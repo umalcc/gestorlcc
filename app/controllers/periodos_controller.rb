@@ -10,7 +10,7 @@ class PeriodosController < ApplicationController
   @@tipo=''
 
   def index
-    @periodos = Periodo.find(:all,:order=>"inicio") 
+    @periodos = Periodo.order("inicio").all
     session[:cambia_activo]=cambia_admision=false
 
     respond_to do |format|
@@ -86,7 +86,7 @@ class PeriodosController < ApplicationController
 
     respond_to do |format|
       if @periodo.save
-        @periodos = Periodo.find(:all,:order=>"inicio")
+        @periodos = Periodo.order("inicio").all
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @periodo, :status => :created, :location => @periodo }
       else
@@ -136,7 +136,7 @@ class PeriodosController < ApplicationController
     
            if @periodo.update_attributes(params[:periodo])
               
-              @periodos = Periodo.find(:all,:order=>"inicio")
+              @periodos = Periodo.order("inicio").all
               format.html { redirect_to :action => "index" }
               format.xml  { head :ok }
            else
@@ -175,9 +175,9 @@ class PeriodosController < ApplicationController
 
   def enviar_correo_activo_on
    if params[:tipo]=="Lectivo"
-    CorreoTecnicos::deliver_adjudicalectivo
+    CorreoTecnicos::adjudicalectivo.deliver
    else
-    CorreoTecnicos::deliver_adjudicaexamen
+    CorreoTecnicos::adjudicaexamen.deliver
    end
     @mensaje="Correo enviado"
     render :update do |page|
@@ -187,9 +187,9 @@ class PeriodosController < ApplicationController
 
   def enviar_correo_activo_off
     if params[:tipo]=="Lectivo"
-    CorreoTecnicos::deliver_cierreadjudicalectivo
+    CorreoTecnicos::cierreadjudicalectivo.deliver
    else
-    CorreoTecnicos::deliver_cierreadjudicaexamen
+    CorreoTecnicos::cierreadjudicaexamen.deliver
    end
     @mensaje="Correo enviado"
     render :update do |page|
@@ -225,7 +225,7 @@ class PeriodosController < ApplicationController
                              a.destroy      }
     end
    
-    solicitudes=Solicitudlab.find(:all,:conditions=>["asignado = ?","D"])
+    solicitudes=Solicitudlab.where("asignado = ?","D").all
     solicitudes.each{|s| 
                    peticiones= Peticionlab.find_all_by_solicitudlab_id(s.id)
                    peticiones.each{|p| p.destroy}
@@ -264,7 +264,7 @@ class PeriodosController < ApplicationController
                              conta+=1 }
     end
 
-    solicitudes=Solicitudlabexa.find(:all,:conditions=>["asignado = ?","D"])
+    solicitudes=Solicitudlabexa.all("asignado = ?","D")
     solicitudes.each{|s| s.destroy}
 
     @mensaje="Grabadas en archivo historico "+conta.to_s+" asignaciones"
@@ -306,9 +306,9 @@ class PeriodosController < ApplicationController
   def enviar_correo_lectivo_on
    p=Periodo.find(session[:periodo])
    if p.tipo=="Lectivo"
-    CorreoTecnicos::deliver_aperturalectivo(p.nombre,formato_europeo(p.finsol))
+    CorreoTecnicos::aperturalectivo(p.nombre,formato_europeo(p.finsol)).deliver
    else
-    CorreoTecnicos::deliver_aperturaexamen(p.nombre,formato_europeo(p.finsol))
+    CorreoTecnicos::aperturaexamen(p.nombre,formato_europeo(p.finsol)).deliver
    end
     @mensaje="Correo enviado"
     render :update do |page|
@@ -319,9 +319,9 @@ class PeriodosController < ApplicationController
   def enviar_correo_lectivo_off
    p=Periodo.find(session[:periodo])
    if p.tipo=="Lectivo"
-    CorreoTecnicos::deliver_cierrelectivo(p.nombre)
+    CorreoTecnicos::cierrelectivo(p.nombre).deliver
    else
-    CorreoTecnicos::deliver_cierreexamen(p.nombre)
+    CorreoTecnicos::cierreexamen(p.nombre).deliver
    end
     @mensaje="Correo enviado"
     render :update do |page|
@@ -358,9 +358,9 @@ def cambia_activo
 def enviar_correo_activo_on
    p=Periodo.find(session[:periodo])
    if p.tipo=="Lectivo"
-    CorreoTecnicos::deliver_adjudicalectivo(p.nombre)
+    CorreoTecnicos::adjudicalectivo(p.nombre).deliver
    else
-    CorreoTecnicos::deliver_adjudicaexamen(p.nombre)
+    CorreoTecnicos::adjudicaexamen(p.nombre).deliver
    end
     @mensaje="Correo enviado"
     render :update do |page|
@@ -371,9 +371,9 @@ def enviar_correo_activo_on
   def enviar_correo_activo_off
    p=Periodo.find(session[:periodo])
    if p.tipo=="Lectivo"
-    CorreoTecnicos::deliver_cierreadjudicalectivo(p.nombre)
+    CorreoTecnicos::cierreadjudicalectivo(p.nombre).deliver
    else
-    CorreoTecnicos::deliver_cierreadjudicaexamen(p.nombre)
+    CorreoTecnicos::cierreadjudicaexamen(p.nombre).deliver
    end
     @mensaje="Correo enviado"
     render :update do |page|

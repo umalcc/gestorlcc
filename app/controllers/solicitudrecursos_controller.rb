@@ -23,15 +23,15 @@ class SolicitudrecursosController < ApplicationController
     @solicitudrecurso = Solicitudrecurso.new  
 
     #cargo los usuarios y los diferentes recursos
-    @usuarios=Usuario.find(:all,:order=>"apellidos").reject{|u| u.identificador=="anonimo"} 
+    @usuarios=Usuario.order("apellidos").all.reject{|u| u.identificador=="anonimo"} 
     
     
     #identifico los tipos distintos de recurso
-    @tipos = Recurso.find(:all).map{ |i| i.descripcion }.uniq
+    @tipos = Recurso.all.map{ |i| i.descripcion }.uniq
     
     # cargo los dias y horas posibles para los select
-    @dias=Dia.find(:all,:conditions=>['en_uso = ?',"t"])
-    @horas=Horario.find(:all,:conditions=>['en_uso = ?',"t"])
+    @dias=Dia.where('en_uso = ?',"t").all
+    @horas=Horario.where('en_uso = ?',"t").all
 
     #obtengo y formateo la fecha actual 
     @dia=@solicitudrecurso.fechareserva=formato_europeo(Date.today)
@@ -51,7 +51,7 @@ class SolicitudrecursosController < ApplicationController
   # GET /solicitudrecursos/1/edit
   def edit
     @solicitudrecurso = Solicitudrecurso.find(params[:id])
-    @usuarios=Usuario.find(:all,:order=>"apellidos").reject{|u| u.identificador=="anonimo"}
+    @usuarios=Usuario.order("apellidos").all.reject{|u| u.identificador=="anonimo"}
     usuario=Usuario.find(@solicitudrecurso.usuario_id)
     @usuarioselec=usuario.apellidos+", "+usuario.nombre 
     @dia=Date.today.strftime("%d-%m-%Y")   
@@ -78,19 +78,18 @@ class SolicitudrecursosController < ApplicationController
     @solicitudrecurso.usuario_id=session[:user_id]
     @solicitudrecurso.motivos=params[:motivos]
     nombrecomp = params[:usuario][:identificador].to_s.split(', ')
-    @solicitudrecurso.usuario_id = Usuario.find(:first, :conditions => 
-     ["nombre = :nombre and apellidos = :apellidos", {:nombre => nombrecomp[1], :apellidos => nombrecomp[0]}]).id
+    @solicitudrecurso.usuario_id = Usuario.first("nombre = :nombre and apellidos = :apellidos", {:nombre => nombrecomp[1], :apellidos => nombrecomp[0]}).id
     
        
       if @solicitudrecurso.save
         familia=Recurso.find_by_identificador(@solicitudrecurso.tipo).descripcion
-        @recs=Recurso.find(:all, :conditions => ['descripcion = ? and disponible = ?',familia,"t"])
+        @recs=Recurso.all( 'descripcion = ? and disponible = ?',familia,"t")
         @ids=@recs.map {|r| r.identificador}
         #session[:fechares]=params[:fecha]
         dia=formato_europeo(session[:fechares])
         #alreves=session[:fechares].to_s.split('-')
         #dia=alreves[2]+"-"+alreves[1]+"-"+alreves[0]
-        @reservas = Solicitudrecurso.find(:all, :conditions => ['tipo in (?) and fechareserva = ?', @ids,dia])
+        @reservas = Solicitudrecurso.all('tipo in (?) and fechareserva = ?', @ids,dia)
 
         render :update do |page|
           page.replace_html(:'reservas', :partial=>"/solicitudrecursos/recurso_reservado", :object=>@reservas)
@@ -119,8 +118,7 @@ class SolicitudrecursosController < ApplicationController
     
       nombrecomp = params[:usuario][:identificador].to_s.split(', ')
       if @solicitudrecurso.update_attributes(
-                                             :usuario_id => Usuario.find(:first, :conditions => 
-     ["nombre = :nombre and apellidos = :apellidos", {:nombre => nombrecomp[1], :apellidos => nombrecomp[0]}]).id,
+                                             :usuario_id => Usuario.where( "nombre = :nombre and apellidos = :apellidos", {:nombre => nombrecomp[1], :apellidos => nombrecomp[0]}).first.id,
                                              :motivos => params[:motivos])
                
         @solicitudrecursos = Solicitudrecurso.all
@@ -162,10 +160,10 @@ class SolicitudrecursosController < ApplicationController
     @solicitudrecurso = Solicitudrecurso.find(params[:reserva])
     @solicitudrecurso.destroy
     familia=Recurso.find_by_identificador(@solicitudrecurso.tipo).descripcion
-    @recs=Recurso.find(:all, :conditions => ['descripcion = ? and disponible = ?',familia,"t"])
+    @recs=Recurso.all('descripcion = ? and disponible = ?',familia,"t")
     @ids=@recs.map {|r| r.identificador}
     dia=formato_europeo(session[:fechares])
-    @reservas = Solicitudrecurso.find(:all, :conditions => ['tipo in (?) and fechareserva = ?', @ids,dia])
+    @reservas = Solicitudrecurso.all('tipo in (?) and fechareserva = ?', @ids,dia)
 
     render :update do |page|
       page.replace_html(:'reservas', :partial=>"/solicitudrecursos/recurso_reservado", :object=>@reservas)
@@ -188,13 +186,13 @@ class SolicitudrecursosController < ApplicationController
 
     cadena=(cadena.nil?)? "%" : "%#{cadena}%"
 
-    @recs=Recurso.find(:all,:conditions=> ["descripcion || identificador LIKE ?", cadena])
+    @recs=Recurso.all("descripcion || identificador LIKE ?", cadena)
     recs=@recs.map {|r| r.identificador}
-    @usuarios=Usuario.find(:all,:conditions=> ["nombre || apellidos LIKE ?",cadena])
+    @usuarios=Usuario.where("nombre || apellidos LIKE ?",cadena).all
     codigos_u=@usuarios.map { |t| t.id}
-    @tramos=Peticion.find(:all,:conditions=> ["diasemana || horaini || horafin LIKE ?",cadena])
+    @tramos=Peticion.where("diasemana || horaini || horafin LIKE ?",cadena).all
     codigos_t=@tramos.map { |t| t.solicitudrecurso_id}
-    @solicitudrecursos=Solicitudrecurso.find(:all,:conditions=> ["fechareserva ||  fechasol LIKE ? or usuario_id in (?) or id in (?) or tipo in (?)",cadena,codigos_u,codigos_t,recs])
+    @solicitudrecursos=Solicitudrecurso.where("fechareserva ||  fechasol LIKE ? or usuario_id in (?) or id in (?) or tipo in (?)",cadena,codigos_u,codigos_t,recs).all
     @cuenta=@solicitudrecursos.size
     #respond_to {|format| format.js }
   end
@@ -202,13 +200,13 @@ class SolicitudrecursosController < ApplicationController
   def buscar
     dia=params[:fecha].to_date
     if dia.wday!=0 and dia>=Date.today # no comprueba si el dia es posterior a hoy o no es domingo
-     @recs=Recurso.find(:all, :conditions => ['descripcion = ? and disponible = ?',params[:tipo][:descripcion],"t"])
+     @recs=Recurso.all('descripcion = ? and disponible = ?',params[:tipo][:descripcion],"t")
      @ids=@recs.map {|r| r.identificador}
      session[:fechares]=params[:fecha]
      dia=formato_europeo(params[:fecha])
      #alreves=params[:fecha].to_s.split('-')
      #dia=alreves[2]+"-"+alreves[1]+"-"+alreves[0]
-     @reservas = Solicitudrecurso.find(:all, :conditions => ['tipo in (?) and fechareserva = ?', @ids,dia])
+     @reservas = Solicitudrecurso.all('tipo in (?) and fechareserva = ?', @ids,dia)
     else
      @festivo=1
     end

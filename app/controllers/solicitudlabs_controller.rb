@@ -17,7 +17,7 @@ class SolicitudlabsController < ApplicationController
     
     @solicitudlab = Solicitudlab.new
 
-    session[:titulacion]=Titulacion.find(:first)
+    session[:titulacion]=Titulacion.first
     session[:nivel]=Asignatura::CURSO.first
  
     # esto es para crear un carro no persistente  
@@ -66,7 +66,7 @@ class SolicitudlabsController < ApplicationController
   
 # HACER UN DRYYYYYYY!!!!! COMPROBAR SI DETECTA BIEN EL PERIODO
 
-   periodoact=Periodo.find(:first,:conditions=>["admision = ? and tipo = ? ","t","Lectivo"])
+   periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
     if periodoact.nil?
        iniperiodoact=finperiodoact=Date.today 
     else 
@@ -106,7 +106,7 @@ class SolicitudlabsController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.find(:all,:conditions=>['especial=?',"t"]) 
+    @especiales=Laboratorio.all('especial=?',"t") 
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -134,7 +134,7 @@ class SolicitudlabsController < ApplicationController
                               p.save
                               @correotramos+=' - '+p.diasemana+' de '+p.horaini+' a '+p.horafin }
          
-        CorreoTecnicos::deliver_emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Nueva ")     
+        CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Nueva ").deliver     
         
          
         format.html { redirect_to :action => "index" }
@@ -160,7 +160,7 @@ class SolicitudlabsController < ApplicationController
 
 # UN DRYYY!!!!!
 
-    periodoact=Periodo.find(:first,:conditions=>["admision = ? and tipo = ? ","t","Lectivo"])
+    periodoact=Periodo.first("admision = ? and tipo = ? ","t","Lectivo")
     if periodoact.nil?
        iniperiodoact=finperiodoact=Date.today 
     else 
@@ -194,7 +194,7 @@ class SolicitudlabsController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.find(:all,:conditions=>['especial=?',"t"]) 
+    @especiales=Laboratorio.all('especial=?',"t") 
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -236,7 +236,7 @@ class SolicitudlabsController < ApplicationController
                                   reg=Peticionlab.find(tramo)
                                   reg.destroy
                                 end } unless @borrados.empty?
-        CorreoTecnicos::deliver_emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Cambios en ")
+        CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Cambios en ").deliver
 
         @solicitudlabs = Solicitudlab.all
         format.html { redirect_to :action => "index" }
@@ -260,7 +260,7 @@ class SolicitudlabsController < ApplicationController
     @correotramos=''
     @tramos.each {|tramo| @correotramos+=' - '+tramo.diasemana+' de '+tramo.horaini+' a '+tramo.horafin
                           tramo.destroy} # los elimino en cascada
-    CorreoTecnicos::deliver_emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Borrado de ")
+    CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Borrado de ").deliver
     respond_to do |format|
       format.html { redirect_to(solicitudlabs_url) }
       format.xml  { head :ok }
@@ -284,16 +284,16 @@ class SolicitudlabsController < ApplicationController
 
     cadena=(cadena.nil?)? "%" : "%#{cadena}%"
     
-    @usuarios=Usuario.find(:all,:conditions=> ["nombre || apellidos LIKE ?",cadena])
+    @usuarios=Usuario.all("nombre || apellidos LIKE ?",cadena)
     codigos_u=@usuarios.map { |t| t.id}
-    @asignaturas=Asignatura.find(:all,:conditions=> ["nombre_asig || abrevia_asig || curso LIKE ?",cadena])
+    @asignaturas=Asignatura.all("nombre_asig || abrevia_asig || curso LIKE ?",cadena)
     codigos_a=@asignaturas.map { |t| t.id}
-    @tramos=Peticionlab.find(:all,:conditions=> ["diasemana || horaini || horafin LIKE ?",cadena])
+    @tramos=Peticionlab.all("diasemana || horaini || horafin LIKE ?",cadena)
     codigos_t=@tramos.map { |t| t.solicitudlab_id}
-    @labs_especiales=Laboratorio.find(:all,:conditions=> ["ssoo || nombre_lab like ? and especial=?",cadena,"t"])
+    @labs_especiales=Laboratorio.all("ssoo || nombre_lab like ? and especial=?",cadena,"t")
     nombre_l=@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'si'+';'}
     nombre_l=nombre_l+@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'no'+';'}
-    @solicitudlabs=Solicitudlab.find(:all,:conditions=> ["npuestos || curso || fechaini || fechafin || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, codigos_t,nombre_l])
+    @solicitudlabs=Solicitudlab.all("npuestos || curso || fechaini || fechafin || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, codigos_t,nombre_l)
     @cuenta=@solicitudlabs.size
     #respond_to {|format| format.js }
   end

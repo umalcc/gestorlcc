@@ -29,11 +29,11 @@ end
 
 def estadisticas_examenes
   
-  @registros=Historicoasigexa.find_all_by_periodo(params[:periodo][:nombre_per])
+  @registros=Historicoasigexa.where(:periodo =>params[:periodo][:nombre_per])
 
-  render :update do |page|
-          page.replace_html(:'registros', :partial=>"/estadisticas/registros_examenes", :object=>@registros)
-  end
+  respond_to do |format|
+	format.js
+   end
 
 end
 

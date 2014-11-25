@@ -5,7 +5,7 @@ class UsuariosController < ApplicationController
 before_filter :login_requerido, :admin?
 
   def index
-    @usuarios = Usuario.find(:all,:order=>"apellidos")
+    @usuarios = Usuario.order("apellidos").all
     @cuenta = @usuarios.size
 
     respond_to do |format|
@@ -72,7 +72,7 @@ before_filter :login_requerido, :admin?
   
       if @usuario.update_attributes(params[:usuario]) 
      #   flash[:notice] = 'El usuario fue actualizado con &eacute;xito.'
-        @usuarios = Usuario.find(:all,:order=>"apellidos")
+        @usuarios = Usuario.order("apellidos").all
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else
@@ -127,7 +127,7 @@ before_filter :login_requerido, :admin?
  
   def listar
     cadena=(params[:query].nil?)? "%" : "%#{params[:query]}%"
-    @usuarios=Usuario.find(:all,:conditions=> ["nombre||' '||apellidos||' '||identificador||' '||email||' '||despacho||' '||telefono LIKE ?",cadena],:order=>"apellidos")
+    @usuarios=Usuario.order("apellidos").all("nombre||' '||apellidos||' '||identificador||' '||email||' '||despacho||' '||telefono LIKE ?",cadena)
     @cuenta=@usuarios.size
     #respond_to {|format| format.js }
   end

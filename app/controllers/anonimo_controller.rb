@@ -15,7 +15,7 @@ class AnonimoController < ApplicationController
   end 
 
   def labgeneral
-    @asignacionexas = Asignacionlabexadef.find(:all,:order=>'dia,solicitudlabexa_id,laboratorio_id')
+    @asignacionexas = Asignacionlabexadef.order('dia,solicitudlabexa_id,laboratorio_id').all
 
     respond_to do |format|
       format.html # index.html.erb

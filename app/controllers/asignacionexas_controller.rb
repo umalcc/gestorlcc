@@ -21,7 +21,7 @@
 
 
   def asignar
-    @admision=Periodo.find(:all,:conditions=>["admision = ? and tipo= ?","t","Examenes"])
+    @admision=Periodo.where("admision = ? and tipo= ?","t","Examenes").all
     @totalprov=Asignacionlabexa.all.size
 
   end
@@ -37,8 +37,8 @@
   end
 # SI HIDDEN FIELD ES PRINCIPIO, SE LEEN SOLICITUDLAB, SINO DE ASIGNACIONEXAPROV
   def asignar_iniciar
-    solicitudes=Solicitudlabexa.find(:all,:conditions=>["fecha >= ? and asignado <> ?",Date.today,"D"])
-    #@adjudicado=Periodo.find(:all,:conditions=>["activo = ? and tipo= ?","t","Examenes"])
+    solicitudes=Solicitudlabexa.where("fecha >= ? and asignado <> ?",Date.today,"D").all
+    #@adjudicado=Periodo.where(:conditions=>["activo = ? and tipo= ?","t","Examenes"]).all
     if solicitudes.size!=0 
      
      @solicitudlabexas=solicitudes.to_a
@@ -84,8 +84,7 @@
           @nhoras<<nhoras
           if sol.npuestos<Laboratorio::DOS_LAB 
            
-            @todoslab=Laboratorio.find(:all,:order=>"nombre_lab desc",
-                                      :conditions=>["puestos = ?",sol.npuestos])
+            @todoslab=Laboratorio.order("nombre_lab desc").all("puestos = ?",sol.npuestos)
             # en principio el laboratorio asignado es ninguno y buscamos uno libre de ese tamaño
             lab=nil
           if sol.preferencias=="" or sol.preferencias==nil
@@ -142,7 +141,7 @@
           end # if < DOSLAB
            # siempre habra al menos una asignacionexa para todos
            # CONSTRUIR UNA LISTA Y UNA ITERACION  SOBRE ELLA DE ASIGNACIONES
-           lab.each {|l| for hora in hi..hf
+           lab.each {|l| for horconditioa in hi..hf
                          @asignacionexas<<asignacionexa=Asignacionlabexa.new(:solicitudlabexa_id=>sol.id,
                                                                  :laboratorio_id=>l,
                                                                  :dia=>sol.fecha,              #aqui hay cambio
@@ -233,8 +232,7 @@
     horaini=Horasexa.find_by_comienzo(params[:horario_id][:comienzo]).comienzo
     horafin=Horasexa.find_by_comienzo(params[:horario_id][:comienzo]).fin
     if inicial_laboratorio!=laboratorio_id
-      asignaciones=Asignacionlabexa.find(:all,
-         :conditions=>['solicitudlabexa_id = ? and laboratorio_id = ?',@asignacionexa.solicitudlabexa,inicial_laboratorio])
+      asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ? and laboratorio_id = ?',@asignacionexa.solicitudlabexa,inicial_laboratorio).all
       for asignacionexa in asignaciones # todas las que haya que modificar
         asignacionexa.update_attributes(:laboratorio_id=>laboratorio_id) 
       end 
@@ -242,7 +240,7 @@
     mov_dia=""
     if formato_europeo(inicial_dia) != params[:dia][:dia]
       mov_dia=" cambio de "+inicial_dia.to_s+" a "+params[:dia][:dia].to_s+"; "
-      asignaciones=Asignacionlabexa.find(:all,:conditions=>['solicitudlabexa_id = ?',@asignacionexa.solicitudlabexa])
+      asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ?',@asignacionexa.solicitudlabexa).all
       for asignacionexa in asignaciones # todas las que haya que modificar
         asignacionexa.update_attributes(:dia=> params[:dia][:dia], 
                                         :mov_dia=> mov_dia) 
@@ -252,7 +250,7 @@
     if inicial_hora_ini != params[:horario_id][:comienzo]
       diferencia=Horasexa.find_by_comienzo(inicial_hora_ini).num-Horasexa.find_by_comienzo(params[:horario_id][:comienzo]).num
       mov_hora=" cambio de "+inicial_hora_ini+"-"+inicial_hora_fin+" a "+params[:horario_id][:comienzo]+"-"+horafin+"; "
-      asignaciones=Asignacionlabexa.find(:all,:conditions=>['solicitudlabexa_id = ?',@asignacionexa.solicitudlabexa])
+      asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ?',@asignacionexa.solicitudlabexa).all
       for asignacionexa in asignaciones # todas las que haya que modificar
         asignacionexa.update_attributes(:horaini=> Horasexa.find_by_num(Horasexa.find_by_comienzo(asignacionexa.horaini).num-diferencia).comienzo,
                                         :horafin=> Horasexa.find_by_num(Horasexa.find_by_comienzo(asignacionexa.horaini).num-diferencia).fin,
@@ -293,7 +291,7 @@
 
     horas=Horasexa.all.map{|h| h.id}
     laboratorios=Laboratorio.all.map{|l| l.id}
-    periodo=Periodo.find(:all,:conditions=>['tipo = ? and inicio > ?','Examenes',Date.today]).first
+    periodo=Periodo.all('tipo = ? and inicio > ?','Examenes',Date.today).first
     
 
     @colision=0
@@ -313,7 +311,7 @@
   end
   
   def consulta
-    @asignacionexas = Asignacionlabexadef.find(:all,:order=>'dia,solicitudlabexa_id,laboratorio_id')
+    @asignacionexas = Asignacionlabexadef.order('dia,solicitudlabexa_id,laboratorio_id').all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -392,7 +390,7 @@
   def borranormal
     asignacionexa=Asignacionlabexa.find(params[:asigna])
     #asignacionexa.delete
-    otrasasignacionexas=Asignacionlabexa.find(:all,:conditions=>['solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id])
+    otrasasignacionexas=Asignacionlabexa.where('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id).all
     otrasasignacionexas.each {|o| o.delete }
     @asignacionexas=Asignacionlabexa.all
         render :update do |page|
@@ -403,7 +401,7 @@
   def borranormalasignada
     asignacionexa=Asignacionlabexa.find(params[:asigna])
     #asignacionexa.delete
-    otrasasignacionexas=Asignacionlabexa.find(:all,:conditions=>['solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id])
+    otrasasignacionexas=Asignacionlabexa.all('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id)
     otrasasignacionexas.each {|o| o.delete }
     @asignacionexas=Asignacionlabexa.all
         render :update do |page|
@@ -414,11 +412,11 @@
   def borradirasignada
     asignacionexa=Asignacionlabexadef.find(params[:asigna].to_i)
     solicitudlab=Solicitudlabexa.find(asignacionexa.solicitudlabexa_id)
-    otrasasignacionexas=Asignacionlabexadef.find(:all,:conditions=>['solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id])
+    otrasasignacionexas=Asignacionlabexadef.where('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id).all
     #asignacionexa.delete
     otrasasignacionexas.each {|o| o.delete }
     #solicitudlab.delete
-    @asignacionexas=Asignacionlabexadef.find(:all,:order=>'dia,solicitudlabexa_id,laboratorio_id')
+    @asignacionexas=Asignacionlabexadef.order('dia,solicitudlabexa_id,laboratorio_id').all
         render :update do |page|
           page.replace_html(:'cuadrante2', :partial=>"/asignacionexas/cuadrante2", :object=>@asignacionexas)
         end
@@ -427,7 +425,7 @@
   def borradir
     asignacionexa=Asignacionlabexa.find(params[:asigna])
     solicitudlab=Solicitudlab.find(asignacionexa.solicitudlabexa_id)
-    otrasasignacionexas=Asignacionlabexa.find(:all,:conditions=>['solicitudlabexa_id = ?',asignacionexa.solicitudlab_id])
+    otrasasignacionexas=Asignacionlabexa.all('solicitudlabexa_id = ?',asignacionexa.solicitudlab_id)
     #asignacionexa.delete
     otrasasignacionexas.each {|o| o.delete }
     #solicitudlab.delete
@@ -456,19 +454,19 @@
       cadena="sin curso"
     end
     cadena=(params[:query].nil?)? "%" : "%#{params[:query]}%"
-    @titulaciones=Titulacion.find(:all,:conditions=>["abrevia||nombre LIKE ?",cadena])
+    @titulaciones=Titulacion.where("abrevia||nombre LIKE ?",cadena).all
     codtits=@titulaciones.map{|t| t.id}
-    @asignaturas=Asignatura.find(:all,:conditions=> ["abrevia_asig||nombre_asig LIKE ? or titulacion_id in (?)",cadena,codtits])
+    @asignaturas=Asignatura.where("abrevia_asig||nombre_asig LIKE ? or titulacion_id in (?)",cadena,codtits).all
     codasigs=@asignaturas.map { |a| a.id}
-    @profesores=Usuario.find(:all,:conditions=>["nombre||apellidos LIKE ?",cadena])
+    @profesores=Usuario.where("nombre||apellidos LIKE ?",cadena).all
     codprofs=@profesores.map {|p| p.id}
-    @solicitudlabexas=Solicitudlabexa.find(:all,:conditions=>["asignatura_id in (?) or usuario_id in (?) or curso LIKE ?",codasigs,codprofs,cadena])
+    @solicitudlabexas=Solicitudlabexa.where("asignatura_id in (?) or usuario_id in (?) or curso LIKE ?",codasigs,codprofs,cadena).all
     codsols=@solicitudlabexas.map{|s| s.id}
-    @laboratorios=Laboratorio.find(:all,:conditions=>["nombre_lab LIKE ?",cadena])
+    @laboratorios=Laboratorio.where("nombre_lab LIKE ?",cadena).all
     codlabs=@laboratorios.map{|l| l.id}
-    @asignacionexas=Asignacionlabexadef.find(:all,:conditions=> ["solicitudlabexa_id in (?) or laboratorio_id in (?) or dia LIKE ?",codsols,codlabs,cadena])
+    @asignacionexas=Asignacionlabexadef.where("solicitudlabexa_id in (?) or laboratorio_id in (?) or dia LIKE ?",codsols,codlabs,cadena).all
 
-    #respond_to {|format| format.js }
+    respond_to {|format| format.js }
   end
     
 

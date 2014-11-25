@@ -5,7 +5,7 @@ class DiasController < ApplicationController
 before_filter :login_requerido, :admin?
 
   def index
-    @dias = Dia.find(:all,:order=> "num")
+    @dias = Dia.order("num").all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -48,7 +48,7 @@ before_filter :login_requerido, :admin?
     respond_to do |format|
       if @dia.save
         #flash[:notice] = 'Dia was successfully created.'
-        @dias = Dia.find(:all,:order=> "num")
+        @dias = Dia.order( "num").all
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @dia, :status => :created, :location => @dia }
       else
@@ -66,7 +66,7 @@ before_filter :login_requerido, :admin?
     respond_to do |format|
       if @dia.update_attributes(params[:dia])
         #flash[:notice] = 'Dia was successfully updated.'
-        @dias = Dia.find(:all,:order=> "num")
+        @dias = Dia.order( "num").all
         format.html { redirect_to :action => "index"  }
         format.xml  { head :ok }
       else

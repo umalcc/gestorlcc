@@ -4,13 +4,14 @@ class AsignaturasController < ApplicationController
 
 #  @@asignaturas=[]
 
-  before_filter :login_requerido
+  before_filter :login_requerido 
+
   before_filter :admin?, :except=> [:combo_por_titulacion, :combo_por_nivel]
 
   def index
-    @asignaturas = Asignatura.find(:all,:order=>"titulacion_id,curso,cuatrimestre") 
+    @asignaturas = Asignatura.order("titulacion_id,curso,cuatrimestre").all
     
-    @titulaciones=Titulacion.find(:all,:order=>"codigo") 
+    @titulaciones=Titulacion.order("codigo").all
     @cuenta = @asignaturas.size
 
     respond_to do |format|
@@ -21,7 +22,7 @@ class AsignaturasController < ApplicationController
 
   def new
     @asignatura = Asignatura.new
-    session[:titulacion]=Titulacion.find(:first,:order=>"id").id
+    session[:titulacion]=Titulacion.order("id").first.id
     session[:nivel]=Asignatura::CURSO.first
    
 
@@ -34,7 +35,7 @@ class AsignaturasController < ApplicationController
   # GET /asignaturas/1/edit
   def edit
     @asignatura = Asignatura.find(params[:id])
-    @titulaciones=Titulacion.find(:all,:order=>"codigo")
+    @titulaciones=Titulacion.order("codigo").all
     @titulaselec=Titulacion.find(@asignatura.titulacion_id).nombre
     @cursoselec=@asignatura.curso
     @areaselec=@asignatura.area_depto
@@ -63,7 +64,7 @@ class AsignaturasController < ApplicationController
     respond_to do |format|
       if @asignatura.save
        # flash[:notice] = 'Asignatura fue creada con &eacute;xito.'
-        @asignaturas = Asignatura.find(:all,:order=>"titulacion_id,curso,cuatrimestre")
+        @asignaturas = Asignatura.order("titulacion_id,curso,cuatrimestre").all
         @cuenta = @asignaturas.size 
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @asignatura, :status => :created, :location => @asignatura }
@@ -89,7 +90,7 @@ class AsignaturasController < ApplicationController
     respond_to do |format|
       if @asignatura.update_attributes(params[:asignatura])
       #  flash[:notice] = 'Asignatura fue actualizada con &eacute;xito.'
-        @asignaturas = Asignatura.find(:all,:order=>"titulacion_id,curso,cuatrimestre")
+        @asignaturas = Asignatura.order("titulacion_id,curso,cuatrimestre").all
         @cuenta = @asignaturas.size
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
@@ -115,7 +116,7 @@ class AsignaturasController < ApplicationController
   def combo_por_titulacion
 
     session[:titulacion]=params[:combo_titulacion]
-    @asignaturas=Asignatura.find(:all, :conditions => ['titulacion_id = ? and curso = ?', session[:titulacion].to_i,session[:nivel].to_i],:order=>"nombre_asig")
+    @asignaturas=Asignatura.order("nombre_asig").all('titulacion_id = ? and curso = ?', session[:titulacion].to_i,session[:nivel].to_i)
     
     return render(:partial => 'combo_por_titulacion', :layout => false) if request.xhr?
   end
@@ -123,7 +124,7 @@ class AsignaturasController < ApplicationController
   def combo_por_nivel
 
     session[:nivel]=params[:combo_nivel]
-    @asignaturas=Asignatura.find(:all, :conditions => ['titulacion_id = ? and curso = ?', session[:titulacion].to_i,session[:nivel].to_i],:order=>"nombre_asig")
+    @asignaturas=Asignatura.order("nombre_asig").all('titulacion_id = ? and curso = ?', session[:titulacion].to_i,session[:nivel].to_i)
     
 
 
@@ -131,12 +132,21 @@ class AsignaturasController < ApplicationController
   end
 
   def listar
+   
+    logger.debug "EEEEEEEEEEEEEEEEEEEEEEEEEE"
     cadena=(params[:query].nil?)? "%" : "%#{params[:query]}%"
-    @titulaciones=Titulacion.find(:all,:conditions=> ["abrevia LIKE ?",cadena])
+    logger.debug "CADENAAAA"+ cadena
+    @titulaciones=Titulacion.where("abrevia LIKE ?",cadena).all
     codigos=@titulaciones.map { |t| t.id}
-    @asignaturas=Asignatura.find(:all,:conditions=> ["codigo_asig||nombre_asig||caracter||curso||cuatrimestre LIKE ? or titulacion_id in (?)",cadena,codigos])
-    @cuenta=@asignaturas.size
-    #respond_to {|format| format.js }
+	logger.debug codigos
+    @asignaturas=Asignatura.where("codigo_asig||nombre_asig||caracter||curso||cuatrimestre LIKE ? or titulacion_id in (?)",cadena,codigos).all
+     @cuenta=@asignaturas.size
+ #render(:partial => 'listar', :layout => false)
+
+    respond_to do |format|
+ 
+	format.js 
+    end
   end
 
 end

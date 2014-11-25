@@ -21,7 +21,7 @@ class AsignacionsController < ApplicationController
 
 
   def asignar
-    @admision=Periodo.find(:all,:conditions=>["admision = ? and tipo= ?","t","Lectivo"])
+    @admision=Periodo.where("admision = ? and tipo= ?","t","Lectivo").all
     @totalprov=Asignacion.all.size
 
   end
@@ -37,8 +37,8 @@ class AsignacionsController < ApplicationController
   end
 # SI HIDDEN FIEL ES PRINCIPIO, SE LEEN SOLICITUDLAB, SINO DE ASIGNACIONPROV
   def asignar_iniciar
-    solicitudes=Solicitudlab.find(:all,:conditions=>["fechafin >= ? and asignado <> ?",Date.today,"D"])
-    @adjudicado=Periodo.find(:all,:conditions=>["activo = ? and tipo= ?","t","Lectivo"])
+    solicitudes=Solicitudlab.where("fechafin >= ? and asignado <> ?",Date.today,"D").all
+    @adjudicado=Periodo.where("activo = ? and tipo= ?","t","Lectivo").all
 
     if solicitudes.size!=0 
      
@@ -119,8 +119,7 @@ class AsignacionsController < ApplicationController
          for hora in hi..hf     #   for cada hora del tramo, una asignacion
           if sol.npuestos<Laboratorio::DOS_LAB 
            
-            @todoslab=Laboratorio.find(:all,:order=>"nombre_lab desc",
-                                      :conditions=>["puestos = ?",sol.npuestos])
+            @todoslab=Laboratorio.order("nombre_lab desc").where("puestos = ?",sol.npuestos).all
             # en principio el laboratorio asignado es ninguno y buscamos uno libre de ese tamaño
             lab=nil
           if sol.preferencias=="" or sol.preferencias==nil
@@ -396,7 +395,7 @@ class AsignacionsController < ApplicationController
     # esto es lo quedebe cambiar, hay que ir a generar la asignacion nueva y hay que grabarla
     # y redirigir a la consulta de asignaciones  
       l=Laboratorio.find_by_nombre_lab(params[:laboratorio_id][:nombre_lab]).id
-      peticiones=Peticionlab.find(:all,:conditions=>['solicitudlab_id = ?',@solicitudlab.id])
+      peticiones=Peticionlab.where('solicitudlab_id = ?',@solicitudlab.id).all
       peticiones.each {|p|  
                            hi=Horario.find_by_comienzo(p.horaini).id.to_i
                            hf=Horario.find_by_fin(p.horafin).id.to_i
@@ -429,7 +428,7 @@ class AsignacionsController < ApplicationController
   def borranormal
     asignacion=Asignacion.find(params[:asigna])
     asignacion.delete
-    # otrasasignaciones=Asignacion.find(:all,:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id])
+    # otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).all
     # otrasasignaciones.each {|o| o.delete }
     @asignacions=Asignacion.all
         render :update do |page|
@@ -440,7 +439,7 @@ class AsignacionsController < ApplicationController
   def borranormalasignada
     asignacion=Asignaciondef.find(params[:asigna])
     asignacion.delete
-    # otrasasignaciones=Asignacion.find(:all,:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id])
+    # otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).all
     # otrasasignaciones.each {|o| o.delete }
     @asignacions=Asignaciondef.all
         render :update do |page|
@@ -451,7 +450,7 @@ class AsignacionsController < ApplicationController
   def borradirasignada
     asignacion=Asignaciondef.find(params[:asigna])
     #solicitudlab=Solicitudlab.find(asignacion.solicitudlab_id)
-    #otrasasignaciones=Asignacion.find(:all,:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id])
+    #otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).all
     asignacion.delete
     #otrasasignaciones.each {|o| o.delete }
     #solicitudlab.delete
@@ -464,7 +463,7 @@ class AsignacionsController < ApplicationController
   def borradir
     asignacion=Asignacion.find(params[:asigna])
     #solicitudlab=Solicitudlab.find(asignacion.solicitudlab_id)
-    #otrasasignaciones=Asignacion.find(:all,:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id])
+    #otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).all
     asignacion.delete
     #otrasasignaciones.each {|o| o.delete }
     #solicitudlab.delete

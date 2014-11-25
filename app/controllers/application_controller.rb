@@ -11,9 +11,16 @@ class ApplicationController < ActionController::Base
   before_filter :comprobar_usuario_login
 
   protected
+#def comprobar_usuario_login
+     #  return unless session[:user_id]
+     #  @usuario_actual = Usuario.find_by_id(session[:user_id])
+    #end
 
     def comprobar_usuario_login
+      @usuario_actual=nil
+     logger.debug "Comprobandoooooooooo"+session[:user_id].to_s
        return unless session[:user_id]
+	logger.debug "Usuariooooooo"+ session[:user_id].to_s
        @usuario_actual = Usuario.find_by_id(session[:user_id])
     end
 
@@ -24,7 +31,8 @@ class ApplicationController < ActionController::Base
 
     def login_requerido
       return true if login_usuario?
-      session[:vuelta_a]=request.request_uri
+      session[:vuelta_a]=request.url
+      Rails.logger.info("REDIRECT1")
       redirect_to new_session_path and return false
     end
 
@@ -35,11 +43,14 @@ class ApplicationController < ActionController::Base
     def admin?
       @usuario_actual = Usuario.find_by_id(session[:user_id])
       return true if @usuario_actual.admin?
+      Rails.logger.info("REDIRECT_admin")
+      
       redirect_to new_session_path and return false
     end
     helper_method :admin?
 
     def usuario?
+logger.debug "application_controller-->usuario"
       @usuario_actual = Usuario.find_by_id(session[:user_id])
       return true if !@usuario_actual.admin? and @usuario_actual.identificador!="anonimo"
       redirect_to new_session_path and return false

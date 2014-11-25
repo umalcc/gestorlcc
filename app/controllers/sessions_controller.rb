@@ -23,13 +23,15 @@ class SessionsController < ApplicationController
 # end
     @usuario_actual=Usuario.find_by_identificador_and_password(
                         params[:login],Digest::MD5.hexdigest(params[:password]))
-
+logger.debug "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
    if @usuario_actual
     #if !@usuario_actual.sesion
      session[:user_id]=@usuario_actual.id
+
      #@usuario_actual.sesion=true
-     #@usuario_actual.save
+     @usuario_actual.save
      if @usuario_actual.admin
+     logger.debug "ADMIN!!!"
      # si el usuario es administrador
       # File.open('/tmp/adminreservas.txt', 'w+') {|f| f.puts(Date.today.to_s) } # da problema de denegacion
        redirect_to new_inicio_path
@@ -47,7 +49,7 @@ class SessionsController < ApplicationController
     #end
    else
  #    # si el usuario no es conocido
-     flash[:notice]='Identificador o <br> password erroneo'
+     flash[:notice]='Identificador o <br> password erroneo'.html_safe
      redirect_to new_session_path
       #render :action => 'new'
  #    #flash[:notice]=""
@@ -59,6 +61,7 @@ class SessionsController < ApplicationController
   def destroy
     #@usuario_actual.sesion=false
     #@usuario_actual.save
+    logger.debug "BBBBBBB"
     session[:user_id]=@usuario_actual=nil
     redirect_to new_session_path
   end

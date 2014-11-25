@@ -5,7 +5,7 @@ class HorasexasController < ApplicationController
 before_filter :login_requerido, :admin?
 
   def index
-    @horasexas = Horasexa.find(:all,:order=> "num")
+    @horasexas = Horasexa.order("num").all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -35,7 +35,7 @@ before_filter :login_requerido, :admin?
     respond_to do |format|
       if @horasexa.save
        
-        @horasexas = Horasexa.find(:all,:order=> "num")
+        @horasexas = Horasexa.order("num").all
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @horasexa, :status => :created, :location => @horasexa }
       else
@@ -52,7 +52,7 @@ before_filter :login_requerido, :admin?
 
     respond_to do |format|
       if @horasexa.update_attributes(params[:horasexa])
-        @horasexas = Horasexa.find(:all,:order=> "num")
+        @horasexas = Horasexa.order("num").all
         format.html { redirect_to :action => "index"  }
         format.xml  { head :ok }
       else

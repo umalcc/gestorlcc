@@ -5,7 +5,7 @@ class SolicitudlabexasController < ApplicationController
   before_filter :login_requerido, :admin?
 
   def index
-    @solicitudlabexas = Solicitudlabexa.find(:all,:order=>"fecha")
+    @solicitudlabexas = Solicitudlabexa.order("fecha").all
     @cuenta = @solicitudlabexas.size
     
     respond_to do |format|
@@ -19,7 +19,7 @@ class SolicitudlabexasController < ApplicationController
   def new
     @solicitudlabexa = Solicitudlabexa.new
 
-    session[:titulacion]=Titulacion.find(:first)
+    session[:titulacion]=Titulacion.first
     session[:nivel]=Asignatura::CURSO.first
 
     
@@ -60,7 +60,7 @@ class SolicitudlabexasController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.find(:all,:conditions=>['especial=?',"t"]) 
+    @especiales=Laboratorio.all('especial=?',"t") 
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -73,7 +73,7 @@ class SolicitudlabexasController < ApplicationController
     respond_to do |format|
 
       if @solicitudlabexa.save      
-       CorreoTecnicos::deliver_emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Nueva ")       
+       CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Nueva ").deliver       
               
         @solicitudlabexas = Solicitudlabexa.all
         
@@ -105,7 +105,7 @@ class SolicitudlabexasController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.find(:all,:conditions=>['especial=?',"t"]) 
+    @especiales=Laboratorio.all('especial=?',"t") 
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -125,7 +125,7 @@ class SolicitudlabexasController < ApplicationController
 					     :npuestos => params[:npuestos].to_s,
                                              :comentarios=>Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios]))
 
-CorreoTecnicos::deliver_emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Cambios en ")      
+CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Cambios en ").deliver      
         @solicitudlabexas = Solicitudlabexa.all
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
@@ -144,7 +144,7 @@ CorreoTecnicos::deliver_emitesolicitudexamen(@solicitudlabexa,params[:fecha],"So
  def destroy
     @solicitudlabexa = Solicitudlabexa.find(params[:id])
     @solicitudlabexa.destroy
-    CorreoTecnicos::deliver_emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Borrado de ")      
+    CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Borrado de ").deliver      
     respond_to do |format|
       format.html { redirect_to(solicitudlabexas_url) }
       format.xml  { head :ok }
@@ -168,14 +168,14 @@ CorreoTecnicos::deliver_emitesolicitudexamen(@solicitudlabexa,params[:fecha],"So
 
     cadena=(cadena.nil?)? "%" : "%#{cadena}%"
     
-    @usuarios=Usuario.find(:all,:conditions=> ["nombre || apellidos LIKE ?",cadena])
+    @usuarios=Usuario.all("nombre || apellidos LIKE ?",cadena)
     codigos_u=@usuarios.map { |t| t.id}
-    @asignaturas=Asignatura.find(:all,:conditions=> ["nombre_asig || abrevia_asig || curso LIKE ?",cadena])
+    @asignaturas=Asignatura.all("nombre_asig || abrevia_asig || curso LIKE ?",cadena)
     codigos_a=@asignaturas.map { |t| t.id}
-    @labs_especiales=Laboratorio.find(:all,:conditions=> ["ssoo || nombre_lab like ? and especial=?",cadena,"t"])
+    @labs_especiales=Laboratorio.all("ssoo || nombre_lab like ? and especial=?",cadena,"t")
     nombre_l=@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'si'+';'}
     nombre_l=nombre_l+@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'no'+';'}
-    @solicitudlabexas=Solicitudlabexa.find(:all,:conditions=> ["npuestos || curso || fecha || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, nombre_l])
+    @solicitudlabexas=Solicitudlabexa.all("npuestos || curso || fecha || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, nombre_l)
     @cuenta=@solicitudlabexas.size
     #respond_to {|format| format.js }
   end
