@@ -12,7 +12,9 @@ has_many :solicitudlab
 # restricciones del modelo
   validates_uniqueness_of :codigo_asig, 
                           :message => ': Ya se encuentra registrado ese valor'
-  validates_presence_of :codigo_asig, :nombre_asig, :abrevia_asig,
+  validates_presence_of :codigo_asig, 
+			:nombre_asig, 
+			:abrevia_asig,
                         :message => ': No puede estar en blanco'
   validates_length_of :codigo_asig, 
                       :in => 3..5, 

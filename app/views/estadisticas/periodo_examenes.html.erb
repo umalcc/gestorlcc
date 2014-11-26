@@ -6,27 +6,22 @@
       <p><%= image_tag ("bg_separ.gif") %></p>
       <% nregistros=Historicoasigexa.all.size %>
       <% if nregistros!=0 %>
-        <% @periodos=Historicoasigexa.find(:all,:order=>"periodo") %>
-        <% form_tag  do %>
+        <% @periodos=Historicoasigexa.order("periodo").all %>
+        <% form_tag(url_for(:controller=>"estadisticas",:action=>"estadisticas_examenes"),remote:true,method:"get")  do %>
         <table id="busqueda" style="width:400px">
           <tr>
             <td style="text-align:left;width:100px">Periodo : </td>
             <td style="text-align:left;width:100px"><%= select "periodo", "nombre_per", @periodos.map {|r| [r.periodo]}.uniq %> </td>
-            <td style="width:100px"><%= link_to_remote(image_tag("boton2.png",:border=>0),
-                         :submit   => "busqueda",
-                         :before   => 'mostrardiv("imagen-progreso")',
-                         :url      => { :controller=>'estadisticas',:action => 'estadisticas_examenes' })%></td>
+            <td style="width:100px">
+<%= submit_tag("Buscar",:type=>:image,:src=>"images/boton2.png")%></td>
           </tr>
         </table>
-        <table id="eliminahistorico" style="margin-left:900px;margin-top:-50px">
+<!--        <table id="eliminahistorico" style="margin-left:900px;margin-top:-50px">
           <tr>
-            <td><%= link_to_remote(image_tag("limpiar.jpeg",:border=>0,:width=>32,:height=>32),
-                         :url      => { :controller=>'estadisticas',:action => 'borrar_historico_examenes' },
-                         :before   => 'mostrardiv("imagen-progreso")',
-                         :confirm  => "Esto eliminara todo el registro historico de asignaciones en periodo de examenes. Esta seguro?")%></td>
+            <td></td>
            <td style="color:#010080;font-size:0.9em">Limpiar<br/> hist&oacute;rico</td>
           </tr>
-        </table>
+        </table>-->
         <div id="registros">
            <div id="imagen-progreso" style="position:relative;top:-35px;right:200px;visibility:hidden">
                      <%=image_tag("ajax-loader.gif",:border=>0) %>

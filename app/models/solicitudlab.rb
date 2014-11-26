@@ -9,21 +9,24 @@ has_many :asignacion
 
 # callbacks
 
-def before_save
-  if self.tipo!='X'  # si es una asignacion directa de admin
+before_save:set_tipo
+  
+def set_tipo
+if self.tipo!='X'  # si es una asignacion directa de admin
    if self.fechaini==self.fechafin
       self.tipo="C"
    else 
       # no funciona para el periodo entero
-      if !Periodo.find(:first,:conditions=>['inicio= ? and fin = ?',self.fechaini,self.fechafin]).nil?
+      if !Periodo.first('inicio= ? and fin = ?',self.fechaini,self.fechafin).nil?
          self.tipo="T"
       else
          self.tipo="I"
       end
    end
-  end
-end
 
+  end
+
+end
 # restricciones del modelo
 
 validate :fechas_correctas?

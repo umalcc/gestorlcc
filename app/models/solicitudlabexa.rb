@@ -14,7 +14,7 @@ def horas_correctas?
 end
 
 def fecha_en_margenes?
-  p=Periodo.find(:first,:conditions=>['tipo= ? and admision = ?',"Examenes","t"])
+  p=Periodo.first(:conditions=>['tipo= ? and admision = ?',"Examenes","t"])
   if !p.nil?
     errors.add("fecha: ", "La fecha elegida no se encuentra dentro del periodo") unless p.inicio<=self.fecha and p.fin>=self.fecha
   end

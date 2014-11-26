@@ -19,7 +19,7 @@
     <a href="http://www.lcc.uma.es">
     <%= image_tag ("logo_lcc.png"), :border=>0,:width=>"195",:height=>"100",:id=>"logotipo" %></a>
     <div class="centre0" id="autenticacion">
-       <% form_tag session_path, :name=>"login_form",:onsubmit=>"return true;" do %>
+       <%= form_tag session_path, :name=>"login_form",:onsubmit=>"return true;" do %>
           <p><%= label(:nombre, "Identificador:") %>
              <%= text_field_tag 'login', nil,:class=>"usuario", :size=>10 %></p>
           <p><%= label(:password, "Password:") %>

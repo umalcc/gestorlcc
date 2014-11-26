@@ -6,7 +6,7 @@
 <% nasignacionexadef=Asignacionlabexadef.all.size %>
 <% total=nsol+nsolexa+nasig+nasigdef+nasignacionexa+nasignacionexadef %>
 
-<% form_tag new_asignatura_path, :method=>:get do -%>
+<%= form_tag new_asignatura_path, :method=>:get do -%>
   <%= submit_tag "Nueva asignatura", :class=>"botonindexsearch" %>
 <% end -%>
 
@@ -33,28 +33,28 @@
 
    <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
     <td class="icono"><%= link_to image_tag("Editar.png", :border=>0), edit_asignatura_path(i.id) %></td> 
-    <td style="text-align:right""><%=h i.codigo_asig %></td>
-    <td><%=h i.nombre_asig %></td>
-    <td><%=h i.abrevia_asig %></td>
+    <td style="text-align:right""><%= i.codigo_asig %></td>
+    <td><%= i.nombre_asig %></td>
+    <td><%= i.abrevia_asig %></td>
     <td>
-        <%= "<a onmouseover=ShowContent('titulacion"+i.id.to_s+"'); return true;
-   			   onmouseout=HideContent('titulacion"+i.id.to_s+"'); return true;>" %>
-                           <%= "<div id=titulacion"+i.id.to_s %> 
+        <a onmouseover="ShowContent('titulacion<%= i.id.to_s %>'); return true;"
+   			   onmouseout="HideContent('titulacion<%= i.id.to_s %>'); return true;">
+                           <div id='titulacion<%= i.id.to_s %>' 
 				style='display:none;position:absolute;
       					border-style: solid;
       					background-color: white;
       					padding: 5px;';>
-                                        <%=h i.titulacion.nombre %>
+                                        <%= i.titulacion.nombre %>
 			    </div>
-        <%=h i.titulacion.abrevia %></a></td>
+        <%= i.titulacion.abrevia %></a></td>
     <td style="text-align:center"><% if i.curso>0 %>
                                      <%= i.curso %>
                                   <% else %>
                                      <%= "-" %>
                                   <% end %></td>
-    <td><%=h i.area_depto %></td> 
-    <td style="text-align:right"><%=h i.coeficiente_exp %></td> 
-    <td style="text-align:center"><%=h i.caracter %></td>
+    <td><%= i.area_depto %></td> 
+    <td style="text-align:right"><%= i.coeficiente_exp %></td> 
+    <td style="text-align:center"><%= i.caracter %></td>
     <td style="text-align:center"><% if i.cuatrimestre!=0 %>
                                      <%= i.cuatrimestre %>
                                   <% else %>
