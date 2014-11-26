@@ -144,7 +144,6 @@ class AsignaturasController < ApplicationController
  #render(:partial => 'listar', :layout => false)
 
     respond_to do |format|
- 
 	format.js 
     end
   end

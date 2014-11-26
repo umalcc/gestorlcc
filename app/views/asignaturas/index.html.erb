@@ -24,12 +24,6 @@
 <script type="text/javascript" charset="utf-8">
         // we can now rely on $ within the safety of our "bodyguard" function
         $( function() { 
-$.ajaxSetup({
-beforeSend:function(xhr)
-{
-  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
-}
-});
 		$("#query").keyup(function()
 			{  
 				var jqueryVal=$("#query").val();
