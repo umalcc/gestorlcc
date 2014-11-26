@@ -10,6 +10,7 @@
 
 
 
+
 function show_calendar2(str_target, str_datetime,x,y) {
 	var arr_months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
 		"Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
