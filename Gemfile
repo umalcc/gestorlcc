@@ -15,7 +15,7 @@ gem 'sqlite3', :require => 'sqlite3'
 gem 'therubyracer'
 # To use debugger
 # gem 'ruby-debug'
-gem 'railties', ">= 3.1.0"
+#gem 'railties', ">= 3.1.0"
 # Bundle the extra gems:
 #gem 'nokogiri'
 #gem 'rack', '~>1.1'
@@ -25,7 +25,7 @@ gem 'railties', ">= 3.1.0"
 # gem 'nokogiri'
 # gem 'sqlite3-ruby', :require => 'sqlite3'
 # gem 'aws-s3', :require => 'aws/s3'
-gem 'jquery-rails'
+#gem 'jquery-rails'
 gem 'sprockets'
 gem 'sprockets-rails', :require => 'sprockets/railtie'
 group :development, :test do
@@ -47,5 +47,5 @@ end
 #   gem 'webrat'
 # end
 group :assets do
-  gem 'jquery-ui-rails' # jquery ui
+#  gem 'jquery-ui-rails' # jquery ui
 end
