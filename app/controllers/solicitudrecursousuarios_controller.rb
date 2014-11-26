@@ -171,7 +171,7 @@ class SolicitudrecursousuariosController < ApplicationController
   def buscar
    dia=params[:fecha].to_date
    if dia.wday!=0 and dia>=Date.today # no comprueba si el dia es posterior a hoy o no es domingo
-     @recs=Recurso.all('descripcion = ? and disponible = ?',params[:tipo][:descripcion],"t"])
+     @recs=Recurso.all('descripcion = ? and disponible = ?',params[:tipo][:descripcion],"t")
      @ids=@recs.map {|r| r.identificador}
      session[:fechares]=params[:fecha]
      dia=formato_europeo(params[:fecha])
