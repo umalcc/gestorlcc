@@ -7,7 +7,7 @@
     
     <div id="recuadro-azul" style="height:325px">
 
-    <% form_for(@asignatura) do |f| %>
+    <%= form_for(@asignatura) do |f| %>
 
       <dl>
           <dt>C&oacute;digo * </dt>
@@ -17,7 +17,7 @@
           <dt>Acr&oacute;nimo *</dt>
           <dd><%= f.text_field :abrevia_asig, :size=>20 %></dd>
           <dt>Titulaci&oacute;n *</dt>
-          <dd><% @titulaciones=Titulacion.find(:all,:order=>"codigo") %>
+          <dd><% @titulaciones=Titulacion.order("codigo").all %>
               <%= select "titulacion", "nombre", @titulaciones.map {|t| [t.nombre]} %></dd>
           <dt>Curso *</dt>
           <dd><%= select_tag "curso", options_for_select(Asignatura::CURSO)%></dd>

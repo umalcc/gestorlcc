@@ -1,6 +1,3 @@
-
-
-html='<%= escape_javascript(render(:partial => 'registros_examenes', :locals=>{:obj => @registros}))%>'
-
+html='<%= escape_javascript(render(:partial =>  'registros_examenes', :locals => {:obj => @registros}))%>';
 
 $("#registros").html(html);

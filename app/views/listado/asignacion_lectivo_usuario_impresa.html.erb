@@ -3,9 +3,9 @@
  <tr>
    <td>
      <p style="font-size:1em;margin-left:50px;">ASIGNACI&Oacute;N  DE LABORATORIOS</p>
-     <% activo=Periodo.find(:first,:conditions=>['activo = ? and tipo= ?',"t","Lectivo"]) %>
+     <% activo=Periodo.where("activo = ? AND tipo= ?","t","Lectivo").first %>
      <% if activo.nil? %>
-        <% activo=Periodo.find(:first,:conditions=>['tipo= ? and inicio>= ?',"Lectivo",Date.today],:order=>"inicio") %>
+        <% activo=Periodo.where("tipo= ? AND inicio>= ?","Lectivo",Date.today).order("inicio").first %>
         <% inactivo=true %>
      <% end %>
      <div id="nom_periodo" style="margin-left:50px;">
@@ -48,7 +48,7 @@
    <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
     <td style="background-color:white"></td>
     <td style="text-align:center"><% if diaant != a.dia %>
-                                    <%=h a.dia.nombre %>
+                                    <%= a.dia.nombre %>
                                   <% end %><% diaant=a.dia %></td>
     <td><%= "<a onmouseover=ShowContent('asignatura"+a.id.to_s+"'); return true;
    			   onmouseout=HideContent('asignatura"+a.id.to_s+"'); return true;>" %>
@@ -57,9 +57,9 @@
       					border-style: solid;
       					background-color: white;
       					padding: 5px;';>
-                                        <%=h a.solicitudlab.asignatura.nombre_asig %>
+                                        <%= a.solicitudlab.asignatura.nombre_asig %>
 			    </div>
-         <%=h a.solicitudlab.asignatura.abrevia_asig %></a></td>
+         <%= a.solicitudlab.asignatura.abrevia_asig %></a></td>
    
     <td>
         <%= "<a onmouseover=ShowContent('titulacion"+a.id.to_s+"'); return true;
@@ -69,13 +69,13 @@
       					border-style: solid;
       					background-color: white;
       					padding: 5px;';>
-                                        <%=h a.solicitudlab.asignatura.titulacion.nombre %>
+                                        <%= a.solicitudlab.asignatura.titulacion.nombre %>
 			    </div>
-        <%=h a.solicitudlab.asignatura.titulacion.abrevia %></a></td>
-    <td style="text-align:center"><%=h a.solicitudlab.curso=="sin curso"? "-" : a.solicitudlab.curso %></td>
-    <td style="text-align:center"><%=h a.solicitudlab.npuestos %></td> 
+        <%= a.solicitudlab.asignatura.titulacion.abrevia %></a></td>
+    <td style="text-align:center"><%= a.solicitudlab.curso=="sin curso"? "-" : a.solicitudlab.curso %></td>
+    <td style="text-align:center"><%= a.solicitudlab.npuestos %></td> 
     <td><% todasas=@asignacions.select{|as| as.solicitudlab==a.solicitudlab } %>
-        <%=h a.horaini+"-"+todasas.last.horafin %></td>
+        <%= a.horaini+"-"+todasas.last.horafin %></td>
     <td style="text-align:center"><% labs=todasas.map{|as| as.laboratorio.nombre_lab }.sort %>
         <% antlab=" " %>
         <% labs.each do |l|  %>
@@ -83,7 +83,7 @@
             <% if antlab!=" " %>
                <%= " - " %>
             <% end %>
-            <%=h l %>
+            <%= l %>
           <% end %>
           <% antlab= l %>
         <% end %></td>

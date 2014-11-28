@@ -5,20 +5,20 @@
     <div id="recuadro">
       <p><%= image_tag ("bg_separ.gif") %></p>
       <div id="recuadro-azul" style="height:600px">
-       <% form_for @solicitudlab, :html=> {:name => "formulario"} do |f| %>
+       <%= form_for @solicitudlab, :html=> {:name => "formulario"} do |f| %>
           <% @tramos=session[:tramos_horarios].solicitudes %>
           <dl>
             <dt>Fecha solicitud</dt>
             <dd><%= fecha_europea(Date.today) %></dd>
             <dt>Usuario *</dt>                    
             <dd onchange=' mostrardiv("solicitudlab_submit")'>
-               <% @usuarios=Usuario.find(:all,:order=>"apellidos").reject{|u| u.identificador=="anonimo"} %>
+               <% @usuarios=Usuario.order("apellidos").all.reject{|u| u.identificador=="anonimo"} %>
                <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]},
                               html_options={:selected=>@solicitudlab.usuario_id } %></dd>
 
             <dt>Titulaci&oacute;n *</dt>
             <dd id="combo_titulacion" onchange='mostrardiv("solicitudlab_submit")'>
-               <% @titulaciones=Titulacion.find(:all,:order=>"nombre") %>
+               <% @titulaciones=Titulacion.order("nombre").all %>
                <% @asignatura=Asignatura.find(@solicitudlab.asignatura_id) %>
                <% @titulacionselec=@asignatura.titulacion_id %>
                <% @cursoselec=@solicitudlab.curso %>
@@ -30,7 +30,7 @@
             <dt>Asignatura *</dt>
             <dd onchange='mostrardiv("solicitudlab_submit")'>
                <SPAN id="combo_asignatura">
-                <% @asignaturas=Asignatura.find(:all, :conditions => ['titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlab.asignatura.curso],:order=>"nombre_asig")%>
+                <% @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").all%>
                 <% @asignaturaselec=@solicitudlab.asignatura_id %>
                 <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]}, 
                     html_options={:selected=>@asignaturaselec } %>
@@ -61,7 +61,7 @@
             <dt>Soft. requerido</dt>
             <dd onkeydown='mostrardiv("solicitudlab_submit")'>
               <%= f.text_area :comentarios, :rows =>4, :cols=>40, :name=>"comentarios" %></dd>
-              <% @especiales=Laboratorio.find(:all,:conditions=>['especial=?',"t"]) %>              
+              <% @especiales=Laboratorio.where('especial=?',"t").all %>              
               <% if @especiales.size>0 %>
                <dt>Tipo de equipos</dt>
                <dd >
@@ -125,16 +125,16 @@
                          <th width=60>Hora fin </th>
                        </tr>
                        <tr valign="top" >
-                         <td width=60><% @dias=Dia.find(:all,:conditions=>['en_uso=?',"t"]) %>
+                         <td width=60><% @dias=Dia.where('en_uso=?',"t").all %>
                                       <%= select  "diasemana","nombre", @dias.map {|d| [d.nombre] }%></td> 
-                         <td width=60><% @horas=Horario.find(:all,:conditions=>['en_uso=?',"t"]) %>
+                         <td width=60><% @horas=Horario.where('en_uso=?',"t").all %>
                                       <%= select "horaini", "comienzo", @horas.map {|h| [h.comienzo] }%></td>
                          <td width=60><%= select "horafin", "fin", @horas.map {|h| [h.fin] }%></td>
                          <td width=15>
-                            <%= link_to_remote(image_tag("mas.png",:border=>0),
+                            <%= link_to(image_tag("mas.png",:border=>0),
                               :submit   => "subformulario",
                               :url      => { :controller=>:solicitar,:action => 'anadir' },
-                              :success  => 'mostrardiv("solicitudlab_submit")') %></td>      
+                              :success  => 'mostrardiv("solicitudlab_submit")', :remote => true) %></td>      
                        </tr>
                     </table><!-- subformulario para anadir tramos -->
                    </td>

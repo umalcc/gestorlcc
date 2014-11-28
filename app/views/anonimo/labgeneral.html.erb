@@ -5,7 +5,7 @@
   </p>
   <div id="recuadro">  
     <p><%= image_tag ("bg_separ.gif") %></p>
-       <% activo=Periodo.find(:all,:conditions=>["activo = ? and tipo= ?","t","Examenes"]) %>
+       <% activo=Periodo.where("activo = ? and tipo= ?","t","Examenes").all %>
        <% nasig=Asignacionlabexadef.all.size %>
        <% if activo.size>0 and nasig>0 %>
        <div id="busqueda">

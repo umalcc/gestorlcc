@@ -1,7 +1,6 @@
 <div id="central" >
     <p>GESTOR DE RECURSOS<br>
-       <%= image_tag ("pointer.gif") %>Supervisi&oacute;n de asignaciones de laboratorios en periodo lectivo
-    </p>
+       <%= image_tag ("pointer.gif") %>Supervisi&oacute;n de asignaciones de laboratorios en periodo lectivo</p>
     <p><%= image_tag ("bg_separ.gif") %></p>
 
       <% if @admision.size>0 %>
@@ -19,13 +18,10 @@
            </tr>
            <tr>
             <td class="doscientos">Asignaci&oacute;n inicial</td>
-            <td class="cien"><%= link_to_remote(image_tag("boton2.png",:border=>0),
-                         :before   => 'mostrardiv("imagen-progreso")',
-                         :url      => { :controller=>'asignacions',:action => 'asignar_iniciar' })%></td>
+            <td class="cien">
+            <%= link_to(image_tag("boton2.png",:border=>0), { :controller=>'asignacions',:action => 'asignar_iniciar' }, :method => 'POST', :before => 'mostrardiv("imagen-progreso")', :remote => true )%></td>
             <td class="doscientoscincuenta">Asignaci&oacute;n en curso</td>
-            <td class="cien"><%= link_to_remote(image_tag("boton2.png",:border=>0),
-                         :before   => 'mostrardiv("imagen-progreso")',
-                         :url      => { :controller=>'asignacions',:action => 'asignar_continuar' })%></td>
+            <td class="cien"><%= link_to(image_tag("boton2.png",:border=>0), { :controller=>'asignacions',:action => 'asignar_continuar' }, :before   => 'mostrardiv("imagen-progreso")', :remote => true)%></td>
            </tr>
            <tr>
             <td class="doscientos" style="color:blue;font-size:1.5em;line-height:1.5em;border: 4px solid #fbbb13">Se tomaran las solicitudes iniciales<br/>Cualquier asignaci&oacute;n provisional almacenada ser&aacute; descartada</td>

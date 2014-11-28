@@ -5,7 +5,7 @@
 
   <div id="lista-gestion">
    <p><%= image_tag ("bg_separ.gif") %>
-   <% periodos=Periodo.find(:all,:conditions=>['activo = ? and tipo = ?',"t","Examenes"]) %>
+   <% periodos=Periodo.where('activo = ? and tipo = ?',"t","Examenes").all %>
 
    <% if periodos.size!=0 %><!-- si se esta en un periodo de asignaciones activadas -->
     <div id="nom_periodo"><%= periodos.first.nombre %></div>
@@ -38,16 +38,16 @@
       					border-style: solid;
       					background-color: white;width:200px;
       					padding: 5px;';>
-                                        <%=h asig.nombre_asig %><br/>
-                                        <%=h asig.titulacion.abrevia %>
+                                        <%= asig.nombre_asig %><br/>
+                                        <%= asig.titulacion.abrevia %>
 			    </div>
-                 <%=h asignacion.solicitudlab.asignatura.abrevia_asig %></td>
-             <td><%=h asignacion.solicitudlab.curso %></td> 
-             <td><%=h asignacion.dia.nombre %></td>
-             <td><%=h asignacion.horaini+'-'+asignacion.horafin %></td>
-             <td style="text-align:center"><%=h asignacion.laboratorio.nombre_lab %></td>
-             <td><%=h asignacion.laboratorio.aviso %></td>
-             <td><%=h asignacion.mov_dia+asignacion.mov_hora %></td>
+                 <%= asignacion.solicitudlab.asignatura.abrevia_asig %></td>
+             <td><%= asignacion.solicitudlab.curso %></td> 
+             <td><%= asignacion.dia.nombre %></td>
+             <td><%= asignacion.horaini+'-'+asignacion.horafin %></td>
+             <td style="text-align:center"><%= asignacion.laboratorio.nombre_lab %></td>
+             <td><%= asignacion.laboratorio.aviso %></td>
+             <td><%= asignacion.mov_dia+asignacion.mov_hora %></td>
             </tr>
      <% else %>
            <% if !(asignacion.peticionlab_id==asignacion_ant.peticionlab_id   or
@@ -55,13 +55,13 @@
              <tr valign="top" class="<%=clase %>">        
              <td></td>
              <td></td> 
-             <td><%=h asignacion.dia.nombre %></td>
-             <td><%=h asignacion.horaini+'-'+asignacion.horafin %></td>
+             <td><%= asignacion.dia.nombre %></td>
+             <td><%= asignacion.horaini+'-'+asignacion.horafin %></td>
              <% if asignacion.laboratorio.id!=asignacion_ant.laboratorio.id %>
                <td style="text-align:center">
-                 <%=h asignacion.laboratorio.nombre_lab %></td>
-               <td><%=h asignacion.laboratorio.aviso %></td>
-               <td><%=h asignacion.mov_dia+asignacion.mov_hora %></td>
+                 <%= asignacion.laboratorio.nombre_lab %></td>
+               <td><%= asignacion.laboratorio.aviso %></td>
+               <td><%= asignacion.mov_dia+asignacion.mov_hora %></td>
              <% end %>
             </tr>  
            <% else %>
@@ -69,12 +69,12 @@
              <td></td>
              <td></td> 
              <td></td>
-             <td><%=h asignacion.horaini+'-'+asignacion.horafin %></td>
+             <td><%= asignacion.horaini+'-'+asignacion.horafin %></td>
              <% if asignacion.laboratorio.id!=asignacion_ant.laboratorio.id %>
                 <td style="text-align:center">
-                    <%=h asignacion.laboratorio.nombre_lab %></td>
-                <td><%=h asignacion.laboratorio.aviso %></td>
-                <td><%=h asignacion.mov_dia+asignacion.mov_hora %></td>
+                    <%= asignacion.laboratorio.nombre_lab %></td>
+                <td><%= asignacion.laboratorio.aviso %></td>
+                <td><%= asignacion.mov_dia+asignacion.mov_hora %></td>
              <% else %>
                <td></td>
                <td></td>

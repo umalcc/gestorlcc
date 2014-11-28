@@ -5,7 +5,7 @@
     <div id="recuadro">
        <p><%= image_tag ("bg_separ.gif") %></p>
        <div id="recuadro-azul" style="height:200px">
-       <% form_for(@titulacion) do |f| %>
+       <%= form_for(@titulacion) do |f| %>
          <dl>
           <dt>C&oacute;digo *</dt>
           <dd><%= f.text_field :codigo, :size =>4 %></dd>

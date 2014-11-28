@@ -6,7 +6,7 @@
     <p><%= image_tag ("bg_separ.gif") %></p>
 
     <div id="recuadro-azul" style="height:250px">
-     <% form_for @usuario, :url => dato_path, :action=>"update" do |f|  %>
+     <%= form_for @usuario, :url => dato_path, :action=>"update" do |f|  %>
   
        <dl>
           <dt>Identificador </dt>

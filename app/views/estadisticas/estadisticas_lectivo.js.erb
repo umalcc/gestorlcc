@@ -1,0 +1,5 @@
+alert("Ha entrado");
+
+html='<%= escape_javascript(render(:partial =>  'registros_lectivo', :locals => {:obj => @registros}))%>';
+
+$("#registros").html(html);

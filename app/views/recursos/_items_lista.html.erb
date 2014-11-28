@@ -9,7 +9,7 @@
 
 
 
-<% form_tag new_recurso_path, :method=>:get do -%>
+<%= form_tag new_recurso_path, :method=>:get do -%>
       <%= submit_tag "Nuevo recurso", :class=>"botonindexsearch" %>
 <% end -%>
 
@@ -32,11 +32,11 @@
 
       <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
         <td class="icono"><%= link_to image_tag("Editar.png", :border=>0), edit_recurso_path(i) %></td> 
-        <td><%=h i.identificador %></td>
-        <td><%=h i.descripcion %></td>
-        <td><%=h i.caracteristicas %></td>
+        <td><%= i.identificador %></td>
+        <td><%= i.descripcion %></td>
+        <td><%= i.caracteristicas %></td>
         <td><%= "SI" unless !i.disponible? %></td>
-        <td><%=h i.aviso %></td>
+        <td><%= i.aviso %></td>
         <td class="icono">
         <% if total==0 %>
           <%= link_to image_tag("borrar.png", :border=>0), i, 

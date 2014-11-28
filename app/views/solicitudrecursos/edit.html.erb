@@ -5,7 +5,7 @@
     <div id="recuadro">
        <p><%= image_tag ("bg_separ.gif") %></p>
        <div id="recuadro-azul" style="height:350px">
-           <% form_for @solicitudrecurso, :html=> {:name => "formulario"} do |f| %>
+           <%= form_for @solicitudrecurso, :html=> {:name => "formulario"} do |f| %>
             <dl>
               <dt>Fecha reserva</dt>
               <dd><%= @dia %></dd>

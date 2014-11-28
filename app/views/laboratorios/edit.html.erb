@@ -7,12 +7,12 @@
 
       <div id="recuadro-azul" style="height:500px">
 
-       <% form_for(@laboratorio) do |f| %>
+       <%= form_for(@laboratorio) do |f| %>
         <dl>
           <dt>N&uacute;mero *</dt>
           <dd><%= f.text_field :nombre_lab,:size=>4 %></dd>
           <dt> Lab. especial?</dt>
-          <% n=Solicitudlab.find(:all,:conditions=>["preferencias LIKE ?","%"+@laboratorio.nombre_lab+"%"]).size.to_s %>
+          <% n=Solicitudlab.where("preferencias LIKE ?","%"+@laboratorio.nombre_lab+"%").all.size.to_s %>
           <dd><%= f.check_box :especial,:size=>1, :onclick=>"alert('hay "+n+" solicitudes en curso afectadas')" %></dd>
           <dt>Puestos *</dt>
           <dd><%= f.text_field :puestos,:size=>2 %></dd>

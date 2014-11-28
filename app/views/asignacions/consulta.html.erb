@@ -5,9 +5,9 @@
   </p>
   <div id="recuadro">  
     <p><%= image_tag ("bg_separ.gif") %></p>
-       <% activo=Periodo.find(:first,:conditions=>['activo = ? and tipo= ?',"t","Lectivo"]) %>
+       <% activo=Periodo.where("activo = ? AND tipo= ?","t","Lectivo").first %>
        <% if activo.nil? %>
-          <% activo=Periodo.find(:first,:conditions=>['tipo= ? and inicio>= ?',"Lectivo",Date.today],:order=>"inicio") %>
+          <% activo=Periodo.where("tipo= ? AND inicio>= ?","Lectivo",Date.today).order("inicio").first %>
           <% inactivo=true %>
        <% end %>
        <% nasig=Asignaciondef.all.size %>

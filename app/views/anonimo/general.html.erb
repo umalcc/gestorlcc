@@ -5,7 +5,7 @@
   </p>
   <div id="recuadro">  
     <p><%= image_tag ("bg_separ.gif") %></p>
-    <% periodos=Periodo.find(:all,:conditions=>['activo = ? and tipo = ?',"t","Lectivo"]) %>
+    <% periodos=Periodo.where("activo = ? and tipo = ?","t","Lectivo").all %>
     <% nasig=Asignaciondef.all.size %>
     <% if periodos.size>0 and nasig>0 %><!-- si se esta en un periodo de asignaciones activadas -->
       <div id="nom_periodo">
@@ -27,7 +27,7 @@
           <%= image_tag ("bg_separ.gif") %>&nbsp;&nbsp<a href="#up"><%= image_tag ("up.png") %></a>
         </div>
         <table id="asignacion">
-          <% @labs=Laboratorio.find(:all,:order=>"nombre_lab") %>
+          <% @labs=Laboratorio.order("nombre_lab").all %>
           <tr>
            <th></th>
            <% for lab in @labs do %><!-- los laboratorios son las columnas -->

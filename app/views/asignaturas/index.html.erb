@@ -1,5 +1,3 @@
-
-
 <div id="central" >
   <p id="titulo">GESTOR DE RECURSOS<br>
     <%= image_tag ("pointer.gif") %>Gesti&oacute;n de archivos: Asignaturas
@@ -7,13 +5,12 @@
   <div id="recuadro">
     <div id="lista-gestion">
       <p><%= image_tag ("bg_separ.gif") %></p>
-      <div id="busqueda" data-request-path='<%= url_for(:controller=>'asignaturas', :action=>'listar')%>'>
+
         <table>
           <tr>
            <td><%= image_tag("search.png") %></td>
            <td>Buscar  : 
-           <td><%= text_field_tag "query" %></td>
-           
+           <td><%= text_field_tag "query" %>
           </tr>
         </table>
       </div>
@@ -21,24 +18,22 @@
     </div>
   </div>
 </div>
+
 <script type="text/javascript" charset="utf-8">
-        // we can now rely on $ within the safety of our "bodyguard" function
-        $( function() { 
-		$("#query").keyup(function()
-			{  
-				var jqueryVal=$("#query").val();
-		   		var url="/asignaturas/listar";
-				$.ajax({
-beforeSend:function(xhr)
+alert("ss");
+$(function(){
+alert("ii");
+  $("#query").keyup(function()
 {
-  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
-},
+ alert("aaaaa");  
+ var jqueryVal=$("#query").val();
+ var url="asignaturas/listar";
+  $.ajax({
+    type:"POST",
+   url:url,
+  data:{query:jqueryVal}
+});
+});
 
-					 type:"POST",
-					  url:url,
-					  data:{query: jqueryVal},
-					});
-			});
-	  } );
-
+);
 </script>

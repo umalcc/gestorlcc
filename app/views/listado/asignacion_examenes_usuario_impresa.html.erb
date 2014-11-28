@@ -2,9 +2,9 @@
  <tr>
    <td>
      <p style="font-size:1em;margin-left:50px;">ASIGNACI&Oacute;N  DE LABORATORIOS</p>
-     <% activo=Periodo.find(:first,:conditions=>['activo = ? and tipo= ?',"t","Examenes"]) %>
+     <% activo=Periodo.where('activo = ? and tipo= ?',"t","Examenes").first %>
      <% if activo.nil? %>
-        <% activo=Periodo.find(:first,:conditions=>['tipo= ? and inicio>= ?',"Examenes",Date.today],:order=>"inicio") %>
+        <% activo=Periodo.where("tipo= ? AND inicio>= ?","Examenes",Date.today).order("inicio").first %>
         <% inactivo=true %>
      <% end %>
      <div id="nom_periodo" style="margin-left:50px;">
@@ -46,14 +46,14 @@
   
    <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
     <td style="text-align:center"><% if diaant != a.dia %>
-                                    <%=h formato_europeo(a.dia) %>
+                                    <%= formato_europeo(a.dia) %>
                                   <% end %><% diaant=a.dia %></td>
-    <td><%=h a.solicitudlabexa.asignatura.abrevia_asig %></td>
-    <td><%=h a.solicitudlabexa.asignatura.titulacion.abrevia %></td>
-    <td style="text-align:center"><%=h a.solicitudlabexa.curso=="sin curso"? "-" : a.solicitudlabexa.curso %></td>
-    <td style="text-align:center"><%=h a.solicitudlabexa.npuestos %></td> 
+    <td><%= a.solicitudlabexa.asignatura.abrevia_asig %></td>
+    <td><%= a.solicitudlabexa.asignatura.titulacion.abrevia %></td>
+    <td style="text-align:center"><%= a.solicitudlabexa.curso=="sin curso"? "-" : a.solicitudlabexa.curso %></td>
+    <td style="text-align:center"><%= a.solicitudlabexa.npuestos %></td> 
     <td><% todasas=@asignacionexas.select{|as| as.solicitudlabexa==a.solicitudlabexa } %>
-        <%=h a.horaini+"-"+todasas.last.horafin %></td>
+        <%= a.horaini+"-"+todasas.last.horafin %></td>
     <td style="text-align:center"><% labs=todasas.map{|as| as.laboratorio.nombre_lab }.sort %>
         <% antlab=" " %>
         <% labs.each do |l|  %>
@@ -61,7 +61,7 @@
             <% if antlab!=" " %>
                <%= " - " %>
             <% end %>
-            <%=h l %>
+            <%= l %>
           <% end %>
           <% antlab= l %>
         <% end %></td>

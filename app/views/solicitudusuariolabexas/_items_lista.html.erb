@@ -2,12 +2,12 @@
 <% nasignacionexadef=Asignacionlabexadef.all.size %>
 <% total=nasignacionexa+nasignacionexadef %>
 
-<% form_tag new_solicitudusuariolabexa_path, :method=>:get do -%>
+<%= form_tag new_solicitudusuariolabexa_path, :method=>:get do -%>
         <%= submit_tag "Nueva solicitud", :class=>"botonindexsearch" %>
 <% end -%>
 
 <% if @solicitudlabexas %>
-    <% periodo=Periodo.find(:first,:conditions=>['tipo = ? and (activo = ? or admision = ?)',"Examenes","t","t"],:order=>"admision desc") %>
+    <% periodo=Periodo.where("tipo = ? AND (activo = ? OR admision = ?)","Examenes","t","t").order("admision DESC").first %>
     <div id="nom_periodo">
     <% if !periodo.nil? %><!-- si se esta en un periodo de asignaciones activadas o adjudicadas-->
       <%= periodo.nombre %>
@@ -53,7 +53,7 @@
                               <% end %>
                             <% end %>
                            <% end %></td>
-         <td><%=h fecha_europea(i.fechasol) %></td>  
+         <td><%= fecha_europea(i.fechasol) %></td>  
          <td><% asig=Asignatura.find(i.asignatura_id) %>
              <%= "<a onmouseover=ShowContent('asignatura"+i.id.to_s+"'); return true;
    			   onmouseout=HideContent('asignatura"+i.id.to_s+"'); return true;>" %>
@@ -62,17 +62,17 @@
       					border-style: solid;
       					background-color: white;width:300px;
       					padding: 5px;';>
-                                        <%=h asig.nombre_asig %><br/><!-- nombre completo de la asignatura -->
+                                        <%= asig.nombre_asig %><br/><!-- nombre completo de la asignatura -->
                                         <%="Titulacion :"+asig.titulacion.abrevia %>
 			    </div>
-             <%=h asig.abrevia_asig %></td><!-- nombre abreviado de la asignatura -->
+             <%= asig.abrevia_asig %></td><!-- nombre abreviado de la asignatura -->
          <td style="text-align:center"><% if i.curso.to_s=="sin curso" %>
                                           <%= "-" %>
                                        <% else %>
-                                          <%=h i.curso %>
+                                          <%= i.curso %>
                                        <% end %></td>
-         <td style="text-align:center"><%=h i.npuestos %></td>
-         <td><%=h fecha_europea(i.fecha) %></td>
+         <td style="text-align:center"><%= i.npuestos %></td>
+         <td><%= fecha_europea(i.fecha) %></td>
          
          <td><%= i.horaini+" - "+i.horafin %></td>
          <td style="text-align:center"><%= "<a onmouseover=ShowContent('"+"flotante"+i.id.to_s+"'); return true;

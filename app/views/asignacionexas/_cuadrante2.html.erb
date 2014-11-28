@@ -1,7 +1,7 @@
 <p><%= image_tag ("bg_separ.gif") %></p>
- <% activo=Periodo.find(:first,:conditions=>['activo = ? and tipo= ?',"t","Examenes"]) %>
+ <% activo=Periodo.where("activo = ? AND tipo= ?","t","Examenes").first %>
    <% if activo.nil? %>
-      <% activo=Periodo.find(:first,:conditions=>['tipo= ? and inicio >= ?',"Examenes",Date.today],:order=>"inicio") %>
+      <% activo=Periodo.where("tipo= ? AND inicio >= ?","Examenes",Date.today).order("inicio").first %>
       <% inactivo=true %>
    <% end %>
       <div id="nom_periodo">
@@ -42,9 +42,9 @@
   
    <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
     <td style="text-align:center"><% if diaant != a.dia %>
-                                    <%=h formato_europeo(a.dia) %>
+                                    <%= formato_europeo(a.dia) %>
                                   <% end %><% diaant=a.dia %></td>
-    <td><%=h a.solicitudlabexa.usuario.nombre+" "+a.solicitudlabexa.usuario.apellidos %></td>
+    <td><%= a.solicitudlabexa.usuario.nombre+" "+a.solicitudlabexa.usuario.apellidos %></td>
     <td><%= "<a onmouseover=ShowContent('asignatura"+a.id.to_s+"'); return true;
    			   onmouseout=HideContent('asignatura"+a.id.to_s+"'); return true;>" %>
                            <%= "<div id=asignatura"+a.id.to_s %> 
@@ -52,9 +52,9 @@
       					border-style: solid;
       					background-color: white;
       					padding: 5px;';>
-                                        <%=h a.solicitudlabexa.asignatura.nombre_asig %>
+                                        <%= a.solicitudlabexa.asignatura.nombre_asig %>
 			    </div>
-         <%=h a.solicitudlabexa.asignatura.abrevia_asig %></a></td>
+         <%= a.solicitudlabexa.asignatura.abrevia_asig %></a></td>
    
     <td>
         <%= "<a onmouseover=ShowContent('titulacion"+a.id.to_s+"'); return true;
@@ -64,13 +64,13 @@
       					border-style: solid;
       					background-color: white;
       					padding: 5px;';>
-                                        <%=h a.solicitudlabexa.asignatura.titulacion.nombre %>
+                                        <%= a.solicitudlabexa.asignatura.titulacion.nombre %>
 			    </div>
-        <%=h a.solicitudlabexa.asignatura.titulacion.abrevia %></a></td>
-    <td style="text-align:center"><%=h a.solicitudlabexa.curso=="sin curso"? "-" : a.solicitudlabexa.curso %></td>
-    <td style="text-align:center"><%=h a.solicitudlabexa.npuestos %></td> 
+        <%= a.solicitudlabexa.asignatura.titulacion.abrevia %></a></td>
+    <td style="text-align:center"><%= a.solicitudlabexa.curso=="sin curso"? "-" : a.solicitudlabexa.curso %></td>
+    <td style="text-align:center"><%= a.solicitudlabexa.npuestos %></td> 
     <td><% todasas=@asignacionexas.select{|as| as.solicitudlabexa==a.solicitudlabexa } %>
-        <%=h a.horaini+"-"+todasas.last.horafin %></td>
+        <%= a.horaini+"-"+todasas.last.horafin %></td>
     <td style="text-align:center"><% labs=todasas.map{|as| as.laboratorio.nombre_lab }.sort %>
         <% antlab=" " %>
         <% labs.each do |l|  %>
@@ -78,10 +78,12 @@
             <% if antlab!=" " %>
                <%= " - " %>
             <% end %>
-            <%=h l %><%= link_to_remote image_tag("borrar.png",:border=>0,:height => "50%"),
+            <%= l %><%= link_to image_tag("borrar.png",:border=>0,:height => "50%"),
                                 :with => "'asigna=#{a.id}'",
                                 :url=>{ :controller=>'asignacionexas',:action => 'borradirasignada' },
-                                :confirm=>'Seguro que desea eliminar la asignacion?' %>
+                                :confirm=>'Seguro que desea eliminar la
+                                           asignacion?', 
+                                :remote => true %>
           <% end %>
           <% antlab= l %>
         <% end %></td>

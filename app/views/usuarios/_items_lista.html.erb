@@ -9,7 +9,7 @@
 
 
 
-<% form_tag new_usuario_path, :method=>:get do -%>
+<%= form_tag new_usuario_path, :method=>:get do -%>
     <%= submit_tag "Nuevo usuario", :class=>"botonindexsearch" %>
 <% end -%>
 
@@ -31,13 +31,13 @@
         <% @usuarios.each do |i| %>
         <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
           <td class="icono"><%= link_to image_tag("Editar.png", :border=>0), edit_usuario_path(i.id) %></td> 
-          <td><%=h i.identificador %></td>
-          <td><%=h i.nombre %></td>
-          <td><%=h i.apellidos %></td>
-          <td><%=h i.email %></td>
-          <td style="text-align:center"><%=h i.despacho %></td>
-          <td style="text-align:center"><%=h i.telefono %></td>
-          <td style="text-align:center"><b><%=h "SI" unless !i.admin  %></b></td>
+          <td><%= i.identificador %></td>
+          <td><%= i.nombre %></td>
+          <td><%= i.apellidos %></td>
+          <td><%= i.email %></td>
+          <td style="text-align:center"><%= i.despacho %></td>
+          <td style="text-align:center"><%= i.telefono %></td>
+          <td style="text-align:center"><b><%= "SI" unless !i.admin  %></b></td>
           
           <td class="icono">
            <% if total==0 %>

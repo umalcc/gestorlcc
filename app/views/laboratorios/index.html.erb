@@ -36,14 +36,14 @@
     <% for laboratorio in @laboratorios %>
     <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
      <td class="icono"><%= link_to image_tag("Editar.png", :border=>0), edit_laboratorio_path(laboratorio) %></td>
-     <td><%=h laboratorio.nombre_lab %></td>
+     <td><%= laboratorio.nombre_lab %></td>
      <td><%= "SI" unless !laboratorio.especial?  %></td>
-     <td style="text-align:right"><%=h laboratorio.puestos %></td>
-     <td><%=h laboratorio.ssoo %></td>
-     <td><%=h laboratorio.descr_HW %></td>
-     <td><%=h laboratorio.descr_SW %></td>
-     <td><%=h laboratorio.comentarios %></td>
-     <td><%=h laboratorio.aviso %></td>  
+     <td style="text-align:right"><%= laboratorio.puestos %></td>
+     <td><%= laboratorio.ssoo %></td>
+     <td><%= laboratorio.descr_HW %></td>
+     <td><%= laboratorio.descr_SW %></td>
+     <td><%= laboratorio.comentarios %></td>
+     <td><%= laboratorio.aviso %></td>  
      <td class="icono">
       <% if total==0 %>
        <%= link_to image_tag("borrar.png", :border=>0), laboratorio, 
@@ -55,7 +55,7 @@
     </table>
    </div><!-- de lista-gestion -->
   <br/>
-  <% form_tag new_laboratorio_path, :method=>:get do -%>
+  <%= form_tag new_laboratorio_path, :method=>:get do -%>
     <%= submit_tag "Nuevo laboratorio", :class=>"botonindex" %>
   <% end -%>
 

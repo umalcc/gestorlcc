@@ -2,7 +2,7 @@
 
 <% if @asignacionexas.size!=0  %>
 
- <% periodo=Periodo.find(:all,:conditions=>['tipo = ? and inicio > ?','Examenes',Date.today],:order=>'inicio').first %>
+ <% periodo=Periodo.where('tipo = ? and inicio > ?','Examenes',Date.today).order('inicio').first %>
 
  <% fechas=[] %>
  <% for dia in periodo.inicio..periodo.fin %>
@@ -15,11 +15,18 @@
   <table>
    <tr>
     <td>Revisar colisiones</td>
-    <td style="padding-right:150px"><%= link_to_remote image_tag("boton2.png", :border=>0), 
-                                :url=>{ :controller=>'asignacionexas',:action => 'revisar' } %></td>
+    <td style="padding-right:150px">
+      <%= link_to image_tag("boton2.png", :border=>0), 
+              :url => { :controller=>'asignacionexas',:action => 'revisar'}, 
+              :remote => true %> 
+    </td>
     <td>Grabar asignaci&oacute;n definitiva</td>
-    <td><%= link_to_remote image_tag("boton2.png", :border=>0), 
-                                :url=>{ :controller=>'asignacionexas',:action => 'grabar_asignacion' } %></td>
+    <td>
+      <%= link_to image_tag("boton2.png", :border=>0), 
+          :url => { :controller=>'asignacionexas',:action =>
+                  'grabar_asignacion'}, 
+          :remote => true %>
+   </td>
    </tr>
   </table>
  </div> 
@@ -45,8 +52,8 @@
   <% end %>
 </div>
 </p>
-<% @labs=Laboratorio.find(:all,:order=>"nombre_lab") %>
-<% @horas=Horasexa.find(:all,:order=>"num") %>
+<% @labs=Laboratorio.order("nombre_lab").all %>
+<% @horas=Horasexa.order("num").all %>
 <% for dia in  fechas %><!-- POR CADA DIA DE EXAMEN -->
    
    <div id="rotulodia"><%="<a name="+dia.to_s+">"+Dia::DIASEM[dia.wday]+"&nbsp;"+fecha_europea(dia).to_s+"</a>&nbsp;&nbsp;" %><br/>
@@ -131,19 +138,23 @@
 			      <%= "<div id="+formid2+" >"%>
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
-			      <%= link_to_remote image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"),
+			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"),
                                 :submit=> formid2, 
                                 :url=>{ :controller=>'asignacionexas',:action => 'borradir' },
-                                :confirm=>'Seguro que desea eliminar la asignacion?' %><!-- para eliminar la asignacion -->
+                                :confirm=>'Seguro que desea eliminar la
+                                           asignacion?', 
+                                :remote => true %>
                             <% else %>
                               <% formid3="formborra"+hora.id.to_s+dia.to_s+a.id.to_s %>
 			      <%= "<div id="+formid3+" >"%>
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
-			      <%= link_to_remote image_tag("borrar.png", :border=>0,:height=>16,:width=>16),
+			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16),
                                 :submit=> formid3, 
                                 :url=>{ :controller=>'asignacionexas',:action => 'borranormal' },
-                                :confirm=>'Seguro que desea eliminar la asignacion?' %><!-- para eliminar la asignacion -->
+                                :confirm=>'Seguro que desea eliminar la
+                                           asignacion?', 
+                                :remote => true %>
                             <% end %>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <!-- NO PUEDE BORRAR AQUI TAMBIEN LAS ASIGNACIONES **** VER CONTROLLER -->
@@ -180,7 +191,7 @@
                                             </tr>
 				            <tr>
                                               <td>Laboratorio </td>
-                                              <td> <% @laboratorios=Laboratorio.find(:all,:order=>"nombre_lab") %>
+                                              <td> <% @laboratorios=Laboratorio.order("nombre_lab").all %>
                                                    <% labora=Laboratorio.find(a.laboratorio_id).nombre_lab %>
                 				   <%= select "laboratorio_id", "nombre_lab", 
 								@laboratorios.map {|l| [l.nombre_lab]},
@@ -198,7 +209,7 @@
                                             </tr>
                                             <tr>
                                               <td>Hora </td>
-                                              <td> <% @horas=Horasexa.find(:all,:conditions=>['en_uso = ?',"t"]) %>
+                                              <td> <% @horas=Horasexa.where('en_uso = ?',"t").all %>
                                                    <% a.horaini %>
                 				   <%= select "horario_id", "comienzo", 
 								@horas.map {|h| [h.comienzo]},
@@ -209,10 +220,11 @@
                                               <td><%= hidden_field_tag "id", a.id %>
                                               </td>
                                               <td>
-                                        	<%= button_to_remote ( "Mover"),
+                                        	<%= button_to( "Mover"),
 					    	:success=>"HideContent('"+"flotanteform"+dia.to_s+hora.id.to_s+lab.id.to_s+a.id.to_s+"')",
                                             	:submit=> formid, 
-                                            	:url=> { :controller=>'asignacionexas',:action => 'mover' }%>
+                                            	:url=> { :controller=>'asignacionexas',:action => 'mover' },
+                                                :remote => true %>
                                               </td>
                                             </tr>
                                          </table>

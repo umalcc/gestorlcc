@@ -31,9 +31,9 @@
 
 <!-- PARECE QUE DA PROBLEMA EL LINK_TO_REMOTE PARECE QUE SE QUEDA EN EL CONTROLLER DE SOLICITUDRECURSO-->
 <td>
-<%= link_to_remote(image_tag("mas.jpg",:border=>0),
+<%= link_to(image_tag("mas.jpg",:border=>0),
 	
        :submit   => "subformulario",
-       :url      => { :controller=>:solicitar,:action => 'anadir' }) %>
+       :url      => { :controller=>:solicitar,:action => 'anadir' }, :remote => true) %>
 
 </td></tr></table>

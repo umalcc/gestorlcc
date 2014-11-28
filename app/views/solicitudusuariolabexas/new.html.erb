@@ -4,17 +4,17 @@
      </p>
      <div id="recuadro">
         <p><%= image_tag ("bg_separ.gif") %></p>
-        <% periodo=Periodo.find(:first,:conditions=>["tipo = ? and admision = ?","Examenes","t"]) %>
+        <% periodo=Periodo.where("tipo = ? AND admision = ?","Examenes","t").first %>
         <% if !periodo.nil? %>  
         <% @primerdia=formato_europeo(periodo.inicio) %> 
         <div id="recuadro-azul" style="height:500px">
-          <% form_for @solicitudlabexa, :url => solicitudusuariolabexas_path, :action=>"create",
+          <%= form_for @solicitudlabexa, :url => solicitudusuariolabexas_path, :action=>"create",
                                :html=> {:name => "formulario"} do |f| %>
           <dl>
             <dt>Fecha solicitud</dt>
             <dd><%= inicio=fecha_europea(Date.today) %></dd>
             <dt>Titulaci&oacute;n *</dt>
-              <dd id="combo_titulacion"><%@titulaciones=Titulacion.find(:all,:order=>"id")%>
+              <dd id="combo_titulacion"><%@titulaciones=Titulacion.order("id").all %>
                 <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]} %></dd>
             <dt>Curso *</dt>
             <dd id="combo_nivel"><%= select_tag "nivel", options_for_select(Asignatura::CURSO)%></dd>
@@ -25,7 +25,7 @@
                 <% else %>
                    <% as=Asignatura::CURSO.first %>
                 <% end %>
-                <% @asignaturas=Asignatura.find(:all,:conditions=>['titulacion_id = ? and curso = ?',@titulaciones.first.id,as]) %>
+                <% @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).all %>
                 <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]} %>
                 </span><dd>
                 <%= observe_field 'titulacion_titulacion_id', 
@@ -57,7 +57,7 @@
                  <td style="text-align:center">No</td>
                  <td style="text-align:center">Indif.</td>
                 </tr>
-                <% @especiales=Laboratorio.find(:all,:conditions=>['especial=?',"t"]) %>
+                <% @especiales=Laboratorio.where("especial=?","t").all %>
                 <% for especial in @especiales do %>
                 <tr style="font-size: 10px;font-weight: normal;text-align:center">
                    <td class="cien"><%= especial.ssoo %>
@@ -76,7 +76,7 @@
                           <td class="cien">Hora fin </th>
                        </tr>
                        <tr valign="top" style="text-align:center"> 
-                          <td class="cien"><% @horas=Horasexa.find(:all,:conditions=>['en_uso=?',"t"],:order=>"id") %>
+                          <td class="cien"><% @horas=Horasexa.where("en_uso=?","t").order("id").all %>
                                        <%= select "horaini", "comienzo", @horas.map {|h| [h.comienzo] }%></td>
                           <td class="cien"><%= select "horafin", "fin", @horas.map {|h| [h.fin] }%></td>
                        </tr>

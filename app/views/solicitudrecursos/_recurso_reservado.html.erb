@@ -1,4 +1,4 @@
-<%    @dias=Dia.find(:all,:conditions=>['en_uso=?',"t"])  %>
+<%    @dias=Dia.where('en_uso=?',"t").all  %>
 
 <% if @festivo %>
     <div id="errores">     
@@ -9,7 +9,7 @@
        </div>     
     </div>
 <% else %>
-  <% @usuarios=Usuario.find(:all,:order=>"apellidos").reject{|u| u.identificador=="anonimo"} %>
+  <% @usuarios=Usuario.order("apellidos").all.reject{|u| u.identificador=="anonimo"} %>
   <table id="horario">
     <tr>
       <th></th>
@@ -59,10 +59,10 @@
                              <%= hidden_field_tag "reserva", value=reserva[0].id %>
                             </div>
                             <% if Date.today <=reserva[0].fechareserva %>         
-			      <%= link_to_remote image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>'cursor:pointer'),
+			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>'cursor:pointer'),
                                 :submit=> formid2, 
                                 :url=>{ :controller=>'solicitudrecursos',:action => 'borra' },
-                                :before => "confirm('Seguro que desea eliminar la reserva?')" %><!-- para eliminar la reserva -->        
+                                :before => "confirm('Seguro que desea eliminar la reserva?')", :remote => true %><!-- para eliminar la reserva -->        
                             
                             <% end %><!-- solo puedo eliminar reservas de fechas futuras -->
 	      </td>
@@ -100,10 +100,10 @@
                                         	 <%= hidden_field_tag "fechasol",value=Date.today %>
 						 <tr>
                                                    <td></td>
-                                                   <td><%= button_to_remote ( "Reservar"),
+                                                   <td><%= button_to ( "Reservar"),
 					    	             :success=>"HideContent('"+"flotanteform"+fila.to_s+columna.to_s+"')",
                                             	             :submit=> formid, 
-                                            	             :url=> { :controller=>'solicitudrecursos',:action => 'create' }%></td>
+                                            	             :url=> { :controller=>'solicitudrecursos',:action => 'create' }, :remote => true%></td>
                                                  </tr>
                                                 </table><!-- del formulario de reserva -->
                                  </div><!-- del flotanteform -->

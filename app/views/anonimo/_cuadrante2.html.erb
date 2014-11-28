@@ -1,5 +1,5 @@
 
- <% activo=Periodo.find(:all,:conditions=>['activo = ? and tipo= ?',"t","Examenes"]) %>
+ <% activo=Periodo.where("activo = ? and tipo= ?","t","Examenes").all %>
       <div id="nom_periodo">
          <%= activo.first.nombre %>
            <span style="margin-left:600px;color:blue;font-weight:normal;font-size:0.7em">Para imprimir 
@@ -32,9 +32,9 @@
   
    <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
     <td style="text-align:center"><% if diaant != a.dia %>
-                                    <%=h formato_europeo(a.dia) %>
+                                    <%= formato_europeo(a.dia) %>
                                   <% end %><% diaant=a.dia %></td>
-    <td><%=h a.solicitudlabexa.usuario.nombre+" "+a.solicitudlabexa.usuario.apellidos %></td>
+    <td><%= a.solicitudlabexa.usuario.nombre+" "+a.solicitudlabexa.usuario.apellidos %></td>
     <td><%= "<a onmouseover=ShowContent('asignatura"+a.id.to_s+"'); return true;
    			   onmouseout=HideContent('asignatura"+a.id.to_s+"'); return true;>" %>
                            <%= "<div id=asignatura"+a.id.to_s %> 
@@ -42,9 +42,9 @@
       					border-style: solid;
       					background-color: white;
       					padding: 5px;';>
-                                        <%=h a.solicitudlabexa.asignatura.nombre_asig %>
+                                        <%= a.solicitudlabexa.asignatura.nombre_asig %>
 			    </div>
-         <%=h a.solicitudlabexa.asignatura.abrevia_asig %></a></td>
+         <%= a.solicitudlabexa.asignatura.abrevia_asig %></a></td>
    
     <td>
         <%= "<a onmouseover=ShowContent('titulacion"+a.id.to_s+"'); return true;
@@ -54,13 +54,13 @@
       					border-style: solid;
       					background-color: white;
       					padding: 5px;';>
-                                        <%=h a.solicitudlabexa.asignatura.titulacion.nombre %>
+                                        <%= a.solicitudlabexa.asignatura.titulacion.nombre %>
 			    </div>
-        <%=h a.solicitudlabexa.asignatura.titulacion.abrevia %></a></td>
-    <td style="text-align:center"><%=h a.solicitudlabexa.curso=="sin curso"? "-" : a.solicitudlabexa.curso %></td>
-    <td style="text-align:center"><%=h a.solicitudlabexa.npuestos %></td> 
+        <%= a.solicitudlabexa.asignatura.titulacion.abrevia %></a></td>
+    <td style="text-align:center"><%= a.solicitudlabexa.curso=="sin curso"? "-" : a.solicitudlabexa.curso %></td>
+    <td style="text-align:center"><%= a.solicitudlabexa.npuestos %></td> 
     <td><% todasas=@asignacionexas.select{|as| as.solicitudlabexa==a.solicitudlabexa } %>
-        <%=h a.horaini+"-"+todasas.last.horafin %></td>
+        <%= a.horaini+"-"+todasas.last.horafin %></td>
     <td style="text-align:center"><% labs=todasas.map{|as| as.laboratorio.nombre_lab }.sort %>
         <% antlab=" " %>
         <% labs.each do |l|  %>
@@ -68,7 +68,7 @@
             <% if antlab!=" " %>
                <%= " - " %>
             <% end %>
-            <%=h l %>
+            <%= l %>
           <% end %>
           <% antlab= l %>
         <% end %></td>

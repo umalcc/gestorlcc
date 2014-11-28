@@ -32,10 +32,10 @@
         <% if total==0 %>
            <%= link_to image_tag("Editar.png", :border=>0), edit_horario_path(horario) %>
         <% end %></td> 
-        <td style="text-align:center"><%=h horario.num %></td>
-        <td style="text-align:right"><%=h horario.comienzo %></td>
-        <td style="text-align:right"><%=h horario.fin %></td>
-        <td style="text-align:center"><%=h "SI" unless !horario.en_uso? %></td>
+        <td style="text-align:center"><%= horario.num %></td>
+        <td style="text-align:right"><%= horario.comienzo %></td>
+        <td style="text-align:right"><%= horario.fin %></td>
+        <td style="text-align:center"><%= "SI" unless !horario.en_uso? %></td>
         <td class="icono">
          <% if total==0 %>
           <%= link_to image_tag("borrar.png", :border=>0), horario, 
@@ -46,7 +46,7 @@
      </table>
     <br/>
    </div><!-- de lista-gestion -->
-   <% form_tag new_horario_path, :method=>:get do -%>
+   <%= form_tag new_horario_path, :method=>:get do -%>
       <%= submit_tag "Agregar hora", :class=>"botonindex" %>
    <% end -%>
    </div><!-- de recuadro -->

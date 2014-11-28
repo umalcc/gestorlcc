@@ -26,9 +26,9 @@
          <% for titulacion in @titulacions %>
          <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
            <td class="icono"><%= link_to image_tag("Editar.png", :border=>0), edit_titulacion_path(titulacion) %></td>
-           <td style="text-align:right"><%=h titulacion.codigo %></td>
-           <td><%=h titulacion.nombre %></td>
-           <td><%=h titulacion.abrevia %></td> 
+           <td style="text-align:right"><%= titulacion.codigo %></td>
+           <td><%= titulacion.nombre %></td>
+           <td><%= titulacion.abrevia %></td> 
            <td class="icono">
            <% asignaturas=Asignatura.find_all_by_titulacion_id(titulacion.id).size %>
            <% if total==0 and asignaturas==0 %>
@@ -40,7 +40,7 @@
          </table>
      </div><!-- de lista-gestion -->
      <br/>
-     <% form_tag new_titulacion_path, :method=>:get do -%>
+     <%= form_tag new_titulacion_path, :method=>:get do -%>
          <%= submit_tag "Nueva titulacion", :class=>"botonindex" %>
      <% end -%>
    </div><!-- de recuadro -->

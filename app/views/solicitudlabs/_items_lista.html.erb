@@ -3,12 +3,12 @@
 <% nasigdef=Asignaciondef.all.size %>
 <% total=nasig+nasigdef %>
 
-<% form_tag new_solicitudlab_path, :method=>:get do -%>
+<%= form_tag new_solicitudlab_path, :method=>:get do -%>
         <%= submit_tag "Nueva solicitud", :class=>"botonindexsearch" %>
 <% end -%>
 
 <% if @solicitudlabs %>
-    <% periodo=Periodo.find(:first,:conditions=>['tipo = ? and (activo = ? or admision = ?)',"Lectivo","t","t"],:order=>"admision desc") %>
+    <% periodo=Periodo.where("tipo = ? AND (activo = ? OR admision = ?)","Lectivo","t","t").order("admision DESC").first %>
     <div id="nom_periodo">
     <% if !periodo.nil? %><!-- si se esta en un periodo de asignaciones activadas o adjudicadas-->
       <%= periodo.nombre %>
@@ -58,8 +58,8 @@
                               <% end %>
                             <% end %>
                            <% end %></td>
-         <td><%=h fecha_europea(i.fechasol) %></td>  
-         <td><% usuario=Usuario.find(i.usuario_id) %><%=h usuario.nombre+" "+usuario.apellidos %></td>
+         <td><%= fecha_europea(i.fechasol) %></td>  
+         <td><% usuario=Usuario.find(i.usuario_id) %><%= usuario.nombre+" "+usuario.apellidos %></td>
          <td><% asig=Asignatura.find(i.asignatura_id) %>
              <%= "<a onmouseover=ShowContent('asignatura"+i.id.to_s+"'); return true;
    			   onmouseout=HideContent('asignatura"+i.id.to_s+"'); return true;>" %>
@@ -68,18 +68,18 @@
       					border-style: solid;
       					background-color: white;width:300px;
       					padding: 5px;';>
-                                        <%=h asig.nombre_asig %><br/><!-- nombre completo de la asignatura -->
+                                        <%= asig.nombre_asig %><br/><!-- nombre completo de la asignatura -->
                                         <%="Titulacion :"+asig.titulacion.abrevia %>
 			    </div>
-             <%=h asig.abrevia_asig %></td><!-- nombre abreviado de la asignatura -->
+             <%= asig.abrevia_asig %></td><!-- nombre abreviado de la asignatura -->
          <td style="text-align:center"><% if i.curso.to_s=="sin curso" %>
                                           <%= "-" %>
                                        <% else %>
-                                          <%=h i.curso %>
+                                          <%= i.curso %>
                                        <% end %></td>
-         <td style="text-align:center"><%=h i.npuestos %></td>
-         <td><%=h fecha_europea(i.fechaini) %></td>
-         <td><%=h fecha_europea(i.fechafin) %></td>
+         <td style="text-align:center"><%= i.npuestos %></td>
+         <td><%= fecha_europea(i.fechaini) %></td>
+         <td><%= fecha_europea(i.fechafin) %></td>
          <td><% @tramos=i.peticionlab %>
              <table>
                 <%=render(:partial => "/solicitudrecursos/tramo_peticion", :collection=> @tramos ) %>

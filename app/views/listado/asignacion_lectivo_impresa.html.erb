@@ -2,9 +2,9 @@
  <tr>
    <td>
      <p style="font-size:1em;margin-left:50px;">ASIGNACI&Oacute;N GENERAL DE LABORATORIOS</p>
-     <% activo=Periodo.find(:first,:conditions=>['activo = ? and tipo= ?',"t","Lectivo"]) %>
+     <% activo=Periodo.where("activo = ? AND tipo= ?","t","Lectivo").first %>
      <% if activo.nil? %>
-        <% activo=Periodo.find(:first,:conditions=>['tipo= ? and inicio>= ?',"Examenes",Date.today],:order=>"inicio") %>
+        <% activo=Periodo.where("tipo= ? AND inicio>= ?","Examenes",Date.today).order("inicio").first %>
         <% inactivo=true %>
      <% end %>
      <div id="nom_periodo" style="margin-left:50px;">
@@ -19,7 +19,7 @@
      <%= image_tag("logo_lcc.png", :border=>0,:width=>"195", :height=>"100", :id=>"logotipo") %> </td>
   </tr>
 </table>
-      <% @dias=Dia.find(:all,:conditions=>['en_uso=?',"t"],:order=>"num") %><% @dias=@dias.select {|d| d.en_uso } %>
+      <% @dias=Dia.where("en_uso=?","t").order("num").all %><% @dias=@dias.select {|d| d.en_uso } %>
       
     
         <% for dia in @dias %><!-- por cada dia de la semana, un cuadrante -->
@@ -29,7 +29,7 @@
           <%= image_tag ("bg_separ.gif") %>
         </div>
         <table id="asignacion">
-          <% @labs=Laboratorio.find(:all,:order=>"nombre_lab") %>
+          <% @labs=Laboratorio.order("nombre_lab").all %>
           <tr>
            <th></th>
            <% for lab in @labs do %><!-- los laboratorios son las columnas -->
@@ -39,7 +39,7 @@
            <% end %><!-- del for lab in @labs --> 
          </tr>
 
-         <%@horas=Horario.find(:all,:order=>"num") %>
+         <%@horas=Horario.order("num").all %>
          <% for hora in @horas do %><!-- las horas son las filas -->
          <tr>
            <th class="cien"><%=hora.comienzo+'-'+hora.fin %></th>

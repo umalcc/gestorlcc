@@ -31,10 +31,10 @@
       <% for periodo in @periodos %>
       <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
        <td class="icono"><%= link_to image_tag("Editar.png", :border=>0), edit_periodo_path(periodo) %></td> 
-       <td><%=h periodo.nombre %></td>
-       <td><%=h periodo.tipo %>
-       <td style="text-align:right"><%=h fecha_europea(periodo.inicio) %></td>
-       <td style="text-align:right"><%=h fecha_europea(periodo.fin) %></td>
+       <td><%= periodo.nombre %></td>
+       <td><%= periodo.tipo %>
+       <td style="text-align:right"><%= fecha_europea(periodo.inicio) %></td>
+       <td style="text-align:right"><%= fecha_europea(periodo.fin) %></td>
        <td style="text-align:right"><% if periodo.iniciosol.nil? %>
                                         <%= "- -" %>
                                     <% else %>
@@ -58,7 +58,7 @@
      </div><!-- de lista-gestion -->
 
      <br/>
-     <% form_tag new_periodo_path, :method=>:get do -%>
+     <%= form_tag new_periodo_path, :method=>:get do -%>
        <%= submit_tag "Agregar periodo", :class=>"botonindex" %>
      <% end -%>
   </div><!-- de recuadro -->

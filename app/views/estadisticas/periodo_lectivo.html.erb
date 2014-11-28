@@ -6,24 +6,22 @@
       <p><%= image_tag ("bg_separ.gif") %></p>
       <% nregistros=Historicoasig.all.size %>
       <% if nregistros!=0 %>
-        <% @periodos=Historicoasig.find(:all,:order=>"periodo") %>
-        <% form_tag  do %>
+        <% @periodos=Historicoasig.order("periodo").all %>
+        <%= form_tag(url_for(:controller=>'estadisticas',:action=>'estadisticas_lectivo'),id:"form", method:"post",before: 'mostrardiv("imagen-progreso")', remote:true) do %>
         <table id="busqueda" style="width:300px">
           <tr>
             <td style="text-align:left;width:100px">Periodo : </td>
             <td style="text-align:left;width:100px"><%= select "periodo", "nombre_per", ['todos']+@periodos.map {|r| [r.periodo]}.uniq %> </td>
-            <td style="width:100px"><%= link_to_remote(image_tag("boton2.png",:border=>0),
-                         :submit   => "busqueda",
-                         :before   => 'mostrardiv("imagen-progreso")',
-                         :url      => { :controller=>'estadisticas',:action => 'estadisticas_lectivo' })%></td>
+            <td style="width:100px">
+              <%= submit_tag("Buscar", :type=>:image, :src=>"/images/boton2.png")%>
+            </td>
           </tr>
         </table>
         <table id="eliminahistorico" style="margin-left:900px;margin-top:-50px">
           <tr>
             
-            <td><%= link_to_remote(image_tag("limpiar.jpeg",:border=>0,:width=>32,:height=>32),
-                         :url      => { :controller=>'estadisticas',:action => 'borrar_historico_lectivo' },
-                         :confirm  => "Esto eliminara todo el registro historico de asignaciones en periodos lectivos. Esta seguro?")%></td>
+            <td><%= link_to(image_tag("limpiar.jpeg",:border=>0,:width=>32,:height=>32),
+{ :method => 'POST', :controller=>'estadisticas',:action => 'borrar_historico_lectivo' }, :confirm  => "Esto eliminará todo el registro histórico de asignaciones en períodos lectivos. ¿Está seguro?", :remote => true)%></td>
             <td style="color:#010080;font-size:0.9em">Limpiar<br/> hist&oacute;rico</td>
           </tr>
         </table>

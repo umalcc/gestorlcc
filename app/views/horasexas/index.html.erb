@@ -32,10 +32,10 @@
         <% if total==0 %>
            <%= link_to image_tag("Editar.png", :border=>0), edit_horasexa_path(horasexa) %>
         <% end %></td> 
-        <td style="text-align:center"><%=h horasexa.num %></td>
-        <td style="text-align:right"><%=h horasexa.comienzo %></td>
-        <td style="text-align:right"><%=h horasexa.fin %></td>
-        <td style="text-align:center"><%=h "SI" unless !horasexa.en_uso? %></td>
+        <td style="text-align:center"><%= horasexa.num %></td>
+        <td style="text-align:right"><%= horasexa.comienzo %></td>
+        <td style="text-align:right"><%= horasexa.fin %></td>
+        <td style="text-align:center"><%= "SI" unless !horasexa.en_uso? %></td>
         <td class="icono">
          <% if total==0 %>
           <%= link_to image_tag("borrar.png", :border=>0), horasexa, 
@@ -46,7 +46,7 @@
      </table>
     <br/>
    </div><!-- de lista-gestion -->
-   <% form_tag new_horasexa_path, :method=>:get do -%>
+   <%= form_tag new_horasexa_path, :method=>:get do -%>
       <%= submit_tag "Agregar hora", :class=>"botonindex" %>
    <% end -%>
    </div><!-- de recuadro -->
