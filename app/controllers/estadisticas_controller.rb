@@ -17,9 +17,9 @@ def estadisticas_lectivo
 
   @registros=Historicoasig.find_by_sql("select historicoasigs.* from historicoasigs where periodo like '#{periodo}'  order by periodo,nombre_tit,nombre_asig")
 
-  render :update do |page|
-          page.replace_html(:'registros', :partial=>"/estadisticas/registros_lectivo", :object=>@registros)
-  end
+   respond_to do |format|
+        format.js
+    end
 
 end
 

@@ -213,9 +213,10 @@ class AsignacionsController < ApplicationController
     else
       @asignacions=[]
     end
-      render :update do |page|
-        page.replace_html(:'cuadrante', :partial=>"/asignacions/cuadrante", :object=>@asignacions)
-      end
+	
+    respond_to do |format|
+        format.js
+    end
     
   end
 
