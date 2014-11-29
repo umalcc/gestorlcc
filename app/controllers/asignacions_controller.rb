@@ -29,12 +29,13 @@ class AsignacionsController < ApplicationController
   def asignar_continuar
        @asignacions=Asignacion.all
     
-      render :update do |page|
-        page.replace_html(:'cuadrante', :partial=>"/asignacions/cuadrante", :object=>@asignacions)
-      end
+      respond_to do |format|
+        format.js
+    end
     
 
   end
+
 # SI HIDDEN FIEL ES PRINCIPIO, SE LEEN SOLICITUDLAB, SINO DE ASIGNACIONPROV
   def asignar_iniciar
     solicitudes=Solicitudlab.where("fechafin >= ? and asignado <> ?",Date.today,"D").all

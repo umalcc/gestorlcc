@@ -19,7 +19,7 @@
            <tr>
             <td class="doscientos">Asignaci&oacute;n inicial</td>
             <td class="cien">
-            <%= link_to(image_tag("boton2.png",:border=>0), { :controller=>'asignacions',:action => 'asignar_iniciar' }, :method => 'POST', :before => 'mostrardiv("imagen-progreso")', :remote => true )%></td>
+            <%= link_to( image_tag("boton2.png",:border=>0), { :controller=>'asignacions',:action => 'asignar_iniciar' }, :before  => 'mostrardiv("imagen-progreso")', :remote => true )%></td>
             <td class="doscientoscincuenta">Asignaci&oacute;n en curso</td>
             <td class="cien"><%= link_to(image_tag("boton2.png",:border=>0), { :controller=>'asignacions',:action => 'asignar_continuar' }, :before   => 'mostrardiv("imagen-progreso")', :remote => true)%></td>
            </tr>

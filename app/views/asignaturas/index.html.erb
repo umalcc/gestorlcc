@@ -20,20 +20,24 @@
 </div>
 
 <script type="text/javascript" charset="utf-8">
-alert("ss");
+
 $(function(){
-alert("ii");
   $("#query").keyup(function()
 {
- alert("aaaaa");  
+
  var jqueryVal=$("#query").val();
  var url="asignaturas/listar";
   $.ajax({
+  beforeSend:function(xhr)
+{
+  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+},
+
     type:"POST",
    url:url,
   data:{query:jqueryVal}
 });
 });
 
-);
+});
 </script>
