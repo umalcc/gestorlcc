@@ -12,10 +12,7 @@
               <td>Buscar  : 
               <td><%= text_field_tag "query" %>
              
-                  <%= observe_field 'query',  
-                      :frequency => 1,         
-                      :with => 'query',
-                      :url => {:controller => 'solicitudlabs',:action => 'listar'} %>
+                
             </tr>
            </table>
           </div><!-- de busqueda -->
@@ -23,4 +20,27 @@
        </div><!-- de lista-gestion -->
     </div><!-- de recuadro -->
 </div><!-- de central -->
+
+
+
+<script type="text/javascript">
+$(function()
+{
+   $("#query").keyup(function()
+   {
+    var url="solicitudlabs/listar"; 
+	 var jqueryVal=$("#query").val();
+  $.ajax({
+  beforeSend:function(xhr)
+{
+  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+},
+
+    type:"POST",
+   url:url,
+  data:{query:jqueryVal}
+});
+   });
+   });
+</script>
 

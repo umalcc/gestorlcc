@@ -12,10 +12,7 @@
            <td><%= image_tag("search.png") %></td>
            <td>Buscar  : 
            <td><%= text_field_tag "query" %>         
-               <%= observe_field 'query',  
-                  :frequency => 1,         
-                  :with => 'query',
-                  :url => {:controller => 'recursos',:action => 'listar'} %>
+            
           </tr>
          </table>
         </div><!-- de busqueda -->
@@ -26,3 +23,20 @@
     </div><!-- de titulo -->
 </div><!-- de central -->
 
+
+
+<script type="text/javascript">
+$(function()
+  {
+    $("#query").keyup(function()
+      {
+
+        var url="/recursos/listar";
+        $.ajax({
+          type:"POST",
+          url:url,
+          data:{query:$("#query").val()}
+        });
+      });
+  });
+</script>

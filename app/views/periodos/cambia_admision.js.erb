@@ -1,0 +1,16 @@
+
+<%if params[:periodo_admision]=="1"
+       if @p.tipo=="Lectivo" %>
+         $('#admision').html("<%= escape_javascript(render :partial => 'control_admision_on') %>");
+     <% else %>
+       $('#admision').html("<%= escape_javascript(render :partial => 'control_admision_examen_on') %>");
+      <% end
+     else
+       if @p.tipo=="Lectivo" %>   
+        $('#admision').html("<%= escape_javascript(render :partial => 'control_admision_off') %>");
+     <% else  %>
+        $('#admision').html("<%= escape_javascript(render :partial => 'control_admision_examen_off') %>");
+      <% end
+     end %>
+
+

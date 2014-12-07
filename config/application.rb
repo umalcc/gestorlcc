@@ -2,6 +2,8 @@ require File.expand_path('../boot', __FILE__)
 #require 'active_support/core_ext'
 require 'rails/all'
 require 'sprockets/railtie'
+
+
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env) if defined?(Bundler)
@@ -53,6 +55,7 @@ module Gestorlcc
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default_content_type = "text/plain"
   config.action_mailer.default_charset = "utf-8"
+config.middleware.use ActionDispatch::Flash
 
   # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
   # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}')]

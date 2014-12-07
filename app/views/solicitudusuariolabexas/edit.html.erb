@@ -38,14 +38,7 @@
                 <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]}, 
                     html_options={:selected=>@asignaturaselec } %>
                </span><dd>
-               <%= observe_field 'titulacion_titulacion_id', 
-                       :url =>{:controller => 'asignaturas', :action => 'combo_por_titulacion'}, 
-                       :update => 'combo_asignatura', 
-                       :with => 'combo_titulacion' %>
-               <%= observe_field 'nivel', 
-                            :url =>{:controller => 'asignaturas', :action => 'combo_por_nivel'}, 
-                            :update => 'combo_asignatura', 
-                            :with => 'combo_nivel' %>
+               
 
 	    <dt>Puestos *</dt>
             <dd onchange='mostrardiv("solicitudlabexa_submit")'>
@@ -126,3 +119,30 @@
       <% end %><!-- de form_for -->
    </div><!-- de recuadro -->
 </div><!-- de central -->
+
+<script type="text/javascript">
+  $(function()
+    {
+      $("#titulacion_titulacion_id").change(function()
+        {
+          var url="/asignaturas/combo_por_titulacion";
+          var query=$("#titulacion_titulacion_id").val();
+          $.ajax({
+            type:"POST",
+            url:url,
+            data:{combo_titulacion:query}
+          });
+        });
+
+       $("#nivel").change(function()
+        {
+          var url="/asignaturas/combo_por_nivel";
+          var query=$("#nivel").val();
+          $.ajax({
+            type:"POST",
+            url:url,
+            data:{combo_nivel:query}
+          });
+        });
+    });
+</script>

@@ -63,7 +63,7 @@ class SolicitudlabsController < ApplicationController
     @solicitudlab.curso=params[:nivel].to_s
     @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
     @solicitudlab.asignado="N"
-  
+   
 # HACER UN DRYYYYYYY!!!!! COMPROBAR SI DETECTA BIEN EL PERIODO
 
    periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
@@ -106,7 +106,7 @@ class SolicitudlabsController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.all('especial=?',"t") 
+    @especiales=Laboratorio.where('especial=?',"t").all
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -114,11 +114,10 @@ class SolicitudlabsController < ApplicationController
       end
     end
     @solicitudlab.preferencias=pref
-    
     respond_to do |format|
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
       flash[:notice]="No hay tramos horarios en su peticion"
-      format.html { redirect_to(new_solicitudlab_path) }
+      format.js
 
     else 
 
@@ -136,12 +135,13 @@ class SolicitudlabsController < ApplicationController
          
         CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Nueva ").deliver     
         
-         
+        format.js
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @solicitudlabs, :status => :created, :location => @solicitudlabs }
-      
+         
       else
-        format.html { render :action => "new" }
+        format.js
+	      format.html { render :action => "new" }
         format.xml  { render :xml => @solicitudlabs.errors, :status => :unprocessable_entity }
       end
      
@@ -160,7 +160,7 @@ class SolicitudlabsController < ApplicationController
 
 # UN DRYYY!!!!!
 
-    periodoact=Periodo.first("admision = ? and tipo = ? ","t","Lectivo")
+    periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
     if periodoact.nil?
        iniperiodoact=finperiodoact=Date.today 
     else 
@@ -194,7 +194,7 @@ class SolicitudlabsController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.all('especial=?',"t") 
+    @especiales=Laboratorio.where('especial=?',"t").all 
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -242,7 +242,7 @@ class SolicitudlabsController < ApplicationController
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else
-        format.html { render :controller=> solicitudlabs, :action => "edit"}
+        format.html { render :controller=> @solicitudlabs, :action => "edit"}
         format.xml  { render :xml => @solicitudlab.errors, :status => :unprocessable_entity }
       end
     end
@@ -284,18 +284,18 @@ class SolicitudlabsController < ApplicationController
 
     cadena=(cadena.nil?)? "%" : "%#{cadena}%"
     
-    @usuarios=Usuario.all("nombre || apellidos LIKE ?",cadena)
+    @usuarios=Usuario.where("nombre || apellidos LIKE ?",cadena).all
     codigos_u=@usuarios.map { |t| t.id}
-    @asignaturas=Asignatura.all("nombre_asig || abrevia_asig || curso LIKE ?",cadena)
+    @asignaturas=Asignatura.where("nombre_asig || abrevia_asig || curso LIKE ?",cadena).all
     codigos_a=@asignaturas.map { |t| t.id}
-    @tramos=Peticionlab.all("diasemana || horaini || horafin LIKE ?",cadena)
+    @tramos=Peticionlab.where("diasemana || horaini || horafin LIKE ?",cadena).all
     codigos_t=@tramos.map { |t| t.solicitudlab_id}
-    @labs_especiales=Laboratorio.all("ssoo || nombre_lab like ? and especial=?",cadena,"t")
+    @labs_especiales=Laboratorio.where("ssoo || nombre_lab like ? and especial=?",cadena,"t").all
     nombre_l=@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'si'+';'}
     nombre_l=nombre_l+@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'no'+';'}
-    @solicitudlabs=Solicitudlab.all("npuestos || curso || fechaini || fechafin || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, codigos_t,nombre_l)
+    @solicitudlabs=Solicitudlab.where("npuestos || curso || fechaini || fechafin || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, codigos_t,nombre_l).all
     @cuenta=@solicitudlabs.size
-    #respond_to {|format| format.js }
+    respond_to {|format| format.js }
   end
 
  

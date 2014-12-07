@@ -21,8 +21,7 @@ class SolicitudlabexasController < ApplicationController
 
     session[:titulacion]=Titulacion.first
     session[:nivel]=Asignatura::CURSO.first
-
-    
+    getViewModel
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @solicitudlabexa }
@@ -31,15 +30,25 @@ class SolicitudlabexasController < ApplicationController
 
   # GET /solicitudlabs/1/edit
   def edit
-    @solicitudlabexa = Solicitudlabexa.find(params[:id])
-    
+
+    getViewModel
+    @solicitudlabexa = Solicitudlabexa.find(params[:id])     
+    @asignatura=Asignatura.find(@solicitudlabexa.asignatura_id)
+    @titulacionselec=@asignatura.titulacion_id
+    @cursoselec=@solicitudlabexa.curso
     @solicitudlabexa.fecha=formato_europeo(@solicitudlabexa.fecha)
- 
+   
+    usuario=Usuario.find(@solicitudlabexa.usuario_id)
+    @usuarioselec=usuario.apellidos+", "+usuario.nombre
+    @usuarios=Usuario.order("apellidos").all.reject{|u| u.identificador=="anonimo"}
+    @asignaturaselec=@solicitudlabexa.asignatura_id
   end
 
   # POST /solicitudlabs
   # POST /solicitudlabs.xml
   def create
+  
+    getViewModel
     @solicitudlabexa = Solicitudlabexa.new(params[:solicitudlabexa])
     @solicitudlabexa.usuario_id = params[:usuario][:identificador].to_i
     @solicitudlabexa.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
@@ -47,11 +56,10 @@ class SolicitudlabexasController < ApplicationController
     @solicitudlabexa.npuestos=params[:npuestos].to_s
     @solicitudlabexa.curso=params[:nivel].to_s
     @solicitudlabexa.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
-
-    @solicitudlabexa.horaini=params[:horaini][:comienzo]
+        @solicitudlabexa.horaini=params[:horaini][:comienzo]
     @solicitudlabexa.horafin=params[:horafin][:fin]
     @solicitudlabexa.asignado="N"
-    
+  
     if params[:fecha]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
       nfecha=formato_europeo(params[:fecha])
       @solicitudlabexa.fecha=nfecha.to_date
@@ -60,7 +68,7 @@ class SolicitudlabexasController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.all('especial=?',"t") 
+    @especiales=Laboratorio.where('especial=?',"t").all 
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -80,7 +88,7 @@ class SolicitudlabexasController < ApplicationController
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @solicitudlabexas, :status => :created, :location => @solicitudlabexas }
       else
-        format.html { redirect_to :action => "new" }
+        format.html { render :action => "new" }
         format.xml  { render :xml => @solicitudlabexas.errors, :status => :unprocessable_entity }
       end
      
@@ -88,16 +96,28 @@ class SolicitudlabexasController < ApplicationController
     
   end
 
+  def getViewModel
+    @usuarios=Usuario.order("apellidos").all.reject{|u| u.identificador=="anonimo"} 
+    if (Asignatura::CURSO).first=="optativa"
+      as='0'
+    else 
+      as=Asignatura::CURSO.first
+    end
+    @titulaciones=Titulacion.order("id").all
+    @usuarios=Usuario.order("apellidos").all.reject{|u| u.identificador=="anonimo"}  
+    @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?',@titulaciones.first.id,as).all
+    @puestos=Laboratorio.find_by_sql(["select distinct(puestos) from laboratorios order by puestos"]).map{|l| l.puestos}
+    @horas=Horasexa.where('en_uso=?',"t").order("id").all
+    @especiales=Laboratorio.where('especial=?',"t").all 
+  end
   # PUT /solicitudlabexas/1
   # PUT /solicitudlabexas/1.xml
 
  def update
     @solicitudlabexa = Solicitudlabexa.find(params[:id])
-
+    getViewModel
     respond_to do |format|
-
-
-
+    
     if params[:fecha]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
       nfecha=formato_europeo(params[:fecha])
     else
@@ -105,7 +125,7 @@ class SolicitudlabexasController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.all('especial=?',"t") 
+    
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -130,7 +150,7 @@ CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud 
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else
-        format.html { redirect_to :action => "edit"}
+        format.html { render :action => "edit"}
         format.xml  { render :xml => @solicitudlabexa.errors, :status => :unprocessable_entity }
       end
    
@@ -168,16 +188,18 @@ CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud 
 
     cadena=(cadena.nil?)? "%" : "%#{cadena}%"
     
-    @usuarios=Usuario.all("nombre || apellidos LIKE ?",cadena)
+    @usuarios=Usuario.where("nombre || apellidos LIKE ?",cadena).all
     codigos_u=@usuarios.map { |t| t.id}
-    @asignaturas=Asignatura.all("nombre_asig || abrevia_asig || curso LIKE ?",cadena)
+    @asignaturas=Asignatura.where("nombre_asig || abrevia_asig || curso LIKE ?",cadena).all
     codigos_a=@asignaturas.map { |t| t.id}
-    @labs_especiales=Laboratorio.all("ssoo || nombre_lab like ? and especial=?",cadena,"t")
+    @labs_especiales=Laboratorio.where("ssoo || nombre_lab like ? and especial=?",cadena,"t").all
     nombre_l=@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'si'+';'}
     nombre_l=nombre_l+@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'no'+';'}
-    @solicitudlabexas=Solicitudlabexa.all("npuestos || curso || fecha || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, nombre_l)
+    @solicitudlabexas=Solicitudlabexa.where("npuestos || curso || fecha || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, nombre_l).all
     @cuenta=@solicitudlabexas.size
-    #respond_to {|format| format.js }
+    respond_to do |format|
+      format.js 
+    end
   end
 
  

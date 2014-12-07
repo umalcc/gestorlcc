@@ -35,14 +35,14 @@
                 <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]}, 
                     html_options={:selected=>@asignaturaselec } %>
                </span><dd>
-               <%= observe_field 'titulacion_titulacion_id', 
+              <!-- <= observe_field 'titulacion_titulacion_id', 
                        :url =>{:controller => 'asignaturas', :action => 'combo_por_titulacion'}, 
                        :update => 'combo_asignatura', 
-                       :with => 'combo_titulacion' %>
-               <%= observe_field 'nivel', 
-                            :url =>{:controller => 'asignaturas', :action => 'combo_por_nivel'}, 
-                            :update => 'combo_asignatura', 
-                            :with => 'combo_nivel' %>
+                       :with => 'combo_titulacion' %>-->
+               <!--<= observe_field 'nivel', 
+                            url =>{controller => asignaturas, action => combo_por_nivel}, 
+                            update => combo_asignatura, 
+                            with => combo_nivel %>-->
 
 	    <dt>Puestos *</dt>
             <dd onchange='mostrardiv("solicitudlab_submit")'>
@@ -131,10 +131,8 @@
                                       <%= select "horaini", "comienzo", @horas.map {|h| [h.comienzo] }%></td>
                          <td width=60><%= select "horafin", "fin", @horas.map {|h| [h.fin] }%></td>
                          <td width=15>
-                            <%= link_to(image_tag("mas.png",:border=>0),
-                              :submit   => "subformulario",
-                              :url      => { :controller=>:solicitar,:action => 'anadir' },
-                              :success  => 'mostrardiv("solicitudlab_submit")', :remote => true) %></td>      
+                           <%= link_to(image_tag("mas.png",:border=>0),"#",
+                                          id:"linkSubFormulario") %></td>      
                        </tr>
                     </table><!-- subformulario para anadir tramos -->
                    </td>
@@ -159,3 +157,72 @@
       <% end %><!-- de form_for -->
    </div><!-- de recuadro -->
 </div><!-- de central -->
+
+
+
+<script type="text/javascript">
+$(function(){
+
+
+  $("#linkSubFormulario").click(function()
+{
+  var url="/solicitar/anadir";
+  var horafin_f=$("#horafin_fin").val();
+  var diasemana_n=$("#diasemana_nombre").val();
+  var horario_com=$("#horaini_comienzo").val();
+  $.ajax({
+     beforeSend:function(xhr)
+{
+  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+},
+
+     url:url,
+     data:{diasemana_nombre:diasemana_n,horaini_comienzo:horario_com,horafin_fin:horafin_f},
+     type:"POST",
+     success:function()
+     {
+      //mostrardiv("solicitudlab_submit");
+     }
+  });
+
+});
+$("#nivel").change(function()
+{
+ var url="/asignaturas/combo_por_nivel"; 
+   var jqueryVal=$("#nivel").val();
+  $.ajax({
+  beforeSend:function(xhr)
+{
+  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+},
+    type:"POST",
+   url:url,
+  data:{combo_nivel:jqueryVal}
+});
+});
+
+
+
+   $("#titulacion_titulacion_id").change(function()
+   {
+    var url="../../asignaturas/combo_por_titulacion"; 
+   var jqueryVal=$("#titulacion_titulacion_id").val();
+  $.ajax({
+  beforeSend:function(xhr)
+{
+  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+},
+    type:"POST",
+   url:url,
+  data:{combo_titulacion:jqueryVal}
+});
+   });
+   });
+
+</script>
+
+
+ <!--<= observe_field 'nivel', 
+                            url =>{controller => asignaturas, action => combo_por_nivel}, 
+                            update => combo_asignatura, 
+                            with => combo_nivel %>-->

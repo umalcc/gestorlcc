@@ -7,10 +7,34 @@
      <td style="width:30px"><%= muestra_tramo.horaini %></td>
      <td style="width:5px"><%="-" %></td>
      <td style="width:30px"><%= muestra_tramo.horafin %></td>
-     <td style="width:15px"><%= link_to image_tag("menos.png", :border=>0), 
-                                     :url => { :controller=>:solicitar, 
-                                     :action => 'eliminar', 
-                                     :num=> muestra_tramo.id },
-                                     :success=>'mostrardiv("solicitudlab_submit")', :remote => true %></td>
-       
+     <td style="width:15px">
+        <%= link_to(image_tag("menos.png",:border=>0),"#",
+                                          name:"linkEliminar") %>
+     <td width="0"><input name="muestraId" type="hidden" value=<%= muestra_tramo.id%>/></td>   
    </tr>
+
+
+
+<script type="text/javascript">
+
+$(function()
+{
+
+$("a[name=linkEliminar]").click(function()
+{
+  var url="/solicitar/eliminar";
+  var numero=$(this).closest("tr").find("input[name='muestraId']").val();
+  $.ajax({
+     url:url,
+     data:{num:numero},
+     success:function()
+     {
+      mostrardiv("solicitudlab_submit");
+     }
+  });
+});
+
+});
+
+
+</script>

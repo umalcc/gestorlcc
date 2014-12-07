@@ -61,9 +61,9 @@
          <td><%= fecha_europea(i.fechasol) %></td>  
          <td><% usuario=Usuario.find(i.usuario_id) %><%= usuario.nombre+" "+usuario.apellidos %></td>
          <td><% asig=Asignatura.find(i.asignatura_id) %>
-             <%= "<a onmouseover=ShowContent('asignatura"+i.id.to_s+"'); return true;
-   			   onmouseout=HideContent('asignatura"+i.id.to_s+"'); return true;>" %>
-                           <%= "<div id=asignatura"+i.id.to_s %> 
+             <a onmouseover=ShowContent('asignatura<%=i.id.to_s%>'); return true;
+   			   onmouseout=HideContent('asignatura<%= i.id.to_s %>'); return true;>
+                           <div id="asignatura<%= i.id.to_s %>" 
 				style='display:none;position:absolute;
       					border-style: solid;
       					background-color: white;width:300px;
@@ -84,13 +84,13 @@
              <table>
                 <%=render(:partial => "/solicitudrecursos/tramo_peticion", :collection=> @tramos ) %>
              </table></td>
-         <td style="text-align:center"><%= "<a onmouseover=ShowContent('"+"flotante"+i.id.to_s+"'); return true;
-   			   onmouseout=HideContent('"+"flotante"+i.id.to_s+"'); return true;>"  %>
-                            <%= "<div id="+"flotante"+i.id.to_s+" 
+         <td style="text-align:center"><a onmouseover=ShowContent("flotante<%= i.id.to_s %>"); return true;
+   			   onmouseout=HideContent('flotante<%= i.id.to_s %>'); return true;>
+                            <div id="flotante<%= i.id.to_s %>" 
 				style='display:none;position:absolute;
       					border-style: solid;
       					background-color: white;
-      					padding: 5px;';>" %>
+      					padding: 5px;';>
                                         <%=i.comentarios %><!-- se visualiza el comentario completo -->
 			    </div>
 			    <%="SI" unless i.comentarios=="" %></a><!-- si hay comentarios, se indica --></td>

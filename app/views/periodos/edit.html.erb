@@ -34,10 +34,10 @@
                   :id=>"DPC_fin_DD-MM-YYYY", :value=>fin %></dd>
           <dt>Tipo *</dt><% @tipoact=@periodo.tipo %>
           <dd><%= select_tag "tipo", options_for_select(["Lectivo","Examenes","Festivo"],@tipoact) %></dd>
-              <%= observe_field "tipo",
+             <!-- < observe_field "tipo",
                   :frecuency => 1,
                   :function =>"if (value!='Festivo') document.getElementById('opcional').style.visibility='visible'
-                              else if (value=='Festivo') document.getElementById('opcional').style.visibility='hidden'" %>
+                              else if (value=='Festivo') document.getElementById('opcional').style.visibility='hidden'" %>-->
               <% if @tipoact=="Festivo" %><!-- si festivo, lo siguiente no procede -->
                 <div style="visibility:hidden">
               <% end %>
@@ -50,18 +50,18 @@
                       :id=>"DPC_finsol_DD-MM-YYYY", :value=>finsol %></dd>
                  <dt>Admisi&oacute;n</dt>
                  <dd><%= f.check_box :admision,:size=>1 %>
-                     <%= observe_field 'periodo_admision', 
-                            :frequency => 1,
-                            :url =>{:controller => 'periodos', :action => 'cambia_admision'},
-                            :with => 'periodo_admision' %> 
+                    <!-- < observe_field periodo_admision, 
+                            frequency => 1,
+                            url =>{controller => periodos, action => cambia_admision},
+                            with => periodo_admision > -->
                             
                             </dd>
                  <dt>Asignado</dt>
                  <dd><%= f.check_box :activo,:size=>1 %>
-                     <%= observe_field 'periodo_activo', 
-                            :frequency => 1,
-                            :url =>{:controller => 'periodos', :action => 'cambia_activo'},
-                            :with =>'periodo_activo' %> </dd>
+                    <!-- < observe_field periodo_activo, 
+                            frequency => 1,
+                            url =>{:controller => periodos, action => cambia_activo},
+                            with =>periodo_activo %> </dd>-->
                </div>
               <% if @tipoact=="Festivo" %>
                 </div>
@@ -78,6 +78,7 @@
       <div id="errores">
          <%= f.error_messages :header_message => 'Se produjeron errores en la captura de datos', 
              :message => 'Imposible modificar el periodo debido a:'%>
+
          <% if flash[:notice] %>
                 <div id="errorExplanation">
                   <p>Imposible modificar periodo:</p>
@@ -90,3 +91,51 @@
 
   </div><!-- de recuadro -->
 </div><!-- de central -->
+
+
+
+
+<script type="text/javascript">
+$(function()
+  {
+    $("#tipo").change(function()
+    {
+      var val=$("#tipo").val();
+      if(val!='Festivo')
+      {
+       $("#opcional").css('visibility', 'visible');
+      }
+      else
+      {
+         $("#opcional").css('visibility', 'hidden');
+      }
+      
+    });
+
+     $("#periodo_admision").change(function()
+    {
+      var val=$("#periodo_admision").val();
+      var url="/periodos/cambia_admision";
+      $.ajax(
+      {
+        type:"POST",
+        url:url,
+        data:{periodo_admision:val}
+      });
+      
+    });
+
+      $("#periodo_activo").change(function()
+    {
+      var val=$("#periodo_activo").val();
+      var url="/periodos/cambia_activo";
+      $.ajax(
+      {
+        type:"POST",
+        url:url,
+        data:{periodo_activo:val}
+      });
+      
+    });
+  });
+</script

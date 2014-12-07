@@ -10,11 +10,7 @@
              <tr>
                <td><%= image_tag("search.png") %></td> 
                <td>Buscar  : 
-               <td><%= text_field_tag "query" %>           
-                   <%= observe_field 'query',  
-                           :frequency => 1,         
-                           :with => 'query',
-                           :url => {:controller => 'solicitudrecursos',:action => 'listar'} %>      
+               <td><%= text_field_tag "query" %></td>     
               </tr>
             </table>
          </div>  
@@ -22,3 +18,22 @@
         </div><!-- de lista-gestion -->
      </div><!-- de recuadro -->
 </div><!-- de central -->
+
+
+<script type="text/javascript">
+$(function()
+{
+  $("#query").keyup(function()
+    {
+      var url="/solicitudrecursos/listar";
+      var query=$("#query").val();
+      $.ajax(
+        {
+          type:"POST",
+          url:url,
+          data:{query:query}
+        });
+    });
+});
+
+</script>

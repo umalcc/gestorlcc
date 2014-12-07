@@ -1,0 +1,199 @@
+ <div id="recuadro">
+      <p><%= image_tag ("bg_separ.gif") %></p>
+     <% periodo=Periodo.where('admision = ? and tipo = ?',"t","Lectivo").all %>
+     <% if periodo.size!=0 %>
+      <div id="recuadro-azul" style="min-height:550px">   
+        <%= form_for @solicitudlab,:html=> {:name => "formulario"} do |f| %>
+        <%= f.hidden_field :id %>
+
+         <dl>
+          <dt>Fecha solicitud</dt>
+          <dd><%= @dia=@solicitudlab.fechaini=@solicitudlab.fechafin= fecha_europea(Date.today) %></dd>
+          <dt>Titulaci&oacute;n *</dt>
+            <dd id="combo_titulacion"><%@titulaciones=Titulacion.order("id").all %>
+              <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]},
+          html_options={:selected=>@titulacionselec} %></dd>
+          <dt>Curso *</dt>
+          <dd id="combo_nivel"><%= select_tag "nivel", options_for_select(Asignatura::CURSO,@solicitudlab.asignatura.curso)%></dd>
+    <dt>Asignatura *</dt>    
+          <dd><SPAN id="combo_asignatura">
+             
+              <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]},
+                       html_options={:selected=>@asignaturaselec } %>
+              </span><dd>
+             
+          </dd>
+          <dt>Puestos *</dt>
+          <dd><% periodoact=Periodo.where("admision = ? AND tipo = ?","t","Lectivo").first %>
+                <% if periodoact.nil? %>
+                   <%  inicio=fin=fecha_europea(Date.today) %>
+                <% else %>
+                   <% iniperiodoact=periodoact.inicio %>
+                   <% finperiodoact=periodoact.fin %>
+                   <% inicio=fecha_europea(iniperiodoact) %>
+                   <% fin=fecha_europea(finperiodoact) %>
+                <% end %>
+                <% @puestos=Laboratorio.find_by_sql(["select distinct(puestos) from laboratorios order by puestos"]).map{|l| l.puestos} %>
+               <% if periodoact.tipo!="Examenes" %>                   
+                   <%= select_tag "npuestos", options_for_select(@puestos<<Laboratorio::DOS_LAB,@solicitudlab.npuestos) %>
+                <% else %>
+                   <%= select_tag "npuestos", 
+                        options_for_select((@puestos<<Laboratorio::DOS_LAB)+Laboratorio::PUESTOS_EXAMEN,@solicitudlab.npuestos) %>
+                <% end %>
+          </dd>
+          
+          <dt>Fecha inicio *</dt>
+          <dd>
+          <%= f.text_field :fechaini, :size=>12, :name=>"fechaini",  :id=>"DPC_fechaini_DD-MM-YYYY", :value=>inicio %></dd>
+          <dt>Fecha fin *</dt>
+          <dd><%= f.text_field :fechafin, :size=>12, :name=>"fechafin", :id=>"DPC_fechafin_DD-MM-YYYY", :value=>fin %>  </dd>
+          <dt>Soft. requerido</dt>
+          <dd><%= f.text_area :comentarios, :rows =>4, :cols=>40, :name=>"comentarios" %></dd>
+
+          <dt>Tipo de equipos</dt>
+          <dd>
+           <table id="preferencias"><tr style="font-size: 0.7em;font-weight: normal;text-align:center">
+             <tr>
+               <th></th>
+               <td style="text-align:center">Si</td>
+               <td style="text-align:center">No</td>
+               <td style="text-align:center">Indif.</td>
+             </tr>
+               <% @especiales=Laboratorio.where("especial=?","t").all %> 
+             <% for especial in @especiales do %>
+             <tr style="font-size: 10px;font-weight: normal;text-align:center">
+               <td class="cien"><%= especial.ssoo %>
+                          <% nombre=especial.ssoo %>
+                           <% n=@solicitudlab.preferencias.index(especial.ssoo)  %>  
+                           <% if !n.nil? %>   
+                              <% parte=@solicitudlab.preferencias.split("-") %>
+                              <%  valor=parte[2].slice(0,2).to_s %>
+                           <% else %>
+                              <% valor="in" %>
+                           <% end %></td>
+                <td style="text-align:center" class="cincuenta"><%= radio_button_tag nombre, 'si' ,valor == 'si',
+                      :onclick=>'mostrardiv("solicitudlab_submit")' %>   </td>
+                  <td style="text-align:center" class="cincuenta"><%= radio_button_tag nombre, 'no' ,valor == 'no',
+                      :onclick=>'mostrardiv("solicitudlab_submit")' %>   </td>
+                  <td style="text-align:center" class="cincuenta"><%= radio_button_tag nombre, 'in' ,valor == 'in',
+                      :onclick=>'mostrardiv("solicitudlab_submit")' %>  </td>
+             </tr>
+             <% end %><!-- de for especial -->
+           </table><!-- de preferencias de lab especial -->
+          </dd>
+          <dt>D&iacute;as y horas *</dt>
+          <dd><table>
+                <tr> 
+                  <td id="subform"><!-- visualizacion de los tramos horarios elegidos -->
+                    <% @tramos=session[:tramos_horarios].solicitudes %> 
+                    <table id="tramos">
+                       <% if @tramos.empty? %>
+                           <tr><td><%= h "Introduzca tramos horarios" %></td></tr>
+                       <% else %>
+                           <%=render(:partial => "solicitudrecursos/muestra_tramo", :collection=> @tramos) %> 
+                       <% end %>
+                    </table></td>
+                  <td><a onclick='mostrardiv("subformulario")'>
+                      <%= image_tag("reloj.jpg",:border=>0) %></a></td>
+                 </tr>
+                 <tr height=10></tr>
+                 <tr>
+                  <td><table id="subformulario" style="visibility:hidden">
+                       <tr style="font-size: 10px;font-weight: normal;text-align:center">
+                         <th width=60></th>
+                         <th width=60></th>
+                         <th width=60></th>
+                         <th style="align:left"><%=image_tag("icon_close.png",:border=>0,
+                                                    :onclick=>'ocultardiv("subformulario")')%></th>
+                       </tr>
+                       <tr style="font-size: 10px;font-weight: normal;text-align:center">
+                         <th width=60>Dia semana</th>
+                         <th width=60>Hora inicio </th>
+                         <th width=60>Hora fin </th>
+                         <th></th>
+                       </tr>
+                       <tr valign="top" halign=center>
+                         <td width=60><% @dias=Dia.where("en_uso=?","t").all %>
+                                      <%= select  "diasemana","nombre", @dias.map {|d| [d.nombre] }%></td> 
+                         <td width=60><% @horas=Horario.where("en_uso=?","t").all %>
+                                      <%= select "horaini", "comienzo", @horas.map {|h| [h.comienzo] }%></td>
+                         <td width=60><%= select "horafin", "fin", @horas.map {|h| [h.fin] }%></td>
+                         <td width=15>
+                            <%= link_to(image_tag("mas.png",:border=>0),"#",id:"anadirLink")%>
+                         </td>     
+                       </tr>
+                     </table><!-- subformulario de captacion de tramos horarios -->
+                    </td>
+                  </tr>
+            </table></dd>
+          
+          <p><%= f.submit 'Guardar' %></p>
+         </dl>  
+       </div><!-- de recuadro-azul -->
+       <div id="errores">
+            <%= f.error_messages :header_message => 'Se produjeron errores en la captura de datos', 
+                        :message => 'Imposible guardar una solicitud de laboratorio:'%>
+            <% if flash[:notice] %>
+                <div id="errorExplanation">
+                     <p>Imposible guardar la solicitud de laboratorio:</p>
+                     <ul><li><%=flash[:notice]%></li></ul>
+                </div>
+            <% end %>
+       </div>
+    <% end %><!-- de form_for -->
+   <% else %><!-- de periodo de admision -->
+        <div class="aviso">
+            <p>No est&aacute; activa la admisi&oacute;n de solicitudes</p>
+            <p>Para cualquier consulta: tecnicos@lcc.uma.es</p>
+        </div>
+   <% end %>
+  </div><!-- de recuadro -->
+
+
+
+
+<script type="text/javascript">
+$(function()
+  {
+     $("#titulacion_titulacion_id").change(function()
+      {
+        var url="/asignaturas/combo_por_titulacion";
+        var query=$("#titulacion_titulacion_id").val();
+        $.ajax({
+          url:url,
+          type:"POST",
+          data:{combo_titulacion:query}
+        });
+      });
+
+      $("#nivel").change(function()
+      {
+        var url="/asignaturas/combo_por_nivel";
+        var query=$("#nivel").val();
+        $.ajax({
+          url:url,
+          type:"POST",
+          data:{combo_nivel:query}
+        });
+      });
+   $("#anadirLink").click(function()
+      {
+        var url="/solicitar/anadir";
+        var query=$("#nivel").val();
+        var horafin_f=$("#horafin_fin").val();
+        var diasemana_n=$("#diasemana_nombre").val();
+        var horario_com=$("#horaini_comienzo").val();
+        $.ajax({
+          url:url,
+          type:"POST",
+           data:{diasemana_nombre:diasemana_n,horaini_comienzo:horario_com,horafin_fin:horafin_f},
+          success:function()
+          {
+            mostrardiv("solicitudlab_submit");
+          }
+        });
+      });
+
+  });
+
+</script>

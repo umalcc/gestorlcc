@@ -2,10 +2,28 @@
 <table class="aviso" style="text-align:left">
   <tr>
     <td class="doscientoscincuenta" style="font-size:0.5cm">Enviar correo de aviso a usuarios</td>
-    <td><%= link_to image_tag("boton2.png", :border=>0,:align=>"left"), 
-                                :url=>{ :controller=>'periodos',:action => 'enviar_correo_activo_on' },
-				:confirm  => "Se enviara un correo a todos los usuarios de la base, en el que se anunciara la apertura del periodo de adjudicaci&oacute;n", :remote => true %></td>
+    <td><%= link_to image_tag("boton2.png", :border=>0,:align=>"left"), "#",id: "enlaceApertura", %></td>
   </tr>
 </table>
 <p style="font-size:2em;"><%=  @mensaje %></p>
+
+
+<script type="text/javascript">
+
+$(function()
+	{
+		$("#enlaceApertura").click(function()
+		{
+			var mensaje="Se enviará un correo a todos los usuarios de la base, en el que se anunciará la apertura del periodo de adjudicación";
+			if (confirm(mensaje)){
+			var url="/periodos/enviar_correo_activo_on";
+			$.ajax
+			({
+				type:"POST",
+				url:url
+			});
+			}
+		});
+	});
+</script>
   

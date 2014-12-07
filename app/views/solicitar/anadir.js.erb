@@ -1,0 +1,8 @@
+$("#errores").html("");
+$('#tramos').html("<%= escape_javascript(render :partial => 'solicitudlabs/muestra_tramo',:collection=>session[:tramos_horarios].solicitudes) %>");
+
+ <% if flash[:notice] %>
+$("#errores").html("<div id='errorExplanation' style='top:400px'><p>Imposible incluir tramo horario:</p><ul><li><%=escape_javascript (flash[:notice]) %></li></ul></div>");
+<%end%>
+$('#actual').css({'background-color':'#010080'});
+ $("#actual").animate({'background-color':'#f6ecd5'}, 1000);

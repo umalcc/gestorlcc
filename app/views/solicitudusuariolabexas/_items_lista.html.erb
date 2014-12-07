@@ -55,9 +55,9 @@
                            <% end %></td>
          <td><%= fecha_europea(i.fechasol) %></td>  
          <td><% asig=Asignatura.find(i.asignatura_id) %>
-             <%= "<a onmouseover=ShowContent('asignatura"+i.id.to_s+"'); return true;
-   			   onmouseout=HideContent('asignatura"+i.id.to_s+"'); return true;>" %>
-                           <%= "<div id=asignatura"+i.id.to_s %> 
+             <a onmouseover=ShowContent('asignatura<%=i.id.to_s%>'); return true;
+   			   onmouseout=HideContent('asignatura<%=i.id.to_s%>'); return true;>
+                           <div id="asignatura<%=i.id.to_s %>" 
 				style='display:none;position:absolute;
       					border-style: solid;
       					background-color: white;width:300px;
@@ -75,13 +75,13 @@
          <td><%= fecha_europea(i.fecha) %></td>
          
          <td><%= i.horaini+" - "+i.horafin %></td>
-         <td style="text-align:center"><%= "<a onmouseover=ShowContent('"+"flotante"+i.id.to_s+"'); return true;
-   			   onmouseout=HideContent('"+"flotante"+i.id.to_s+"'); return true;>"  %>
-                            <%= "<div id="+"flotante"+i.id.to_s+" 
+         <td style="text-align:center"><a onmouseover=ShowContent("flotante<%=i.id.to_s%>"); return true;
+   			   onmouseout=HideContent("flotante<%=i.id.to_s%>"); return true;>
+                            <div id="flotante<%=i.id.to_s%>" 
 				style='display:none;position:absolute;
       					border-style: solid;
       					background-color: white;
-      					padding: 5px;';>" %>
+      					padding: 5px;';>
                                         <%=i.comentarios %><!-- se visualiza el comentario completo -->
 			    </div>
 			    <%="SI" unless i.comentarios=="" %></a><!-- si hay comentarios, se indica --></td>
@@ -91,7 +91,7 @@
             </table></td>    
          <td class="icono"><% if (i.tipo!="X" and !periodo.nil? and total==0)  and i.asignado!="N" %><!-- solicitudes de asignaciones directas de admin -->
                              <%= link_to image_tag("borrar.png", :border=>0), solicitudusuariolabexa_path(i),
-                              :confirm => 'Seguro que desea eliminar la solicitud?', :method => :delete %>
+                              :confirm => '¿Seguro que desea eliminar la solicitud?', :method => :delete %>
                            <% else %>
                               <% if i.tipo=="X" %>
                                   Asignaci&oacute;n directa

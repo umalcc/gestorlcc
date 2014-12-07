@@ -25,7 +25,7 @@
         <% for dia in @dias %><!-- por cada dia de la semana, un cuadrante -->
    
         <div id="rotulodia">
-          <%="<p style='color:blue'>"+dia.nombre+"</p>&nbsp;&nbsp;" %><br/>
+          <p style='color:blue'><%= dia.nombre %></p>&nbsp;&nbsp;<br/>
           <%= image_tag ("bg_separ.gif") %>
         </div>
         <table id="asignacion">

@@ -28,7 +28,8 @@ Gestorlcc::Application.routes.draw do |map|
 
   map.resources :asignaturas
 
-  
+ 
+ 
 
   map.resources :usuarios
   map.resource :solicitar
@@ -109,10 +110,16 @@ map.connect 'solicitudrecursos/borrar_reservas', :controller => 'solicitudrecurs
 map.connect 'solicitudrecursousuarios/listar', :controller => 'solicitudrecursousuarios', :action=> 'listar'
 map.connect 'solicitudrecursousuarios/buscar', :controller => 'solicitudrecursousuarios', :action=> 'buscar'
 map.connect 'solicitudusuariolabs/listar', :controller => 'solicitudusuariolabs', :action=> 'listar'
+map.connect 'solicitudusuariolabs/crear', :controller => 'solicitudusuariolabs', :action=> 'create'
+map.connect 'solicitudusuariolabs/update', :controller => 'solicitudusuariolabs', :action=> 'update'
+
 map.connect 'solicitudrecursos/buscar', :controller => 'solicitudrecursos', :action=> 'buscar'
-map.connect 'solicitudrecursos/crear', :controller => 'solicitudrecursos', :action=> 'crear'
+map.connect 'solicitudrecursos/crear', :controller => 'solicitudrecursos', :action=> 'create'
 map.connect 'solicitudrecursos/borra', :controller => 'solicitudrecursos', :action=> 'borra'
 map.connect 'solicitudrecursousuarios/borra', :controller => 'solicitudrecursousuarios', :action=> 'borra'
+map.connect 'solicitudrecursousuarios/crear', :controller => 'solicitudrecursousuarios', :action=> 'create'
+
+map.connect 'solicitar/eliminar', :controller => 'solicitar', :action=> 'eliminar'
 
 map.connect 'asignacions/mover', :controller => 'asignacions', :action=> 'mover'
 map.connect 'asignacions/revisar', :controller => 'asignacions', :action=> 'revisar'

@@ -1,238 +1,162 @@
-                    periodos GET    /periodos(.:format)                          {:controller=>"periodos", :action=>"index"}
-                             POST   /periodos(.:format)                          {:controller=>"periodos", :action=>"create"}
-                 new_periodo GET    /periodos/new(.:format)                      {:controller=>"periodos", :action=>"new"}
-                edit_periodo GET    /periodos/:id/edit(.:format)                 {:controller=>"periodos", :action=>"edit"}
-                     periodo GET    /periodos/:id(.:format)                      {:controller=>"periodos", :action=>"show"}
-                             PUT    /periodos/:id(.:format)                      {:controller=>"periodos", :action=>"update"}
-                             DELETE /periodos/:id(.:format)                      {:controller=>"periodos", :action=>"destroy"}
-                peticionlabs GET    /peticionlabs(.:format)                      {:controller=>"peticionlabs", :action=>"index"}
-                             POST   /peticionlabs(.:format)                      {:controller=>"peticionlabs", :action=>"create"}
-             new_peticionlab GET    /peticionlabs/new(.:format)                  {:controller=>"peticionlabs", :action=>"new"}
-            edit_peticionlab GET    /peticionlabs/:id/edit(.:format)             {:controller=>"peticionlabs", :action=>"edit"}
-                 peticionlab GET    /peticionlabs/:id(.:format)                  {:controller=>"peticionlabs", :action=>"show"}
-                             PUT    /peticionlabs/:id(.:format)                  {:controller=>"peticionlabs", :action=>"update"}
-                             DELETE /peticionlabs/:id(.:format)                  {:controller=>"peticionlabs", :action=>"destroy"}
-               solicitudlabs GET    /solicitudlabs(.:format)                     {:controller=>"solicitudlabs", :action=>"index"}
-                             POST   /solicitudlabs(.:format)                     {:controller=>"solicitudlabs", :action=>"create"}
-            new_solicitudlab GET    /solicitudlabs/new(.:format)                 {:controller=>"solicitudlabs", :action=>"new"}
-           edit_solicitudlab GET    /solicitudlabs/:id/edit(.:format)            {:controller=>"solicitudlabs", :action=>"edit"}
-                solicitudlab GET    /solicitudlabs/:id(.:format)                 {:controller=>"solicitudlabs", :action=>"show"}
-                             PUT    /solicitudlabs/:id(.:format)                 {:controller=>"solicitudlabs", :action=>"update"}
-                             DELETE /solicitudlabs/:id(.:format)                 {:controller=>"solicitudlabs", :action=>"destroy"}
-            solicitudlabexas GET    /solicitudlabexas(.:format)                  {:controller=>"solicitudlabexas", :action=>"index"}
-                             POST   /solicitudlabexas(.:format)                  {:controller=>"solicitudlabexas", :action=>"create"}
-         new_solicitudlabexa GET    /solicitudlabexas/new(.:format)              {:controller=>"solicitudlabexas", :action=>"new"}
-        edit_solicitudlabexa GET    /solicitudlabexas/:id/edit(.:format)         {:controller=>"solicitudlabexas", :action=>"edit"}
-             solicitudlabexa GET    /solicitudlabexas/:id(.:format)              {:controller=>"solicitudlabexas", :action=>"show"}
-                             PUT    /solicitudlabexas/:id(.:format)              {:controller=>"solicitudlabexas", :action=>"update"}
-                             DELETE /solicitudlabexas/:id(.:format)              {:controller=>"solicitudlabexas", :action=>"destroy"}
-                        dias GET    /dias(.:format)                              {:controller=>"dias", :action=>"index"}
-                             POST   /dias(.:format)                              {:controller=>"dias", :action=>"create"}
-                     new_dia GET    /dias/new(.:format)                          {:controller=>"dias", :action=>"new"}
-                    edit_dia GET    /dias/:id/edit(.:format)                     {:controller=>"dias", :action=>"edit"}
-                         dia GET    /dias/:id(.:format)                          {:controller=>"dias", :action=>"show"}
-                             PUT    /dias/:id(.:format)                          {:controller=>"dias", :action=>"update"}
-                             DELETE /dias/:id(.:format)                          {:controller=>"dias", :action=>"destroy"}
-                    horarios GET    /horarios(.:format)                          {:controller=>"horarios", :action=>"index"}
-                             POST   /horarios(.:format)                          {:controller=>"horarios", :action=>"create"}
-                 new_horario GET    /horarios/new(.:format)                      {:controller=>"horarios", :action=>"new"}
-                edit_horario GET    /horarios/:id/edit(.:format)                 {:controller=>"horarios", :action=>"edit"}
-                     horario GET    /horarios/:id(.:format)                      {:controller=>"horarios", :action=>"show"}
-                             PUT    /horarios/:id(.:format)                      {:controller=>"horarios", :action=>"update"}
-                             DELETE /horarios/:id(.:format)                      {:controller=>"horarios", :action=>"destroy"}
-                   horasexas GET    /horasexas(.:format)                         {:controller=>"horasexas", :action=>"index"}
-                             POST   /horasexas(.:format)                         {:controller=>"horasexas", :action=>"create"}
-                new_horasexa GET    /horasexas/new(.:format)                     {:controller=>"horasexas", :action=>"new"}
-               edit_horasexa GET    /horasexas/:id/edit(.:format)                {:controller=>"horasexas", :action=>"edit"}
-                    horasexa GET    /horasexas/:id(.:format)                     {:controller=>"horasexas", :action=>"show"}
-                             PUT    /horasexas/:id(.:format)                     {:controller=>"horasexas", :action=>"update"}
-                             DELETE /horasexas/:id(.:format)                     {:controller=>"horasexas", :action=>"destroy"}
-                   peticions GET    /peticions(.:format)                         {:controller=>"peticions", :action=>"index"}
-                             POST   /peticions(.:format)                         {:controller=>"peticions", :action=>"create"}
-                new_peticion GET    /peticions/new(.:format)                     {:controller=>"peticions", :action=>"new"}
-               edit_peticion GET    /peticions/:id/edit(.:format)                {:controller=>"peticions", :action=>"edit"}
-                    peticion GET    /peticions/:id(.:format)                     {:controller=>"peticions", :action=>"show"}
-                             PUT    /peticions/:id(.:format)                     {:controller=>"peticions", :action=>"update"}
-                             DELETE /peticions/:id(.:format)                     {:controller=>"peticions", :action=>"destroy"}
-           solicitudrecursos GET    /solicitudrecursos(.:format)                 {:controller=>"solicitudrecursos", :action=>"index"}
-                             POST   /solicitudrecursos(.:format)                 {:controller=>"solicitudrecursos", :action=>"create"}
-        new_solicitudrecurso GET    /solicitudrecursos/new(.:format)             {:controller=>"solicitudrecursos", :action=>"new"}
-       edit_solicitudrecurso GET    /solicitudrecursos/:id/edit(.:format)        {:controller=>"solicitudrecursos", :action=>"edit"}
-            solicitudrecurso GET    /solicitudrecursos/:id(.:format)             {:controller=>"solicitudrecursos", :action=>"show"}
-                             PUT    /solicitudrecursos/:id(.:format)             {:controller=>"solicitudrecursos", :action=>"update"}
-                             DELETE /solicitudrecursos/:id(.:format)             {:controller=>"solicitudrecursos", :action=>"destroy"}
-                 titulacions GET    /titulacions(.:format)                       {:controller=>"titulacions", :action=>"index"}
-                             POST   /titulacions(.:format)                       {:controller=>"titulacions", :action=>"create"}
-              new_titulacion GET    /titulacions/new(.:format)                   {:controller=>"titulacions", :action=>"new"}
-             edit_titulacion GET    /titulacions/:id/edit(.:format)              {:controller=>"titulacions", :action=>"edit"}
-                  titulacion GET    /titulacions/:id(.:format)                   {:controller=>"titulacions", :action=>"show"}
-                             PUT    /titulacions/:id(.:format)                   {:controller=>"titulacions", :action=>"update"}
-                             DELETE /titulacions/:id(.:format)                   {:controller=>"titulacions", :action=>"destroy"}
-                    recursos GET    /recursos(.:format)                          {:controller=>"recursos", :action=>"index"}
-                             POST   /recursos(.:format)                          {:controller=>"recursos", :action=>"create"}
-                 new_recurso GET    /recursos/new(.:format)                      {:controller=>"recursos", :action=>"new"}
-                edit_recurso GET    /recursos/:id/edit(.:format)                 {:controller=>"recursos", :action=>"edit"}
-                     recurso GET    /recursos/:id(.:format)                      {:controller=>"recursos", :action=>"show"}
-                             PUT    /recursos/:id(.:format)                      {:controller=>"recursos", :action=>"update"}
-                             DELETE /recursos/:id(.:format)                      {:controller=>"recursos", :action=>"destroy"}
-                laboratorios GET    /laboratorios(.:format)                      {:controller=>"laboratorios", :action=>"index"}
-                             POST   /laboratorios(.:format)                      {:controller=>"laboratorios", :action=>"create"}
-             new_laboratorio GET    /laboratorios/new(.:format)                  {:controller=>"laboratorios", :action=>"new"}
-            edit_laboratorio GET    /laboratorios/:id/edit(.:format)             {:controller=>"laboratorios", :action=>"edit"}
-                 laboratorio GET    /laboratorios/:id(.:format)                  {:controller=>"laboratorios", :action=>"show"}
-                             PUT    /laboratorios/:id(.:format)                  {:controller=>"laboratorios", :action=>"update"}
-                             DELETE /laboratorios/:id(.:format)                  {:controller=>"laboratorios", :action=>"destroy"}
-                 asignaturas GET    /asignaturas(.:format)                       {:controller=>"asignaturas", :action=>"index"}
-                             POST   /asignaturas(.:format)                       {:controller=>"asignaturas", :action=>"create"}
-              new_asignatura GET    /asignaturas/new(.:format)                   {:controller=>"asignaturas", :action=>"new"}
-             edit_asignatura GET    /asignaturas/:id/edit(.:format)              {:controller=>"asignaturas", :action=>"edit"}
-                  asignatura GET    /asignaturas/:id(.:format)                   {:controller=>"asignaturas", :action=>"show"}
-                             PUT    /asignaturas/:id(.:format)                   {:controller=>"asignaturas", :action=>"update"}
-                             DELETE /asignaturas/:id(.:format)                   {:controller=>"asignaturas", :action=>"destroy"}
-                    usuarios GET    /usuarios(.:format)                          {:controller=>"usuarios", :action=>"index"}
-                             POST   /usuarios(.:format)                          {:controller=>"usuarios", :action=>"create"}
-                 new_usuario GET    /usuarios/new(.:format)                      {:controller=>"usuarios", :action=>"new"}
-                edit_usuario GET    /usuarios/:id/edit(.:format)                 {:controller=>"usuarios", :action=>"edit"}
-                     usuario GET    /usuarios/:id(.:format)                      {:controller=>"usuarios", :action=>"show"}
-                             PUT    /usuarios/:id(.:format)                      {:controller=>"usuarios", :action=>"update"}
-                             DELETE /usuarios/:id(.:format)                      {:controller=>"usuarios", :action=>"destroy"}
-               new_solicitar GET    /solicitar/new(.:format)                     {:controller=>"solicitars", :action=>"new"}
-              edit_solicitar GET    /solicitar/edit(.:format)                    {:controller=>"solicitars", :action=>"edit"}
-                   solicitar GET    /solicitar(.:format)                         {:controller=>"solicitars", :action=>"show"}
-                             PUT    /solicitar(.:format)                         {:controller=>"solicitars", :action=>"update"}
-                             DELETE /solicitar(.:format)                         {:controller=>"solicitars", :action=>"destroy"}
-                             POST   /solicitar(.:format)                         {:controller=>"solicitars", :action=>"create"}
-                 new_session GET    /session/new(.:format)                       {:controller=>"sessions", :action=>"new"}
-                edit_session GET    /session/edit(.:format)                      {:controller=>"sessions", :action=>"edit"}
-                     session GET    /session(.:format)                           {:controller=>"sessions", :action=>"show"}
-                             PUT    /session(.:format)                           {:controller=>"sessions", :action=>"update"}
-                             DELETE /session(.:format)                           {:controller=>"sessions", :action=>"destroy"}
-                             POST   /session(.:format)                           {:controller=>"sessions", :action=>"create"}
-                  new_inicio GET    /inicio/new(.:format)                        {:controller=>"inicios", :action=>"new"}
-                 edit_inicio GET    /inicio/edit(.:format)                       {:controller=>"inicios", :action=>"edit"}
-                      inicio GET    /inicio(.:format)                            {:controller=>"inicios", :action=>"show"}
-                             PUT    /inicio(.:format)                            {:controller=>"inicios", :action=>"update"}
-                             DELETE /inicio(.:format)                            {:controller=>"inicios", :action=>"destroy"}
-                             POST   /inicio(.:format)                            {:controller=>"inicios", :action=>"create"}
-              new_userinicio GET    /userinicio/new(.:format)                    {:controller=>"userinicios", :action=>"new"}
-             edit_userinicio GET    /userinicio/edit(.:format)                   {:controller=>"userinicios", :action=>"edit"}
-                  userinicio GET    /userinicio(.:format)                        {:controller=>"userinicios", :action=>"show"}
-                             PUT    /userinicio(.:format)                        {:controller=>"userinicios", :action=>"update"}
-                             DELETE /userinicio(.:format)                        {:controller=>"userinicios", :action=>"destroy"}
-                             POST   /userinicio(.:format)                        {:controller=>"userinicios", :action=>"create"}
-                    new_dato GET    /dato/new(.:format)                          {:controller=>"datos", :action=>"new"}
-                   edit_dato GET    /dato/edit(.:format)                         {:controller=>"datos", :action=>"edit"}
-                        dato GET    /dato(.:format)                              {:controller=>"datos", :action=>"show"}
-                             PUT    /dato(.:format)                              {:controller=>"datos", :action=>"update"}
-                             DELETE /dato(.:format)                              {:controller=>"datos", :action=>"destroy"}
-                             POST   /dato(.:format)                              {:controller=>"datos", :action=>"create"}
-                             GET    /solicitudrecurso/new(.:format)              {:controller=>"solicitudrecursos", :action=>"new"}
-                             GET    /solicitudrecurso/edit(.:format)             {:controller=>"solicitudrecursos", :action=>"edit"}
-                             GET    /solicitudrecurso(.:format)                  {:controller=>"solicitudrecursos", :action=>"show"}
-                             PUT    /solicitudrecurso(.:format)                  {:controller=>"solicitudrecursos", :action=>"update"}
-                             DELETE /solicitudrecurso(.:format)                  {:controller=>"solicitudrecursos", :action=>"destroy"}
-                             POST   /solicitudrecurso(.:format)                  {:controller=>"solicitudrecursos", :action=>"create"}
-    solicitudrecursousuarios GET    /solicitudrecursousuarios(.:format)          {:controller=>"solicitudrecursousuarios", :action=>"index"}
-                             POST   /solicitudrecursousuarios(.:format)          {:controller=>"solicitudrecursousuarios", :action=>"create"}
- new_solicitudrecursousuario GET    /solicitudrecursousuarios/new(.:format)      {:controller=>"solicitudrecursousuarios", :action=>"new"}
-edit_solicitudrecursousuario GET    /solicitudrecursousuarios/:id/edit(.:format) {:controller=>"solicitudrecursousuarios", :action=>"edit"}
-     solicitudrecursousuario GET    /solicitudrecursousuarios/:id(.:format)      {:controller=>"solicitudrecursousuarios", :action=>"show"}
-                             PUT    /solicitudrecursousuarios/:id(.:format)      {:controller=>"solicitudrecursousuarios", :action=>"update"}
-                             DELETE /solicitudrecursousuarios/:id(.:format)      {:controller=>"solicitudrecursousuarios", :action=>"destroy"}
-        solicitudusuariolabs GET    /solicitudusuariolabs(.:format)              {:controller=>"solicitudusuariolabs", :action=>"index"}
-                             POST   /solicitudusuariolabs(.:format)              {:controller=>"solicitudusuariolabs", :action=>"create"}
-     new_solicitudusuariolab GET    /solicitudusuariolabs/new(.:format)          {:controller=>"solicitudusuariolabs", :action=>"new"}
-    edit_solicitudusuariolab GET    /solicitudusuariolabs/:id/edit(.:format)     {:controller=>"solicitudusuariolabs", :action=>"edit"}
-         solicitudusuariolab GET    /solicitudusuariolabs/:id(.:format)          {:controller=>"solicitudusuariolabs", :action=>"show"}
-                             PUT    /solicitudusuariolabs/:id(.:format)          {:controller=>"solicitudusuariolabs", :action=>"update"}
-                             DELETE /solicitudusuariolabs/:id(.:format)          {:controller=>"solicitudusuariolabs", :action=>"destroy"}
-     solicitudusuariolabexas GET    /solicitudusuariolabexas(.:format)           {:controller=>"solicitudusuariolabexas", :action=>"index"}
-                             POST   /solicitudusuariolabexas(.:format)           {:controller=>"solicitudusuariolabexas", :action=>"create"}
-  new_solicitudusuariolabexa GET    /solicitudusuariolabexas/new(.:format)       {:controller=>"solicitudusuariolabexas", :action=>"new"}
- edit_solicitudusuariolabexa GET    /solicitudusuariolabexas/:id/edit(.:format)  {:controller=>"solicitudusuariolabexas", :action=>"edit"}
-      solicitudusuariolabexa GET    /solicitudusuariolabexas/:id(.:format)       {:controller=>"solicitudusuariolabexas", :action=>"show"}
-                             PUT    /solicitudusuariolabexas/:id(.:format)       {:controller=>"solicitudusuariolabexas", :action=>"update"}
-                             DELETE /solicitudusuariolabexas/:id(.:format)       {:controller=>"solicitudusuariolabexas", :action=>"destroy"}
-                     cambiar        /usuarios/:id/cambiar                        {:controller=>"usuarios", :action=>"cambiar"}
-                        root        /                                            {:controller=>"sessions", :action=>"index"}
-                                    /anonimo/new                                 {:controller=>"anonimo", :action=>"new"}
-                                    /anonimo/general                             {:controller=>"anonimo", :action=>"general"}
-                                    /anonimo/labgeneral                          {:controller=>"anonimo", :action=>"labgeneral"}
-                                    /estadisticas/periodo_lectivo                {:controller=>"estadisticas", :action=>"periodo_lectivo"}
-                                    /estadisticas/periodo_examenes               {:controller=>"estadisticas", :action=>"periodo_examenes"}
-                                    /estadisticas/estadisticas_lectivo           {:controller=>"estadisticas", :action=>"estadisticas_lectivo"}
-                                    /estadisticas/estadisticas_examenes          {:controller=>"estadisticas", :action=>"estadisticas_examenes"}
-                                    /estadisticas/borrar_historico_lectivo       {:controller=>"estadisticas", :action=>"borrar_historico_lectivo"}
-                                    /estadisticas/borrar_historico_examenes      {:controller=>"estadisticas", :action=>"borrar_historico_examenes"}
-                                    /periodos/cambia_admision                    {:controller=>"periodos", :action=>"cambia_admision"}
-                                    /periodos/cambia_activo                      {:controller=>"periodos", :action=>"cambia_activo"}
-                                    /periodos/enviar_correo_lectivo_on           {:controller=>"periodos", :action=>"enviar_correo_lectivo_on"}
-                                    /periodos/enviar_correo_activo_off           {:controller=>"periodos", :action=>"enviar_correo_activo_off"}
-                                    /periodos/enviar_correo_activo_on            {:controller=>"periodos", :action=>"enviar_correo_activo_on"}
-                                    /periodos/enviar_correo_lectivo_off          {:controller=>"periodos", :action=>"enviar_correo_lectivo_off"}
-                                    /periodos/grabar_historico                   {:controller=>"periodos", :action=>"grabar_historico"}
-                                    /periodos/grabar_historico_examen            {:controller=>"periodos", :action=>"grabar_historico_examen"}
-                                    /solicitar/anadir                            {:controller=>"solicitar", :action=>"anadir"}
-                                    /solicitar/eliminar                          {:controller=>"solicitar", :action=>"eliminar"}
-                                    /asignaturas/combo_por_titulacion            {:controller=>"asignaturas", :action=>"combo_por_titulacion"}
-                                    /asignaturas/combo_por_descripcion           {:controller=>"recursos", :action=>"combo_por_descripcion"}
-                                    /asignaturas/combo_por_nivel                 {:controller=>"asignaturas", :action=>"combo_por_nivel"}
-                                    /usuarios/listar                             {:controller=>"usuarios", :action=>"listar"}
-                                    /asignaturas/listar                          {:controller=>"asignaturas", :action=>"listar"}
-                                    /recursos/listar                             {:controller=>"recursos", :action=>"listar"}
-                                    /solicitudlabs/listar                        {:controller=>"solicitudlabs", :action=>"listar"}
-                                    /solicitudlabexas/listar                     {:controller=>"solicitudlabexas", :action=>"listar"}
-                                    /solicitudusuariolabexas/listar              {:controller=>"solicitudusuariolabexas", :action=>"listar"}
-                                    /solicitudrecursos/listar                    {:controller=>"solicitudrecursos", :action=>"listar"}
-                                    /solicitudrecursos/borrar_reservas           {:controller=>"solicitudrecursos", :action=>"borrar_reservas"}
-                                    /solicitudrecursousuarios/listar             {:controller=>"solicitudrecursousuarios", :action=>"listar"}
-                                    /solicitudrecursousuarios/buscar             {:controller=>"solicitudrecursousuarios", :action=>"buscar"}
-                                    /solicitudusuariolabs/listar                 {:controller=>"solicitudusuariolabs", :action=>"listar"}
-                                    /solicitudrecursos/buscar                    {:controller=>"solicitudrecursos", :action=>"buscar"}
-                                    /solicitudrecursos/crear                     {:controller=>"solicitudrecursos", :action=>"crear"}
-                                    /solicitudrecursos/borra                     {:controller=>"solicitudrecursos", :action=>"borra"}
-                                    /solicitudrecursousuarios/borra              {:controller=>"solicitudrecursousuarios", :action=>"borra"}
-                                    /asignacions/mover                           {:controller=>"asignacions", :action=>"mover"}
-                                    /asignacions/revisar                         {:controller=>"asignacions", :action=>"revisar"}
-                                    /asignacions/asignar                         {:controller=>"asignacions", :action=>"asignar"}
-                                    /asignacions/asignar_iniciar                 {:controller=>"asignacions", :action=>"asignar_iniciar"}
-                                    /asignacions/asignar_continuar               {:controller=>"asignacions", :action=>"asignar_continuar"}
-                                    /asignacions/grabar_parcial                  {:controller=>"asignacions", :action=>"grabar_parcial"}
-                                    /asignacions/grabar_asignacion               {:controller=>"asignacions", :action=>"grabar_asignacion"}
-                                    /asignacions/index                           {:controller=>"asignacions", :action=>"index"}
-                                    /asignacions/consulta                        {:controller=>"asignacions", :action=>"consulta"}
-                                    /asignacions/asigna_directa                  {:controller=>"asignacions", :action=>"asigna_directa"}
-                                    /asignacions/graba                           {:controller=>"asignacions", :action=>"graba"}
-                                    /asignacions/borradir                        {:controller=>"asignacions", :action=>"borradir"}
-                                    /asignacions/borradirasignada                {:controller=>"asignacions", :action=>"borradirasignada"}
-                                    /asignacions/borranormal                     {:controller=>"asignacions", :action=>"borranormal"}
-                                    /asignacions/borranormalasignada             {:controller=>"asignacions", :action=>"borranormalasignada"}
-                                    /listado/asignacion_lectivo_impresa          {:controller=>"listado", :action=>"asignacion_lectivo_impresa"}
-                                    /listado/asignacion_examenes_impresa         {:controller=>"listado", :action=>"asignacion_examenes_impresa"}
-                                    /listado/asignacion_lectivo_usuario_impresa  {:controller=>"listado", :action=>"asignacion_lectivo_usuario_impresa"}
-                                    /listado/asignacion_examenes_usuario_impresa {:controller=>"listado", :action=>"asignacion_examenes_usuario_impresa"}
-                                    /consultasasig/asignar                       {:controller=>"consultasasig", :action=>"asignar"}
-                                    /consultasasig/porusuario                    {:controller=>"consultasasig", :action=>"porusuario"}
-                                    /consultasasig/general                       {:controller=>"consultasasig", :action=>"general"}
-                                    /consultasasig/labgeneral                    {:controller=>"consultasasig", :action=>"labgeneral"}
-                                    /consultasasig/labporusuario                 {:controller=>"consultasasig", :action=>"labporusuario"}
-                                    /consultasasig/listar                        {:controller=>"consultasasig", :action=>"listar"}
-                                    /asignacionexas/mover                        {:controller=>"asignacionexas", :action=>"mover"}
-                                    /asignacionexas/revisar                      {:controller=>"asignacionexas", :action=>"revisar"}
-                                    /asignacionexas/asignar                      {:controller=>"asignacionexas", :action=>"asignar"}
-                                    /asignacionexas/asignar_iniciar              {:controller=>"asignacionexas", :action=>"asignar_iniciar"}
-                                    /asignacionexas/asignar_continuar            {:controller=>"asignacionexas", :action=>"asignar_continuar"}
-                                    /asignacionexas/grabar_parcial               {:controller=>"asignacionexas", :action=>"grabar_parcial"}
-                                    /asignacionexas/grabar_asignacion            {:controller=>"asignacionexas", :action=>"grabar_asignacion"}
-                                    /asignacionexas/index                        {:controller=>"asignacionexas", :action=>"index"}
-                                    /asignacionexas/consulta                     {:controller=>"asignacionexas", :action=>"consulta"}
-                                    /asignacionexas/asigna_directa               {:controller=>"asignacionexas", :action=>"asigna_directa"}
-                                    /asignacionexas/graba                        {:controller=>"asignacionexas", :action=>"graba"}
-                                    /asignacionexas/borradir                     {:controller=>"asignacionexas", :action=>"borradir"}
-                                    /asignacionexas/borradirasignada             {:controller=>"asignacionexas", :action=>"borradirasignada"}
-                                    /asignacionexas/borranormal                  {:controller=>"asignacionexas", :action=>"borranormal"}
-                                    /asignacionexas/borranormalasignada          {:controller=>"asignacionexas", :action=>"borranormalasignada"}
-                                    /asignacionexas/listar                       {:controller=>"asignacionexas", :action=>"listar"}
-                                    /consultasasigexa/asignar                    {:controller=>"consultasasigexa", :action=>"asignar"}
-                                    /consultasasigexa/porusuario                 {:controller=>"consultasasigexa", :action=>"porusuario"}
-                                    /consultasasigexa/general                    {:controller=>"consultasasigexa", :action=>"general"}
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	deleted:    app/views/asignacions/---asignar_iniciar.js.erb
+#	modified:   app/views/periodos/_control_adjudicacion_examen_off.html.erb
+#	modified:   app/views/periodos/_control_adjudicacion_examen_on.html.erb
+#	modified:   app/views/periodos/_control_adjudicacion_off.html.erb
+#	modified:   app/views/periodos/_control_adjudicacion_on.html.erb
+#	modified:   app/views/periodos/_control_admision_examen_off.html.erb
+#	modified:   app/views/periodos/_control_admision_examen_on.html.erb
+#	modified:   app/views/periodos/_control_admision_off.html.erb
+#	modified:   app/views/periodos/_control_admision_on.html.erb
+#	new file:   app/views/periodos/cambia_activo.js.erb
+#	new file:   app/views/periodos/cambia_admision.js.erb
+#	modified:   app/views/periodos/edit.html.erb
+#	new file:   app/views/periodos/enviar_correo_activo_off.js.erb
+#	new file:   app/views/periodos/enviar_correo_activo_on.js.erb
+#	new file:   app/views/periodos/enviar_correo_lectivo_off.js.erb
+#	new file:   app/views/periodos/enviar_correo_lectivo_on.js.erb
+#	new file:   app/views/periodos/grabar_historico_examen.js.erb
+#	modified:   app/views/periodos/new.html.erb
+#	renamed:    app/views/recursos/new.html.erb -> app/views/recursos/_add_or_edit.html.erb
+#	modified:   app/views/recursos/edit.html.erb
+#	modified:   app/views/recursos/index.html.erb
+#	new file:   app/views/recursos/listar.js.erb
+#	modified:   app/views/recursos/new.html.erb
+#	new file:   app/views/sessions/new.js.erb
+#	new file:   app/views/solicitar/--anadir.js.rjs
+#	new file:   app/views/solicitar/anadir.js.erb
+#	new file:   app/views/solicitar/eliminar.js.erb
+#	new file:   app/views/solicitudlabexas/--listar.js.rjs
+#	modified:   app/views/solicitudlabexas/_items_lista.html.erb
+#	modified:   app/views/solicitudlabexas/edit.html.erb
+#	modified:   app/views/solicitudlabexas/index.html.erb
+#	new file:   app/views/solicitudlabexas/listar.js.erb
+#	modified:   app/views/solicitudlabexas/new.html.erb
+#	modified:   app/views/solicitudlabs/_items_lista.html.erb
+#	modified:   app/views/solicitudlabs/_muestra_tramo.html.erb
+#	new file:   app/views/solicitudlabs/create_solicitud.js.erb
+#	modified:   app/views/solicitudlabs/edit.html.erb
+#	modified:   app/views/solicitudlabs/index.html.erb
+#	new file:   app/views/solicitudlabs/listar.js.erb
+#	modified:   app/views/solicitudlabs/new.html.erb
+#	modified:   app/views/solicitudrecursos/_items_lista.html.erb
+#	modified:   app/views/solicitudrecursos/_muestra_tramo.html.erb
+#	modified:   app/views/solicitudrecursos/_recurso_reservado.html.erb
+#	new file:   app/views/solicitudrecursos/anadir.js.erb
+#	new file:   app/views/solicitudrecursos/borra.js.erb
+#	new file:   app/views/solicitudrecursos/borrar_reservas.js.erb
+#	new file:   app/views/solicitudrecursos/buscar.js.erb
+#	new file:   app/views/solicitudrecursos/create.js.erb
+#	new file:   app/views/solicitudrecursos/destroy.js.erb
+#	modified:   app/views/solicitudrecursos/edit.html.erb
+#	modified:   app/views/solicitudrecursos/index.html.erb
+#	new file:   app/views/solicitudrecursos/listar.js.erb
+#	modified:   app/views/solicitudrecursos/new.html.erb
+#	modified:   app/views/solicitudrecursousuarios/_items_lista.html.erb
+#	modified:   app/views/solicitudrecursousuarios/_recurso_reservado.html.erb
+#	new file:   app/views/solicitudrecursousuarios/borra.js.erb
+#	new file:   app/views/solicitudrecursousuarios/buscar.js.erb
+#	new file:   app/views/solicitudrecursousuarios/create.js.erb
+#	modified:   app/views/solicitudrecursousuarios/index.html.erb
+#	new file:   app/views/solicitudrecursousuarios/listar.js.erb
+#	modified:   app/views/solicitudrecursousuarios/new.html.erb
+#	modified:   app/views/solicitudusuariolabexas/_items_lista.html.erb
+#	modified:   app/views/solicitudusuariolabexas/edit.html.erb
+#	modified:   app/views/solicitudusuariolabexas/index.html.erb
+#	new file:   app/views/solicitudusuariolabexas/listar.js.erb
+#	modified:   app/views/solicitudusuariolabexas/new.html.erb
+#	renamed:    app/views/solicitudusuariolabs/new.html.erb -> app/views/solicitudusuariolabs/_add_or_edit.html.erb
+#	modified:   app/views/solicitudusuariolabs/_items_lista.html.erb
+#	modified:   app/views/solicitudusuariolabs/edit.html.erb
+#	modified:   app/views/solicitudusuariolabs/index.html.erb
+#	new file:   app/views/solicitudusuariolabs/listar.js.erb
+#	modified:   app/views/solicitudusuariolabs/new.html.erb
+#	renamed:    app/views/usuarios/new.html.erb -> app/views/usuarios/_add_or_edit.html.erb
+#	modified:   app/views/usuarios/edit.html.erb
+#	modified:   app/views/usuarios/index.html.erb
+#	new file:   app/views/usuarios/listar.js.erb
+#	modified:   app/views/usuarios/new.html.erb
+#	new file:   public/javascripts/jquery-color.js
+#
+# Changes not staged for commit:
+#   (use "git add/rm <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   Gemfile
+#	modified:   Gemfile.lock
+#	modified:   Rakefile
+#	modified:   app/controllers/application_controller.rb
+#	modified:   app/controllers/asignacions_controller.rb
+#	modified:   app/controllers/asignaturas_controller.rb
+#	modified:   app/controllers/listado_controller.rb
+#	modified:   app/controllers/periodos_controller.rb
+#	modified:   app/controllers/recursos_controller.rb
+#	modified:   app/controllers/sessions_controller.rb
+#	modified:   app/controllers/solicitar_controller.rb
+#	modified:   app/controllers/solicitudlabexas_controller.rb
+#	modified:   app/controllers/solicitudlabs_controller.rb
+#	modified:   app/controllers/solicitudrecursos_controller.rb
+#	modified:   app/controllers/solicitudrecursousuarios_controller.rb
+#	modified:   app/controllers/solicitudusuariolabexas_controller.rb
+#	modified:   app/controllers/solicitudusuariolabs_controller.rb
+#	modified:   app/controllers/solicitudusuarioslab_controller.rb
+#	modified:   app/controllers/usuarios_controller.rb
+#	modified:   app/helpers/application_helper.rb
+#	modified:   app/models/correo_tecnicos.rb
+#	modified:   app/models/periodo.rb
+#	modified:   app/models/solicitudhoraria.rb
+#	modified:   app/models/solicitudlab.rb
+#	modified:   app/models/solicitudlabexa.rb
+#	modified:   app/models/usuario.rb
+#	modified:   app/views/asignacions/asignar.html.erb
+#	deleted:    app/views/asignaturas/_combo_por_titulacion.html.erb~
+#	modified:   app/views/asignaturas/index.html.erb
+#	deleted:    app/views/asignaturas/index.html.erb~
+#	modified:   app/views/asignaturas/listar.js.erb
+#	modified:   app/views/layouts/application.html.erb
+#	modified:   app/views/layouts/asignacions.html.erb
+#	modified:   app/views/layouts/recursos.html.erb
+#	modified:   app/views/layouts/solicitudlabexas.html.erb
+#	modified:   app/views/layouts/solicitudlabexas.html.erb~
+#	modified:   app/views/layouts/solicitudlabs.html.erb
+#	deleted:    app/views/layouts/solicitudrecursos.html.erb~
+#	deleted:    app/views/layouts/solicitudrecursousuarios.html.erb~
+#	modified:   app/views/layouts/solicitudusuariolabexas.html.erb
+#	deleted:    app/views/layouts/solicitudusuariolabexas.html.erb~
+#	modified:   app/views/layouts/solicitudusuariolabs.html.erb
+#	deleted:    app/views/layouts/solicitudusuariolabs.html.erb~
+#	modified:   app/views/layouts/usuarios.html.erb
+#	deleted:    app/views/listado/asignacion_examenes_impresa.html.erb~
+#	deleted:    app/views/listado/asignacion_examenes_usuario_impresa.html.erb~
+#	modified:   app/views/listado/asignacion_lectivo_impresa.html.erb
+#	deleted:    app/views/listado/asignacion_lectivo_impresa.html.erb~
+#	deleted:    app/views/listado/asignacion_lectivo_usuario_impresa.html.erb~
+#	deleted:    app/views/recursos/edit.html.erb~
+#	modified:   app/views/sessions/new.html.erb
+#	deleted:    app/views/solicitar/anadir.js.rjs
+#	deleted:    app/views/solicitudlabexas/listar.js.rjs
+#	deleted:    app/views/solicitudlabs/_muestra_tramo.html.erb~
+#	modified:   config/application.rb
+#	modified:   config/routes.rb
+#	modified:   db/development.sqlite3
+#	deleted:    ff
+#	modified:   fichero.txt
+#	modified:   log/development.log
+#	deleted:    public/javascripts/controls.js
+#	deleted:    public/javascripts/dragdrop.js
+#	deleted:    public/javascripts/effects.js
+#	deleted:    public/javascripts/prototype.js
+#	deleted:    public/javascripts/rails.js
+#	modified:   script/server
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	app/views/asignaturas/----combo_por_titulacion.js.rjs
+#	app/views/asignaturas/_combo_por_nivel.html.erb
+#	app/views/asignaturas/combo_por_nivel.js.erb
+#	app/views/asignaturas/combo_por_titulacion.js.erb
+#	vendor/

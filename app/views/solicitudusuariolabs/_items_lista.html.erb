@@ -54,9 +54,9 @@
                            <% end %></td>
             <td class="fecha"><%= fecha_europea(i.fechasol) %></td>  
             <td><% asig=Asignatura.find(i.asignatura_id) %>
-                <%= "<a onmouseover=ShowContent('asignatura"+i.id.to_s+"'); return true;
-   			   onmouseout=HideContent('asignatura"+i.id.to_s+"'); return true;>" %>
-                           <%= "<div id=asignatura"+i.id.to_s %> 
+                <a onmouseover=ShowContent("asignatura<%=i.id.to_s%>"); return true;
+   			   onmouseout=HideContent("asignatura<%=i.id.to_s%>"); return true;>
+                           <div id="asignatura<%=i.id.to_s %>" 
 				style='display:none;position:absolute;
       					border-style: solid;
       					background-color: white;width:300px;
@@ -78,13 +78,13 @@
                    <%=render(:partial => "/solicitudrecursos/tramo_peticion", :collection=> @tramos ) %>
                 </table>
             </td>
-            <td style="text-align:center"><%= "<a onmouseover=ShowContent('"+"flotante"+i.id.to_s+"'); return true;
-   			   onmouseout=HideContent('"+"flotante"+i.id.to_s+"'); return true;>"  %>
-                            <%= "<div id="+"flotante"+i.id.to_s+" 
+            <td style="text-align:center"><a onmouseover=ShowContent("flotante<%=i.id.to_s%>"); return true;
+   			   onmouseout=HideContent("flotante<%=i.id.to_s%>"); return true;>
+                            <div id="flotante<%=i.id.to_s%>" 
 				style='display:none;position:absolute;width:200px;
       					border-style: solid;
       					background-color: white;
-      					padding: 5px;';>" %>
+      					padding: 5px;';>
                                         <%=i.comentarios %>
 			    </div><!-- se visualiza el comentario -->
 			    <%="SI" unless i.comentarios=="" %></a><!-- se indica si hay comentario que visualizar --></td>
@@ -96,7 +96,7 @@
             <td class="icono"><% if (i.tipo!="X" and !periodo.nil? and total==0) or i.asignado!="D"  %>
                               <!-- solicitudes que reflejan asignaciones directas de admin o periodos no vigentes-->
                                  <%= link_to image_tag("borrar.png", :border=>0), solicitudusuariolab_path(i), 
-                                    :confirm => 'Seguro que desea eliminar la solicitud?', :method => :delete %>
+                                    :confirm => '¿Seguro que desea eliminar la solicitud?', :method => :delete %>
                                  <% else %>
                                    <% if i.tipo=="X" %>
                                     Asignaci&oacute;n directa

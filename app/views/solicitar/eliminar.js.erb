@@ -1,0 +1,21 @@
+$('#tramos').html("<%= escape_javascript(render :partial => 'solicitudlabs/muestra_tramo',:collection=>session[:tramos_horarios].solicitudes) %>");
+
+<% if (session[:tramos_horarios].solicitudes.size==0) %>
+
+$('#tramos').html("<%= escape_javascript(render :partial => 'solicitudlabs/vacio',:collection=>session[:tramos_horarios].solicitudes) %>");
+
+$('#tramos').css({'background-color':'#010080'});
+ $("#tramos").animate({'background-color':'#f6ecd5'}, 1000);
+<%   end %>
+
+/*page.replace_html(:'tramos', 
+                  :partial=>"/solicitudlabs/muestra_tramo", 
+                  :collection=>session[:tramos_horarios].solicitudes)
+
+page.replace_html(:'tramos', 
+                  :partial=>"/solicitudlabs/vacio")   if session[:tramos_horarios].solicitudes.size==0
+
+page[:tramostramos].visual_effect :highlight,
+                            :startcolor => "#010080" ,
+                            :endcolor => "#f6ecd5"    if session[:tramos_horarios].solicitudes.size==0
+*/

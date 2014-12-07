@@ -1,0 +1,5 @@
+$("#errores").html("");
+
+ <% if flash[:notice] %>
+$("#errores").html("<div id='errorExplanation' style='top:400px'><p>Imposible crear la solicitud:</p><ul><li><%=escape_javascript (flash[:notice]) %></li></ul></div>");
+<%end%>

@@ -1,0 +1,19 @@
+<% if !@p.activo 
+      if @p.tipo=="Examenes" %>
+            $('#activo').html("<%= escape_javascript(render :partial => 'control_adjudicacion_examen_on') %>");
+       <%
+      else %>
+      $('#activo').html("<%= escape_javascript(render :partial => 'control_adjudicacion_on') %>");
+      <%
+      end
+     else
+       if @p.tipo=="Examenes" %>
+          $('#activo').html("<%= escape_javascript(render :partial => 'control_adjudicacion_examen_off') %>");
+       <%
+      else %> 
+      $('#activo').html("<%= escape_javascript(render :partial => 'control_adjudicacion_off') %>");
+       <%
+      end
+     end %>
+
+

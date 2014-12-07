@@ -10,11 +10,15 @@ class ApplicationController < ActionController::Base
 
   before_filter :comprobar_usuario_login
 
+
   protected
 #def comprobar_usuario_login
      #  return unless session[:user_id]
      #  @usuario_actual = Usuario.find_by_id(session[:user_id])
     #end
+
+
+
 
     def comprobar_usuario_login
       @usuario_actual=nil

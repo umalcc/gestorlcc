@@ -105,7 +105,7 @@ class SolicitudusuariolabexasController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.all('especial=?',"t") 
+    @especiales=Laboratorio.where('especial=?',"t").all
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -131,7 +131,7 @@ class SolicitudusuariolabexasController < ApplicationController
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else
-        format.html { redirect_to :action => "edit"}
+        format.html { render :action => "edit"}
         format.xml  { render :xml => @solicitudlabexa.errors, :status => :unprocessable_entity }
       end
    
@@ -169,16 +169,16 @@ class SolicitudusuariolabexasController < ApplicationController
 
     cadena=(cadena.nil?)? "%" : "%#{cadena}%"
     
-    @usuarios=Usuario.all("nombre || apellidos LIKE ?",cadena)
+    @usuarios=Usuario.where("nombre || apellidos LIKE ?",cadena).all
     codigos_u=@usuarios.map { |t| t.id}
-    @asignaturas=Asignatura.all("nombre_asig || abrevia_asig || curso LIKE ?",cadena)
+    @asignaturas=Asignatura.where("nombre_asig || abrevia_asig || curso LIKE ?",cadena).all
     codigos_a=@asignaturas.map { |t| t.id}
-    @labs_especiales=Laboratorio.all("ssoo || nombre_lab like ? and especial=?",cadena,"t")
+    @labs_especiales=Laboratorio.where("ssoo || nombre_lab like ? and especial=?",cadena,"t").all
     nombre_l=@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'si'+';'}
     nombre_l=nombre_l+@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'no'+';'}
-    @solicitudlabexas=Solicitudlabexa.all("usuario_id == ? and (npuestos || curso || fecha || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or preferencias in (?))", session[:user_id], cadena, codigos_u, codigos_a, nombre_l)
+    @solicitudlabexas=Solicitudlabexa.where("usuario_id == ? and (npuestos || curso || fecha || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or preferencias in (?))", session[:user_id], cadena, codigos_u, codigos_a, nombre_l).all
     @cuenta=@solicitudlabexas.size
-    #respond_to {|format| format.js }
+    respond_to {|format| format.js }
   end
 
  

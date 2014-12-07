@@ -19,10 +19,6 @@
                :id=>"DPC_fin_DD-MM-YYYY",:value=>@dia  %></dd>
           <dt>Tipo *</dt>
           <dd><%= select_tag "tipo", options_for_select(["Lectivo","Examenes","Festivo"]) %></dd>
-              <%= observe_field "tipo",
-                   :frecuency => 1,
-                   :function =>"if (value!='Festivo') document.getElementById('opcional').style.visibility='visible'
-                               else if (value=='Festivo') document.getElementById('opcional').style.visibility='hidden'" %> 
               <div id="opcional" style="visibility:visible">
                 <dt>F.Inic. Solicitudes</dt>
                 <dd><%= f.text_field :iniciosol, :size=>12, :name=>"iniciosol",  
@@ -33,7 +29,7 @@
               </div>
               <%= f.hidden_field :activo,:value=>:false %>
               <%= f.hidden_field :activo,:value=>:false %>
-          <p><%= f.submit 'Crear', :class=>"boton" %></p>
+          <p><%= f.submit 'Guardar', :class=>"boton" %></p>
         </dl>
      </div><!-- de recuadro-azul -->
 
@@ -45,3 +41,23 @@
 
    </div><!-- de recuadro -->
 </div><!-- de central -->
+
+
+<script type="text/javascript">
+$(function()
+  {
+    $("#tipo").change(function()
+    {
+      var val=$("#tipo").val();
+      if(val!='Festivo')
+      {
+       $("#opcional").css('visibility', 'visible');
+      }
+      else
+      {
+         $("#opcional").css('visibility', 'hidden');
+      }
+      
+    });
+  });
+</script>

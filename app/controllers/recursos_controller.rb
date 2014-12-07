@@ -80,9 +80,12 @@ before_filter :login_requerido, :admin?
 
   def listar
     cadena=(params[:query].nil?)? "%" : "%#{params[:query]}%"
-    @recursos=Recurso.all("descripcion||identificador||caracteristicas LIKE ?",cadena)
+    @recursos=Recurso.where("descripcion||identificador||caracteristicas LIKE ?",cadena).all
     @cuenta=@recursos.size
-    #respond_to {|format| format.js }
+    logger.debug "RECURSO"
+    respond_to do |format|
+      format.js
+    end
   end
 
 

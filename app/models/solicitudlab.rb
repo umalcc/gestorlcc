@@ -17,7 +17,7 @@ if self.tipo!='X'  # si es una asignacion directa de admin
       self.tipo="C"
    else 
       # no funciona para el periodo entero
-      if !Periodo.first('inicio= ? and fin = ?',self.fechaini,self.fechafin).nil?
+      if !Periodo.where('inicio= ? and fin = ?',self.fechaini,self.fechafin).first.nil?
          self.tipo="T"
       else
          self.tipo="I"

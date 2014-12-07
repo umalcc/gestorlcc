@@ -16,14 +16,14 @@
         <% for  r in @recs %>
            <th style="padding: 5px 0px;">
 
-             <%= "<a onmouseover=ShowContent('recurso"+r.id.to_s+"'); return true;
-   			   onmouseout=HideContent('recurso"+r.id.to_s+"'); return true;>" %>
-                           <%= "<div id=recurso"+r.id.to_s %> 
+             <a onmouseover=ShowContent('recurso<%=r.id.to_s %>'); return true;
+   			   onmouseout=HideContent('recurso<%= r.id.to_s%>'); return true;>
+                           <div id="recurso<%= r.id.to_s %>" 
 				style='display:none;position:absolute;
       					border-style: solid;
       					background-color: white;
       					padding: 5px;
-                                        width:300px;';>
+                                        width:300px;'>
                                         <%= r.caracteristicas %>
 			    </div>
               <%= r.descripcion+" : "+r.identificador %></a></th>
@@ -41,13 +41,13 @@
 	    <% reserva=@reservas.select{|m| m.tipo==r.identificador && m.horaini==Recurso::HORAS[i]}   %>
             <% if !reserva.empty? %>
               <td id="celda_ocupada" style="text-align:center"><% profesor=reserva[0].usuario %>
-                            <%= "<a onmouseover=ShowContent('"+"flotante"+fila.to_s+columna.to_s+"'); return true;
-   			   onmouseout=HideContent('"+"flotante"+fila.to_s+columna.to_s+"'); return true;>"  %>
-                            <%= "<div id="+"flotante"+fila.to_s+columna.to_s+" 
+                            <a onmouseover=ShowContent("flotante<%=fila.to_s+columna.to_s%>"); return true;
+   			   onmouseout=HideContent("flotante<%=fila.to_s+columna.to_s%>"); return true;>
+                            <div id="flotante<%=fila.to_s+columna.to_s%>" 
 				style='display:none;position:absolute;
       					border-style: solid;
       					background-color: white;
-      					padding: 5px;';>" %>
+      					padding: 5px;'>
                                         <%=profesor.nombre+' '+profesor.apellidos%><br> 
        					Despacho: <%= profesor.despacho %><br>
                                         Telefono: <%= profesor.telefono %><br>
@@ -55,33 +55,34 @@
 			    </div><!-- los datos detallados de quien ocupa el recurso -->
 			    <%=profesor.nombre+' '+profesor.apellidos%></a><br/><!-- nombre y apellidos del profesor -->
                             <% formid2="formborra"+fila.to_s+columna.to_s %>
-			    <%= "<div id="+formid2+" >"%>
+			    <div id="<%= formid2%>" >
                              <%= hidden_field_tag "reserva", value=reserva[0].id %>
                             </div>
                             <% if Date.today <=reserva[0].fechareserva %>         
-			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>'cursor:pointer'),
-                                :submit=> formid2, 
+			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>'cursor:pointer'),"#",:name => "borrar" %>
+                              <!-- para eliminar la reserva -->        
+                            <!--   :submit=> formid2, 
                                 :url=>{ :controller=>'solicitudrecursos',:action => 'borra' },
-                                :before => "confirm('Seguro que desea eliminar la reserva?')", :remote => true %><!-- para eliminar la reserva -->        
-                            
+                                :before => "confirm('Seguro que desea eliminar la reserva?')", :remote => true %>-->
                             <% end %><!-- solo puedo eliminar reservas de fechas futuras -->
 	      </td>
             <% else %>
               <td id="celda_libre" style="text-align:center">
                             <% formid="form"+fila.to_s+columna.to_s %>
-		            <%= "<div id="+formid+" >"%>
-			    <%= "<a onclick=ShowContent('"+"flotanteform"+fila.to_s+columna.to_s+"'); return true; style='cursor:pointer'>" %>Reservar</a>
-                            <%= "<div id="+"flotanteform"+fila.to_s+columna.to_s+" 
+		            <div id="formid">
+			    <a onclick=ShowContent("flotanteform<%=fila.to_s+columna.to_s%>"); return true; style='cursor:pointer'>Reservar</a>
+                            <div id="flotanteform<%=fila.to_s+columna.to_s%>" 
 				        style='display:none;position:absolute;
       					        border-style: solid;
       					        background-color: #f6ecd5;
-      					        padding: 5px;';>" %>
+      					        padding: 5px;'>
                                                 <table class=flotante><!-- formulario para la reserva -->
                                                  <tr>
                                                    <td></td>
-                                                   <td align=right valign=top><%=image_tag("icon_close.png",:border=>0,
-                                                        :style=>'cursor:pointer',
-                                                        :onclick=>"HideContent('"+"flotanteform"+fila.to_s+columna.to_s+"')")%>
+                                                   <td align=right valign=top>
+                                                   <a onclick=HideContent("flotanteform<%=fila.to_s+columna.to_s%>");return true;>
+                                                   <%=image_tag("icon_close.png",:border=>0,:style=>'cursor:pointer') %>
+                                                        </a>
                                                    </td>
                                                  </tr>
                                                  <tr>
@@ -94,16 +95,15 @@
                                                    <td>Motivos </td>
                                                    <td> <%= text_area_tag "motivos",nil,:cols=>30,:rows=>3 %></td> 
                                                  </tr>
-                                        	 <%= hidden_field_tag "tipo", value=r.identificador %>
-                                        	 <%= hidden_field_tag "horai", value=Recurso::HORAS[i] %>
-                                        	 <%= hidden_field_tag "horaf", value=Recurso::HORAS[i+1] %>
-                                        	 <%= hidden_field_tag "fechasol",value=Date.today %>
+                                                 <tr>
+                                        	 <td><%= hidden_field_tag "tipo", value=r.identificador %></td>
+                                        	 <td><%= hidden_field_tag "horai", value=Recurso::HORAS[i] %></td>
+                                        	 <td><%= hidden_field_tag "horaf", value=Recurso::HORAS[i+1] %></td>
+                                        	 <td><%= hidden_field_tag "fechasol",value=Date.today %></td></tr>
 						 <tr>
                                                    <td></td>
-                                                   <td><%= button_to ( "Reservar"),
-					    	             :success=>"HideContent('"+"flotanteform"+fila.to_s+columna.to_s+"')",
-                                            	             :submit=> formid, 
-                                            	             :url=> { :controller=>'solicitudrecursos',:action => 'create' }, :remote => true%></td>
+                                                   <td><input data-form="flotanteform<%=fila.to_s+columna.to_s%>" type="button" name="reservar" value="Reservar"/></td>
+                                                   <!--<td><= button_to  Reservar22,{},{name => reservar}></td>-->
                                                  </tr>
                                                 </table><!-- del formulario de reserva -->
                                  </div><!-- del flotanteform -->
@@ -117,3 +117,48 @@
 <% end %><!-- de if @festivo -->
 
 
+
+
+<script type="text/javascript">
+$(function()
+{
+$("a[name=borrar]").click(function()
+{
+  var mensaje="¿Seguro que desea eliminar la reserva?";
+  if(confirm(mensaje))
+  {
+    var url="/solicitudrecursos/borra";
+    var data=$(this).parent().find("input[name=reserva]").val();
+    $.ajax({
+      type:"POST",
+      url:url,
+      data:{reserva:data}
+    });
+  }
+   
+});
+
+
+  $("input[name=reservar]").click(function(event)
+    {
+      //event.preventDefault(); 
+      var id=$(this).data("form");
+     var $this=$("#"+id);
+      var url="/solicitudrecursos/crear";
+       var tipo=$this.find("input[name=tipo]").val();
+       var motivos=$this.find("textarea[name=motivos]").val();
+      var horai=$this.find("input[name=horai]").val();
+      var horaf=$this.find("input[name=horaf]").val();
+      var usuario=$this.find("#usuario_identificador").val();
+      $.ajax({
+        type:"POST",
+        url:url,
+        data:{tipo:tipo,motivos:motivos,horaf:horaf,horai:horai, usuario:usuario}
+      });
+    });
+});
+/*
+:success=>"HideContent('"+"flotanteform"+fila.to_s+columna.to_s+"')",
+                                                           :submit=> formid, 
+                                                            */
+</script>

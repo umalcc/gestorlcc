@@ -133,14 +133,14 @@ class PeriodosController < ApplicationController
     end
 
     respond_to do |format|
-    
            if @periodo.update_attributes(params[:periodo])
               
               @periodos = Periodo.order("inicio").all
               format.html { redirect_to :action => "index" }
               format.xml  { head :ok }
            else
-              format.html { redirect_to :action => "edit" }
+
+              format.html { render :action => "edit" }
               format.xml  { render :xml => @periodo.errors, :status => :unprocessable_entity }
            end
     end
@@ -148,29 +148,10 @@ class PeriodosController < ApplicationController
 
   def cambia_activo 
 
-     p=Periodo.find(params[:periodo_activo])
-     if !p.activo
-      if p.tipo=="Examenes"
-       render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_examen_on")
-       end
-      else
-       render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_on")
-       end
-      end
-     else
-       if p.tipo=="Examenes"
-       render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_examen_off")
-       end
-      else
-       render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_off")
-       end
-      end
-     end
-     
+     @p=Periodo.find(session[:periodo])
+     respond_to do |format|
+      format.js
+    end  
   end
 
   def enviar_correo_activo_on
@@ -180,9 +161,13 @@ class PeriodosController < ApplicationController
     CorreoTecnicos::adjudicaexamen.deliver
    end
     @mensaje="Correo enviado"
-    render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_on", :object=>@mensaje)
-    end
+
+    respond_to do |format|
+      format.js
+    end  
+    #render :update do |page|
+   #     page.replace_html(:'activo', :partial=>"control_adjudicacion_on", :object=>@mensaje)
+   # end
   end
 
   def enviar_correo_activo_off
@@ -192,9 +177,12 @@ class PeriodosController < ApplicationController
     CorreoTecnicos::cierreadjudicaexamen.deliver
    end
     @mensaje="Correo enviado"
-    render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_off", :object=>@mensaje)
-    end
+     respond_to do |format|
+      format.js
+    end  
+   # render :update do |page|
+    #    page.replace_html(:'activo', :partial=>"control_adjudicacion_off", :object=>@mensaje)
+    #end
   end
 
   def grabar_historico
@@ -232,9 +220,12 @@ class PeriodosController < ApplicationController
                    s.destroy}
 
     @mensaje="Grabadas en archivo historico "+conta.to_s+" asignaciones"
-    render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_off", :object=>@mensaje)
-    end
+     respond_to do |format|
+      format.js
+    end  
+    #render :update do |page|
+    #    page.replace_html(:'activo', :partial=>"control_adjudicacion_off", :object=>@mensaje)
+    #end
 
   end
 
@@ -264,56 +255,49 @@ class PeriodosController < ApplicationController
                              conta+=1 }
     end
 
-    solicitudes=Solicitudlabexa.all("asignado = ?","D")
+    solicitudes=Solicitudlabexa.where("asignado = ?","D").all
     solicitudes.each{|s| s.destroy}
 
     @mensaje="Grabadas en archivo historico "+conta.to_s+" asignaciones"
-    render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_examen_off", :object=>@mensaje)
-    end
+     respond_to do |format|
+      format.js
+    end  
+    #render :update do |page|
+    #    page.replace_html(:'activo', :partial=>"control_adjudicacion_examen_off", :object=>@mensaje)
+    #end
 
   end
 
   def cambia_admision
      session[:cambia_admision]=true
 
-     p=Periodo.find(session[:periodo])
-     if params[:periodo_admision]=="1"
-       if p.tipo=="Lectivo"
-       render :update do |page|
-        page.replace_html(:'admision', :partial=>"control_admision_on")
-       end
-      else
-       render :update do |page|
-        page.replace_html(:'admision', :partial=>"control_admision_examen_on")
-       end
-      end
-     else
-       if p.tipo=="Lectivo"
-       render :update do |page|
-        page.replace_html(:'admision', :partial=>"control_admision_off")
-       end
-      else
-       render :update do |page|
-        page.replace_html(:'admision', :partial=>"control_admision_examen_off")
-       end
-      end
+     @p=Periodo.find(session[:periodo])
+     respond_to do |format|
+      format.js
      end
-     
   end
 
 
   def enviar_correo_lectivo_on
-   p=Periodo.find(session[:periodo])
-   if p.tipo=="Lectivo"
-    CorreoTecnicos::aperturalectivo(p.nombre,formato_europeo(p.finsol)).deliver
-   else
-    CorreoTecnicos::aperturaexamen(p.nombre,formato_europeo(p.finsol)).deliver
-   end
-    @mensaje="Correo enviado"
-    render :update do |page|
-        page.replace_html(:'admision', :partial=>"control_admision_on", :object=>@mensaje)
+     p=Periodo.find(session[:periodo])
+    if p.finsol ==nil
+      @mensaje="El campo Fecha fin de solicitudes no puede ser vacio<br/>.Por favor, rellene este campo guarde los cambios y vuelva a intentarlo. "
+    else
+      @mensaje="Correo enviado"
+     
+      if p.tipo=="Lectivo"
+        CorreoTecnicos::aperturalectivo(p.nombre,formato_europeo(p.finsol)).deliver
+      else
+        CorreoTecnicos::aperturaexamen(p.nombre,formato_europeo(p.finsol)).deliver
+      end
     end
+   
+     respond_to do |format|
+      format.js
+    end  
+    #render :update do |page|
+    #    page.replace_html(:'admision', :partial=>"control_admision_on", :object=>@mensaje)
+    #end
   end
 
   def enviar_correo_lectivo_off
@@ -324,36 +308,14 @@ class PeriodosController < ApplicationController
     CorreoTecnicos::cierreexamen(p.nombre).deliver
    end
     @mensaje="Correo enviado"
-    render :update do |page|
-        page.replace_html(:'admision', :partial=>"control_admision_off", :object=>@mensaje)
-    end
+     respond_to do |format|
+      format.js
+    end  
+    #render :update do |page|
+    #    page.replace_html(:'admision', :partial=>"control_admision_off", :object=>@mensaje)
+    #end
   end
 
-def cambia_activo
-     p=Periodo.find(session[:periodo])
-     if params[:periodo_activo]=="1"
-       if p.tipo=="Lectivo"
-       render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_on")
-       end
-      else
-       render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_examen_on")
-       end
-      end
-     else
-       if p.tipo=="Lectivo"
-       render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_off")
-       end
-      else
-       render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_examen_off")
-       end
-      end
-     end
-     
-  end
 
 def enviar_correo_activo_on
    p=Periodo.find(session[:periodo])
@@ -363,9 +325,12 @@ def enviar_correo_activo_on
     CorreoTecnicos::adjudicaexamen(p.nombre).deliver
    end
     @mensaje="Correo enviado"
-    render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_on", :object=>@mensaje)
-    end
+     respond_to do |format|
+      format.js
+    end  
+    #render :update do |page|
+    #    page.replace_html(:'activo', :partial=>"control_adjudicacion_on", :object=>@mensaje)
+    #end
   end
 
   def enviar_correo_activo_off
@@ -376,9 +341,12 @@ def enviar_correo_activo_on
     CorreoTecnicos::cierreadjudicaexamen(p.nombre).deliver
    end
     @mensaje="Correo enviado"
-    render :update do |page|
-        page.replace_html(:'activo', :partial=>"control_adjudicacion_off", :object=>@mensaje)
-    end
+     respond_to do |format|
+      format.js
+    end  
+    #render :update do |page|
+    #    page.replace_html(:'activo', :partial=>"control_adjudicacion_off", :object=>@mensaje)
+    #end
   end
 
   # DELETE /periodos/1

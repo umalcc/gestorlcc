@@ -13,8 +13,7 @@
           <tr>
             
             <td><%= link_to(image_tag("limpiar.jpeg",:border=>0,:width=>32,:height=>32),
-                         :url      => { :controller=>'solicitudrecursos',:action => 'borrar_reservas' },
-                         :confirm  => "Esto eliminara todo el registro de reservas. Esta seguro?", :remote => true)%></td>
+                        "#",id:"linkBorraReservas")%></td>
             <td style="color:#010080;font-size:0.9em">Eliminar todas<br/>las reservas</td>
           </tr>
         </table>
@@ -39,10 +38,31 @@
         <td style="text-align:center"><%= i.horaini+"-"+i.horafin %></td>
         <td class="cientocincuenta"><%= i.motivos %></td>
         <td class="icono"><%= link_to image_tag("borrar.png", :border=>0), i, 
-                             :confirm => 'Seguro que desea eliminar la reserva?', :method => :delete %></td> 
+                             :confirm => '¿Seguro que desea eliminar la reserva?', :method => :delete %></td> 
       </tr>
       <% end %><!-- de @solicitudrecursos.each -->
     </table>
     <% end %><!-- de @cuenta!=0 -->  
 <% end %><!-- de @solicitudrecursos -->
+
+<script type="text/javascript">
+
+$(function()
+{
+  $("#linkBorraReservas").click(function()
+    {
+      var url="/solicitudrecursos/borrar_reservas";
+      var mensaje="Ésto eliminará todo el registro de reservas. ¿Está seguro?";
+      if(confirm(mensaje))
+      {
+      $.ajax({
+        type:"POST",
+        url:url
+      });
+    }
+    });
+});
+
+</script>
+
 

@@ -1,3 +1,5 @@
+
+
 <% if muestra_tramo.id == @actual %>
 <tr id="actual" valign=top>
 <% else %>
@@ -7,8 +9,37 @@
 <td width=30><%= muestra_tramo.horaini %></td>
 <td width=10><%="-" %></td>
 <td width=30><%= muestra_tramo.horafin %></td>
-<td width=15><%= link_to image_tag("menos.png", :border=>0), 
-         :url => { :controller=>:solicitar, :action => 'eliminar', :num=> muestra_tramo.id },
-         :success=>'mostrardiv("solicitudrecurso_submit")', :remote => true %></td>
-       
+<td width=15><%= link_to image_tag("menos.png", :border=>0),"#", name:"linkEliminar" %></td>
+<td width="0"><input name="muestraId" type="hidden" value=<%= muestra_tramo.id%>/></td>       
 </tr>
+
+
+
+
+<script type="text/javascript">
+
+$(function()
+{
+$("a[name=linkEliminar]").click(function()
+{
+  var url="/solicitar/eliminar";
+  var numero=$(this).closest("tr").find("input[name='muestraId']").val();
+
+  $.ajax({
+  	     beforeSend:function(xhr)
+{
+  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+},
+     url:url,
+     data:{num:numero},
+     success:function()
+     {
+      mostrardiv("solicitudrecurso_submit");
+     }
+  });
+});
+
+});
+
+
+</script>

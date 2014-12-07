@@ -15,9 +15,7 @@
                 <% hoy=Date.today.strftime("%d-%m-%Y") %>
             <td><%= s.text_field :fechareserva, :size=>12,:value=>hoy ,:name=>"fecha", 
                     :id=>"DPC_fechareserva_DD-MM-YYYY"%></td>
-            <td><%= link_to(image_tag("boton2.png",:border=>0),
-                         :submit   => "busqueda2",
-                         :url      => { :controller=>'solicitudrecursos',:action => 'buscar' }, :remote => true)%></td>
+            <td><%= link_to(image_tag("boton2.png",:border=>0),"#", id:"link") %></td>
           </tr>
         </table>
         <div id="reservas">
@@ -25,3 +23,26 @@
         <% end %><!-- de form_for -->
    </div><!-- de recuadro -->
 </div><!-- de central -->
+
+
+<script type="text/javascript">
+
+$(function()
+{
+  $("#link").click(function()
+    {
+      var tipo_descripcion=$("#tipo_descripcion").val();
+      var fecha=$("input[name=fecha]").val();
+      var url="/solicitudrecursos/buscar";
+      $.ajax({
+        type:"POST",
+        url:url,
+        data:{tipo_descripcion:tipo_descripcion, fecha:fecha}
+      });
+    });
+
+});
+
+/* :submit   => "busqueda2",
+                         :url      => { :controller=>'solicitudrecursos',:action => 'buscar' }, :remote => true)%>*/
+</script>

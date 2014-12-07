@@ -29,7 +29,7 @@ before_filter :login_requerido, :admin?
   # GET /usuarios/new.xml
   def new
     @usuario = Usuario.new
-
+    @usuario.admin='f'
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @usuario }
@@ -39,6 +39,7 @@ before_filter :login_requerido, :admin?
   # GET /usuarios/1/edit
   def edit
     @usuario = Usuario.find(params[:id])
+    @usuario.password=""
   end
 
   # POST /usuarios
@@ -127,9 +128,9 @@ before_filter :login_requerido, :admin?
  
   def listar
     cadena=(params[:query].nil?)? "%" : "%#{params[:query]}%"
-    @usuarios=Usuario.order("apellidos").all("nombre||' '||apellidos||' '||identificador||' '||email||' '||despacho||' '||telefono LIKE ?",cadena)
+    @usuarios=Usuario.order("apellidos").where("nombre||' '||apellidos||' '||identificador||' '||email||' '||despacho||' '||telefono LIKE ?",cadena).all
     @cuenta=@usuarios.size
-    #respond_to {|format| format.js }
+    respond_to {|format| format.js }
   end
 
   
