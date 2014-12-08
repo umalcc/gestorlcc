@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.12'
+gem 'rails', '3.2.21'
 
 #gem 'limited_sessions'
 # Bundle edge Rails instead:
@@ -28,7 +28,6 @@ gem 'therubyracer'
 # gem 'sqlite3-ruby', :require => 'sqlite3'
 # gem 'aws-s3', :require => 'aws/s3'
 #gem 'jquery-rails'
-gem 'actionpack', '= 3.1.12'
 gem 'sprockets'#,'~> 2.0.4'
 gem 'sprockets-rails', :require => 'sprockets/railtie'
 group :development, :test do
@@ -39,8 +38,8 @@ end
   #>>>>>>>>>>>>config.gem :net-ldap 
 group :assets do
 	gem 'railties'#, ">= 3.1.0"
-	gem 'sass-rails'
-	gem 'coffee-rails'
+	gem 'sass-rails', '~> 3.2.6'
+	gem 'coffee-rails', '~> 3.2.2'
 	gem 'uglifier','>= 1.0.3'
 	gem 'tilt', 
 end
