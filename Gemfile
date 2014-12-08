@@ -1,7 +1,8 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.20'
+gem 'rails', '3.1.12'
 
+#gem 'limited_sessions'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 #gem 'activerecord', :require => "active_record"
@@ -27,9 +28,8 @@ gem 'therubyracer'
 # gem 'sqlite3-ruby', :require => 'sqlite3'
 # gem 'aws-s3', :require => 'aws/s3'
 #gem 'jquery-rails'
-gem 'iconv'
-gem 'jquery-color'
-gem 'sprockets'
+gem 'actionpack', '= 3.1.12'
+gem 'sprockets'#,'~> 2.0.4'
 gem 'sprockets-rails', :require => 'sprockets/railtie'
 group :development, :test do
   gem "mocha"
@@ -37,6 +37,13 @@ group :development, :test do
   #gem "factory_girl_rails"
 end
   #>>>>>>>>>>>>config.gem :net-ldap 
+group :assets do
+	gem 'railties'#, ">= 3.1.0"
+	gem 'sass-rails'
+	gem 'coffee-rails'
+	gem 'uglifier','>= 1.0.3'
+	gem 'tilt', 
+end
 
   # Specify gems that this application depends on and have them installed with rake gems:install
   # config.gem "hpricot", "0.6", :source => "http://code.whytheluckystiff.net"

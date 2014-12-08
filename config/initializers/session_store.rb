@@ -15,7 +15,10 @@
 # LimitedSessions::SelfCleaningSession.max_session=12.hours
 # LimitedSessions::SelfCleaningSession.recent_activity=2.hours
 
+#Gestorlcc::Application.config.session_store :active_record_store, :key => '_gestorlcc_session'
 Gestorlcc::Application.config.session_store :active_record_store, :key => '_gestorlcc_session'
+#ActionDispatch::Session::ActiveRecordStore.session_class = LimitedSessions::SelfCleaningSession
+
 
 #Gestorlcc::Application.config.session_store :active_record_store
 #ActionDispatch::Session::ActiveRecordStore.session_class = #LimitedSessions::SelfCleaningSession

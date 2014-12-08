@@ -20,6 +20,9 @@ Gestorlcc::Application.configure do
   # Print deprecation notices to the Rails logger
   config.active_support.deprecation = :log
 
+# Configure static asset server for tests with Cache-Control for performance
+config.serve_static_assets = true
+config.static_cache_control = 'public, max-age=3600'
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 end
