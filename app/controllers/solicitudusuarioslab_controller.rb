@@ -5,7 +5,7 @@ class SolicitudusuariolabexasController < ApplicationController
   before_filter :login_requerido,:usuario?
 
   def index
-    @solicitudlabexas = Solicitudlabexa.find_all_by_usuario_id(@usuario_actual.id)
+    @solicitudlabexas = Solicitudlabexa.where("usuario_id = ? ",@usuario_actual.id).all
     @cuenta = @solicitudlabexas.size
     
     respond_to do |format|
@@ -76,7 +76,7 @@ class SolicitudusuariolabexasController < ApplicationController
 
       if @solicitudlabexa.save   
         CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Nueva ").deliver                                 
-        @solicitudlabexas = Solicitudlabexa.find_all_by_usuario_id(@usuario_actual.id)
+        @solicitudlabexas = Solicitudlabexa.where("usuario_id = ? ",@usuario_actual.id).all
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @solicitudlabexas, :status => :created, :location => @solicitudlabexas }
       else
@@ -126,7 +126,7 @@ class SolicitudusuariolabexasController < ApplicationController
                                              :comentarios => Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios]))
 
         CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Cambios en ").deliver  
-        @solicitudlabexas = Solicitudlabexa.find_all_by_usuario_id(@usuario_actual.id)
+        @solicitudlabexas = Solicitudlabexa.where("usuario_id = ?",@usuario_actual.id).all
         @cuenta=@solicitudlabexas.size
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }

@@ -5,7 +5,7 @@ class SolicitudrecursousuariosController < ApplicationController
   before_filter :login_requerido,:usuario?
 
   def index
-    @solicitudrecursos= Solicitudrecurso.find_all_by_usuario_id(session[:user_id])
+    @solicitudrecursos= Solicitudrecurso.where("usuario_id = ?",session[:user_id]).all
     @cuenta=@solicitudrecursos.size
 
     respond_to do |format|
@@ -69,7 +69,7 @@ class SolicitudrecursousuariosController < ApplicationController
     
        
       if @solicitudrecurso.save
-        familia=Recurso.find_by_identificador(@solicitudrecurso.tipo).descripcion
+        familia=Recurso.where("identificador = ?",@solicitudrecurso.tipo).first.descripcion
         @recs=Recurso.where('descripcion = ? and disponible = ?',familia,"t").all
         @ids=@recs.map {|r| r.identificador}
         #session[:fechares]=params[:fecha]
@@ -98,7 +98,7 @@ class SolicitudrecursousuariosController < ApplicationController
     
       if @solicitudrecurso.update_attributes(:motivos => params[:motivos])
                
-        @solicitudrecursos = Solicitudrecurso.find_all_by_usuario_id(@usuario_actual.id)
+        @solicitudrecursos = Solicitudrecurso.where("usuario_id = ?",@usuario_actual.id).all
         format.html { render :action => "index" }
         format.xml  { head :ok }
       else
@@ -118,7 +118,7 @@ class SolicitudrecursousuariosController < ApplicationController
     @solicitudrecurso.destroy
     
     respond_to do |format|
-      @solicitudrecursos= Solicitudrecurso.find_all_by_usuario_id(@usuario_actual.id)
+      @solicitudrecursos= Solicitudrecurso.where("usuario_id = ?",@usuario_actual.id).all
       format.html { render :action => "index" }
       format.xml  { head :ok }
     end
@@ -127,7 +127,7 @@ class SolicitudrecursousuariosController < ApplicationController
   def borra
     @solicitudrecurso = Solicitudrecurso.find(params[:reserva])
     @solicitudrecurso.destroy
-    familia=Recurso.find_by_identificador(@solicitudrecurso.tipo).descripcion
+    familia=Recurso.where("identificador = ?",@solicitudrecurso.tipo).first.descripcion
     @recs=Recurso.where('descripcion = ? and disponible = ?',familia,"t").all
     @ids=@recs.map {|r| r.identificador}
     #session[:fechares]=params[:fecha]

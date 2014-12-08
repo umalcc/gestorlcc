@@ -216,7 +216,7 @@ class PeriodosController < ApplicationController
    
     solicitudes=Solicitudlab.where("asignado = ?","D").all
     solicitudes.each{|s| 
-                   peticiones= Peticionlab.find_all_by_solicitudlab_id(s.id)
+                   peticiones= Peticionlab.where("solicitudlab_id = ? ",s.id).all
                    peticiones.each{|p| p.destroy}
                    s.destroy}
 

@@ -3,7 +3,7 @@ class SolicitudusuariolabsController < ApplicationController
   before_filter :login_requerido,:usuario?
 
   def index
-    @solicitudlabs= Solicitudlab.find_all_by_usuario_id(@usuario_actual.id)
+    @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).all
     @cuenta=@solicitudlabs.size
 
     respond_to do |format|
@@ -17,7 +17,7 @@ class SolicitudusuariolabsController < ApplicationController
     
     @solicitudlab = Solicitudlab.find(params[:id])
     session[:tramos_horarios]=Solicitudhoraria.new
-    session[:tramos_horarios].solicitudes=Peticionlab.find_all_by_solicitudlab_id(@solicitudlab.id) 
+    session[:tramos_horarios].solicitudes=Peticionlab.where("solicitudlab_id = ? ",@solicitudlab.id).all 
     session[:codigo_tramo]=0
     session[:borrar]=[]
     @asignatura=Asignatura.find(@solicitudlab.asignatura_id)
@@ -161,7 +161,7 @@ def new
 
       
         CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Nueva ").deliver                       
-        @solicitudlabs = Solicitudlab.find_all_by_usuario_id(@usuario_actual.id)
+        @solicitudlabs = Solicitudlab.where("usuario_id = ?",@usuario_actual.id).all
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @solicitudlabs, :status => :created, :location => @solicitudlabs }
       else
@@ -261,7 +261,7 @@ def update
                                 end } unless @borrados.empty?
         # flash[:notice] = 'Solicitudrecurso was successfully updated.'
         CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Cambios en ").deliver      
-        @solicitudlabs = Solicitudlab.find_all_by_usuario_id(@usuario_actual.id)
+        @solicitudlabs = Solicitudlab.where("usuario_id = ?", @usuario_actual.id).all
         format.html { render :action => "index" }
         format.xml  { head :ok }
       else
@@ -276,7 +276,7 @@ def update
  def destroy
     @solicitudlab = Solicitudlab.find(params[:id])
     @solicitudlab.destroy
-    @tramos=Peticionlab.find_all_by_solicitudlab_id(@solicitudlab.id) # busco todos los tramos que tenian el id
+    @tramos=Peticionlab.where("solicitudlab_id = ?", @solicitudlab.id).all # busco todos los tramos que tenian el id
     @tramos.each {|tramo| tramo.destroy} # los elimino en cascada
     CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Borrado de ").deliver      
     respond_to do |format|

@@ -37,7 +37,7 @@ class SolicitudlabsController < ApplicationController
     @solicitudlab = Solicitudlab.find(params[:id])
    
     session[:tramos_horarios]=Solicitudhoraria.new
-    session[:tramos_horarios].solicitudes=Peticionlab.find_all_by_solicitudlab_id(@solicitudlab.id) 
+    session[:tramos_horarios].solicitudes=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).all 
     session[:codigo_tramo]=0
     session[:borrar]=[]
     logger.debug @solicitudlab.fechaini.to_s+" "+formato_europeo(@solicitudlab.fechaini).to_s
@@ -256,7 +256,7 @@ class SolicitudlabsController < ApplicationController
  def destroy
     @solicitudlab = Solicitudlab.find(params[:id])
     @solicitudlab.destroy
-    @tramos=Peticionlab.find_all_by_solicitudlab_id(@solicitudlab.id) # busco todos los tramos que tenian el id
+    @tramos=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).all # busco todos los tramos que tenian el id
     @correotramos=''
     @tramos.each {|tramo| @correotramos+=' - '+tramo.diasemana+' de '+tramo.horaini+' a '+tramo.horafin
                           tramo.destroy} # los elimino en cascada

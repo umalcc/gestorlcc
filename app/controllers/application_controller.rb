@@ -67,7 +67,7 @@ class ApplicationController < ActionController::Base
     helper_method :formato_europeo
 
     def horas(solicitud)
-      tramos=Peticionlab.find_all_by_solicitudlab_id(solicitud.id)
+      tramos=Peticionlab.where("solicitudlab_id = ?",solicitud.id).all
       total=0
       tramos.each {|t| p=Horario.find_by_comienzo(t.horaini).id.to_i
                        f=Horario.find_by_fin(t.horafin).id.to_i

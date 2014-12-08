@@ -139,7 +139,7 @@ class SolicitudrecursosController < ApplicationController
   def destroy
     @solicitudrecurso = Solicitudrecurso.find(params[:id])
     @solicitudrecurso.destroy
-    @tramos=Peticion.find_all_by_solicitudrecurso_id(@solicitudrecurso.id) # busco todos los tramos que tenian el id
+    @tramos=Peticion.where("solicitudrecurso_id = ?",@solicitudrecurso.id).all # busco todos los tramos que tenian el id
     @tramos.each {|tramo| tramo.destroy} # los elimino en cascada
 
     respond_to do |format|
@@ -161,7 +161,7 @@ class SolicitudrecursosController < ApplicationController
   def borra
     @solicitudrecurso = Solicitudrecurso.find(params[:reserva])
     @solicitudrecurso.destroy
-    familia=Recurso.find_by_identificador(@solicitudrecurso.tipo).descripcion
+    familia=Recurso.where("identificador = ?",@solicitudrecurso.tipo).first.descripcion
     @recs=Recurso.where('descripcion = ? and disponible = ?',familia,"t").all
     @ids=@recs.map {|r| r.identificador}
     dia=formato_europeo(session[:fechares])
