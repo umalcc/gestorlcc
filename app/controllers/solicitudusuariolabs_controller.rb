@@ -26,7 +26,6 @@ class SolicitudusuariolabsController < ApplicationController
     @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").all
     @asignaturaselec=@solicitudlab.asignatura_id
 
-    logger.debug "Seleccionadahhh"+ @solicitudlab.preferencias
     @solicitudlab.fechaini=formato_europeo(@solicitudlab.fechaini)
     @solicitudlab.fechafin=formato_europeo(@solicitudlab.fechafin)
     respond_to do |format|
@@ -86,11 +85,13 @@ def new
     @solicitudlab.asignado="N"
 
 # HACER UN DRYYYYYYY!!!!!
-
+logger.debug "Periodo"
     periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
     if periodoact.nil? # si es un user no puede cursar en periodo sin activaRRRRRRRR!!!!!!!!!
        iniperiodoact=finperiodoact=Date.today 
+       logger.debug "Activoo"
     else 
+      logger.debug "Inactivo"
        iniperiodoact=periodoact.inicio
        finperiodoact=periodoact.fin
         if formato_europeo(params[:fechaini])<iniperiodoact.to_s

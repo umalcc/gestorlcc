@@ -1,1 +1,0 @@
-page.replace_html(:'tabla', :partial=>"/asignaturas/items_lista", :object=>@asignaturas)
