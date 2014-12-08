@@ -53,8 +53,8 @@ module Gestorlcc
     }
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.default_content_type = "text/plain"
-  config.action_mailer.default_charset = "utf-8"
+ # config.action_mailer.default_content_type = "text/plain"
+#ActionMailer::Base.default :content_type => "text/html"
 config.middleware.use ActionDispatch::Flash
 #config.middleware.insert_after ActionDispatch::Flash, LimitedSessions::Expiry, recent_activity: 2.hours, max_session: 24.hours
   # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
