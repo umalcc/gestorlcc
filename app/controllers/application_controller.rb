@@ -2,7 +2,7 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-
+  include ApplicationHelper
 
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
@@ -47,14 +47,12 @@ class ApplicationController < ActionController::Base
     def admin?
       @usuario_actual = Usuario.find_by_id(session[:user_id])
       return true if @usuario_actual.admin?
-      Rails.logger.info("REDIRECT_admin")
       
       redirect_to new_session_path and return false
     end
     helper_method :admin?
 
     def usuario?
-logger.debug "application_controller-->usuario"
       @usuario_actual = Usuario.find_by_id(session[:user_id])
       return true if !@usuario_actual.admin? and @usuario_actual.identificador!="anonimo"
       redirect_to new_session_path and return false
@@ -62,9 +60,8 @@ logger.debug "application_controller-->usuario"
     helper_method :usuario?
 
     def formato_europeo(fecha)
-      nfecha=fecha.to_s.split('-')
-      nfechaini=nfecha[2]+"-"+nfecha[1]+"-"+nfecha[0]
-      return nfechaini
+      cadena=fecha.to_s.split('-')
+    return cadena[2]+'-'+cadena[1]+'-'+cadena[0]
     end
 
     helper_method :formato_europeo

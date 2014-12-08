@@ -16,7 +16,7 @@ end
 def fecha_en_margenes?
 	if !self.fecha.nil?
 		p=Periodo.where('tipo= ? and admision = ?',"Examenes","t").first
-		if !p.nil
+		if !p.nil?
 			errors.add("fecha: ", "La fecha elegida no se encuentra dentro del periodo: " + p.inicio.strftime("%d/%m/%Y")+" - "+ p.fin.strftime("%d/%m/%Y")) unless p.inicio<=self.fecha and p.fin>=self.fecha
 			end
 			end

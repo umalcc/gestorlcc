@@ -127,6 +127,9 @@ class AsignaturasController < ApplicationController
   def combo_por_nivel
 
     session[:nivel]=params[:combo_nivel]
+    if(params[:titulacion]!=nil)
+      session[:titulacion]=params[:titulacion]
+    end
     @asignaturas=Asignatura.order("nombre_asig").where('titulacion_id = ? and curso = ?', session[:titulacion].to_i,session[:nivel].to_i).all
     
     respond_to do |format|
