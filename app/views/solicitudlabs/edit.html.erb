@@ -35,14 +35,6 @@
                 <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]}, 
                     html_options={:selected=>@asignaturaselec } %>
                </span><dd>
-              <!-- <= observe_field 'titulacion_titulacion_id', 
-                       :url =>{:controller => 'asignaturas', :action => 'combo_por_titulacion'}, 
-                       :update => 'combo_asignatura', 
-                       :with => 'combo_titulacion' %>-->
-               <!--<= observe_field 'nivel', 
-                            url =>{controller => asignaturas, action => combo_por_nivel}, 
-                            update => combo_asignatura, 
-                            with => combo_nivel %>-->
 
 	    <dt>Puestos *</dt>
             <dd onchange='mostrardiv("solicitudlab_submit")'>
@@ -53,11 +45,11 @@
             <dt>Fecha inicio *</dt>
             <dd onclick='mostrardiv("solicitudlab_submit")'>
               <%= f.text_field :fechaini, :size=>12, :name=>"fechaini", 
-                  :id=>"DPC_fechaini_DD-MM-YYYY" %></dd>
+                  :id=>"DPC_fechaini_DD-MM-YYYY", :value=>@solicitudlab.fechaini.strftime('%d-%m-%Y') %></dd>
             <dt>Fecha fin *</dt>
             <dd onclick='mostrardiv("solicitudlab_submit")'>
               <%= f.text_field :fechafin, :size=>12, :name=>"fechafin", 
-                  :id=>"DPC_fechafin_DD-MM-YYYY" %>  </dd>
+                  :id=>"DPC_fechafin_DD-MM-YYYY",:value=>@solicitudlab.fechafin.strftime('%d-%m-%Y') %>  </dd>
             <dt>Soft. requerido</dt>
             <dd onkeydown='mostrardiv("solicitudlab_submit")'>
               <%= f.text_area :comentarios, :rows =>4, :cols=>40, :name=>"comentarios" %></dd>
@@ -72,14 +64,14 @@
                    <td style="text-align:center">No</td>
                    <td style="text-align:center">Indif.</td>
                   </tr>
-             
+
                   <% for especial in @especiales do %>
                   <tr style="font-size: 10px;font-weight: normal;text-align:center" >
                    <td width=100><% nombre=especial.ssoo %><%= especial.ssoo %>
                            <% n=@solicitudlab.preferencias.index(especial.ssoo)  %>  
                            <% if !n.nil? %>   
-                              <% parte=@solicitudlab.preferencias.split("-") %>
-                              <%  valor=parte[2].slice(0,2).to_s %>
+                              <% parte=@solicitudlab.preferencias[n..-1].split("-") %>
+                              <%  valor=parte[1].slice(0,2).to_s %>
                            <% else %>
                               <% valor="in" %>
                            <% end %></td>

@@ -36,7 +36,7 @@
                 <%= select_tag "npuestos", options_for_select((@puestos<<Laboratorio::DOS_LAB)+Laboratorio::PUESTOS_EXAMEN,@solicitudlabexa.npuestos) %>
             </dd>
             <dt>Fecha *</dt>
-            <dd onclick='mostrardiv("solicitudlabexa_submit")'><%= f.text_field :fecha, :size=>12, :name=>"fecha",  :id=>"DPC_fecha_DD-MM-YYYY",:value=>@solicitudlabexa.fecha %></dd>
+            <dd onclick='mostrardiv("solicitudlabexa_submit")'><%= f.text_field :fecha, :size=>12, :name=>"fecha",  :id=>"DPC_fecha_DD-MM-YYYY",:value=>@solicitudlabexa.fecha.strftime('%d-%m-%Y') %></dd>
             <dt>Soft. requerido</dt>
             <dd onkeydown='mostrardiv("solicitudlabexa_submit")'>
               <%= f.text_area :comentarios, :rows =>4, :cols=>40, :name=>"comentarios" %></dd>           
@@ -56,8 +56,8 @@
                    <td width=100><% nombre=especial.ssoo %><%= especial.ssoo %>
                            <% n=@solicitudlabexa.preferencias.index(especial.ssoo)  %>  
                            <% if !n.nil? %>   
-                              <% parte=@solicitudlabexa.preferencias.split("-") %>
-                              <%  valor=parte[2].slice(0,2).to_s %>
+                              <% parte=@solicitudlabexa.preferencias[n..-1].split("-") %>
+                              <%  valor=parte[1].slice(0,2).to_s %>
                            <% else %>
                               <% valor="in" %>
                            <% end %></td>

@@ -40,16 +40,15 @@ class SolicitudlabsController < ApplicationController
     session[:tramos_horarios].solicitudes=Peticionlab.find_all_by_solicitudlab_id(@solicitudlab.id) 
     session[:codigo_tramo]=0
     session[:borrar]=[]
-
+    logger.debug @solicitudlab.fechaini.to_s+" "+formato_europeo(@solicitudlab.fechaini).to_s
     @solicitudlab.fechaini=formato_europeo(@solicitudlab.fechaini)
- #   fecha=@solicitudlab.fechaini.to_s.split('-')
- #   nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
- #   @solicitudlab.fechaini=nfechaini
-    @solicitudlab.fechafin=formato_europeo(@solicitudlab.fechafin)
- #   fecha=@solicitudlab.fechafin.to_s.split('-')
- #   nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
- #   @solicitudlab.fechafin=nfechaini
-
+    logger.debug @solicitudlab.fechaini.to_s
+    fecha=@solicitudlab.fechaini.to_s.split('-')
+    nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
+    @solicitudlab.fechaini=nfechaini
+    logger.debug @solicitudlab.fechaini.to_s
+    fecha=@solicitudlab.fechafin.to_s.split('-')
+    nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
   end
 
   # POST /solicitudlabs
@@ -113,11 +112,13 @@ class SolicitudlabsController < ApplicationController
         pref+=especial.nombre_lab.to_s+'-'+nombre+'-'+params[:"#{nombre}"]+";"
       end
     end
+
     @solicitudlab.preferencias=pref
     respond_to do |format|
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
       flash[:notice]="No hay tramos horarios en su peticion"
       format.js
+      format.html {render :action=>"new"}
 
     else 
 
@@ -166,12 +167,12 @@ class SolicitudlabsController < ApplicationController
     else 
        iniperiodoact=periodoact.inicio
        finperiodoact=periodoact.fin
-       if formato_europeo(params[:fechaini])<iniperiodoact.to_s
-          params[:fechaini]=formato_europeo(iniperiodoact)
-       end
-       if formato_europeo(params[:fechafin])>finperiodoact.to_s
-          params[:fechafin]=formato_europeo(finperiodoact)
-       end
+    #   if formato_europeo(params[:fechaini])<iniperiodoact.to_s
+    #      params[:fechaini]=formato_europeo(iniperiodoact)
+    #   end
+    #   if formato_europeo(params[:fechafin])>finperiodoact.to_s
+    #      params[:fechafin]=formato_europeo(finperiodoact)
+    #   end
     end
 
 
@@ -184,7 +185,6 @@ class SolicitudlabsController < ApplicationController
          @solicitudlab.tipo="P"
        end
     end
-
     if params[:fechaini]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
       nfechaini=formato_europeo(params[:fechaini])
     end
@@ -206,7 +206,7 @@ class SolicitudlabsController < ApplicationController
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
       flash[:notice]="No hay tramos horarios en su peticion"
       @borrados=session[:borrar]
-      format.html { redirect_to(edit_solicitudlab_path(@solicitudlab))}
+      format.html { render :action=> "edit"}
 
     else # VEREMOS SI LAS FECHAS SON CORRECTAS SEGUN EL PERIODO
 

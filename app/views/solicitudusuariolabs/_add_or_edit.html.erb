@@ -66,8 +66,8 @@
                           <% nombre=especial.ssoo %>
                            <% n=@solicitudlab.preferencias.index(especial.ssoo)  %>  
                            <% if !n.nil? %>   
-                              <% parte=@solicitudlab.preferencias.split("-") %>
-                              <%  valor=parte[2].slice(0,2).to_s %>
+                              <% parte=@solicitudlab.preferencias[n..-1].split("-") %>
+                              <%  valor=parte[1].slice(0,2).to_s %>
                            <% else %>
                               <% valor="in" %>
                            <% end %></td>
@@ -170,10 +170,11 @@ $(function()
       {
         var url="/asignaturas/combo_por_nivel";
         var query=$("#nivel").val();
+        var titulacion = $("#titulacion_titulacion_id").val();
         $.ajax({
           url:url,
           type:"POST",
-          data:{combo_nivel:query}
+          data:{combo_nivel:query,titulacion:titulacion}
         });
       });
    $("#anadirLink").click(function()

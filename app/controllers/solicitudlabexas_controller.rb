@@ -30,14 +30,14 @@ class SolicitudlabexasController < ApplicationController
 
   # GET /solicitudlabs/1/edit
   def edit
-
+    @solicitudlabexa = Solicitudlabexa.find(params[:id]) 
     getViewModel
-    @solicitudlabexa = Solicitudlabexa.find(params[:id])     
+       
     @asignatura=Asignatura.find(@solicitudlabexa.asignatura_id)
     @titulacionselec=@asignatura.titulacion_id
     @cursoselec=@solicitudlabexa.curso
-    @solicitudlabexa.fecha=formato_europeo(@solicitudlabexa.fecha)
-   
+    @solicitudlabexa.fecha=fecha_europea(@solicitudlabexa.fecha)
+    @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlabexa.asignatura.curso).order("nombre_asig").all
     usuario=Usuario.find(@solicitudlabexa.usuario_id)
     @usuarioselec=usuario.apellidos+", "+usuario.nombre
     @usuarios=Usuario.order("apellidos").all.reject{|u| u.identificador=="anonimo"}
@@ -116,6 +116,9 @@ class SolicitudlabexasController < ApplicationController
  def update
     @solicitudlabexa = Solicitudlabexa.find(params[:id])
     getViewModel
+    @asignatura=Asignatura.find(@solicitudlabexa.asignatura_id)
+    @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlabexa.asignatura.curso).order("nombre_asig").all
+   
     respond_to do |format|
     
     if params[:fecha]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
@@ -125,6 +128,7 @@ class SolicitudlabexasController < ApplicationController
     end
 
     pref=""
+
     
     for especial in @especiales do
       nombre=especial.ssoo.to_s
@@ -135,7 +139,10 @@ class SolicitudlabexasController < ApplicationController
     @solicitudlabexa.preferencias=pref
 
     nombrecomp = params[:usuario][:identificador].to_s.split(', ')
-      if @solicitudlabexa.update_attributes(:fecha => nfecha,                                             
+     if((params[:asignatura]==nil)or (params[:asignatura][:id]==nil))
+        flash[:notice]="El campo asignatura es obligatorio"
+        format.html { render :action=>"edit"}
+      elsif @solicitudlabexa.update_attributes(:fecha => nfecha,                                             
                                              :usuario_id => params[:usuario][:identificador].to_i,
                                              :asignatura_id => params[:asignatura][:id].to_i,
                                              :fechasol => Date.today,

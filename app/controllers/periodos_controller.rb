@@ -39,6 +39,7 @@ class PeriodosController < ApplicationController
     @tipoact=@periodo.tipo
     @activo="NO" unless @periodo.activo?
     @admision="NO" unless @periodo.admision?
+    logger.debug "Fechaa"+ @periodo.iniciosol.to_s 
   end
 
   # POST /periodos

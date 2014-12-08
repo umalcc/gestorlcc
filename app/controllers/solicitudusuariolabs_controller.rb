@@ -26,8 +26,8 @@ class SolicitudusuariolabsController < ApplicationController
     @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").all
     @asignaturaselec=@solicitudlab.asignatura_id
 
-    @solicitudlab.fechaini=formato_europeo(@solicitudlab.fechaini)
-    @solicitudlab.fechafin=formato_europeo(@solicitudlab.fechafin)
+    #@solicitudlab.fechaini=formato_europeo(@solicitudlab.fechaini)
+    #@solicitudlab.fechafin=formato_europeo(@solicitudlab.fechafin)
     respond_to do |format|
       format.html
       format.xml  { render :xml => @solicitudusuariolab }
@@ -69,6 +69,7 @@ def new
     @solicitudlab = Solicitudlab.new(params[:solicitudlab])
     @solicitudlab.usuario_id = @usuario_actual.id
     @solicitudlab.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+
     @solicitudlab.fechasol=Date.today
     if (Asignatura::CURSO).first=="optativa"
       as='0'
@@ -83,23 +84,20 @@ def new
     @solicitudlab.npuestos=params[:npuestos].to_s
     @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
     @solicitudlab.asignado="N"
-
+    @solicitudlab.asignatura=Asignatura.new
 # HACER UN DRYYYYYYY!!!!!
-logger.debug "Periodo"
     periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
     if periodoact.nil? # si es un user no puede cursar en periodo sin activaRRRRRRRR!!!!!!!!!
        iniperiodoact=finperiodoact=Date.today 
-       logger.debug "Activoo"
     else 
-      logger.debug "Inactivo"
        iniperiodoact=periodoact.inicio
        finperiodoact=periodoact.fin
-        if formato_europeo(params[:fechaini])<iniperiodoact.to_s
-          params[:fechaini]=formato_europeo(iniperiodoact)
-       end
-       if formato_europeo(params[:fechafin])>finperiodoact.to_s
-          params[:fechafin]=formato_europeo(finperiodoact)
-       end
+        #if formato_europeo(params[:fechaini])<iniperiodoact.to_s
+        #  params[:fechaini]=formato_europeo(iniperiodoact)
+       #end
+       #if formato_europeo(params[:fechafin])>finperiodoact.to_s
+       #   params[:fechafin]=formato_europeo(finperiodoact)
+       #end
     end
 
     if params[:fechaini]==params[:fechafin]
@@ -121,9 +119,8 @@ logger.debug "Periodo"
     else
       @solicitudlab.fechaini=nil
     end
-      logger.debug "Fechaaaaa"+ params[:fechafin]
+
     if params[:fechafin]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-        logger.debug "Fechaaaaa22"+ params[:fechafin]
       nfechafin=formato_europeo(params[:fechafin])
       #fecha=params[:fechafin].to_s.split('-')
       #nfechafin=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
@@ -147,7 +144,10 @@ logger.debug "Periodo"
       flash[:notice]="No hay tramos horarios en su peticion"
       format.html { render :action => "new" }
     else
+      @solicitudlab.asignatura=Asignatura.where("id = ?",@solicitudlab.asignatura_id ).first
+      logger.debug "Asignaturaaa :"+ @solicitudlab.asignatura_id.to_s
       if @solicitudlab.save
+        logger.debug "Asignaturaaa :"+ @solicitudlab.asignatura_id.to_s
         nuevo_id=@solicitudlab.id                       
         @tramos=session[:tramos_horarios].solicitudes
         @correotramos=''
@@ -158,6 +158,8 @@ logger.debug "Periodo"
                               p.horafin=tramo.horafin
                               p.save 
                               @correotramos+=' - '+p.diasemana+' de '+p.horaini+' a '+p.horafin}
+
+      
         CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Nueva ").deliver                       
         @solicitudlabs = Solicitudlab.find_all_by_usuario_id(@usuario_actual.id)
         format.html { redirect_to :action => "index" }
@@ -187,12 +189,12 @@ def update
     else 
        iniperiodoact=periodoact.inicio
        finperiodoact=periodoact.fin
-        if formato_europeo(params[:fechaini])<iniperiodoact.to_s
-          params[:fechaini]=formato_europeo(iniperiodoact)
-       end
-       if formato_europeo(params[:fechafin])>finperiodoact.to_s
-          params[:fechafin]=formato_europeo(finperiodoact)
-       end
+        #if formato_europeo(params[:fechaini])<iniperiodoact.to_s
+        #  params[:fechaini]=formato_europeo(iniperiodoact)
+       #end
+       #if formato_europeo(params[:fechafin])>finperiodoact.to_s
+       #   params[:fechafin]=formato_europeo(finperiodoact)
+       #end
     end
 
     
