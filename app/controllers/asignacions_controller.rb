@@ -382,7 +382,7 @@ class AsignacionsController < ApplicationController
     respond_to do |format|
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
       flash[:notice]="No hay tramos horarios en su peticion"
-      format.html { redirect_to('/asignacions/asigna_directa') }
+      format.html { render :action => 'asigna_directa' }
     else
       if @solicitudlab.save
         nuevo_id=@solicitudlab.id                       

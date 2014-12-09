@@ -52,7 +52,7 @@ before_filter :login_requerido, :admin?
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @laboratorio, :status => :created, :location => @laboratorio }
       else
-        format.html { render :action => "index" }
+        format.html { render :action => "new" }
         format.xml  { render :xml => @laboratorio.errors, :status => :unprocessable_entity }
       end
     end

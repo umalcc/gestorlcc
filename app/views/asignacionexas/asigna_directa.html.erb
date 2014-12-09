@@ -6,7 +6,7 @@
        <p><%= image_tag ("bg_separ.gif") %></p>
        <% activo=Periodo.where("activo = ?","t").all %>
         <div id="recuadro-azul" style="height:400px">
-          <%= form_for @solicitudlab,:url => '../asignacionexas/graba', :action=>"graba",  :html=> {:name => "formulario"} do |f| %>
+          <%= form_for @solicitudlab,:url => '/asignacionexas/graba', :action=>"graba",  :html=> {:name => "formulario"} do |f| %>
           <dl>
             <dt>Fecha solicitud</dt>
             <dd><%= @dia=@solicitudlab.fecha= fecha_europea(Date.today) %></dd>

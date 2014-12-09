@@ -7,7 +7,7 @@ has_many :solicitudrecursos
                             :message => ': Error al confirmar la password'
   validates_presence_of :password_confirmation,
                      :if => :password_changed?
-  validates_presence_of :identificador, :password,  :nombre, :apellidos, 
+  validates_presence_of :identificador, :password,  :nombre, :apellidos, :email,
                         :message => ': No puede estar en blanco'
   validates_length_of :password, 
                       :minimum => 6, 
