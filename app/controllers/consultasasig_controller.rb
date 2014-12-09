@@ -73,7 +73,9 @@ class ConsultasasigController < ApplicationController
     codlabs=@laboratorios.map{|l| l.id}
     @asignacionexas=Asignacionlabexadef.where("solicitudlabexa_id in (?) or laboratorio_id in (?) or dia LIKE ?",codsols,codlabs,cadena).all
 
-    #respond_to {|format| format.js }
+    respond_to do |format|
+      format.js
+    end
   end
     
 

@@ -1,2 +1,0 @@
-class Horasexa < ActiveRecord::Base
-end

@@ -2,10 +2,10 @@
    <p><span class="rotulo-menu"><%= link_to "Inicio" , new_inicio_path ,:style=>"color:black"%></span>
       <%= image_tag("bg_separ_nav.gif") %></p>  
    <p><span class="rotulo-menu">Par&aacute;metros del sistema</span>
-     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'D&iacute;as', dias_path %>
+     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Días', dias_path %>
      <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Horario lectivo', horarios_path %>
-     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Horario examenes', horasexas_path %>
-     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Per&iacute;odos', periodos_path %>
+     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Horario exámenes', horasexas_path %>
+     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Períodos', periodos_path %>
      <br/><%= image_tag("bg_separ_nav.gif") %>
    </p>
    <p><span class="rotulo-menu">Gesti&oacute;n de archivos</span>
@@ -17,8 +17,8 @@
      <br/><%= image_tag("bg_separ_nav.gif") %>
    </p>
    <p><span class="rotulo-menu">Solicitudes</span>
-     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Lab. periodo lectivo', solicitudlabs_path %>
-     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Lab. ex&aacute;menes', solicitudlabexas_path %>
+     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Lab. período lectivo', solicitudlabs_path %>
+     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Lab. exámenes', solicitudlabexas_path %>
      <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Otros recursos', solicitudrecursos_path %>
      <br/><%= image_tag("bg_separ_nav.gif") %>
    </p>
@@ -33,8 +33,8 @@
      <br/><%= image_tag("bg_separ_nav.gif") %>
    </p>
    <p><span class="rotulo-menu">Estad&iacute;sticas</span>
-     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Periodo lectivo','/estadisticas/periodo_lectivo' %>
-     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Ex&aacute;menes','/estadisticas/periodo_examenes' %>
+     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Período lectivo','/estadisticas/periodo_lectivo' %>
+     <br/>&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to 'Exámenes','/estadisticas/periodo_examenes' %>
      <br/><%= image_tag("bg_separ_nav.gif") %>
    </p>
    <p><span class="rotulo-menu"><%= link_to "Salir" , session_path, :method => 'delete',:style=>"color:black" %></span>

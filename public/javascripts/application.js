@@ -9,9 +9,6 @@
 //    for feature requests and/or donations
 
 
-//= require jquery
-//= require jquery.ui.all
-//= require jquery_ujs
 
 
 function show_calendar2(str_target, str_datetime,x,y) {

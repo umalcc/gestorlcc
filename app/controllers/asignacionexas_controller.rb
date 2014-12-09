@@ -1,4 +1,4 @@
-﻿class AsignacionexasController < ApplicationController
+class AsignacionexasController < ApplicationController
   # GET /asignacionexas
   # GET /asignacionexas.xml
 
@@ -29,9 +29,9 @@
   def asignar_continuar
        @asignacionexas=Asignacionlabexa.all
     
-      render :update do |page|
-        page.replace_html(:'cuadrante', :partial=>"/asignacionexas/cuadrante", :object=>@asignacionexas)
-      end
+      respond_to do |format|
+        format.js
+    end
     
 
   end
@@ -180,9 +180,9 @@
     else
       @asignacionexas=[]
     end
-      render :update do |page|
-        page.replace_html(:'cuadrante', :partial=>"/asignacionexas/cuadrante", :object=>@asignacionexas)
-      end
+      respond_to do |format|
+        format.js
+    end
 
   end
 
@@ -214,8 +214,8 @@
                             sol.save
                             a.destroy
                       }
-    render :update do |page|
-        page.replace_html(:'cuadrante', :partial=>"/asignacionexas/grabacion")
+    respond_to do |format|
+        format.js
       end
 
   end
@@ -228,9 +228,11 @@
     inicial_hora_ini=@asignacionexa.horaini
     inicial_hora_fin=@asignacionexa.horafin
     inicial_laboratorio=@asignacionexa.laboratorio
-    laboratorio_id=Laboratorio.find_by_nombre_lab(params[:laboratorio_id][:nombre_lab]).id
-    horaini=Horasexa.find_by_comienzo(params[:horario_id][:comienzo]).comienzo
-    horafin=Horasexa.find_by_comienzo(params[:horario_id][:comienzo]).fin
+    laboratorio_id=Laboratorio.find_by_nombre_lab(params[:nombre_lab]).id
+    horaini=Horasexa.find_by_comienzo(params[:comienzo]).comienzo
+    horafin=Horasexa.find_by_comienzo(params[:comienzo]).fin
+
+
     if inicial_laboratorio!=laboratorio_id
       asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ? and laboratorio_id = ?',@asignacionexa.solicitudlabexa,inicial_laboratorio).all
       for asignacionexa in asignaciones # todas las que haya que modificar
@@ -238,36 +240,36 @@
       end 
     end
     mov_dia=""
-    if formato_europeo(inicial_dia) != params[:dia][:dia]
-      mov_dia=" cambio de "+inicial_dia.to_s+" a "+params[:dia][:dia].to_s+"; "
+    if formato_europeo(inicial_dia) != params[:dia]
+      mov_dia=" cambio de "+inicial_dia.to_s+" a "+params[:dia].to_s+"; "
       asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ?',@asignacionexa.solicitudlabexa).all
       for asignacionexa in asignaciones # todas las que haya que modificar
-        asignacionexa.update_attributes(:dia=> params[:dia][:dia], 
+        asignacionexa.update_attributes(:dia=> params[:dia], 
                                         :mov_dia=> mov_dia) 
       end  
     end
     mov_hora="" 
-    if inicial_hora_ini != params[:horario_id][:comienzo]
-      diferencia=Horasexa.find_by_comienzo(inicial_hora_ini).num-Horasexa.find_by_comienzo(params[:horario_id][:comienzo]).num
-      mov_hora=" cambio de "+inicial_hora_ini+"-"+inicial_hora_fin+" a "+params[:horario_id][:comienzo]+"-"+horafin+"; "
+    if inicial_hora_ini != params[:comienzo]
+      diferencia=Horasexa.find_by_comienzo(inicial_hora_ini).num-Horasexa.find_by_comienzo(params[:comienzo]).num
+      mov_hora=" cambio de "+inicial_hora_ini+"-"+inicial_hora_fin+" a "+params[:comienzo]+"-"+horafin+"; "
       asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ?',@asignacionexa.solicitudlabexa).all
       for asignacionexa in asignaciones # todas las que haya que modificar
         asignacionexa.update_attributes(:horaini=> Horasexa.find_by_num(Horasexa.find_by_comienzo(asignacionexa.horaini).num-diferencia).comienzo,
                                         :horafin=> Horasexa.find_by_num(Horasexa.find_by_comienzo(asignacionexa.horaini).num-diferencia).fin,
-                                        :mov_hora=> mov_hora )
+                                       :mov_hora=> mov_hora )
       end  
     end
-    #for asignacionexa in asignaciones # todas las que haya que modificar
-    #  asignacionexa.update_attributes(:laboratorio_id=>laboratorio_id,
-    #                                  :dia=> params[:dia], 
-    #                                  :horaini=> params[:horario_id][:comienzo],
-    #                                  :horafin=> horafin,
-    #                                  :mov_dia=> mov_dia,
-    #                                  :mov_hora=> mov_hora ) 
-    #end    
+    for asignacionexa in asignaciones # todas las que haya que modificar
+      asignacionexa.update_attributes(:laboratorio_id=>laboratorio_id,
+                                      :dia=> params[:dia], 
+                                      :horaini=> params[:comienzo],
+                                      :horafin=> horafin,
+                                      :mov_dia=> mov_dia,
+                                      :mov_hora=> mov_hora ) 
+    end    
         @asignacionexas=Asignacionlabexa.all
-        render :update do |page|
-          page.replace_html(:'cuadrante', :partial=>"/asignacionexas/cuadrante", :object=>@asignacionexas)
+        respond_to do |format|
+          format.js
         end
      
     
@@ -291,7 +293,7 @@
 
     horas=Horasexa.all.map{|h| h.id}
     laboratorios=Laboratorio.all.map{|l| l.id}
-    periodo=Periodo.all('tipo = ? and inicio > ?','Examenes',Date.today).first
+    periodo=Periodo.where('tipo = ? and inicio > ?','Examenes',Date.today).first #cambiar Date.parse por Date.today
     
 
     @colision=0
@@ -305,8 +307,8 @@
          end
       end
     end
-    render :update do |page|
-          page.replace_html(:'colision', :partial=>"/asignacionexas/colisiones", :object=>@colision)
+    respond_to do |format|
+          format.js
     end
   end
   
@@ -393,20 +395,21 @@
     otrasasignacionexas=Asignacionlabexa.where('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id).all
     otrasasignacionexas.each {|o| o.delete }
     @asignacionexas=Asignacionlabexa.all
-        render :update do |page|
-          page.replace_html(:'cuadrante', :partial=>"/asignacionexas/cuadrante", :object=>@asignacionexas)
-        end
+
+    respond_to do |format|
+      format.js
+    end
   end
 
-  def borranormalasignada
+  def borranormalasignada 
     asignacionexa=Asignacionlabexa.find(params[:asigna])
     #asignacionexa.delete
     otrasasignacionexas=Asignacionlabexa.all('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id)
     otrasasignacionexas.each {|o| o.delete }
     @asignacionexas=Asignacionlabexa.all
-        render :update do |page|
-          page.replace_html(:'cuadrante2', :partial=>"/asignacionexas/cuadrante2", :object=>@asignacionexas)
-        end
+    respond_to do |format|
+        format.js
+    end
   end
 
   def borradirasignada
@@ -417,9 +420,9 @@
     otrasasignacionexas.each {|o| o.delete }
     #solicitudlab.delete
     @asignacionexas=Asignacionlabexadef.order('dia,solicitudlabexa_id,laboratorio_id').all
-        render :update do |page|
-          page.replace_html(:'cuadrante2', :partial=>"/asignacionexas/cuadrante2", :object=>@asignacionexas)
-        end
+    respond_to do |format|
+      format.js
+    end
   end
 
   def borradir
@@ -430,9 +433,10 @@
     otrasasignacionexas.each {|o| o.delete }
     #solicitudlab.delete
     @asignacionexas=Asignacionlabexa.all
-        render :update do |page|
-          page.replace_html(:'cuadrante', :partial=>"/asignacionexas/cuadrante", :object=>@asignacionexas)
-        end
+    
+    respond_to do |format|
+      format.js
+    end
   end
 
 
@@ -466,8 +470,10 @@
     codlabs=@laboratorios.map{|l| l.id}
     @asignacionexas=Asignacionlabexadef.where("solicitudlabexa_id in (?) or laboratorio_id in (?) or dia LIKE ?",codsols,codlabs,cadena).all
 
-    respond_to {|format| format.js }
+    respond_to do |format| 
+      format.js 
   end
-    
+  
+  end
 
 end

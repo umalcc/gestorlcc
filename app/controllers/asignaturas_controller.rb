@@ -116,29 +116,29 @@ class AsignaturasController < ApplicationController
   def combo_por_titulacion
 
     session[:titulacion]=params[:combo_titulacion]
-    @asignaturas=Asignatura.order("nombre_asig").all('titulacion_id = ? and curso = ?', session[:titulacion].to_i,session[:nivel].to_i)
+
+    @asignaturas=Asignatura.order("nombre_asig").where('titulacion_id = ? and curso = ?', session[:titulacion].to_i,session[:nivel].to_i).all
     
-    return render(:partial => 'combo_por_titulacion', :layout => false) if request.xhr?
+    respond_to do |format|
+      format.js
+    end
   end
 
   def combo_por_nivel
 
     session[:nivel]=params[:combo_nivel]
-    @asignaturas=Asignatura.order("nombre_asig").all('titulacion_id = ? and curso = ?', session[:titulacion].to_i,session[:nivel].to_i)
+    @asignaturas=Asignatura.order("nombre_asig").where('titulacion_id = ? and curso = ?', session[:titulacion].to_i,session[:nivel].to_i).all
     
-
-
-    return render(:partial => 'combo_por_titulacion', :layout => false) if request.xhr?
+    respond_to do |format|
+      format.js
+    end
   end
 
   def listar
    
-    logger.debug "EEEEEEEEEEEEEEEEEEEEEEEEEE"
     cadena=(params[:query].nil?)? "%" : "%#{params[:query]}%"
-    logger.debug "CADENAAAA"+ cadena
     @titulaciones=Titulacion.where("abrevia LIKE ?",cadena).all
     codigos=@titulaciones.map { |t| t.id}
-	logger.debug codigos
     @asignaturas=Asignatura.where("codigo_asig||nombre_asig||caracter||curso||cuatrimestre LIKE ? or titulacion_id in (?)",cadena,codigos).all
      @cuenta=@asignaturas.size
  #render(:partial => 'listar', :layout => false)

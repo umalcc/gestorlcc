@@ -14,7 +14,7 @@
          <span style="margin-left:600px;color:blue;font-weight:normal;font-size:0.7em">Para imprimir 
          <%= link_to image_tag("print.png",:alt=>"Para imprimir"), '../listado/asignacion_examenes_impresa',{:target => "_blank" } %></span>
       </div>
-<div id="asignadirecta" style="top:-117px;left:700px"><%= link_to 'Asignaci&oacute;n directa','../asignacionexas/asigna_directa' %></div>
+<div id="asignadirecta" style="top:-117px;left:700px"><%= link_to 'Asignación directa','../asignacionexas/asigna_directa' %></div>
 
 <div id="recuadro">
  <div id="lista-gestion">
@@ -45,26 +45,26 @@
                                     <%= formato_europeo(a.dia) %>
                                   <% end %><% diaant=a.dia %></td>
     <td><%= a.solicitudlabexa.usuario.nombre+" "+a.solicitudlabexa.usuario.apellidos %></td>
-    <td><%= "<a onmouseover=ShowContent('asignatura"+a.id.to_s+"'); return true;
-   			   onmouseout=HideContent('asignatura"+a.id.to_s+"'); return true;>" %>
-                           <%= "<div id=asignatura"+a.id.to_s %> 
-				style='display:none;position:absolute;
-      					border-style: solid;
-      					background-color: white;
-      					padding: 5px;';>
-                                        <%= a.solicitudlabexa.asignatura.nombre_asig %>
+    <td><a onmouseover="ShowContent('asignatura<%=a.id.to_s%>'); return true;"
+   			   onmouseout="HideContent('asignatura<%=a.id.to_s%>'); return true;">
+          <div id="asignatura<%=a.id.to_s%>" 
+				       style='display:none;position:absolute;
+      					      border-style: solid;
+      					      background-color: white;
+      					      padding: 5px;';>
+          <%= a.solicitudlabexa.asignatura.nombre_asig %>
 			    </div>
          <%= a.solicitudlabexa.asignatura.abrevia_asig %></a></td>
    
     <td>
-        <%= "<a onmouseover=ShowContent('titulacion"+a.id.to_s+"'); return true;
-   			   onmouseout=HideContent('titulacion"+a.id.to_s+"'); return true;>" %>
-                           <%= "<div id=titulacion"+a.id.to_s %> 
-				style='display:none;position:absolute;
-      					border-style: solid;
-      					background-color: white;
-      					padding: 5px;';>
-                                        <%= a.solicitudlabexa.asignatura.titulacion.nombre %>
+        <a onmouseover="ShowContent('titulacion<%=a.id.to_s%>'); return true;"
+   			   onmouseout="HideContent('titulacion<%=a.id.to_s%>'); return true;"> 
+          <div id="titulacion<%=a.id.to_s%>"
+				       style='display:none;position:absolute;
+      					      border-style: solid;
+      					      background-color: white;
+      					      padding: 5px;';>
+          <%= a.solicitudlabexa.asignatura.titulacion.nombre %>
 			    </div>
         <%= a.solicitudlabexa.asignatura.titulacion.abrevia %></a></td>
     <td style="text-align:center"><%= a.solicitudlabexa.curso=="sin curso"? "-" : a.solicitudlabexa.curso %></td>
@@ -78,12 +78,7 @@
             <% if antlab!=" " %>
                <%= " - " %>
             <% end %>
-            <%= l %><%= link_to image_tag("borrar.png",:border=>0,:height => "50%"),
-                                :with => "'asigna=#{a.id}'",
-                                :url=>{ :controller=>'asignacionexas',:action => 'borradirasignada' },
-                                :confirm=>'Seguro que desea eliminar la
-                                           asignacion?', 
-                                :remote => true %>
+            <%= l %><%= link_to image_tag("borrar.png",:border=>0,:height => "50%"), "#", id:"borraDirAsig"%>
           <% end %>
           <% antlab= l %>
         <% end %></td>
@@ -95,3 +90,26 @@
   </table>
  </div>
 </div>
+
+
+<script type="text/javascript">
+
+$(function()
+{
+   $('#borraDirAsig').click(function () { 
+
+         var aux=$("div[id^='asignatura']").attr("id"); 
+         var asignaId = aux.replace("asignatura",""); 
+ 
+         if(confirm('Seguro que desea eliminar la asignacion?'))
+         {
+            $.ajax({
+                     type: "POST",
+                     url: "borradirasignada",
+                     data: { asigna:asignaId }
+                   })
+         }  
+    }) 
+});
+
+</script>

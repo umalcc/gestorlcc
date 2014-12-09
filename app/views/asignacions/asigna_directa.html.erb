@@ -5,7 +5,7 @@
      <div id="recuadro">
        <p><%= image_tag ("bg_separ.gif") %></p>
         <div id="recuadro-azul" style="height:600px">
-          <%= form_for @solicitudlab,:url => '../asignacions/graba', :action=>"graba",  :html=>c {:name => "formulario"} do |f| %>
+          <%= form_for @solicitudlab,:url => '../asignacions/graba', :action=>"graba",  :html=> {:name => "formulario"} do |f| %>
           <dl>
             <dt>Fecha solicitud</dt>
             <dd><%= @dia=@solicitudlab.fechaini=@solicitudlab.fechafin= fecha_europea(Date.today) %></dd>
@@ -28,14 +28,6 @@
                 <% end %>
                 <% @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?',@titulaciones.first.id,as).all %>                <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]} %>
                 </span><dd>
-                <%= observe_field 'titulacion_titulacion_id', 
-                            :url =>{:controller => 'asignaturas', :action => 'combo_por_titulacion'}, 
-                            :update => 'combo_asignatura', 
-                            :with => 'combo_titulacion' %>
-                <%= observe_field 'nivel', 
-                            :url =>{:controller => 'asignaturas', :action => 'combo_por_nivel'}, 
-                            :update => 'combo_asignatura', 
-                            :with => 'combo_nivel' %>
             </dd>
             <dt>Laboratorio *</dt>
             <dd><% @laboratorios=Laboratorio.order("nombre_lab").all %>                                             
@@ -90,10 +82,7 @@
                                        <%= select "horaini", "comienzo", @horas.map {|h| [h.comienzo] }%></td>
                           <td width=60><%= select "horafin", "fin", @horas.map {|h| [h.fin] }%></td>
                           <td width=15>
-                              <%= link_to(image_tag("mas.png",:border=>0),
-                                            :submit   => "subformulario",
-                                            :url      => { :controller=>:solicitar,:action => 'anadir' },
-                                            :success  => 'mostrardiv("asignar")', :remote => true) %>
+                              <%= link_to(image_tag("mas.png",:border=>0), "#", :id => "anadirLink") %>
                           </td>
                         </tr>
                       </table><!-- de subformulario --></td>
@@ -117,3 +106,55 @@
         <% end %><!-- de form_for -->
      </div><!-- de recuadro -->
 </div><!-- de central -->
+
+<script type="text/javascript" charset="utf-8">
+
+$(function(){
+  $("#titulacion_titulacion_id").change(function()
+{
+  $.ajax({
+           beforeSend:function(xhr)
+           {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+           },
+           type:"POST",
+           url:"/asignaturas/combo_por_titulacion",
+           data:{combo_titulacion:$("#titulacion_titulacion_id").val()}
+        });
+});
+
+$("#nivel").change(function()
+{
+  $.ajax({
+           beforeSend:function(xhr)
+           {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+           },
+           type:"POST",
+           url:"/asignaturas/combo_por_nivel",
+           data:{combo_nivel:$("#nivel").val()}
+        });
+});
+
+$("#anadirLink").click(function()
+{
+  $.ajax({
+           beforeSend:function(xhr)
+           {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+           },
+           type:"POST",
+           url:"/solicitar/anadir",
+           data:{diasemana_nombre:$("#diasemana_nombre").val(), horafin_fin:$("#horafin_fin").val(), 
+                 horaini_comienzo:$("#horaini_comienzo").val()},
+           success: function()
+           {
+                mostrardiv("asignar");
+           }
+        });
+   });
+
+});
+
+
+</script>

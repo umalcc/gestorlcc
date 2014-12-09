@@ -75,7 +75,7 @@
       <% end %>
       <td>
           <% if tot_as!=0 %><!-- esto es lo que se ve -->
-            <%= tot_as.to_s+" asig / "+(@labs.size*fechas.size).to_s + " asig<br/>"+number_with_precision((Float(100*tot_as)/(@labs.size*fechas.size)),:precision=>2)+ " % "%> 
+            <%= tot_as.to_s%> asig / <%=(@labs.size*fechas.size).to_s%> asig<br/><%=number_with_precision((Float(100*tot_as)/(@labs.size*fechas.size)),:precision=>2)%> % 
           <% else %>
             <%= '-' %>
           <% end %>  

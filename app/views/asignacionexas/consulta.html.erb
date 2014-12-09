@@ -14,10 +14,6 @@
            <td><%= image_tag("search.png") %></td>
            <td>Buscar  : </td>
            <td><%= text_field_tag "query" %>
-           <%= observe_field 'query',  
-            :frequency => 1,         
-            :with => 'query',
-            :url => {:controller => 'asignacionexas',:action => 'listar'} %></td>
            <td class="cien"> </td>
            
           </tr>
@@ -33,4 +29,27 @@
         <% end %>  
   </div>
 </div>
+
+<script type="text/javascript" charset="utf-8">
+
+$(function(){
+  $("#query").keyup(function()
+{
+
+ var jqueryVal=$("#query").val();
+ var url="listar";
+  $.ajax({
+  beforeSend:function(xhr)
+{
+  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+},
+
+    type:"POST",
+    url:url,
+    data:{query:jqueryVal}
+});
+});
+
+});
+</script>
 

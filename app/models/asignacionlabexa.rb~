@@ -1,5 +1,0 @@
-class Asignacionlabexa < ActiveRecord::Base
-
-    belongs_to :solicitudlab;
-    belongs_to :laboratorio;
-end

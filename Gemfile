@@ -27,6 +27,8 @@ gem 'therubyracer'
 # gem 'sqlite3-ruby', :require => 'sqlite3'
 # gem 'aws-s3', :require => 'aws/s3'
 #gem 'jquery-rails'
+gem 'iconv'
+gem 'jquery-color'
 gem 'sprockets'
 gem 'sprockets-rails', :require => 'sprockets/railtie'
 group :development, :test do

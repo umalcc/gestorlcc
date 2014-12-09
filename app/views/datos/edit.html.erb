@@ -12,15 +12,15 @@
           <dt>Identificador </dt>
           <dd><%= h @usuario.identificador %></dd>
           <dt>Nombre *</dt>
-          <dd><%= f.text_field :nombre,:size=>20 %></dd>
+          <dd><%= f.text_field :nombre,:size=>24 %></dd>
           <dt>Apellidos *</dt>
           <dd><%= f.text_field :apellidos,:size=>24 %></dd>
           <dt>email *</dt>
           <dd><%= f.text_field :email,:size=>24 %></dd>
           <dt>Despacho</dt>
-          <dd><%= f.text_field :despacho,:size=>8 %></dd>
+          <dd><%= f.text_field :despacho,:size=>24 %></dd>
           <dt>Tel&eacute;fono</dt>
-          <dd><%= f.text_field :telefono,:size=>8 %></dd>       
+          <dd><%= f.text_field :telefono,:size=>24 %></dd>       
           </dd>
           <p><%= f.submit 'Guardar cambios', :class=>"boton"%></p>
         </dl>

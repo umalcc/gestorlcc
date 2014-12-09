@@ -12,7 +12,7 @@
          <% end %>
       </div>
       <div id="asignadirecta">
-        <%= link_to 'Asignaci&oacute;n directa','../asignacions/asigna_directa' %>
+        <%= link_to 'Asignación directa','../asignacions/asigna_directa' %>
       </div>
       <span style="margin-left:400px;color:blue;">
          Para imprimir 
@@ -45,7 +45,7 @@
       		padding: 5px;'>
                   <%= "Denominacion: "+lab.ssoo %><br>
                   <%= "Num. puestos: "+lab.puestos.to_s  %><br>
-                  <%= "Lab Especial?: "+((lab.especial)?"SI":"NO") %>
+                  Lab Especial?: <%=((lab.especial)? 'SI':'NO') %>
              </div>
              <%= lab.nombre_lab %></a><!-- nombre_lab e info flotante -->
            </th>
@@ -73,11 +73,10 @@
                 <% for a in as %>
                   <a onmouseover="ShowContent('flotante<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s+a.id.to_s%>'); return true;" onmouseout="HideContent('flotante<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>'); return true;">
                <div id="flotante<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>" 
-				 style='display:none;position:absolute;
-      					border-style: solid;
-      					background-color: white;width:200px;
-					font-weight: bold;
-      					padding: 5px;'>
+				            style='display:none;position:absolute;
+      					           border-style: solid;
+      					           background-color: white;width:200px;
+					                 font-weight: bold; padding: 5px;';>
                                    <%= "Asig: "+a.solicitudlab.asignatura.abrevia_asig %><br>
                                    <%= "( "+a.solicitudlab.asignatura.titulacion.abrevia+" )" %><br/>
 				   <%= "Curso: "+a.solicitudlab.curso %><%=" Puestos: "+a.solicitudlab.npuestos.to_s %><br>
@@ -109,22 +108,16 @@
 
 			    <% if a.solicitudlab.tipo=="X" %><!-- si la asignacion es directa, se podra eliminar -->
                               <% formid2="formborra"+hora.id.to_s+dia.id.to_s+a.id.to_s %>
-			      <div id="+formid2+" >
+			      <div id="formid2" >
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
-			      <%= link_to image_tag("borrar.png",:border=>0,:height=>16,:width=>16),
-                            :submit=> formid2, 
-                            :url=>{:controller=>'asignacions',:action=>'borradirasignada'},
-                            :confirm=>'Seguro que desea eliminar la asignacion?',:remote => true %>
+			      <%= link_to image_tag("borrar.png",:border=>0,:height=>16,:width=>16), "#", :id => "borraDirAsig"%>
                             <% else %>
                               <% formid3="formborra"+hora.id.to_s+dia.id.to_s+a.id.to_s %>
-			      <div id="+formid3+" >
+			      <div id="formid3" >
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
-			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16),
-                                :submit=> formid3, 
-                                :url=>{ :controller=>'asignacions',:action => 'borranormalasignada' },
-                                :confirm=>'Seguro que desea eliminar la asignacion?', :remote => true  %><
+			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16), "#", :id => "borraNormAsig"%>
                             <% end %>
                           
                        </a><br/>
@@ -139,3 +132,34 @@
    </table>
    <% end %><!-- de for dia in @dias -->
 
+
+<script type="text/javascript">
+$(function()
+{
+   $('#borraNormAsig').click(function () {    
+         if(confirm('Seguro que desea eliminar la asignacion?'))
+         {
+            $.ajax({
+                     type: "POST",
+                     url: "borranormalasignada",
+                     data: { asigna:$("#asigna").val() }
+                   })
+         }  
+    }) 
+});
+
+$(function()
+{
+   $('#borraDirAsig').click(function () {    
+         if(confirm('Seguro que desea eliminar la asignacion?'))
+         {
+            $.ajax({
+                     type: "POST",
+                     url: "borradirasignada",
+                     data: { asigna:$("#asigna").val() }
+                   })
+         }  
+    }) 
+});
+
+</script>

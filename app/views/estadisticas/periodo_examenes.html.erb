@@ -23,7 +23,7 @@
         <table id="eliminahistorico" style="margin-left:900px;margin-top:-50px">
           <tr>
             <td><%= link_to(image_tag("limpiar.jpeg",:border=>0,:width=>32,:height=>32),
-{class:"borrarHistorico", :method => 'POST',:controller=>'estadisticas',:action => 'borrar_historico_examenes' },
+                        {:method => 'POST',:controller=>'estadisticas',:action => 'borrar_historico_examenes' },
                          :before   => 'mostrardiv("imagen-progreso")',
                          :confirm  => "Esto eliminará todo el registro histórico de asignaciones en período de exámenes. ¿Está seguro?", :remote => true)%></td>
            <td style="color:#010080;font-size:0.9em">Limpiar<br/> hist&oacute;rico</td>
@@ -45,12 +45,10 @@
      </div><!-- de recuadro -->
 </div>
 
-<script type="text/javascript" charset="utf-8">
-alert("ss");
+<!--<script type="text/javascript" charset="utf-8"> asociado al link_to borrar_historico_exámenes
 $(function(){
    $(".borrarHistorico").bind("ajax:complete",function(){
-	alert("PP");
       location.reload();	
 	});
  });
-</script>
+</script>-->

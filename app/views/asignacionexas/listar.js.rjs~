@@ -1,1 +1,0 @@
-page.replace_html(:'cuadrante2', :partial=>"/asignacionexas/cuadrante2", :object=>@asignacionlabexas)

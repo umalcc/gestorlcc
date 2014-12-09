@@ -32,15 +32,12 @@
             <% clase=cycle('linea-impar','linea-par') %>
             <tr valign="top" class="<%=clase %>">        
              <td><% id=asignacion.solicitudlab.asignatura_id %><% asig=Asignatura.find(id) %>
-             <%= "<a onmouseover=ShowContent('asignatura"+id.to_s+"'); return true;
-   			   onmouseout=HideContent('asignatura"+id.to_s+"'); return true;>" %>
-                           <%= "<div id=asignatura"+id.to_s %> 
-				style='display:none;position:absolute;
-      					border-style: solid;
-      					background-color: white;width:200px;
-      					padding: 5px;';>
-                                        <%= asig.nombre_asig %><br/>
-                                        <%= asig.titulacion.abrevia %>
+             <a onmouseover="ShowContent('asignatura<%=id.to_s%>'); return true;"
+   			        onmouseout="HideContent('asignatura<%=id.to_s%>'); return true;">
+                <div id="asignatura<%=id.to_s%>" 
+				             style='display:none;position:absolute; border-style: solid; background-color: white;width:200px; padding: 5px;';>
+                     <%= asig.nombre_asig %><br/>
+                     <%= asig.titulacion.abrevia %>
 			    </div>
                  <%= asignacion.solicitudlab.asignatura.abrevia_asig %></td>
              <td><%= asignacion.solicitudlab.curso %></td> 

@@ -1,5 +1,0 @@
-class Solicitud
-  attr_accessor :diasemana, :horaini, :horafin, :n
- 
-  
-end

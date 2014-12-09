@@ -29,14 +29,7 @@
                 <% @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).all %>
                 <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]} %>
                 </span><dd>
-                <%= observe_field 'titulacion_titulacion_id', 
-                            :url =>{:controller => 'asignaturas', :action => 'combo_por_titulacion'}, 
-                            :update => 'combo_asignatura', 
-                            :with => 'combo_titulacion' %>
-                <%= observe_field 'nivel', 
-                            :url =>{:controller => 'asignaturas', :action => 'combo_por_nivel'}, 
-                            :update => 'combo_asignatura', 
-                            :with => 'combo_nivel' %>
+               
             </dd>
             <dt>Laboratorio *</dt>
             <dd><% @laboratorios=Laboratorio.order("nombre_lab").all %>                                             
@@ -46,7 +39,7 @@
             <dd>
               <% periodoact=Periodo.where("activo = ? AND tipo = ?","t","Examenes").first %>
                 <% if periodoact.nil? %>
-                   <%  inicio=fecha_europea((Periodo.where("inicio >= ? AND tipo = ?",Date.today).first).inicio) %>
+                   <%  inicio=fecha_europea((Periodo.where("inicio >= ? AND tipo = ?",Date.today,"Examenes").first).inicio) %> <!--cambiar por Date.today-->
                 <% else %>
                    <% iniperiodoact=periodoact.inicio %>
                    <% inicio=fecha_europea(iniperiodoact) %>
@@ -88,3 +81,35 @@
        <% else %>
      </div><!-- de recuadro -->
 </div><!-- de central -->
+
+<script type="text/javascript" charset="utf-8">
+
+$(function(){
+  $("#titulacion_titulacion_id").change(function()
+{
+  $.ajax({
+           beforeSend:function(xhr)
+           {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+           },
+           type:"POST",
+           url:"/asignaturas/combo_por_titulacion",
+           data:{combo_titulacion:$("#titulacion_titulacion_id").val()}
+        });
+});
+
+$("#nivel").change(function()
+{
+  $.ajax({
+           beforeSend:function(xhr)
+           {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+           },
+           type:"POST",
+           url:"/asignaturas/combo_por_nivel",
+           data:{combo_nivel:$("#nivel").val()}
+        });
+});
+
+});
+</script>

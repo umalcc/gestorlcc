@@ -5,10 +5,10 @@
    <tr>
     <td>Revisar colisiones</td>
     <td style="padding-right:150px"><%= link_to image_tag("boton2.png", :border=>0), 
-                                :url=>{ :controller=>'asignacions',:action => 'revisar' }, :remote => true %></td>
+                                { :controller=>'asignacions',:action => 'revisar' }, :remote => true %></td>
     <td>Grabar asignaci&oacute;n definitiva</td>
     <td><%= link_to image_tag("boton2.png", :border=>0), 
-                                :url=>{ :controller=>'asignacions',:action => 'grabar_asignacion' }, :remote => true %></td>
+                                { :controller=>'asignacions',:action => 'grabar_asignacion' }, :remote => true %></td>
    </tr>
   </table>
  </div> 
@@ -23,15 +23,16 @@
  <a name="up"></a>
  <div id="rotulodias">
   <% for dia in @dias %>
-    <%= "<a href=#"+dia.nombre+">"+dia.nombre+"&nbsp;&nbsp;&nbsp;&nbsp;"+"</a>" %>
+    <a href="#<%=dia.nombre%>"><%=dia.nombre%>&nbsp;&nbsp;&nbsp;&nbsp;</a>
   <% end %>
  </div>
  </p>
  <% for dia in @dias %><!-- por cada dia habil de la semana, una tabla -->
    
-   <div id="rotulodia"><%="<a  name="+dia.nombre+">"+dia.nombre+"</a>&nbsp;&nbsp;" %><br/>
-                       <%= image_tag ("bg_separ.gif") %>&nbsp;&nbsp
-                       <a href="#up"><%= image_tag ("up.png") %></a>
+   <div id="rotulodia">
+        <a  name="<%=dia.nombre%>"><%=dia.nombre%></a>&nbsp;&nbsp;<br/>
+        <%= image_tag ("bg_separ.gif") %>&nbsp;&nbsp
+        <a href="#up"><%= image_tag ("up.png") %></a>
    </div>
 
    <table id="asignacion">
@@ -40,16 +41,16 @@
       <th></th>
       <% for lab in @labs do %><!-- Los laboratorios son las columnas -->
       <th>
-        <%= "<a onmouseover=ShowContent('"+"flotante"+lab.id.to_s+"'); return true;
-   		      onmouseout=HideContent('"+"flotante"+lab.id.to_s+"'); return true;>" %>
-                      <%= "<div id="+"flotante"+lab.id.to_s+" 
-				style='display:none;position:absolute;
-      					border-style: solid;
-      					background-color: white;
-      					padding: 5px;';>" %>
+          <a onmouseover="ShowContent('flotante<%=lab.id.to_s%>'); return true;"
+   		      onmouseout="HideContent('flotante<%=lab.id.to_s%>'); return true;">
+            <div id="flotante<%=lab.id.to_s%>" 
+				        style='display:none;position:absolute;
+      					       border-style: solid;
+      					       background-color: white;
+      					       padding: 5px;';>
                <%= "Denominacion: "+lab.ssoo %><br>
                <%= "Num. puestos: "+lab.puestos.to_s  %><br>
-               <%= "Lab Especial?: "+((lab.especial)?"SI":"NO") %>
+                   Lab Especial?: <%=((lab.especial)? 'SI':'NO') %>
          </div>
          <%= lab.nombre_lab %></a><!-- nombre_lab e info flotante por laboratorio -->
       </th>
@@ -77,16 +78,11 @@
                 <% end %>
 
                 <% for a in as %><!-- por cada asignacion hallada -->   
-                  <%= "<a onmouseover=ShowContent('"+"flotante"+dia.nombre.to_s+hora.id.to_s+lab.id.to_s+ 
-                        a.id.to_s+"'); return true;
-   		      onmouseout=HideContent('"+"flotante"+dia.nombre.to_s+hora.id.to_s+lab.id.to_s+a.id.to_s+"'); 
-                                 return true;>" %>
-                      <%= "<div id="+"flotante"+dia.nombre.to_s+hora.id.to_s+lab.id.to_s+a.id.to_s+" 
-				style='display:none;position:absolute;
-      					border-style: solid;
-      					background-color: white;width:200px;
-					font-weight: bold;
-      					padding: 5px;';>" %>
+              <a onmouseover="ShowContent('flotante<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>'); return true;"
+   		           onmouseout="HideContent('flotante<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>'); return true;">
+                    <div id="flotante<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>" 
+				                 style='display:none;position:absolute;border-style: solid;background-color: white;width:250px;
+                                font-weight:bold;padding: 5px;';>
                                    <%= "Preferencias:" %>
                                    <% if a.solicitudlab.preferencias=="" %>
                                        <%= "ninguna" %>
@@ -132,24 +128,16 @@
 
                             <% if a.solicitudlab.tipo=="X" %><!-- si la asignacion es directa, se podra eliminar -->
                               <% formid2="formborra"+hora.id.to_s+dia.id.to_s+a.id.to_s %>
-			      <%= "<div id="+formid2+" >"%>
+			                        <div id="formid2">
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
-			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"),
-                                :submit=> formid2, 
-                                :url=>{ :controller=>'asignacions',:action => 'borradir' },
-                                
-                                :confirm=>'Seguro que desea eliminar la asignacion?', :remote => true %>
+			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"),"#", :id => "borraDir"%>
                             <% else %>
                               <% formid3="formborra"+hora.id.to_s+dia.id.to_s+a.id.to_s %>
-			      <%= "<div id="+formid3+" >"%>
+			                        <div id="formid3" >
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
-			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"),
-                                :submit=> formid3, 
-                               
-                                :url=>{ :controller=>'asignacions',:action => 'borranormal' },
-                                :confirm=>'Seguro que desea eliminar la asignacion?', :remote => true %>
+			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"), "#", :id => "borraNorm"%>
                             <% end %>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -157,17 +145,13 @@
 
  
 
-                      <%= "<a onclick=ShowContent('"+"flotanteform"+dia.nombre.to_s+hora.id.to_s+lab.id.to_s+a.id.to_s+"');
-                                      return true;>" %>
+             <a onclick="ShowContent('flotanteform<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>');return true;">
                            <%=image_tag("Ambox_move.png",:border=>0,:width=>16,:height=>16,:style=>"cursor:pointer;float:right")%>
-                      </a><br/>
+             </a><br/>
                            <% formid="form"+dia.nombre.to_s+hora.id.to_s+lab.id.to_s+a.id.to_s %>
-                              <%= "<div id="+"flotanteform"+dia.nombre.to_s+hora.id.to_s+lab.id.to_s+a.id.to_s+"
-				                style='display:none;position:absolute;
-      					        border-style: solid;
-      					        background-color: white;
-      					        padding: 2px;';>" %>
-                                     <%= "<div id="+formid+" >"%>
+                          <div id="flotanteform<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>"
+				                       style='display:none;position:absolute; border-style: solid; background-color: white; padding: 2px;';>
+                               <div id="formid" >
                                         <table class=flotante2>
                                            <tr>
                                              <td></td>
@@ -195,7 +179,7 @@
 			                    </tr>                                               
 					    <tr>
                                               <td>D&iacute;a </td>
-                                              <td> <% @dias=Dia.all('en_uso = ?',"t").all %>
+                                              <td> <% @dias=Dia.where('en_uso = ?',"t").all %>
                                                    <% dia_selec=Dia.find(a.dia_id).nombre %>
                 				   <%= select "dia_id", "nombre", 
 								@dias.map {|d| [d.nombre]},
@@ -214,11 +198,7 @@
                                               <td><%= hidden_field_tag "id", a.id %>
                                               </td>
                                               <td>
-                                        	<%= button_to ( "Mover"),
-					    	:success=>"HideContent('"+"flotanteform"+dia.nombre.to_s+hora.id.to_s+lab.id.to_s+a.id.to_s+"')",
-                                                
-                                            	:submit=> formid, 
-                                            	:url=> { :controller=>'asignacions',:action => 'mover' }, :remote => true %>
+                                              <input id="moverBtn" type="button" value="Mover" style="width:45px;height:20px;" />
                                               </td>
                                             </tr>
                                          </table>
@@ -241,3 +221,51 @@
      No hay solicitudes o asignaciones en curso
   </div>
 <% end %>
+
+<script type="text/javascript">
+$(function()
+{
+   $('#borraNorm').click(function () {    
+         if(confirm('Seguro que desea eliminar la asignacion?'))
+         {
+            $.ajax({
+                     type: "POST",
+                     url: "borranormal",
+                     data: { asigna:$("#asigna").val() }
+                   })
+         }  
+    }) 
+});
+
+$(function()
+{
+   $('#borraDir').click(function () {    
+         if(confirm('Seguro que desea eliminar la asignacion?'))
+         {
+            $.ajax({
+                     type: "POST",
+                     url: "borradir",
+                     data: { asigna:$("#asigna").val() }
+                   })
+         }  
+    }) 
+});
+
+$(function()
+{
+     $("#moverBtn").click(function (e) {    
+       $.ajax({
+                 type: "POST",
+                 url: "mover",
+                 data: { id:$("#id").val(),nombre_lab:$("#laboratorio_id_nombre_lab").val(), 
+                 nombre:$("#dia_id_nombre").val(), 
+                 comienzo:$("#horario_id_comienzo").val() },
+                 success: function()
+                 {
+                    $("div[id^='flotanteform']").hide();
+                 }
+              });  
+    });
+});
+
+</script>

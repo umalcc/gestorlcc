@@ -18,7 +18,7 @@ def estadisticas_lectivo
   @registros=Historicoasig.find_by_sql("select historicoasigs.* from historicoasigs where periodo like '#{periodo}'  order by periodo,nombre_tit,nombre_asig")
 
    respond_to do |format|
-        format.js
+      format.js
     end
 
 end
@@ -32,8 +32,8 @@ def estadisticas_examenes
   @registros=Historicoasigexa.where(:periodo =>params[:periodo][:nombre_per])
 
   respond_to do |format|
-	format.js
-   end
+	  format.js
+  end
 
 end
 
@@ -43,8 +43,8 @@ def borrar_historico_lectivo
   registros.each{|r| r.destroy
                      @total+=1}
 
-  render :update do |page|
-          page.replace_html(:'registros', :partial=>"/estadisticas/registros_lectivo_borrados", :object=>@total)
+  respond_to do |format|
+    format.js
   end
 end
 
@@ -54,8 +54,8 @@ def borrar_historico_examenes
   registros.each{|r| r.destroy
                      @total+=1}
 
-  render :update do |page|
-          page.replace_html(:'registros', :partial=>"/estadisticas/registros_examenes_borrados", :object=>@total)
+  respond_to do |format|
+    format.js
   end
 end
 

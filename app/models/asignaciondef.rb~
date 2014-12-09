@@ -1,2 +1,0 @@
-class Asignaciondef < ActiveRecord::Base
-end

@@ -36,27 +36,27 @@
                                     <%= formato_europeo(a.dia) %>
                                   <% end %><% diaant=a.dia %></td>
     <td><%= a.solicitudlabexa.usuario.nombre+" "+a.solicitudlabexa.usuario.apellidos %></td>
-    <td><%= "<a onmouseover=ShowContent('asignatura"+a.id.to_s+"'); return true;
-   			   onmouseout=HideContent('asignatura"+a.id.to_s+"'); return true;>" %>
-                           <%= "<div id=asignatura"+a.id.to_s %> 
-				style='display:none;position:absolute;
+    <td><a onmouseover="ShowContent('asignatura<%=a.id.to_s%>'); return true;"
+   			   onmouseout="HideContent('asignatura<%=a.id.to_s%>'); return true;">
+          <div id="asignatura<%=a.id.to_s%>" 
+				       style='display:none;position:absolute;
       					border-style: solid;
       					background-color: white;
       					padding: 5px;';>
-                                        <%= a.solicitudlabexa.asignatura.nombre_asig %>
+        <%= a.solicitudlabexa.asignatura.nombre_asig %>
                                         
 			    </div>
          <%= a.solicitudlabexa.asignatura.abrevia_asig %></a></td>
    
     <td>
-        <%= "<a onmouseover=ShowContent('titulacion"+a.id.to_s+"'); return true;
-   			   onmouseout=HideContent('titulacion"+a.id.to_s+"'); return true;>" %>
-                           <%= "<div id=titulacion"+a.id.to_s %> 
-				style='display:none;position:absolute;
+        <a onmouseover="ShowContent('titulacion<%=a.id.to_s%>'); return true;"
+   			   onmouseout="HideContent('titulacion<%=a.id.to_s%>'); return true;">
+          <div id="titulacion<%=a.id.to_s%>"
+				       style='display:none;position:absolute;
       					border-style: solid;
       					background-color: white;
       					padding: 5px;';>
-                                        <%= a.solicitudlabexa.asignatura.titulacion.nombre %>
+          <%= a.solicitudlabexa.asignatura.titulacion.nombre %>
 			    </div>
         <%= a.solicitudlabexa.asignatura.titulacion.abrevia %></a></td>
     <td style="text-align:center"><%= a.solicitudlabexa.curso=="sin curso"? "-" : a.solicitudlabexa.curso %></td>

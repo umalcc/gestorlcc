@@ -1,1 +1,0 @@
-<p>algoooooo<%= @mensaje %></p>

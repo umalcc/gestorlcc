@@ -252,10 +252,9 @@ class AsignacionsController < ApplicationController
                             sol.save
                             a.destroy
                       }
-    render :update do |page|
-        page.replace_html(:'cuadrante', :partial=>"/asignacions/grabacion")
-      end
-
+    respond_to do |format|
+      format.js
+    end
   end
 
  
@@ -264,28 +263,28 @@ class AsignacionsController < ApplicationController
     inicial_dia=@asignacion.peticionlab.diasemana
     inicial_hora_ini=@asignacion.peticionlab.horaini
     inicial_hora_fin=@asignacion.peticionlab.horafin
-    laboratorio_id=Laboratorio.find_by_nombre_lab(params[:laboratorio_id][:nombre_lab]).id
-    dia_id=Dia.find_by_nombre(params[:dia_id][:nombre]).id
-    horafin=Horario.find_by_comienzo(params[:horario_id][:comienzo]).fin
+    laboratorio_id=Laboratorio.find_by_nombre_lab(params[:nombre_lab]).id
+    dia_id=Dia.find_by_nombre(params[:nombre]).id
+    horafin=Horario.find_by_comienzo(params[:comienzo]).fin
     mov_dia=""
-    if inicial_dia != params[:dia_id][:nombre]
-      mov_dia=" cambio de "+inicial_dia+" a "+params[:dia_id][:nombre]+"; "
+    if inicial_dia != params[:nombre]
+      mov_dia=" cambio de "+inicial_dia+" a "+params[:nombre]+"; "
     end
     mov_hora="" 
-    if inicial_hora_ini != params[:horario_id][:comienzo]
-      mov_hora=" cambio de "+inicial_hora_ini+"-"+inicial_hora_fin+" a "+params[:horario_id][:comienzo]+"-"+horafin+"; "
+    if inicial_hora_ini != params[:comienzo]
+      mov_hora=" cambio de "+inicial_hora_ini+"-"+inicial_hora_fin+" a "+params[:comienzo]+"-"+horafin+"; "
     end
     
      if @asignacion.update_attributes(:laboratorio_id=>laboratorio_id,
                                       :dia_id=> dia_id,
-                                      :horaini=> params[:horario_id][:comienzo],
+                                      :horaini=> params[:comienzo],
                                       :horafin=> horafin,
                                       :mov_dia=> mov_dia,
                                       :mov_hora=> mov_hora ) 
         
         @asignacions=Asignacion.all
-        render :update do |page|
-          page.replace_html(:'cuadrante', :partial=>"/asignacions/cuadrante", :object=>@asignacions)
+        respond_to do |format|
+          format.js
         end
      end
     
@@ -322,8 +321,8 @@ class AsignacionsController < ApplicationController
          end
       end
     end
-    render :update do |page|
-          page.replace_html(:'colision', :partial=>"/asignacions/colisiones", :object=>@colision)
+    respond_to do |format|
+      format.js
     end
   end
   
@@ -433,9 +432,9 @@ class AsignacionsController < ApplicationController
     # otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).all
     # otrasasignaciones.each {|o| o.delete }
     @asignacions=Asignacion.all
-        render :update do |page|
-          page.replace_html(:'cuadrante', :partial=>"/asignacions/cuadrante", :object=>@asignacions)
-        end
+    respond_to do |format|
+      format.js
+    end
   end
 
   def borranormalasignada
@@ -444,9 +443,9 @@ class AsignacionsController < ApplicationController
     # otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).all
     # otrasasignaciones.each {|o| o.delete }
     @asignacions=Asignaciondef.all
-        render :update do |page|
-          page.replace_html(:'cuadrante2', :partial=>"/asignacions/cuadrante2", :object=>@asignacions)
-        end
+    respond_to do |format|
+      format.js
+    end
   end
 
   def borradirasignada
@@ -457,9 +456,9 @@ class AsignacionsController < ApplicationController
     #otrasasignaciones.each {|o| o.delete }
     #solicitudlab.delete
     @asignacions=Asignaciondef.all
-        render :update do |page|
-          page.replace_html(:'cuadrante2', :partial=>"/asignacions/cuadrante2", :object=>@asignacions)
-        end
+    respond_to do |format|
+      format.js
+    end
   end
 
   def borradir
@@ -470,9 +469,9 @@ class AsignacionsController < ApplicationController
     #otrasasignaciones.each {|o| o.delete }
     #solicitudlab.delete
     @asignacions=Asignacion.all
-        render :update do |page|
-          page.replace_html(:'cuadrante', :partial=>"/asignacions/cuadrante", :object=>@asignacions)
-        end
+    respond_to do |format|
+      format.js
+    end
   end
 
     
