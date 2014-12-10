@@ -87,21 +87,21 @@ p.edited {
 	width: 100%
 }
  #conta_header {
-	background: url(../images/tr_lycc.gif) left top repeat-x;
+	background: url(tr_lycc.gif) left top repeat-x;
 	width: 100%;
 	height: 160px;
 	float: left
 }
 
 #header {
-	background: url(../images/bg_cabec.png) center top no-repeat;
+	background: url(bg_cabec.png) center top no-repeat;
 	width: 960px;
 	height: 160px;
 	margin: 0 auto
 }
 
 #conta_main {
-	//background: url(../images/bg_modif.png) left top no-repeat;
+	//background: url(bg_modif.png) left top no-repeat;
 	width: 100%;
 	float: left
 }
@@ -134,9 +134,9 @@ p.edited {
 	height: 80px;
 }
 
-#flasherrorportada {background: url(../images/bg_form1.gif)}
+#flasherrorportada {background: url(bg_form1.gif)}
 
-#nav {  background: url(../images/bg_modif.png) left top no-repeat;
+#nav {  background: url(bg_modif.png) left top no-repeat;
 	width: 200px;
 	min-height:600px;
         
@@ -195,7 +195,7 @@ p.edited {
         width:200px;
         //border: 2px solid #fbbb13;
         padding: 0px 3px;
-        background-image: url(../images/bg_separ_nav.gif) left top no-repeat;;
+        background-image: url(bg_separ_nav.gif) left top no-repeat;;
 }
 
 #recuadro {
@@ -453,7 +453,7 @@ table.flotante2 {
 #recuadro-azul form dl dt {
         text-align: left;
 	font-size: 1.1em;
-	background: url(../images/px_dl.gif) repeat-x left bottom;
+	background: url(px_dl.gif) repeat-x left bottom;
 	width: 160px;
 	float: left;
 	clear: both;
@@ -646,31 +646,31 @@ div#nav ul li a#home:hover {
 }
 
 div#nav ul li a.col1 {
-	background: url(../images/bg_col1.png) left top no-repeat
+	background: url(bg_col1.png) left top no-repeat
 }
 
 div#nav ul li a.col2 {
-	background: url(../images/bg_col2.png) left top no-repeat
+	background: url(bg_col2.png) left top no-repeat
 }
 
 div#nav ul li a.col3 {
-	background: url(../images/bg_col3.png) left top no-repeat
+	background: url(bg_col3.png) left top no-repeat
 }
 
 div#nav ul li a.col4 {
-	background: url(../images/bg_col4.png) left top no-repeat
+	background: url(bg_col4.png) left top no-repeat
 }
 
 div#nav ul li a.col5 {
-	background: url(../images/bg_col5.png) left top no-repeat
+	background: url(bg_col5.png) left top no-repeat
 }
 
 div#nav ul li a.col6 {
-	background: url(../images/bg_col6.png) left top no-repeat
+	background: url(bg_col6.png) left top no-repeat
 }
 
 div#nav ul li a.col7 {
-	background: url(../images/bg_col7.png) left top no-repeat
+	background: url(bg_col7.png) left top no-repeat
 }
 
 div#nav ul li a:hover {
@@ -759,13 +759,13 @@ div.centre#portada h3 {
 
 div.centre h3 span a {
         text-decoration: none;
-	background: url(../images/fleizq1.gif) left top no-repeat;
+	background: url(fleizq1.gif) left top no-repeat;
 	padding: 0 0 0 12px
 }
 
 div.centre h3 span a:hover {
 	text-decoration: none;
-	background: url(../images/fleizq2.gif) left top no-repeat;
+	background: url(fleizq2.gif) left top no-repeat;
 	padding: 0 0 0 12px
 }
 
@@ -785,39 +785,39 @@ div.sidebar h3 {
 }
 
 div.centre#portada h3,div.sidebar#portada h3 {
-	background: url(../images/bg_sb0.gif) left bottom no-repeat
+	background: url(bg_sb0.gif) left bottom no-repeat
 }
 
 div.centre#direccion h3,div.sidebar#direccion h3 {
-	background: url(../images/bg_sb1.gif) left bottom no-repeat
+	background: url(bg_sb1.gif) left bottom no-repeat
 }
 
 div.centre#personal h3,div.sidebar#personal h3 {
-	background: url(../images/bg_sb2.gif) left bottom no-repeat
+	background: url(bg_sb2.gif) left bottom no-repeat
 }
 
 div.centre#docencia h3,div.sidebar#docencia h3 {
-	background: url(../images/bg_sb3.gif) left bottom no-repeat
+	background: url(bg_sb3.gif) left bottom no-repeat
 }
 
 div.centre#publicaciones h3,div.sidebar#publicaciones h3 {
-	background: url(../images/bg_sb4.gif) left bottom no-repeat
+	background: url(bg_sb4.gif) left bottom no-repeat
 }
 
 div.centre#investigacion h3,div.sidebar#investigacion h3 {
-	background: url(../images/bg_sb5.gif) left bottom no-repeat
+	background: url(bg_sb5.gif) left bottom no-repeat
 }
 
 div.centre#pfc h3,div.sidebar#pfc h3 {
-	background: url(../images/bg_sb6.gif) left bottom no-repeat
+	background: url(bg_sb6.gif) left bottom no-repeat
 }
 
 div.centre#tablon h3,div.sidebar#tablon h3 {
-	background: url(../images/bg_sb7.gif) left bottom no-repeat
+	background: url(bg_sb7.gif) left bottom no-repeat
 }
 
 div.centre#error h3,div.sidebar#error h3 {
-	background: url(../images/bg_sb8.gif) left bottom no-repeat
+	background: url(bg_sb8.gif) left bottom no-repeat
 }
 
 div.centre h4 {
@@ -837,7 +837,7 @@ p {
 
 p span.separador {
 	line-height: 2px;
-	background: url(../images/bg_separ.gif) left top repeat-y;
+	background: url(bg_separ.gif) left top repeat-y;
 	width: 570px;
 	height: 2px;
 	float: left;
@@ -846,7 +846,7 @@ p span.separador {
 
 p span.separador2 {
 	line-height: 2px;
-	background: url(../images/bg_sepa2.gif) left top repeat-y;
+	background: url(bg_sepa2.gif) left top repeat-y;
 	width: 570px;
 	height: 2px;
 	float: left;
@@ -901,7 +901,7 @@ div.centre ul li {
 }
 
 div.centre ul li a {
-	background: url(../images/px_069.gif) left bottom repeat-x;
+	background: url(px_069.gif) left bottom repeat-x;
 	line-height: 16px
 }
 
@@ -1118,7 +1118,7 @@ dl.pfcs dd ol li {
 -------------------------------------------------- */
 
 div.centre0 form {
-	background: url(../images/bg_form0.gif) center top no-repeat;
+	background: url(bg_form0.gif) center top no-repeat;
 	width: 200px;
 	float: left;
 	padding: 0 20px
@@ -1129,7 +1129,7 @@ div.centre0 form div {
 }
 
 div.centre form {
-	background: url(../images/bg_forms.gif) center top no-repeat;
+	background: url(bg_forms.gif) center top no-repeat;
 	width: 530px;
 	float: left;
 	padding: 0 20px
@@ -1273,7 +1273,7 @@ input#buscar,input#mostrar,input#acceder {
 	font-size: 1.1em;
 	font-weight: bold;
 	color: #036;
-	background: url(../images/bg_bt80.png) left top no-repeat;
+	background: url(bg_bt80.png) left top no-repeat;
 	width: 80px;
 	height: 20px;
 	float: left;
@@ -1284,7 +1284,7 @@ input#acceder {
 	font-size: 1.1em;
 	font-weight: bold;
 	color: #036;
-	background: url(../images/bg_bt80.png) left top no-repeat;
+	background: url(bg_bt80.png) left top no-repeat;
 	width: 80px;
 	height: 20px;
 	float: right;
@@ -1295,7 +1295,7 @@ input#enviar,input#borrar {
 	font-size: 1.1em;
 	font-weight: bold;
 	color: #036;
-	background: url(../images/bg_bt80.png) left top no-repeat;
+	background: url(bg_bt80.png) left top no-repeat;
 	width: 80px;
 	height: 20px;
 	float: right;
@@ -1315,7 +1315,7 @@ input#vertodos {
 }
 
 div.finform {
-	background: url(../images/bg_form2.gif) center top no-repeat;
+	background: url(bg_form2.gif) center top no-repeat;
 	line-height: 9px;
 	width: 570px;
 	height: 9px;
@@ -1324,7 +1324,7 @@ div.finform {
 }
 
 div.finform0 {
-	background: url(../images/bg_form1.gif) center top no-repeat;
+	background: url(bg_form1.gif) center top no-repeat;
 	line-height: 9px;
 	width: 240px;
 	height: 9px;
@@ -1368,7 +1368,7 @@ a.bototex100 {
 	font-weight: bold;
 	color: #036;
 	line-height: 20px;
-	background: url(../images/bg_bt100.png) left top no-repeat;
+	background: url(bg_bt100.png) left top no-repeat;
 	width: 100px;
 	height: 20px;
 	float: left;
@@ -1383,7 +1383,7 @@ a.bototex100:hover {
 -------------------------------------------------- */
 
 #webmail {
-	background: url(../images/bt_wmail.png);
+	background: url(bt_wmail.png);
 	width: 180px;
 	height: 20px;
 	float: left
@@ -1393,7 +1393,7 @@ a.bototex100:hover {
 ------------------------- */
 
 #mispages {
-	background: url(../images/bt_mispa.png);
+	background: url(bt_mispa.png);
 	width: 132px;
 	height: 16px;
 	float: left;
@@ -1401,7 +1401,7 @@ a.bototex100:hover {
 }
 
 #accepag {
-	background: url(../images/bt_pagis.png);
+	background: url(bt_pagis.png);
 	width: 113px;
 	height: 16px;
 	float: left;
@@ -1412,7 +1412,7 @@ a.bototex100:hover {
 ------------------------- */
 
 #datospubli {
-	background: url(../images/bt_info.gif);
+	background: url(bt_info.gif);
 	line-height: 14px;
 	width: 14px;
 	height: 14px;
@@ -1421,7 +1421,7 @@ a.bototex100:hover {
 }
 
 #pdfpubli {
-	background: url(../images/bt_pdf.gif);
+	background: url(bt_pdf.gif);
 	line-height: 14px;
 	width: 14px;
 	height: 14px;
@@ -1430,7 +1430,7 @@ a.bototex100:hover {
 }
 
 #urlpubli {
-	background: url(../images/bt_url.gif);
+	background: url(bt_url.gif);
 	line-height: 14px;
 	width: 14px;
 	height: 14px;
@@ -1439,7 +1439,7 @@ a.bototex100:hover {
 }
 
 #docpubli {
-	background: url(../images/bt_doc.gif);
+	background: url(bt_doc.gif);
 	line-height: 14px;
 	width: 14px;
 	height: 14px;
@@ -1554,7 +1554,7 @@ input#grande {
 
 
 div.centrepeque form {
-	background: url(../images/bg_forms.gif) center top no-repeat;
+	background: url(bg_forms.gif) center top no-repeat;
 	width: 260px;
 	float: left;
 	padding: 0 20px
