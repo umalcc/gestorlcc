@@ -424,7 +424,7 @@ DatePickerControl.createButton = function(input, useId)
 	calButton.style.cursor = "pointer";
 	calButton.style.verticalAlign = "bottom";
 	calButton.style.height = input.offsetHeight;
-	calButton.src = "calendar_icon.png";
+	calButton.src = "/images/calendar_icon.png";
 	if (this.buttonPosition == "in"){
  		// calButton.style.left = "-" + calButton.offsetWidth;
 	}
@@ -1804,5 +1804,5 @@ function writeLayer(ID, parentID, sText)
 }
 
 //
-// Compartir es la única manera de perdurar
+// Compartir es la ?nica manera de perdurar
 // EOF

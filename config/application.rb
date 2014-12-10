@@ -56,11 +56,19 @@ module Gestorlcc
   config.action_mailer.default_content_type = "text/plain"
   config.action_mailer.default_charset = "utf-8"
 config.middleware.use ActionDispatch::Flash
-
+#config.middleware.insert_after ActionDispatch::Flash, LimitedSessions::Expiry, recent_activity: 2.hours, max_session: 24.hours
   # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
   # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}')]
   # config.i18n.default_locale = :de
-  # config.session_store(:cookie_store, {:key => '_gestorlcc_session'})
+  config.session_store(:cookie_store, {:key => '_gestorlcc_session'})
+  config.assets.enabled = true
+ 
+ # Version of your assets, change this if you want to expire all your assets
+  config.assets.version = '1.0'
+  # Do not compress assets
+  config.assets.compress = false
+  # Expands the lines which load the assets
+  config.assets.debug = true
 
 
   end

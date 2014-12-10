@@ -1,52 +1,21 @@
-Gestorlcc::Application.routes.draw do |map|
+Gestorlcc::Application.routes.draw do
 
   #map.resources :asignacions
 
-  map.resources :periodos
+  resources :periodos,:peticionlabs,:solicitudlabs, :solicitudlabexas
 
-  map.resources :peticionlabs
+  resources :dias, :horarios, :horasexas, :peticions, :solicitudrecursos
 
-  map.resources :solicitudlabs
+  resources :titulacions,:recursos, :laboratorios, :asignaturas,:usuarios
+  resource :solicitar, :session, :inicio, :userinicio, :dato, :solicitudrecurso
+  resources :solicitudrecursousuarios, :solicitudusuariolabs,:solicitudusuariolabexas
 
-  map.resources :solicitudlabexas
-
-  map.resources :dias
-
-  map.resources :horarios
-
-  map.resources :horasexas
-
-  map.resources :peticions
-
-  map.resources :solicitudrecursos
-
-  map.resources :titulacions
-
-  map.resources :recursos
-
-  map.resources :laboratorios
-
-  map.resources :asignaturas
-
- 
- 
-
-  map.resources :usuarios
-  map.resource :solicitar
-  map.resource :session 
-  map.resource :inicio
-  map.resource :userinicio
-  map.resource :dato
-  map.resource :solicitudrecurso
-  map.resources :solicitudrecursousuarios
-  map.resources :solicitudusuariolabs
-  map.resources :solicitudusuariolabexas
-
-  map.cambiar 'usuarios/:id/cambiar', :controller => 'usuarios', :action =>'cambiar' 
+  #cambiar 'usuarios/:id/cambiar', :to => 'usuarios#cambiar'
+  match 'usuarios/:id/cambiar', :to => 'usuarios#cambiar' 
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
-  #   map.connect 'products/:id', :controller => 'catalog', :action => 'view'
+  #   match 'products/:id', :controller => 'catalog', :action => 'view'
   # Keep in mind you can assign values other than :controller and :action
 
   # Sample of named route:
@@ -75,98 +44,98 @@ Gestorlcc::Application.routes.draw do |map|
   #   end
 
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
-map.root :controller => 'sessions'
+root :to => 'sessions#index'
 
-map.connect 'anonimo/new', :controller=>'anonimo',:action=>'new'
-map.connect 'anonimo/general', :controller=>'anonimo',:action=>'general'
-map.connect 'anonimo/labgeneral', :controller=>'anonimo',:action=>'labgeneral'
-map.connect 'estadisticas/periodo_lectivo', :controller=>'estadisticas',:action=>'periodo_lectivo'
-map.connect 'estadisticas/periodo_examenes', :controller=>'estadisticas',:action=>'periodo_examenes'
-map.connect 'estadisticas/estadisticas_lectivo', :controller=>'estadisticas',:action=>'estadisticas_lectivo'
-map.connect 'estadisticas/estadisticas_examenes', :controller=>'estadisticas',:action=>'estadisticas_examenes'
-map.connect 'estadisticas/borrar_historico_lectivo', :controller=>'estadisticas',:action=>'borrar_historico_lectivo'
-map.connect 'estadisticas/borrar_historico_examenes', :controller=>'estadisticas',:action=>'borrar_historico_examenes'
-map.connect 'periodos/cambia_admision', :controller=>'periodos',:action=>'cambia_admision'
-map.connect 'periodos/cambia_activo', :controller=>'periodos',:action=>'cambia_activo'
-map.connect 'periodos/enviar_correo_lectivo_on', :controller=>'periodos',:action=>'enviar_correo_lectivo_on'
-map.connect 'periodos/enviar_correo_activo_off', :controller=>'periodos',:action=>'enviar_correo_activo_off'
-map.connect 'periodos/enviar_correo_activo_on', :controller=>'periodos',:action=>'enviar_correo_activo_on'
-map.connect 'periodos/enviar_correo_lectivo_off', :controller=>'periodos',:action=>'enviar_correo_lectivo_off'
-map.connect 'periodos/grabar_historico', :controller=>'periodos',:action=>'grabar_historico'
-map.connect 'periodos/grabar_historico_examen', :controller=>'periodos',:action=>'grabar_historico_examen'
-map.connect 'solicitar/anadir', :controller=>'solicitar', :action=>'anadir'
-map.connect 'solicitar/eliminar', :controller=>'solicitar', :action=>'eliminar'
-map.connect 'asignaturas/combo_por_titulacion', :controller => 'asignaturas', :action => 'combo_por_titulacion'
-map.connect 'asignaturas/combo_por_descripcion', :controller => 'recursos', :action => 'combo_por_descripcion'
-map.connect 'asignaturas/combo_por_nivel', :controller => 'asignaturas', :action => 'combo_por_nivel'
-map.connect 'usuarios/listar', :controller => 'usuarios', :action=> 'listar'
-map.connect 'asignaturas/listar', :controller => 'asignaturas', :action=> 'listar'
-map.connect 'recursos/listar', :controller => 'recursos', :action=> 'listar'
-map.connect 'solicitudlabs/listar', :controller => 'solicitudlabs', :action=> 'listar'
-map.connect 'solicitudlabexas/listar', :controller => 'solicitudlabexas', :action=> 'listar'
-map.connect 'solicitudusuariolabexas/listar', :controller => 'solicitudusuariolabexas', :action=> 'listar'
-map.connect 'solicitudrecursos/listar', :controller => 'solicitudrecursos', :action=> 'listar'
-map.connect 'solicitudrecursos/borrar_reservas', :controller => 'solicitudrecursos', :action=> 'borrar_reservas'
-map.connect 'solicitudrecursousuarios/listar', :controller => 'solicitudrecursousuarios', :action=> 'listar'
-map.connect 'solicitudrecursousuarios/buscar', :controller => 'solicitudrecursousuarios', :action=> 'buscar'
-map.connect 'solicitudusuariolabs/listar', :controller => 'solicitudusuariolabs', :action=> 'listar'
-map.connect 'solicitudusuariolabs/crear', :controller => 'solicitudusuariolabs', :action=> 'create'
-map.connect 'solicitudusuariolabs/update', :controller => 'solicitudusuariolabs', :action=> 'update'
+match 'anonimo/new', :to=>'anonimo#new'
+match 'anonimo/general', :to=>'anonimo#general'
+match 'anonimo/labgeneral', :to=>'anonimo#labgeneral'
+match 'estadisticas/periodo_lectivo', :to=>'estadisticas#periodo_lectivo'
+match 'estadisticas/periodo_examenes', :to=>'estadisticas#periodo_examenes'
+match 'estadisticas/estadisticas_lectivo', :to=>'estadisticas#estadisticas_lectivo'
+match 'estadisticas/estadisticas_examenes', :to=>'estadisticas#estadisticas_examenes'
+match 'estadisticas/borrar_historico_lectivo', :to=>'estadisticas#borrar_historico_lectivo'
+match 'estadisticas/borrar_historico_examenes', :to=>'estadisticas#borrar_historico_examenes'
+match 'periodos/cambia_admision', :to=>'periodos#cambia_admision'
+match 'periodos/cambia_activo', :to=>'periodos#cambia_activo'
+match 'periodos/enviar_correo_lectivo_on', :to=>'periodos#enviar_correo_lectivo_on'
+match 'periodos/enviar_correo_activo_off', :to=>'periodos#enviar_correo_activo_off'
+match 'periodos/enviar_correo_activo_on', :to=>'periodos#enviar_correo_activo_on'
+match 'periodos/enviar_correo_lectivo_off', :to=>'periodos#enviar_correo_lectivo_off'
+match 'periodos/grabar_historico', :to=>'periodos#grabar_historico'
+match 'periodos/grabar_historico_examen', :to=>'periodos#grabar_historico_examen'
+match 'solicitar/anadir', :to=>'solicitar#anadir'
+match 'solicitar/eliminar', :to=>'solicitar#eliminar'
+match 'asignaturas/combo_por_titulacion', :to => 'asignaturas#combo_por_titulacion'
+match 'asignaturas/combo_por_descripcion', :to => 'recursos#combo_por_descripcion'
+match 'asignaturas/combo_por_nivel', :to => 'asignaturas#combo_por_nivel'
+match 'usuarios/listar', :to => 'usuarios#listar'
+match 'asignaturas/listar', :to => 'asignaturas#listar'
+match 'recursos/listar', :to => 'recursos#listar'
+match 'solicitudlabs/listar', :to => 'solicitudlabs#listar'
+match 'solicitudlabexas/listar', :to => 'solicitudlabexas#listar'
+match 'solicitudusuariolabexas/listar', :to => 'solicitudusuariolabexas#listar'
+match 'solicitudrecursos/listar', :to => 'solicitudrecursos#listar'
+match 'solicitudrecursos/borrar_reservas', :to => 'solicitudrecursos#borrar_reservas'
+match 'solicitudrecursousuarios/listar', :to => 'solicitudrecursousuarios#listar'
+match 'solicitudrecursousuarios/buscar', :to => 'solicitudrecursousuarios#buscar'
+match 'solicitudusuariolabs/listar', :to => 'solicitudusuariolabs#listar'
+match 'solicitudusuariolabs/crear', :to => 'solicitudusuariolabs#create'
+match 'solicitudusuariolabs/update', :to => 'solicitudusuariolabs#update'
 
-map.connect 'solicitudrecursos/buscar', :controller => 'solicitudrecursos', :action=> 'buscar'
-map.connect 'solicitudrecursos/crear', :controller => 'solicitudrecursos', :action=> 'create'
-map.connect 'solicitudrecursos/borra', :controller => 'solicitudrecursos', :action=> 'borra'
-map.connect 'solicitudrecursousuarios/borra', :controller => 'solicitudrecursousuarios', :action=> 'borra'
-map.connect 'solicitudrecursousuarios/crear', :controller => 'solicitudrecursousuarios', :action=> 'create'
+match 'solicitudrecursos/buscar', :to => 'solicitudrecursos#buscar'
+match 'solicitudrecursos/crear', :to => 'solicitudrecursos#create'
+match 'solicitudrecursos/borra', :to => 'solicitudrecursos#borra'
+match 'solicitudrecursousuarios/borra', :to => 'solicitudrecursousuarios#borra'
+match 'solicitudrecursousuarios/crear', :to => 'solicitudrecursousuarios#create'
 
-map.connect 'solicitar/eliminar', :controller => 'solicitar', :action=> 'eliminar'
+match 'solicitar/eliminar', :to => 'solicitar#eliminar'
 
-map.connect 'asignacions/mover', :controller => 'asignacions', :action=> 'mover'
-map.connect 'asignacions/revisar', :controller => 'asignacions', :action=> 'revisar'
-map.connect 'asignacions/asignar', :controller => 'asignacions', :action=> 'asignar'
-map.connect 'asignacions/asignar_iniciar', :controller => 'asignacions', :action=> 'asignar_iniciar'
-map.connect 'asignacions/asignar_continuar', :controller => 'asignacions', :action=> 'asignar_continuar'
-map.connect 'asignacions/grabar_parcial', :controller => 'asignacions', :action=> 'grabar_parcial'
-map.connect 'asignacions/grabar_asignacion', :controller => 'asignacions', :action=> 'grabar_asignacion'
-map.connect 'asignacions/index', :controller => 'asignacions', :action=> 'index'
-map.connect 'asignacions/consulta', :controller => 'asignacions', :action=> 'consulta'
-map.connect 'asignacions/asigna_directa', :controller => 'asignacions', :action=> 'asigna_directa'
-map.connect 'asignacions/graba', :controller => 'asignacions', :action=> 'graba'
-map.connect 'asignacions/borradir', :controller => 'asignacions', :action=> 'borradir'
-map.connect 'asignacions/borradirasignada', :controller => 'asignacions', :action=> 'borradirasignada'
-map.connect 'asignacions/borranormal', :controller => 'asignacions', :action=> 'borranormal'
-map.connect 'asignacions/borranormalasignada', :controller => 'asignacions', :action=> 'borranormalasignada'
-map.connect 'listado/asignacion_lectivo_impresa', :controller => 'listado', :action=> 'asignacion_lectivo_impresa'
-map.connect 'listado/asignacion_examenes_impresa', :controller => 'listado', :action=> 'asignacion_examenes_impresa'
-map.connect 'listado/asignacion_lectivo_usuario_impresa', :controller => 'listado', :action=> 'asignacion_lectivo_usuario_impresa'
-map.connect 'listado/asignacion_examenes_usuario_impresa', :controller => 'listado', :action=> 'asignacion_examenes_usuario_impresa'
+match 'asignacions/mover', :to => 'asignacions#mover'
+match 'asignacions/revisar', :to => 'asignacions#revisar'
+match 'asignacions/asignar', :to => 'asignacions#asignar'
+match 'asignacions/asignar_iniciar', :to => 'asignacions#asignar_iniciar'
+match 'asignacions/asignar_continuar', :to => 'asignacions#asignar_continuar'
+match 'asignacions/grabar_parcial', :to => 'asignacions#grabar_parcial'
+match 'asignacions/grabar_asignacion', :to => 'asignacions#grabar_asignacion'
+match 'asignacions/index', :to => 'asignacions#index'
+match 'asignacions/consulta', :to => 'asignacions#consulta'
+match 'asignacions/asigna_directa', :to => 'asignacions#asigna_directa'
+match 'asignacions/graba', :to => 'asignacions#graba'
+match 'asignacions/borradir', :to => 'asignacions#borradir'
+match 'asignacions/borradirasignada', :to => 'asignacions#borradirasignada'
+match 'asignacions/borranormal', :to => 'asignacions#borranormal'
+match 'asignacions/borranormalasignada', :to => 'asignacions#borranormalasignada'
+match 'listado/asignacion_lectivo_impresa', :to => 'listado#asignacion_lectivo_impresa'
+match 'listado/asignacion_examenes_impresa', :to => 'listado#asignacion_examenes_impresa'
+match 'listado/asignacion_lectivo_usuario_impresa', :to => 'listado#asignacion_lectivo_usuario_impresa'
+match 'listado/asignacion_examenes_usuario_impresa', :to => 'listado#asignacion_examenes_usuario_impresa'
 
-map.connect 'consultasasig/asignar', :controller => 'consultasasig', :action=> 'asignar'
-map.connect 'consultasasig/porusuario', :controller => 'consultasasig', :action=> 'porusuario'
-map.connect 'consultasasig/general', :controller => 'consultasasig', :action=> 'general'
-map.connect 'consultasasig/labgeneral', :controller => 'consultasasig', :action=> 'labgeneral'
-map.connect 'consultasasig/labporusuario', :controller => 'consultasasig', :action=> 'labporusuario'
-map.connect 'consultasasig/listar', :controller => 'consultasasig', :action=> 'listar'
+match 'consultasasig/asignar', :to => 'consultasasig#asignar'
+match 'consultasasig/porusuario', :to => 'consultasasig#porusuario'
+match 'consultasasig/general', :to => 'consultasasig#general'
+match 'consultasasig/labgeneral', :to => 'consultasasig#labgeneral'
+match 'consultasasig/labporusuario', :to => 'consultasasig#labporusuario'
+match 'consultasasig/listar', :to => 'consultasasig#listar'
 
-map.connect 'asignacionexas/mover', :controller => 'asignacionexas', :action=> 'mover'
-map.connect 'asignacionexas/revisar', :controller => 'asignacionexas', :action=> 'revisar'
-map.connect 'asignacionexas/asignar', :controller => 'asignacionexas', :action=> 'asignar'
-map.connect 'asignacionexas/asignar_iniciar', :controller => 'asignacionexas', :action=> 'asignar_iniciar'
-map.connect 'asignacionexas/asignar_continuar', :controller => 'asignacionexas', :action=> 'asignar_continuar'
-map.connect 'asignacionexas/grabar_parcial', :controller => 'asignacionexas', :action=> 'grabar_parcial'
-map.connect 'asignacionexas/grabar_asignacion', :controller => 'asignacionexas', :action=> 'grabar_asignacion'
-map.connect 'asignacionexas/index', :controller => 'asignacionexas', :action=> 'index'
-map.connect 'asignacionexas/consulta', :controller => 'asignacionexas', :action=> 'consulta'
-map.connect 'asignacionexas/asigna_directa', :controller => 'asignacionexas', :action=> 'asigna_directa'
-map.connect 'asignacionexas/graba', :controller => 'asignacionexas', :action=> 'graba'
-map.connect 'asignacionexas/borradir', :controller => 'asignacionexas', :action=> 'borradir'
-map.connect 'asignacionexas/borradirasignada', :controller => 'asignacionexas', :action=> 'borradirasignada'
-map.connect 'asignacionexas/borranormal', :controller => 'asignacionexas', :action=> 'borranormal'
-map.connect 'asignacionexas/borranormalasignada', :controller => 'asignacionexas', :action=> 'borranormalasignada'
-map.connect 'asignacionexas/listar', :controller => 'asignacionexas', :action=> 'listar'
-map.connect 'consultasasigexa/asignar', :controller => 'consultasasigexa', :action=> 'asignar'
-map.connect 'consultasasigexa/porusuario', :controller => 'consultasasigexa', :action=> 'porusuario'
-map.connect 'consultasasigexa/general', :controller => 'consultasasigexa', :action=> 'general'
+match 'asignacionexas/mover', :to => 'asignacionexas#mover'
+match 'asignacionexas/revisar', :to => 'asignacionexas#revisar'
+match 'asignacionexas/asignar', :to => 'asignacionexas#asignar'
+match 'asignacionexas/asignar_iniciar', :to => 'asignacionexas#asignar_iniciar'
+match 'asignacionexas/asignar_continuar', :to => 'asignacionexas#asignar_continuar'
+match 'asignacionexas/grabar_parcial', :to => 'asignacionexas#grabar_parcial'
+match 'asignacionexas/grabar_asignacion', :to => 'asignacionexas#grabar_asignacion'
+match 'asignacionexas/index', :to => 'asignacionexas#index'
+match 'asignacionexas/consulta', :to => 'asignacionexas#consulta'
+match 'asignacionexas/asigna_directa', :to => 'asignacionexas#asigna_directa'
+match 'asignacionexas/graba', :to => 'asignacionexas#graba'
+match 'asignacionexas/borradir', :to => 'asignacionexas#borradir'
+match 'asignacionexas/borradirasignada', :to => 'asignacionexas#borradirasignada'
+match 'asignacionexas/borranormal', :to => 'asignacionexas#borranormal'
+match 'asignacionexas/borranormalasignada', :to => 'asignacionexas#borranormalasignada'
+match 'asignacionexas/listar', :to => 'asignacionexas#listar'
+match 'consultasasigexa/asignar', :to => 'consultasasigexa#asignar'
+match 'consultasasigexa/porusuario', :to => 'consultasasigexa#porusuario'
+match 'consultasasigexa/general', :to => 'consultasasigexa#general'
 
 
   # See how all your routes lay out with "rake routes"
@@ -175,8 +144,8 @@ map.connect 'consultasasigexa/general', :controller => 'consultasasigexa', :acti
   # Note: These default routes make all actions in every controller accessible via GET requests. You should
   # consider removing the them or commenting them out if you're using named routes and resources.
 
- # map.connect ':controller/:action/:id'
- # map.connect ':controller/:action/:id.:format'
+ # match ':controller/:action/:id'
+ # match ':controller/:action/:id.:format'
 
 
   # The priority is based upon order of creation:
