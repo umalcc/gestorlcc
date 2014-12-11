@@ -33,7 +33,7 @@
            <% asignaturas=Asignatura.where("titulacion_id = ?",titulacion.id).all.size %>
            <% if total==0 and asignaturas==0 %>
              <%= link_to image_tag("borrar.png", :border=>0), titulacion, 
-             :confirm => 'Seguro que desea eliminar eliminar '+titulacion.nombre+'?', :method => :delete %>
+             data: { confirm: '¿Seguro que desea eliminar eliminar '+titulacion.nombre+'?'}, :method => :delete %>
            <% end %></td> 
          </tr>
          <% end %><!-- de for titulacion -->

@@ -93,7 +93,7 @@
             </table></td>    
          <td class="icono"><% if total==0 and i.asignado=="N" %>
                              <%= link_to image_tag("borrar.png", :border=>0), i, 
-                              :confirm => '¿Seguro que desea eliminar la solicitud?', :method => :delete %>
+                              data:{ confirm: '¿Seguro que desea eliminar la solicitud?'}, :method => :delete %>
                            <% end %>
                            </td> 
         </tr>

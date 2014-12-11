@@ -17,6 +17,7 @@ module Gestorlcc
     # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += %W(#{Rails.root}/lib)
 
+    
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.
     # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
@@ -55,7 +56,7 @@ module Gestorlcc
   config.action_mailer.raise_delivery_errors = true
  # config.action_mailer.default_content_type = "text/plain"
 #ActionMailer::Base.default :content_type => "text/html"
-config.middleware.use ActionDispatch::Flash
+#config.middleware.use ActionDispatch::Flash
 #config.middleware.insert_after ActionDispatch::Flash, LimitedSessions::Expiry, recent_activity: 2.hours, max_session: 24.hours
   # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
   # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}')]

@@ -50,7 +50,7 @@
        <td class="icono">
         <% if total==0 %>
          <%= link_to image_tag("borrar.png", :border=>0), periodo, 
-          :confirm => 'Seguro que desea eliminar el Periodo '+periodo.nombre+'? ', :method => :delete %>
+          data:{ confirm: '¿Seguro que desea eliminar el Periodo '+periodo.nombre+'? '}, :method => :delete %>
          <% end %></td> 
       </tr>
       <% end %><!-- de for periodo in periodos -->

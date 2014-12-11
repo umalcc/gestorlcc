@@ -39,7 +39,7 @@
         <td class="icono">
          <% if total==0 %>
           <%= link_to image_tag("borrar.png", :border=>0), horario, 
-          :confirm => 'Seguro que desea eliminar el tramo '+horario.comienzo+'-'+horario.fin+'? ', :method => :delete %>
+          data: { confirm: '¿Seguro que desea eliminar el tramo '+horario.comienzo+'-'+horario.fin+'? '}, :method => :delete %>
          <% end %></td> 
       </tr>
       <% end %><!-- de for horario en @horarios -->

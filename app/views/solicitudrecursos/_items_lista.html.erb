@@ -38,7 +38,7 @@
         <td style="text-align:center"><%= i.horaini+"-"+i.horafin %></td>
         <td class="cientocincuenta"><%= i.motivos %></td>
         <td class="icono"><%= link_to image_tag("borrar.png", :border=>0), i, 
-                             :confirm => '¿Seguro que desea eliminar la reserva?', :method => :delete %></td> 
+                             data:{ confirm: '¿Seguro que desea eliminar la reserva?'}, :method => :delete %></td> 
       </tr>
       <% end %><!-- de @solicitudrecursos.each -->
     </table>

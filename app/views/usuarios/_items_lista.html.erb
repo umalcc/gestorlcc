@@ -42,7 +42,7 @@
           <td class="icono">
            <% if total==0 %>
             <%= link_to image_tag("borrar.png", :border=>0), i, 
-            :confirm => 'Seguro que desea eliminar a '+i.nombre+' '+i.apellidos+'?', :method => :delete  unless i.admin? %>
+            data: { confirm: '¿Seguro que desea eliminar a '+i.nombre+' '+i.apellidos+'?'}, :method => :delete  unless i.admin? %>
            <% end %>
            </td> 
         </tr>

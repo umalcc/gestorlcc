@@ -96,7 +96,7 @@
             <td class="icono"><% if (i.tipo!="X" and !periodo.nil? and total==0) or i.asignado!="D"  %>
                               <!-- solicitudes que reflejan asignaciones directas de admin o periodos no vigentes-->
                                  <%= link_to image_tag("borrar.png", :border=>0), solicitudusuariolab_path(i), 
-                                    :confirm => '¿Seguro que desea eliminar la solicitud?', :method => :delete %>
+                                    data: { confirm: '¿Seguro que desea eliminar la solicitud?'}, :method => :delete %>
                                  <% else %>
                                    <% if i.tipo=="X" %>
                                     Asignaci&oacute;n directa

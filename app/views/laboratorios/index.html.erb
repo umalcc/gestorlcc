@@ -47,7 +47,7 @@
      <td class="icono">
       <% if total==0 %>
        <%= link_to image_tag("borrar.png", :border=>0), laboratorio, 
-       :confirm => 'Seguro que desea eliminar el Lab.'+laboratorio.nombre_lab+'?', :method => :delete %>
+       data:{ confirm: '¿Seguro que desea eliminar el Lab.'+laboratorio.nombre_lab+'?'}, :method => :delete %>
       <% end %></td> 
     </tr>
     <% end %><!-- del for laboratorio in @laboratorios -->

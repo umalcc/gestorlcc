@@ -40,7 +40,7 @@
         <td class="icono">
         <% if total==0 %>
           <%= link_to image_tag("borrar.png", :border=>0), i, 
-          :confirm => 'Seguro que desea eliminar el recurso '+i.identificador+'?', :method => :delete %>
+          data: { confirm: '¿Seguro que desea eliminar el recurso '+i.identificador+'?'}, :method => :delete %>
         <% end %></td> 
       </tr>
       <% end %><!-- de @recursos.each -->

@@ -91,7 +91,7 @@
             </table></td>    
          <td class="icono"><% if (i.tipo!="X" and !periodo.nil? and total==0)  and i.asignado!="N" %><!-- solicitudes de asignaciones directas de admin -->
                              <%= link_to image_tag("borrar.png", :border=>0), solicitudusuariolabexa_path(i),
-                              :confirm => '¿Seguro que desea eliminar la solicitud?', :method => :delete %>
+                              data: { confirm: '¿Seguro que desea eliminar la solicitud?'}, :method => :delete %>
                            <% else %>
                               <% if i.tipo=="X" %>
                                   Asignaci&oacute;n directa
