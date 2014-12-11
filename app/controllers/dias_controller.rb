@@ -43,7 +43,7 @@ before_filter :login_requerido, :admin?
   # POST /dias
   # POST /dias.xml
   def create
-    @dia = Dia.new(params[:dia])
+    @dia = Dia.new(dia_params)
 
     respond_to do |format|
       if @dia.save
@@ -64,7 +64,7 @@ before_filter :login_requerido, :admin?
     @dia = Dia.find(params[:id])
 
     respond_to do |format|
-      if @dia.update_attributes(params[:dia])
+      if @dia.update(dia_params)
         #flash[:notice] = 'Dia was successfully updated.'
         @dias = Dia.order( "num").to_a
         format.html { redirect_to :action => "index"  }
@@ -87,4 +87,12 @@ before_filter :login_requerido, :admin?
       format.xml  { head :ok }
     end
   end
+
+
+  private 
+
+  def dia_params
+    params.require(:dia).permit(:num, :nombre, :en_uso)
+  end
+
 end

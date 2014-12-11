@@ -134,7 +134,7 @@ class PeriodosController < ApplicationController
     end
 
     respond_to do |format|
-           if @periodo.update(params[:periodo])
+           if @periodo.update(periodo_params)
               
               @periodos = Periodo.order("inicio").to_a
               format.html { redirect_to :action => "index" }
@@ -361,4 +361,12 @@ def enviar_correo_activo_on
       format.xml  { head :ok }
     end
   end
+
+  private
+
+   def periodo_params
+      params.require(:periodo).permit(:nombre, :inicio, :fin, :tipo, :iniciosol, :finsol, :admision, :activo)
+   end
+
+
 end

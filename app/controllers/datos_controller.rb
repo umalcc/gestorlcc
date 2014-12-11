@@ -31,8 +31,7 @@ class DatosController < ApplicationController
            params[:usuario][:password_confirmation]=@antiguapass
       end 
 
-      if @usuario.update_attributes(params[:usuario])
-      #  flash[:notice] = 'Asignatura fue actualizada con &eacute;xito.'
+      if @usuario.update(usuario_params)
         format.html { redirect_to new_userinicio_path }
         format.xml  { head :ok }
       else
@@ -40,6 +39,13 @@ class DatosController < ApplicationController
         format.xml  { render :xml => @usuario.errors, :status => :unprocessable_entity }
       end
     end
+  end
+
+
+  private 
+
+  def usuario_params
+    params.require(:usuario).permit(:password, :password_confirmation, :identificador, :nombre, :apellidos, :email, :admin, :despacho, :telefono)
   end
 
 end

@@ -43,7 +43,7 @@ before_filter :login_requerido, :admin?
   # POST /horarios
   # POST /horarios.xml
   def create
-    @horario = Horario.new(params[:horario])
+    @horario = Horario.new(horario_params)
 
     respond_to do |format|
       if @horario.save
@@ -64,7 +64,7 @@ before_filter :login_requerido, :admin?
     @horario = Horario.find(params[:id])
 
     respond_to do |format|
-      if @horario.update_attributes(params[:horario])
+      if @horario.update(horario_params)
         #flash[:notice] = 'Horario was successfully updated.'
         @horarios = Horario.order("num").to_a
         format.html { redirect_to :action => "index"  }
@@ -87,4 +87,11 @@ before_filter :login_requerido, :admin?
       format.xml  { head :ok }
     end
   end
+
+ private
+
+ def horario_params
+    params.require(:horario).permit(:num, :comienzo, :fin, :en_uso)
+ end
+
 end

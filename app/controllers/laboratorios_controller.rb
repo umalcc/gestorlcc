@@ -43,7 +43,7 @@ before_filter :login_requerido, :admin?
   # POST /laboratorios
   # POST /laboratorios.xml
   def create
-    @laboratorio = Laboratorio.new(params[:laboratorio])
+    @laboratorio = Laboratorio.new(laboratorio_params)
 
     respond_to do |format|
       if @laboratorio.save
@@ -74,7 +74,7 @@ before_filter :login_requerido, :admin?
                                     s.update_attributes(:preferencias=>prefsfinal)
                                }
       end
-      if @laboratorio.update_attributes(params[:laboratorio])
+      if @laboratorio.update(laboratorio_params)
        
        # flash[:notice] = 'Laboratorio fue actualizado con &eacute;xito.'
         @laboratorios = Laboratorio.order("nombre_lab").to_a
@@ -98,4 +98,13 @@ before_filter :login_requerido, :admin?
       format.xml  { head :ok }
     end
   end
+
+  
+ private
+
+ def laboratorio_params
+    params.require(:laboratorio).permit(:nombre_lab, :puestos, :ssoo, :descr_HW, :descr_SW, :comentarios, :aviso, :especial)
+ end
+
+
 end

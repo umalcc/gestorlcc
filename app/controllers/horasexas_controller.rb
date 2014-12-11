@@ -30,7 +30,7 @@ before_filter :login_requerido, :admin?
   # POST /horarios
   # POST /horarios.xml
   def create
-    @horasexa = Horasexa.new(params[:horasexa])
+    @horasexa = Horasexa.new(horasexa_params)
 
     respond_to do |format|
       if @horasexa.save
@@ -51,7 +51,7 @@ before_filter :login_requerido, :admin?
     @horasexa = Horasexa.find(params[:id])
 
     respond_to do |format|
-      if @horasexa.update_attributes(params[:horasexa])
+      if @horasexa.update(horasexa_params)
         @horasexas = Horasexa.order("num").to_a
         format.html { redirect_to :action => "index"  }
         format.xml  { head :ok }
@@ -73,4 +73,12 @@ before_filter :login_requerido, :admin?
       format.xml  { head :ok }
     end
   end
+
+
+ private
+
+ def horasexa_params
+    params.require(:horasexa).permit(:num, :comienzo, :fin, :en_uso)
+ end
+
 end

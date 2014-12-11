@@ -88,7 +88,7 @@ class AsignaturasController < ApplicationController
     end
 
     respond_to do |format|
-      if @asignatura.update_attributes(params[:asignatura])
+      if @asignatura.update(asignatura_params)
       #  flash[:notice] = 'Asignatura fue actualizada con &eacute;xito.'
         @asignaturas = Asignatura.order("titulacion_id,curso,cuatrimestre").to_a
         @cuenta = @asignaturas.size
@@ -149,6 +149,13 @@ class AsignaturasController < ApplicationController
     respond_to do |format|
 	format.js 
     end
+  end
+
+
+  private 
+
+  def asignatura_params
+    params.require(:asignatura).permit(:codigo_asig, :nombre_asig, :area, :caracter, :coeficiente_exp, :curso, :cuatrimestre, :abrevia_asig, :titulacion)
   end
 
 end
