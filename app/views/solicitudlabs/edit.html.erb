@@ -12,13 +12,13 @@
             <dd><%= fecha_europea(Date.today) %></dd>
             <dt>Usuario *</dt>                    
             <dd onchange=' mostrardiv("solicitudlab_submit")'>
-               <% @usuarios=Usuario.order("apellidos").all.reject{|u| u.identificador=="anonimo"} %>
+               <% @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"} %>
                <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]},
                               html_options={:selected=>@solicitudlab.usuario_id } %></dd>
 
             <dt>Titulaci&oacute;n *</dt>
             <dd id="combo_titulacion" onchange='mostrardiv("solicitudlab_submit")'>
-               <% @titulaciones=Titulacion.order("nombre").all %>
+               <% @titulaciones=Titulacion.order("nombre").to_a %>
                <% @asignatura=Asignatura.find(@solicitudlab.asignatura_id) %>
                <% @titulacionselec=@asignatura.titulacion_id %>
                <% @cursoselec=@solicitudlab.curso %>
@@ -30,7 +30,7 @@
             <dt>Asignatura *</dt>
             <dd onchange='mostrardiv("solicitudlab_submit")'>
                <SPAN id="combo_asignatura">
-                <% @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").all%>
+                <% @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").to_a%>
                 <% @asignaturaselec=@solicitudlab.asignatura_id %>
                 <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]}, 
                     html_options={:selected=>@asignaturaselec } %>
@@ -53,7 +53,7 @@
             <dt>Soft. requerido</dt>
             <dd onkeydown='mostrardiv("solicitudlab_submit")'>
               <%= f.text_area :comentarios, :rows =>4, :cols=>40, :name=>"comentarios" %></dd>
-              <% @especiales=Laboratorio.where('especial=?',"t").all %>              
+              <% @especiales=Laboratorio.where('especial=?',"t").to_a %>              
               <% if @especiales.size>0 %>
                <dt>Tipo de equipos</dt>
                <dd >
@@ -117,9 +117,9 @@
                          <th width=60>Hora fin </th>
                        </tr>
                        <tr valign="top" >
-                         <td width=60><% @dias=Dia.where('en_uso=?',"t").all %>
+                         <td width=60><% @dias=Dia.where('en_uso=?',"t").to_a %>
                                       <%= select  "diasemana","nombre", @dias.map {|d| [d.nombre] }%></td> 
-                         <td width=60><% @horas=Horario.where('en_uso=?',"t").all %>
+                         <td width=60><% @horas=Horario.where('en_uso=?',"t").to_a %>
                                       <%= select "horaini", "comienzo", @horas.map {|h| [h.comienzo] }%></td>
                          <td width=60><%= select "horafin", "fin", @horas.map {|h| [h.fin] }%></td>
                          <td width=15>

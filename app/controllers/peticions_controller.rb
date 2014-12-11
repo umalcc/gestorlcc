@@ -7,7 +7,7 @@ class PeticionsController < ApplicationController
   before_filter :admin?
 
   def index
-    @peticions = Peticion.to_a
+    @peticions = Peticion.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -79,7 +79,7 @@ class PeticionsController < ApplicationController
   respond_to do |format|
       if @peticion.save
         
-        @peticions=Peticion.to_a
+        @peticions=Peticion.all
         format.html { redirect_to(session[:direccion]) }
         format.xml  { render :xml => @peticion, :status => :created, :location => @peticion }
       else
@@ -102,7 +102,7 @@ class PeticionsController < ApplicationController
                                      :horafin => params[:horafin].to_s)
 
         # flash[:notice] = 'Peticion was successfully updated.'
-        @peticions=Peticion.to_a
+        @peticions=Peticion.all
         format.html { render :action => "index"  }
         format.xml  { head :ok }
       else

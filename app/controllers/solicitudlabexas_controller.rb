@@ -83,7 +83,7 @@ class SolicitudlabexasController < ApplicationController
       if @solicitudlabexa.save      
        CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Nueva ").deliver       
               
-        @solicitudlabexas = Solicitudlabexa.to_a
+        @solicitudlabexas = Solicitudlabexa.all
         
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @solicitudlabexas, :status => :created, :location => @solicitudlabexas }
@@ -153,7 +153,7 @@ class SolicitudlabexasController < ApplicationController
                                              :comentarios=>Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios]))
 
 CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Cambios en ").deliver      
-        @solicitudlabexas = Solicitudlabexa.to_a
+        @solicitudlabexas = Solicitudlabexa.all
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else

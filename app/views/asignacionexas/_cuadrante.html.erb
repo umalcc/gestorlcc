@@ -51,8 +51,8 @@
   <% end %>
 </div>
 </p>
-<% @labs=Laboratorio.order("nombre_lab").all %>
-<% @horas=Horasexa.order("num").all %>
+<% @labs=Laboratorio.order("nombre_lab").to_a %>
+<% @horas=Horasexa.order("num").to_a %>
 <% for dia in  fechas %><!-- POR CADA DIA DE EXAMEN -->
    
    <div id="rotulodia">
@@ -177,7 +177,7 @@
                                             </tr>
 				            <tr>
                                               <td>Laboratorio </td>
-                                              <td> <% @laboratorios=Laboratorio.order("nombre_lab").all %>
+                                              <td> <% @laboratorios=Laboratorio.order("nombre_lab").to_a %>
                                                    <% labora=Laboratorio.find(a.laboratorio_id).nombre_lab %>
                 				   <%= select "laboratorio_id", "nombre_lab", 
 								@laboratorios.map {|l| [l.nombre_lab]},
@@ -195,7 +195,7 @@
                                             </tr>
                                             <tr>
                                               <td>Hora </td>
-                                              <td> <% @horas=Horasexa.where('en_uso = ?',"t").all %>
+                                              <td> <% @horas=Horasexa.where('en_uso = ?',"t").to_a %>
                                                    <% a.horaini %>
                 				   <%= select "horario_id", "comienzo", 
 								@horas.map {|h| [h.comienzo]},

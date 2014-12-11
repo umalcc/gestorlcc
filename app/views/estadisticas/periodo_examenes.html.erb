@@ -6,7 +6,7 @@
       <% nregistros=Historicoasigexa.all.size %>
 
       <% if nregistros!=0 %>
-          <% @periodos=Historicoasigexa.order("periodo").all %>
+          <% @periodos=Historicoasigexa.order("periodo").to_a %>
           <%= form_tag(url_for(:controller=>'estadisticas',:action=>'estadisticas_examenes'),id:"form", method:"post",before: 'mostrardiv("imagen-progreso")', remote:true) do %>
           
           <table id="busqueda" style="width:400px">

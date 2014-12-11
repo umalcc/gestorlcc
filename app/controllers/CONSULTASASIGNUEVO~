@@ -1,8 +1,8 @@
 class ConsultasasigController < ApplicationController
   def porusuario
-    @solicitudes = Solicitudlab.to_a(:conditions=>["usuario_id == ?",session[:user_id]])
+    @solicitudes = Solicitudlab.all(:conditions=>["usuario_id == ?",session[:user_id]])
     ids=@solicitudes.map {|s| s.id }
-    @asignacions = Asignacion.to_a(:conditions=> ["solicitudlab_id in (?)", ids],
+    @asignacions = Asignacion.all(:conditions=> ["solicitudlab_id in (?)", ids],
 					:order=>"solicitudlab_id,peticionlab_id")
 
     respond_to do |format|
@@ -12,7 +12,7 @@ class ConsultasasigController < ApplicationController
   end
 
   def general
-    @asignacions = Asignacion.to_a
+    @asignacions = Asignacion.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -21,8 +21,8 @@ class ConsultasasigController < ApplicationController
   end
 
   def asignar
-     solicitudes=Solicitudlab.to_a
-     @solicitudlabs=solicitudes.to_a
+     solicitudes=Solicitudlab.all
+     @solicitudlabs=solicitudes.all
 
   # ordenacion segun metodo de ascenso de burbujas por tres criterios:
   # 1- por coeficiente de experimentabilidad, inicialmente el mismo en todas
@@ -72,7 +72,7 @@ class ConsultasasigController < ApplicationController
          hf=Horario.find_by_fin(pet.horafin).id.to_i
          for hora in hi..hf     #   for cada hora del tramo, una asignacion
           if sol.npuestos<55
-           @todoslab=Laboratorio.to_a(:order=>"nombre_lab desc",:conditions=>["puestos = ?",sol.npuestos])
+           @todoslab=Laboratorio.all(:order=>"nombre_lab desc",:conditions=>["puestos = ?",sol.npuestos])
            # en principio el laboratorio asignado es ninguno y buscamos uno libre de ese tamaño
            lab=nil
            @todoslab.each {|laboratorio|

@@ -4,7 +4,7 @@ class SolicitudlabsController < ApplicationController
   before_filter :login_requerido, :admin?
 
   def index
-    @solicitudlabs = Solicitudlab.to_a 
+    @solicitudlabs = Solicitudlab.all
     @cuenta = @solicitudlabs.size
     
     respond_to do |format|
@@ -238,7 +238,7 @@ class SolicitudlabsController < ApplicationController
                                 end } unless @borrados.empty?
         CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Cambios en ").deliver
 
-        @solicitudlabs = Solicitudlab.to_a
+        @solicitudlabs = Solicitudlab.all
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else

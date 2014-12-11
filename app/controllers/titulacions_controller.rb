@@ -48,7 +48,7 @@ before_filter :login_requerido, :admin?
     respond_to do |format|
       if @titulacion.save
        # flash[:notice] = 'Titulacion was successfully created.'
-        @titulacions = Titulacion.to_a.order("abrevia")
+        @titulacions = Titulacion.all.order("abrevia")
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @titulacion, :status => :created, :location => @titulacion }
       else

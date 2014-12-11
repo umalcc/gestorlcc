@@ -6,7 +6,7 @@ class AsignaturasController < ApplicationController
   before_filter :admin?, except=>:combo_por_titulacion
 
   def index
-    @asignaturas = Asignatura.to_a
+    @asignaturas = Asignatura.all
     @titulaciones=Titulacion.find(:all,:order=>"codigo") 
 
     respond_to do |format|
@@ -63,7 +63,7 @@ class AsignaturasController < ApplicationController
     respond_to do |format|
       if @asignatura.save
        # flash[:notice] = 'Asignatura fue creada con &eacute;xito.'
-        @asignaturas = Asignatura.to_a
+        @asignaturas = Asignatura.all
         format.html { render :action => "index" }
         format.xml  { render :xml => @asignatura, :status => :created, :location => @asignatura }
       else
@@ -82,7 +82,7 @@ class AsignaturasController < ApplicationController
     respond_to do |format|
       if @asignatura.update_attributes(params[:asignatura])
       #  flash[:notice] = 'Asignatura fue actualizada con &eacute;xito.'
-        @asignaturas = Asignatura.to_a
+        @asignaturas = Asignatura.all
         format.html { render :action => "index" }
         format.xml  { head :ok }
       else

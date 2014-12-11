@@ -6,7 +6,7 @@
       <p><%= image_tag ("bg_separ.gif") %></p>
       <% nregistros=Historicoasig.all.size %>
       <% if nregistros!=0 %>
-        <% @periodos=Historicoasig.order("periodo").all %>
+        <% @periodos=Historicoasig.order("periodo").to_a %>
         <%= form_tag(url_for(:controller=>'estadisticas',:action=>'estadisticas_lectivo'),id:"form", method:"post",before: 'mostrardiv("imagen-progreso")', remote:true) do %>
         <table id="busqueda" style="width:300px">
           <tr>

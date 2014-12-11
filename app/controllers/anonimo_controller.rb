@@ -3,7 +3,7 @@ class AnonimoController < ApplicationController
 #before_filter :login_requerido
 
   def general
-    @asignacions = Asignaciondef.to_a
+    @asignacions = Asignaciondef.all
     if @asignacions.size!=0
      @asignacions.reject{|a| a.solicitudlab.fechafin<Date.today}
     end

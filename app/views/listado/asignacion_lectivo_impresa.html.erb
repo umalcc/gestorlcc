@@ -19,7 +19,7 @@
      <%= image_tag("logo_lcc.png", :border=>0,:width=>"195", :height=>"100", :id=>"logotipo") %> </td>
   </tr>
 </table>
-      <% @dias=Dia.where("en_uso=?","t").order("num").all %><% @dias=@dias.select {|d| d.en_uso } %>
+      <% @dias=Dia.where("en_uso=?","t").order("num").to_a %><% @dias=@dias.select {|d| d.en_uso } %>
       
     
         <% for dia in @dias %><!-- por cada dia de la semana, un cuadrante -->
@@ -29,7 +29,7 @@
           <%= image_tag ("bg_separ.gif") %>
         </div>
         <table id="asignacion">
-          <% @labs=Laboratorio.order("nombre_lab").all %>
+          <% @labs=Laboratorio.order("nombre_lab").to_a %>
           <tr>
            <th></th>
            <% for lab in @labs do %><!-- los laboratorios son las columnas -->
@@ -39,7 +39,7 @@
            <% end %><!-- del for lab in @labs --> 
          </tr>
 
-         <%@horas=Horario.order("num").all %>
+         <%@horas=Horario.order("num").to_a %>
          <% for hora in @horas do %><!-- las horas son las filas -->
          <tr>
            <th class="cien"><%=hora.comienzo+'-'+hora.fin %></th>
@@ -47,7 +47,7 @@
              <!-- buscamos cada asignacion de ese laboratorio ese dia a esa hora -->
              <% as=@asignacions.select {|a| a.laboratorio_id==lab.id and a.horaini.to_s==hora.comienzo.to_s and dia.id==a.dia_id and a.solicitudlab.fechafin>=Date.today} %>
              <!-- ordenamos las asignaciones por fechaini -->
-             <% as_ordenadas=as.sort_by{|a| a.solicitudlab.fechaini}.all %>
+             <% as_ordenadas=as.sort_by{|a| a.solicitudlab.fechaini}.to_a %>
              <% solapa=0 %><!-- contamos los solapamientos -->
              <% for i in 0..as_ordenadas.size-2 %>
                <% if as_ordenadas[i].solicitudlab.fechafin>as_ordenadas[i+1].solicitudlab.fechaini %>

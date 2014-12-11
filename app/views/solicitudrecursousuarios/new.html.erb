@@ -4,7 +4,7 @@
     </p>
     <div id="recuadro">
        <p><%= image_tag ("bg_separ.gif") %></p>
-       <% @recursos=Recurso.order("identificador").all %>
+       <% @recursos=Recurso.order("identificador").to_a %>
        <% @recursos=@recursos.select {|x| x.disponible.to_s=="true"} %>
        <%= form_for @solicitudrecurso, :html=> {:name => "formulario"} do |s| %>
        <table id="busqueda2">

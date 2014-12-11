@@ -5,7 +5,7 @@ class PeticionlabsController < ApplicationController
   # GET /peticionlabs
   # GET /peticionlabs.xml
   def index
-    @peticionlabs = Peticionlab.to_a
+    @peticionlabs = Peticionlab.all
 
     respond_to do |format|
       format.html # index.html.erb

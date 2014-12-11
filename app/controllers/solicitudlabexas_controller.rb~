@@ -5,7 +5,7 @@ class SolicitudlabexasController < ApplicationController
   before_filter :login_requerido, :admin?
 
   def index
-    @solicitudlabexas = Solicitudlabexa.to_a
+    @solicitudlabexas = Solicitudlabexa.all
     @cuenta = @solicitudlabexas.size
     
     respond_to do |format|
@@ -75,7 +75,7 @@ class SolicitudlabexasController < ApplicationController
       if @solicitudlabexa.save      
        CorreoTecnicos::deliver_emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Nueva ")       
               
-        @solicitudlabexas = Solicitudlabexa.to_a
+        @solicitudlabexas = Solicitudlabexa.all
         
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @solicitudlabexas, :status => :created, :location => @solicitudlabexas }
@@ -126,7 +126,7 @@ class SolicitudlabexasController < ApplicationController
                                              :comentarios=>Iconv.iconv('ascii//translit//ignore', 'utf-8', params[:comentarios]).to_s)
 
 CorreoTecnicos::deliver_emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Cambios en ")      
-        @solicitudlabexas = Solicitudlabexa.to_a
+        @solicitudlabexas = Solicitudlabexa.all
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else

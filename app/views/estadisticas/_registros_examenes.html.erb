@@ -10,8 +10,8 @@
    </div>
    <p style="margin: 30px 0px"><%= image_tag ("bg_separ.gif") %></p>
 
-    <% @labs=Laboratorio.order("nombre_lab").all %>
-    <% @titulaciones=Titulacion.order("id").all %>
+    <% @labs=Laboratorio.order("nombre_lab").to_a %>
+    <% @titulaciones=Titulacion.order("id").to_a %>
     <% fechas=[] %>
     <% per=Periodo.where("nombre = ?",p).first %>
     <% for dia in per.inicio..per.fin do %>
@@ -19,7 +19,7 @@
          <% fechas<<dia %>
       <% end %>
     <% end %>
-    <% @horas=Horasexa.order("num").select("comienzo,fin").all %>
+    <% @horas=Horasexa.order("num").select("comienzo,fin").to_a %>
 
     <table class="estadistica" >
      <tr>

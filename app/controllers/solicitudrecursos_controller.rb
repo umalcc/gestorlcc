@@ -7,7 +7,7 @@ class SolicitudrecursosController < ApplicationController
 
 
   def index
-    @solicitudrecursos = Solicitudrecurso.to_a
+    @solicitudrecursos = Solicitudrecurso.all
     @cuenta = @solicitudrecursos.size
 
     respond_to do |format|
@@ -27,7 +27,7 @@ class SolicitudrecursosController < ApplicationController
     
     
     #identifico los tipos distintos de recurso
-    @tipos = Recurso.to_a.map{ |i| i.descripcion }.uniq
+    @tipos = Recurso.all.map{ |i| i.descripcion }.uniq
     
     # cargo los dias y horas posibles para los select
     @dias=Dia.where('en_uso = ?',"t").to_a
@@ -123,7 +123,7 @@ class SolicitudrecursosController < ApplicationController
                                              :usuario_id => Usuario.where( "nombre = :nombre and apellidos = :apellidos", {:nombre => nombrecomp[1], :apellidos => nombrecomp[0]}).first.id,
                                              :motivos => params[:motivos])
                
-        @solicitudrecursos = Solicitudrecurso.to_a
+        @solicitudrecursos = Solicitudrecurso.all
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else
@@ -149,7 +149,7 @@ class SolicitudrecursosController < ApplicationController
   end
 
   def borrar_reservas
-    solicitudes=Solicitudrecurso.to_a
+    solicitudes=Solicitudrecurso.all
     @total=0
     solicitudes.each{|s| s.destroy
                          @total+=1}

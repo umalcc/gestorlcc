@@ -7,7 +7,7 @@ class SolicitudrecursosController < ApplicationController
 
 
   def index
-    @solicitudrecursos = Solicitudrecurso.to_a
+    @solicitudrecursos = Solicitudrecurso.all
     @cuenta = @solicitudrecursos.size
 
     respond_to do |format|
@@ -134,7 +134,7 @@ class SolicitudrecursosController < ApplicationController
      ["nombre = :nombre and apellidos = :apellidos", {:nombre => nombrecomp[1], :apellidos => nombrecomp[0]}]).id,
                                              :motivos => params[:motivos])
                
-        @solicitudrecursos = Solicitudrecurso.to_a
+        @solicitudrecursos = Solicitudrecurso.all
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else
@@ -160,7 +160,7 @@ class SolicitudrecursosController < ApplicationController
   end
 
   def borrar_reservas
-    solicitudes=Solicitudrecurso.to_a
+    solicitudes=Solicitudrecurso.all
     @total=0
     solicitudes.each{|s| s.destroy
                          @total+=1}

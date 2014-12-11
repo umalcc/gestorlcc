@@ -5,7 +5,7 @@
 
   <div id="lista-gestion">
    <p><%= image_tag ("bg_separ.gif") %></p>
-   <% periodos=Periodo.where('activo = ? and tipo = ?',"t","Lectivo").all %>
+   <% periodos=Periodo.where('activo = ? and tipo = ?',"t","Lectivo").to_a %>
 
    <% if periodos.size!=0 %><!-- si se esta en un periodo de asignaciones activadas -->
     

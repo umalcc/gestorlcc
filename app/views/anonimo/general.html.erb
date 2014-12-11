@@ -5,7 +5,7 @@
   </p>
   <div id="recuadro">  
     <p><%= image_tag ("bg_separ.gif") %></p>
-    <% periodos=Periodo.where("activo = ? and tipo = ?","t","Lectivo").all %>
+    <% periodos=Periodo.where("activo = ? and tipo = ?","t","Lectivo").to_a %>
     <% nasig=Asignaciondef.all.size %>
     <% if periodos.size>0 and nasig>0 %><!-- si se esta en un periodo de asignaciones activadas -->
       <div id="nom_periodo">
@@ -27,7 +27,7 @@
           <%= image_tag ("bg_separ.gif") %>&nbsp;&nbsp<a href="#up"><%= image_tag ("up.png") %></a>
         </div>
         <table id="asignacion">
-          <% @labs=Laboratorio.order("nombre_lab").all %>
+          <% @labs=Laboratorio.order("nombre_lab").to_a %>
           <tr>
            <th></th>
            <% for lab in @labs do %><!-- los laboratorios son las columnas -->
@@ -53,7 +53,7 @@
              <!-- buscamos cada asignacion de ese laboratorio ese dia a esa hora -->
              <% as=@asignacions.select {|a| a.laboratorio_id==lab.id and a.horaini.to_s==hora.comienzo.to_s and dia.id==a.dia_id and a.solicitudlab.fechafin>=Date.today} %>
              <!-- ordenamos las asignaciones por fechaini -->
-             <% as_ordenadas=as.sort_by{|a| a.solicitudlab.fechaini}.all %>
+             <% as_ordenadas=as.sort_by{|a| a.solicitudlab.fechaini}.to_a %>
              <% solapa=0 %><!-- contamos los solapamientos -->
              <% for i in 0..as_ordenadas.size-2 %>
                <% if as_ordenadas[i].solicitudlab.fechafin>as_ordenadas[i+1].solicitudlab.fechaini %>

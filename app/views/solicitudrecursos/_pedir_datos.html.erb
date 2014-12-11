@@ -1,6 +1,6 @@
 <dl>
   <dt>Usuario</dt>
-  <dd><% @usuarios=Usuario.order("apellidos").all %>
+  <dd><% @usuarios=Usuario.order("apellidos").to_a %>
       <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre]} %>
   </dd>
   <dt>Motivos</dt>

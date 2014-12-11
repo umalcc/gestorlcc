@@ -13,7 +13,7 @@
           <dd><%= f.text_field :nombre_lab,:size=>4 %></dd>
           <dt> Lab. especial?</dt>
           <% if titulo == "Editando laboratorio" %>
-             <% n=Solicitudlab.where("preferencias LIKE ?","%"+@laboratorio.nombre_lab+"%").all.size.to_s %>
+             <% n=Solicitudlab.where("preferencias LIKE ?","%"+@laboratorio.nombre_lab+"%").to_a.size.to_s %>
              <dd><%= f.check_box :especial,:size=>1, :onclick=>"alert('hay "+n+" solicitudes en curso afectadas')" %></dd>
           <% else %>
              <dd><%= f.check_box :especial,:size=>1 %></dd>

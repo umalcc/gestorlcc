@@ -1,4 +1,4 @@
-<%    @dias=Dia.where('en_uso=?',"t").all  %>
+<%    @dias=Dia.where('en_uso=?',"t").to_a  %>
 
 <% if @festivo %>
     <div id="errores">     

@@ -9,10 +9,10 @@
    </div>
    <p style="margin: 30px 0px"><%= image_tag ("bg_separ.gif") %></p>
 
-    <% @labs=Laboratorio.order("nombre_lab").all %>
-    <% @titulaciones=Titulacion.order("id").all %>
-    <% @dias=Dia.order("num").all %>
-    <% @horas=Horario.order("num").select("comienzo,fin").all%>
+    <% @labs=Laboratorio.order("nombre_lab").to_a %>
+    <% @titulaciones=Titulacion.order("id").to_a %>
+    <% @dias=Dia.order("num").to_a %>
+    <% @horas=Horario.order("num").select("comienzo,fin").to_a%>
 
     <table class="estadistica" >
      <tr>

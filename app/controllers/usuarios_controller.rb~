@@ -115,7 +115,7 @@ before_filter :login_requerido, :admin?
       
      if @usuario.update_attribute("password", params[:usuario][:password])
      #   flash[:notice] = 'La password ha sido correctamente actualizada.'
-        @usuarios=Usuario.to_a
+        @usuarios=Usuario.all
         format.html { render :action => "index" }
         format.xml  { head :ok }
       else

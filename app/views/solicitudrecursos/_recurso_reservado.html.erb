@@ -1,4 +1,4 @@
-<%    @dias=Dia.where('en_uso=?',"t").all  %>
+<%    @dias=Dia.where('en_uso=?',"t").to_a  %>
 
 <% if @festivo %>
     <div id="errores">     
@@ -9,7 +9,7 @@
        </div>     
     </div>
 <% else %>
-  <% @usuarios=Usuario.order("apellidos").all.reject{|u| u.identificador=="anonimo"} %>
+  <% @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"} %>
   <table id="horario">
     <tr>
       <th></th>

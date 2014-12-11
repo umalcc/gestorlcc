@@ -65,7 +65,7 @@ before_filter :login_requerido, :admin?
 
     respond_to do |format|
       if @laboratorio.especial and !params[:laboratorio][:especial] 
-         @solicitudeslab=Solicitudlab.to_a("preferencias LIKE ?","%"+@laboratorio.nombre_lab+"%")
+         @solicitudeslab=Solicitudlab.all("preferencias LIKE ?","%"+@laboratorio.nombre_lab+"%")
          @solicitudeslab.each {|s|  prefs=s.preferencias.split(';')
                                     prefsfinal=''
                                     prefs.each{ |p|  if !p.index(@laboratorio.nombre_lab)

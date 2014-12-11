@@ -22,12 +22,12 @@ class AsignacionsController < ApplicationController
 
   def asignar
     @admision=Periodo.where("admision = ? and tipo= ?","t","Lectivo").to_a
-    @totalprov=Asignacion.to_a.size
+    @totalprov=Asignacion.all.size
 
   end
 
   def asignar_continuar
-       @asignacions=Asignacion.to_a
+       @asignacions=Asignacion.all
     
       respond_to do |format|
         format.js
@@ -43,7 +43,7 @@ class AsignacionsController < ApplicationController
 
     if solicitudes.size!=0 
      
-     @solicitudlabs=solicitudes.to_a
+     @solicitudlabs=solicitudes.all
 
   # ordenacion de solicitudes segun metodo de ascenso de burbujas por tres criterios:
   # 1- por coeficiente de experimentabilidad, inicialmente el mismo en todas
@@ -203,7 +203,7 @@ class AsignacionsController < ApplicationController
     # OJOOOOOO VER QUE HACER CUANDO SE ACTIVEN NUEVOS PERIODOS
 
    
-        Asignacion.to_a.each { |a| a.destroy }
+        Asignacion.all.each { |a| a.destroy }
 
         @asignacions.each { |a| nueva_asig=Asignacion.new
                             nueva_asig=a
@@ -228,7 +228,7 @@ class AsignacionsController < ApplicationController
     # eliminar las provisionales
 
   
-    @asignaciondefs=Asignaciondef.to_a
+    @asignaciondefs=Asignaciondef.all
     if @asignaciondefs.size!=0
       solicitudes=@asignaciondefs.map{|a| a.solicitudlab_id}.uniq
       solicitudes.each{|s|  sol=Solicitudlab.find(s)
@@ -236,7 +236,7 @@ class AsignacionsController < ApplicationController
       @asignaciondefs.each{|a| a.peticionlab.destroy
                              a.destroy}
     end
-    @asignacions=Asignacion.to_a
+    @asignacions=Asignacion.all
     @asignacions.each { |a| asig_def=Asignaciondef.new( :solicitudlab_id=>a.solicitudlab_id,
                                                         :peticionlab_id=>a.peticionlab_id,
                                                         :laboratorio_id=>a.laboratorio_id,
@@ -282,7 +282,7 @@ class AsignacionsController < ApplicationController
                                       :mov_dia=> mov_dia,
                                       :mov_hora=> mov_hora ) 
         
-        @asignacions=Asignacion.to_a
+        @asignacions=Asignacion.all
         respond_to do |format|
           format.js
         end
@@ -292,7 +292,7 @@ class AsignacionsController < ApplicationController
 
 
   def revisar
-    @asignaciones=Asignacion.to_a
+    @asignaciones=Asignacion.all
     cuadro=Array3d.new
 
 
@@ -306,9 +306,9 @@ class AsignacionsController < ApplicationController
        end
     end
 
-    horas=Horario.to_a.map{|h| h.id}
-    laboratorios=Laboratorio.to_a.map{|l| l.id}
-    dias=Dia.to_a.map{|d| d.id}
+    horas=Horario.all.map{|h| h.id}
+    laboratorios=Laboratorio.all.map{|l| l.id}
+    dias=Dia.all.map{|d| d.id}
 
     @colision=0
     for hora in horas
@@ -327,7 +327,7 @@ class AsignacionsController < ApplicationController
   end
   
   def consulta
-    @asignacions = Asignaciondef.to_a
+    @asignacions = Asignaciondef.all
     if @asignacions.size!=0
      @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
     end
@@ -412,7 +412,7 @@ class AsignacionsController < ApplicationController
                            end
                        }
     # hasta aqui --------                   
-        @asignacions = Asignaciondef.to_a
+        @asignacions = Asignaciondef.all
         format.html { redirect_to('/asignacions/consulta') }
         format.xml  { render :xml => @solicitudlabs, :status => :created, :location => @solicitudlabs }
       else
@@ -431,7 +431,7 @@ class AsignacionsController < ApplicationController
     asignacion.delete
     # otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).to_a
     # otrasasignaciones.each {|o| o.delete }
-    @asignacions=Asignacion.to_a
+    @asignacions=Asignacion.all
     respond_to do |format|
       format.js
     end
@@ -442,7 +442,7 @@ class AsignacionsController < ApplicationController
     asignacion.delete
     # otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).to_a
     # otrasasignaciones.each {|o| o.delete }
-    @asignacions=Asignaciondef.to_a
+    @asignacions=Asignaciondef.all
     respond_to do |format|
       format.js
     end
@@ -455,7 +455,7 @@ class AsignacionsController < ApplicationController
     asignacion.delete
     #otrasasignaciones.each {|o| o.delete }
     #solicitudlab.delete
-    @asignacions=Asignaciondef.to_a
+    @asignacions=Asignaciondef.all
     respond_to do |format|
       format.js
     end
@@ -468,7 +468,7 @@ class AsignacionsController < ApplicationController
     asignacion.delete
     #otrasasignaciones.each {|o| o.delete }
     #solicitudlab.delete
-    @asignacions=Asignacion.to_a
+    @asignacions=Asignacion.all
     respond_to do |format|
       format.js
     end

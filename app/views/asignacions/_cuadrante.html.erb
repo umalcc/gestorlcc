@@ -19,7 +19,7 @@
 
  <p>
   
- <% @dias=Dia.where('en_uso=?',"t").order("num").all %>
+ <% @dias=Dia.where('en_uso=?',"t").order("num").to_a %>
  <a name="up"></a>
  <div id="rotulodias">
   <% for dia in @dias %>
@@ -36,7 +36,7 @@
    </div>
 
    <table id="asignacion">
-     <% @labs=Laboratorio.order("nombre_lab").all %>
+     <% @labs=Laboratorio.order("nombre_lab").to_a %>
      <tr>
       <th></th>
       <% for lab in @labs do %><!-- Los laboratorios son las columnas -->
@@ -57,7 +57,7 @@
       <% end %> 
      </tr>
 
-     <%@horas=Horario.order("num").all %>
+     <%@horas=Horario.order("num").to_a %>
      <% for hora in @horas do %><!-- las horas son las filas -->
      <tr>
       <th><%=hora.comienzo+'-'+hora.fin %></th>
@@ -65,7 +65,7 @@
        <!-- busco las asignaciones a ese lab ese dia a esa hora -->
          <% as=@asignacions.select {|a| a.laboratorio_id==lab.id and a.horaini.to_s==hora.comienzo.to_s and dia.nombre==a.dia.nombre} %>
          <!-- ordenamos las asignaciones por fechaini -->
-         <% as_ordenadas=as.sort_by{|a| a.solicitudlab.fechaini}.all %>
+         <% as_ordenadas=as.sort_by{|a| a.solicitudlab.fechaini}.to_a %>
          <% solapa=0 %><!-- contamos los solapamientos -->
          <% for i in 0..as_ordenadas.size-2 %>
              <% if as_ordenadas[i].solicitudlab.fechafin>as_ordenadas[i+1].solicitudlab.fechaini %>
@@ -171,7 +171,7 @@
                                             </tr>
 				            <tr>
                                               <td>Laboratorio </td>
-                                              <td> <% @laboratorios=Laboratorio.order("nombre_lab").all %>
+                                              <td> <% @laboratorios=Laboratorio.order("nombre_lab").to_a %>
                                                    <% labora=Laboratorio.find(a.laboratorio_id).nombre_lab %>
                 				   <%= select "laboratorio_id", "nombre_lab", 
 								@laboratorios.map {|l| [l.nombre_lab]},
@@ -179,7 +179,7 @@
 			                    </tr>                                               
 					    <tr>
                                               <td>D&iacute;a </td>
-                                              <td> <% @dias=Dia.where('en_uso = ?',"t").all %>
+                                              <td> <% @dias=Dia.where('en_uso = ?',"t").to_a %>
                                                    <% dia_selec=Dia.find(a.dia_id).nombre %>
                 				   <%= select "dia_id", "nombre", 
 								@dias.map {|d| [d.nombre]},
@@ -187,7 +187,7 @@
 			                    </tr> 
                                             <tr>
                                               <td>Hora </td>
-                                              <td> <% @horas=Horario.where('en_uso = ?',"t").all %>
+                                              <td> <% @horas=Horario.where('en_uso = ?',"t").to_a %>
                                                    <% a.horaini %>
                 				   <%= select "horario_id", "comienzo", 
 								@horas.map {|h| [h.comienzo]},

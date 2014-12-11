@@ -11,13 +11,13 @@
             <dt>Fecha solicitud</dt>
             <dd><%= @dia=@solicitudlab.fechaini=@solicitudlab.fechafin= fecha_europea(Date.today) %></dd>
             <dt>Usuario *</dt>
-            <dd><% @usuarios=Usuario.order("apellidos").all.reject{|u| u.identificador=="anonimo"} %>
+            <dd><% @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"} %>
                 
                 <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]} %>
 
             </dd>
             <dt>Titulaci&oacute;n *</dt>
-            <dd id="combo_titulacion"><%@titulaciones=Titulacion.order("id").all %>
+            <dd id="combo_titulacion"><%@titulaciones=Titulacion.order("id").to_a %>
                 <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]} %></dd>
             <dt>Curso *</dt>
             <dd id="combo_nivel"><%= select_tag "nivel", options_for_select(Asignatura::CURSO)%></dd>
@@ -28,7 +28,7 @@
                 <% else %>
                    <% as=Asignatura::CURSO.first %>
                 <% end %>
-                <% @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).all %>
+                <% @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).to_a %>
 
                 <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]} %>
 
@@ -66,7 +66,7 @@
                  <td style="text-align:center">No</td>
                  <td style="text-align:center">Indif.</td>
                 </tr>
-                <% @especiales=Laboratorio.where("especial=?","t").all %>
+                <% @especiales=Laboratorio.where("especial=?","t").to_a %>
                 <% for especial in @especiales do %>
                 <tr style="font-size: 10px;font-weight: normal;text-align:center">
                    <td class="cien"><%= especial.ssoo %>
@@ -112,9 +112,9 @@
                           <th></th>
                        </tr>
                        <tr valign="top" halign=center>
-                          <td width=60><% @dias=Dia.where("en_uso=?","t").order("num").all %>
+                          <td width=60><% @dias=Dia.where("en_uso=?","t").order("num").to_a %>
                                        <%= select  "diasemana","nombre", @dias.map {|d| [d.nombre] }%></td> 
-                          <td width=60><% @horas=Horario.where("en_uso=?","t").order("num").all %>
+                          <td width=60><% @horas=Horario.where("en_uso=?","t").order("num").to_a %>
                                        <%= select "horaini", "comienzo", @horas.map {|h| [h.comienzo] }%></td>
                           <td width=60><%= select "horafin", "fin", @horas.map {|h| [h.fin] }%></td>
                           <td width=15>

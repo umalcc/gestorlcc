@@ -190,7 +190,7 @@ class PeriodosController < ApplicationController
     
 ### FALTA PASAR CADA ASIGNACION AL HISTORICO
  
-    asignaciones=Asignaciondef.to_a
+    asignaciones=Asignaciondef.all
 
     if !asignaciones.nil?
       conta=0
@@ -234,7 +234,7 @@ class PeriodosController < ApplicationController
     
 ### FALTA PASAR CADA ASIGNACION AL HISTORICO
  
-    asignaciones=Asignacionlabexadef.to_a
+    asignaciones=Asignacionlabexadef.all
 
     if !asignaciones.nil?
       conta=0

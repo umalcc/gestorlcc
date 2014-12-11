@@ -21,7 +21,7 @@ class SolicitudrecursousuariosController < ApplicationController
     @solicitudrecurso = Solicitudrecurso.new  
    
     #identifico los tipos distintos de recurso
-    @tipos = Recurso.to_a.map{ |i| i.descripcion }.uniq
+    @tipos = Recurso.all.map{ |i| i.descripcion }.uniq
     
     # cargo los dias y horas posibles para los select
     @dias=Dia.where('en_uso = ?',"t").to_a
