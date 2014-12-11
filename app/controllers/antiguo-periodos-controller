@@ -2,7 +2,7 @@ class PeriodosController < ApplicationController
   # GET /periodos
   # GET /periodos.xml
   def index
-    @periodos = Periodo.order("inicio").all
+    @periodos = Periodo.order("inicio").to_a
 
     respond_to do |format|
       format.html # index.html.erb
@@ -77,7 +77,7 @@ class PeriodosController < ApplicationController
 
     respond_to do |format|
       if @periodo.save
-        @periodos = Periodo.order("inicio").all
+        @periodos = Periodo.order("inicio").to_a
         format.html { render :action => "index" }
         format.xml  { render :xml => @periodo, :status => :created, :location => @periodo }
       else
@@ -139,7 +139,7 @@ class PeriodosController < ApplicationController
     #else
     
            if @periodo.update_attributes(params[:periodo])
-              @periodos = Periodo.order("inicio").all
+              @periodos = Periodo.order("inicio").to_a
               format.html { render :action => "index" }
               format.xml  { head :ok }
            else

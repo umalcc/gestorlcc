@@ -12,13 +12,13 @@ class Periodo < ActiveRecord::Base
  validate :activo_admision?
 
  validate :unico_activo_lectivo?,
-          :if=> Proc.new { |u| u.tipo=='Lectivo' and u.activo and  ((Periodo.where("tipo=? and activo=?","Lectivo","t").all.size>0 and u.id==0) or (Periodo.where("tipo=? and activo=?","Lectivo","t").all.size>1 and u.id!=0)) }
+          :if=> Proc.new { |u| u.tipo=='Lectivo' and u.activo and  ((Periodo.where("tipo=? and activo=?","Lectivo","t").to_a.size>0 and u.id==0) or (Periodo.where("tipo=? and activo=?","Lectivo","t").to_a.size>1 and u.id!=0)) }
  validate :unico_activo_examenes?,
-          :if=> Proc.new { |u| u.tipo=='Examenes' and u.activo and ((Periodo.where("tipo=? and activo=?","Examenes","t").all.size>0 and u.id==0) or (Periodo.where("tipo=? and activo=?","Examenes","t").all.size>1 and u.id!=0)) }
+          :if=> Proc.new { |u| u.tipo=='Examenes' and u.activo and ((Periodo.where("tipo=? and activo=?","Examenes","t").to_a.size>0 and u.id==0) or (Periodo.where("tipo=? and activo=?","Examenes","t").to_a.size>1 and u.id!=0)) }
  validate :unico_admision_lectivo?,
-          :if=> Proc.new { |u| u.tipo=='Lectivo' and u.admision and ((Periodo.where("tipo=? and admision=?","Lectivo","t").all.size>0 and u.id==0) or (Periodo.where("tipo=? and admision=?","Lectivo","t").all.size>1 and u.id!=0)) }
+          :if=> Proc.new { |u| u.tipo=='Lectivo' and u.admision and ((Periodo.where("tipo=? and admision=?","Lectivo","t").to_a.size>0 and u.id==0) or (Periodo.where("tipo=? and admision=?","Lectivo","t").to_a.size>1 and u.id!=0)) }
  validate :unico_admision_examenes?,
-          :if=> Proc.new { |u| u.tipo=='Examenes' and u.admision and ((Periodo.where("tipo=? and admision=?","Examenes","t").all.size>0 and u.id==0) or (Periodo.where("tipo=? and admision=?","Examenes","t").all.size>1 and u.id!=0)) }
+          :if=> Proc.new { |u| u.tipo=='Examenes' and u.admision and ((Periodo.where("tipo=? and admision=?","Examenes","t").to_a.size>0 and u.id==0) or (Periodo.where("tipo=? and admision=?","Examenes","t").to_a.size>1 and u.id!=0)) }
 
  def unico_activo_lectivo?
      errors.add("asignado: ","ya hay otro periodo lectivo asignado") #if (activo and tipo=="Lectivo" and Proc.new{|u| u.tipo=='Lectivo' and u.activo})

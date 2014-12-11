@@ -3,7 +3,7 @@ class ListadoController < ApplicationController
 before_filter :login_requerido
 
   def asignacion_lectivo_impresa
-    @asignacions = Asignaciondef.all
+    @asignacions = Asignaciondef.to_a
 
     respond_to do |format|
       format.html # index.html.erb
@@ -24,7 +24,7 @@ before_filter :login_requerido
   end
 
   def asignacion_examenes_impresa
-    @asignacionexas = Asignacionlabexadef.all
+    @asignacionexas = Asignacionlabexadef.to_a
 
     respond_to do |format|
       format.html # index.html.erb

@@ -5,7 +5,7 @@ class LaboratoriosController < ApplicationController
 before_filter :login_requerido, :admin?
 
   def index
-    @laboratorios = Laboratorio.order("nombre_lab").all
+    @laboratorios = Laboratorio.order("nombre_lab").to_a
 
     respond_to do |format|
       format.html # index.html.erb
@@ -48,7 +48,7 @@ before_filter :login_requerido, :admin?
     respond_to do |format|
       if @laboratorio.save
         #flash[:notice] = 'Laboratorio fue creado con &eacute;xito.'
-        @laboratorios = Laboratorio.order("nombre_lab").all
+        @laboratorios = Laboratorio.order("nombre_lab").to_a
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @laboratorio, :status => :created, :location => @laboratorio }
       else
@@ -65,7 +65,7 @@ before_filter :login_requerido, :admin?
 
     respond_to do |format|
       if @laboratorio.especial and !params[:laboratorio][:especial] 
-         @solicitudeslab=Solicitudlab.all("preferencias LIKE ?","%"+@laboratorio.nombre_lab+"%")
+         @solicitudeslab=Solicitudlab.to_a("preferencias LIKE ?","%"+@laboratorio.nombre_lab+"%")
          @solicitudeslab.each {|s|  prefs=s.preferencias.split(';')
                                     prefsfinal=''
                                     prefs.each{ |p|  if !p.index(@laboratorio.nombre_lab)
@@ -77,7 +77,7 @@ before_filter :login_requerido, :admin?
       if @laboratorio.update_attributes(params[:laboratorio])
        
        # flash[:notice] = 'Laboratorio fue actualizado con &eacute;xito.'
-        @laboratorios = Laboratorio.order("nombre_lab").all
+        @laboratorios = Laboratorio.order("nombre_lab").to_a
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else

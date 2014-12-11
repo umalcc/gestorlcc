@@ -5,7 +5,7 @@ class SolicitudusuariolabexasController < ApplicationController
   before_filter :login_requerido,:usuario?
 
   def index
-    @solicitudlabexas = Solicitudlabexa.where("usuario_id = ? ",@usuario_actual.id).all
+    @solicitudlabexas = Solicitudlabexa.where("usuario_id = ? ",@usuario_actual.id).to_a
     @cuenta = @solicitudlabexas.size
     
     respond_to do |format|
@@ -62,7 +62,7 @@ class SolicitudusuariolabexasController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.where('especial=?',"t").all
+    @especiales=Laboratorio.where('especial=?',"t").to_a
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -76,7 +76,7 @@ class SolicitudusuariolabexasController < ApplicationController
 
       if @solicitudlabexa.save   
         CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Nueva ").deliver                                 
-        @solicitudlabexas = Solicitudlabexa.where("usuario_id = ? ",@usuario_actual.id).all
+        @solicitudlabexas = Solicitudlabexa.where("usuario_id = ? ",@usuario_actual.id).to_a
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @solicitudlabexas, :status => :created, :location => @solicitudlabexas }
       else
@@ -105,7 +105,7 @@ class SolicitudusuariolabexasController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.where('especial=?',"t").all
+    @especiales=Laboratorio.where('especial=?',"t").to_a
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -126,7 +126,7 @@ class SolicitudusuariolabexasController < ApplicationController
                                              :comentarios => Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios]))
 
         CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Cambios en ").deliver  
-        @solicitudlabexas = Solicitudlabexa.where("usuario_id = ?",@usuario_actual.id).all
+        @solicitudlabexas = Solicitudlabexa.where("usuario_id = ?",@usuario_actual.id).to_a
         @cuenta=@solicitudlabexas.size
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
@@ -169,14 +169,14 @@ class SolicitudusuariolabexasController < ApplicationController
 
     cadena=(cadena.nil?)? "%" : "%#{cadena}%"
     
-    @usuarios=Usuario.where("nombre || apellidos LIKE ?",cadena).all
+    @usuarios=Usuario.where("nombre || apellidos LIKE ?",cadena).to_a
     codigos_u=@usuarios.map { |t| t.id}
-    @asignaturas=Asignatura.where("nombre_asig || abrevia_asig || curso LIKE ?",cadena).all
+    @asignaturas=Asignatura.where("nombre_asig || abrevia_asig || curso LIKE ?",cadena).to_a
     codigos_a=@asignaturas.map { |t| t.id}
-    @labs_especiales=Laboratorio.where("ssoo || nombre_lab like ? and especial=?",cadena,"t").all
+    @labs_especiales=Laboratorio.where("ssoo || nombre_lab like ? and especial=?",cadena,"t").to_a
     nombre_l=@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'si'+';'}
     nombre_l=nombre_l+@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'no'+';'}
-    @solicitudlabexas=Solicitudlabexa.where("usuario_id == ? and (npuestos || curso || fecha || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or preferencias in (?))", session[:user_id], cadena, codigos_u, codigos_a, nombre_l).all
+    @solicitudlabexas=Solicitudlabexa.where("usuario_id == ? and (npuestos || curso || fecha || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or preferencias in (?))", session[:user_id], cadena, codigos_u, codigos_a, nombre_l).to_a
     @cuenta=@solicitudlabexas.size
     #respond_to {|format| format.js }
   end

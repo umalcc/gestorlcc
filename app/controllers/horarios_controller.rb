@@ -5,7 +5,7 @@ class HorariosController < ApplicationController
 before_filter :login_requerido, :admin?
 
   def index
-    @horarios = Horario.order("num").all
+    @horarios = Horario.order("num").to_a
 
     respond_to do |format|
       format.html # index.html.erb
@@ -48,7 +48,7 @@ before_filter :login_requerido, :admin?
     respond_to do |format|
       if @horario.save
         #flash[:notice] = 'Horario was successfully created.'
-        @horarios = Horario.order( "num").all
+        @horarios = Horario.order( "num").to_a
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @horario, :status => :created, :location => @horario }
       else
@@ -66,7 +66,7 @@ before_filter :login_requerido, :admin?
     respond_to do |format|
       if @horario.update_attributes(params[:horario])
         #flash[:notice] = 'Horario was successfully updated.'
-        @horarios = Horario.order("num").all
+        @horarios = Horario.order("num").to_a
         format.html { redirect_to :action => "index"  }
         format.xml  { head :ok }
       else

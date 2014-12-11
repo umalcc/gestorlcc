@@ -3,7 +3,7 @@ class SolicitudusuariolabsController < ApplicationController
   before_filter :login_requerido,:usuario?
 
   def index
-    @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).all
+    @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
     @cuenta=@solicitudlabs.size
 
     respond_to do |format|
@@ -17,13 +17,13 @@ class SolicitudusuariolabsController < ApplicationController
     
     @solicitudlab = Solicitudlab.find(params[:id])
     session[:tramos_horarios]=Solicitudhoraria.new
-    session[:tramos_horarios].solicitudes=Peticionlab.where("solicitudlab_id = ? ",@solicitudlab.id).all 
+    session[:tramos_horarios].solicitudes=Peticionlab.where("solicitudlab_id = ? ",@solicitudlab.id).to_a 
     session[:codigo_tramo]=0
     session[:borrar]=[]
     @asignatura=Asignatura.find(@solicitudlab.asignatura_id)
     @titulacionselec=@asignatura.titulacion_id
     @cursoselec=@solicitudlab.curso
-    @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").all
+    @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").to_a
     @asignaturaselec=@solicitudlab.asignatura_id
 
     #@solicitudlab.fechaini=formato_europeo(@solicitudlab.fechaini)
@@ -47,8 +47,8 @@ def new
     else
       as=Asignatura::CURSO.first
     end
-    @titulaciones=Titulacion.order("id").all
-    @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).all 
+    @titulaciones=Titulacion.order("id").to_a
+    @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).to_a 
     session[:titulacion]=Titulacion.first
     session[:nivel]=Asignatura::CURSO.first
 
@@ -76,8 +76,8 @@ def new
     else
       as=Asignatura::CURSO.first
     end
-    @titulaciones=Titulacion.order("id").all
-    @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).all 
+    @titulaciones=Titulacion.order("id").to_a
+    @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).to_a 
 
      
     @solicitudlab.curso=params[:nivel].to_s
@@ -130,7 +130,7 @@ def new
     end
 
     pref=""
-    @especiales=Laboratorio.where('especial=?',"t").all
+    @especiales=Laboratorio.where('especial=?',"t").to_a
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -161,7 +161,7 @@ def new
 
       
         CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Nueva ").deliver                       
-        @solicitudlabs = Solicitudlab.where("usuario_id = ?",@usuario_actual.id).all
+        @solicitudlabs = Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @solicitudlabs, :status => :created, :location => @solicitudlabs }
       else
@@ -177,7 +177,7 @@ def update
     @solicitudlab = Solicitudlab.where("id = ? ",params[:solicitudlab][:id]).first
     @asignatura=Asignatura.find(@solicitudlab.asignatura_id)
    
-    @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").all
+    @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").to_a
    
     respond_to do |format|
 
@@ -220,7 +220,7 @@ def update
     end
 
    pref=""
-   @especiales=Laboratorio.where("especial=?","t").all
+   @especiales=Laboratorio.where("especial=?","t").to_a
     
     for especial in @especiales do
       nombre=especial.ssoo.to_s
@@ -261,7 +261,7 @@ def update
                                 end } unless @borrados.empty?
         # flash[:notice] = 'Solicitudrecurso was successfully updated.'
         CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Cambios en ").deliver      
-        @solicitudlabs = Solicitudlab.where("usuario_id = ?", @usuario_actual.id).all
+        @solicitudlabs = Solicitudlab.where("usuario_id = ?", @usuario_actual.id).to_a
         format.html { render :action => "index" }
         format.xml  { head :ok }
       else
@@ -276,7 +276,7 @@ def update
  def destroy
     @solicitudlab = Solicitudlab.find(params[:id])
     @solicitudlab.destroy
-    @tramos=Peticionlab.where("solicitudlab_id = ?", @solicitudlab.id).all # busco todos los tramos que tenian el id
+    @tramos=Peticionlab.where("solicitudlab_id = ?", @solicitudlab.id).to_a # busco todos los tramos que tenian el id
     @tramos.each {|tramo| tramo.destroy} # los elimino en cascada
     CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Borrado de ").deliver      
     respond_to do |format|
@@ -302,14 +302,14 @@ def update
     cadena=(cadena.nil?)? "%" : "%#{cadena}%"
     
     
-    @asignaturas=Asignatura.where("nombre_asig || curso LIKE ?",cadena).all
+    @asignaturas=Asignatura.where("nombre_asig || curso LIKE ?",cadena).to_a
     codigos_a=@asignaturas.map { |t| t.id}
-    @tramos=Peticionlab.where("diasemana || horaini || horafin LIKE ?",cadena).all
+    @tramos=Peticionlab.where("diasemana || horaini || horafin LIKE ?",cadena).to_a
     codigos_t=@tramos.map { |t| t.solicitudlab_id}
-    @labs_especiales=Laboratorio.where("ssoo || nombre_lab like ? and especial=?",cadena,"t").all
+    @labs_especiales=Laboratorio.where("ssoo || nombre_lab like ? and especial=?",cadena,"t").to_a
     nombre_l=@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'si'+';'}
     nombre_l=nombre_l+@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'no'+';'}
-    @solicitudlabs=Solicitudlab.where("usuario_id == ? and (npuestos || curso || fechaini || fechafin || fechasol LIKE ? or asignatura_id in (?) or id in (?) or preferencias in (?))", session[:user_id],cadena, codigos_a, codigos_t,nombre_l).all
+    @solicitudlabs=Solicitudlab.where("usuario_id == ? and (npuestos || curso || fechaini || fechafin || fechasol LIKE ? or asignatura_id in (?) or id in (?) or preferencias in (?))", session[:user_id],cadena, codigos_a, codigos_t,nombre_l).to_a
     @cuenta=@solicitudlabs.size
     respond_to {|format| format.js }
   end

@@ -5,7 +5,7 @@ class TitulacionsController < ApplicationController
 before_filter :login_requerido, :admin?
 
   def index
-    @titulacions = Titulacion.order("id").all
+    @titulacions = Titulacion.order("id").to_a
 
     respond_to do |format|
       format.html # index.html.erb
@@ -48,7 +48,7 @@ before_filter :login_requerido, :admin?
     respond_to do |format|
       if @titulacion.save
        # flash[:notice] = 'Titulacion was successfully created.'
-        @titulacions = Titulacion.all.order("abrevia")
+        @titulacions = Titulacion.to_a.order("abrevia")
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @titulacion, :status => :created, :location => @titulacion }
       else
@@ -66,7 +66,7 @@ before_filter :login_requerido, :admin?
     respond_to do |format|
       if @titulacion.update_attributes(params[:titulacion])
      #   flash[:notice] = 'Titulacion was successfully updated.'
-        @titulacions = Titulacion.order("abrevia").all
+        @titulacions = Titulacion.order("abrevia").to_a
         format.html { redirect_to :action => "index"  }
         format.xml  { head :ok }
       else

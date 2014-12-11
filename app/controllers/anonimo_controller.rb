@@ -3,7 +3,7 @@ class AnonimoController < ApplicationController
 #before_filter :login_requerido
 
   def general
-    @asignacions = Asignaciondef.all
+    @asignacions = Asignaciondef.to_a
     if @asignacions.size!=0
      @asignacions.reject{|a| a.solicitudlab.fechafin<Date.today}
     end
@@ -15,7 +15,7 @@ class AnonimoController < ApplicationController
   end 
 
   def labgeneral
-    @asignacionexas = Asignacionlabexadef.order('dia,solicitudlabexa_id,laboratorio_id').all
+    @asignacionexas = Asignacionlabexadef.order('dia,solicitudlabexa_id,laboratorio_id').to_a
 
     respond_to do |format|
       format.html # index.html.erb

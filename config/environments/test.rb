@@ -8,7 +8,7 @@ Gestorlcc::Application.configure do
   config.cache_classes = true
 
   # Log error messages when you accidentally call methods on nil.
-  config.whiny_nils = true
+  #config.whiny_nils = true
 
   # Configure static asset server for tests with Cache-Control for performance
   config.serve_static_assets = true
@@ -22,7 +22,7 @@ Gestorlcc::Application.configure do
 
   # Disable request forgery protection in test environment
   config.action_controller.allow_forgery_protection    = false
-
+config.eager_load=true
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.

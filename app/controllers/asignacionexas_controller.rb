@@ -21,13 +21,13 @@ class AsignacionexasController < ApplicationController
 
 
   def asignar
-    @admision=Periodo.where("admision = ? and tipo= ?","t","Examenes").all
-    @totalprov=Asignacionlabexa.all.size
+    @admision=Periodo.where("admision = ? and tipo= ?","t","Examenes").to_a
+    @totalprov=Asignacionlabexa.to_a.size
 
   end
 
   def asignar_continuar
-       @asignacionexas=Asignacionlabexa.all
+       @asignacionexas=Asignacionlabexa.to_a
     
       respond_to do |format|
         format.js
@@ -37,8 +37,8 @@ class AsignacionexasController < ApplicationController
   end
 # SI HIDDEN FIELD ES PRINCIPIO, SE LEEN SOLICITUDLAB, SINO DE ASIGNACIONEXAPROV
   def asignar_iniciar
-    solicitudes=Solicitudlabexa.where("fecha >= ? and asignado <> ?",Date.today,"D").all
-    #@adjudicado=Periodo.where(:conditions=>["activo = ? and tipo= ?","t","Examenes"]).all
+    solicitudes=Solicitudlabexa.where("fecha >= ? and asignado <> ?",Date.today,"D").to_a
+    #@adjudicado=Periodo.where(:conditions=>["activo = ? and tipo= ?","t","Examenes"]).to_a
     if solicitudes.size!=0 
      
      @solicitudlabexas=solicitudes.to_a
@@ -84,7 +84,7 @@ class AsignacionexasController < ApplicationController
           @nhoras<<nhoras
           if sol.npuestos<Laboratorio::DOS_LAB 
            
-            @todoslab=Laboratorio.order("nombre_lab desc").all("puestos = ?",sol.npuestos)
+            @todoslab=Laboratorio.order("nombre_lab desc").to_a("puestos = ?",sol.npuestos)
             # en principio el laboratorio asignado es ninguno y buscamos uno libre de ese tamaño
             lab=nil
           if sol.preferencias=="" or sol.preferencias==nil
@@ -169,7 +169,7 @@ class AsignacionexasController < ApplicationController
     # OJOOOOOO VER QUE HACER CUANDO SE ACTIVEN NUEVOS PERIODOS
 
    
-        Asignacionlabexa.all.each { |a| a.destroy }
+        Asignacionlabexa.to_a.each { |a| a.destroy }
 
         @asignacionexas.each { |a| nueva_asig=Asignacionlabexa.new
                             nueva_asig=a
@@ -193,14 +193,14 @@ class AsignacionexasController < ApplicationController
     # eliminar las provisionales
     
     
-    @asignacionlabexadefs=Asignacionlabexadef.all
+    @asignacionlabexadefs=Asignacionlabexadef.to_a
     if @asignacionlabexadefs.size!=0
       solicitudes=@asignacionlabexadefs.map{|a| a.solicitudlabexa_id}.uniq
       solicitudes.each{|s| sol=Solicitudlabexa.find(s)
                            sol.destroy}
       @asignacionlabexadefs.each{|a| a.destroy}
     end
-    @asignacionexas=Asignacionlabexa.all
+    @asignacionexas=Asignacionlabexa.to_a
     @asignacionexas.each { |a| asig_def=Asignacionlabexadef.new(:solicitudlabexa_id=>a.solicitudlabexa_id,
                                                                  :laboratorio_id=>a.laboratorio_id,
                                                                  :dia=>a.dia,              
@@ -234,7 +234,7 @@ class AsignacionexasController < ApplicationController
 
 
     if inicial_laboratorio!=laboratorio_id
-      asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ? and laboratorio_id = ?',@asignacionexa.solicitudlabexa,inicial_laboratorio).all
+      asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ? and laboratorio_id = ?',@asignacionexa.solicitudlabexa,inicial_laboratorio).to_a
       for asignacionexa in asignaciones # todas las que haya que modificar
         asignacionexa.update_attributes(:laboratorio_id=>laboratorio_id) 
       end 
@@ -242,7 +242,7 @@ class AsignacionexasController < ApplicationController
     mov_dia=""
     if formato_europeo(inicial_dia) != params[:dia]
       mov_dia=" cambio de "+inicial_dia.to_s+" a "+params[:dia].to_s+"; "
-      asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ?',@asignacionexa.solicitudlabexa).all
+      asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ?',@asignacionexa.solicitudlabexa).to_a
       for asignacionexa in asignaciones # todas las que haya que modificar
         asignacionexa.update_attributes(:dia=> params[:dia], 
                                         :mov_dia=> mov_dia) 
@@ -252,7 +252,7 @@ class AsignacionexasController < ApplicationController
     if inicial_hora_ini != params[:comienzo]
       diferencia=Horasexa.find_by_comienzo(inicial_hora_ini).num-Horasexa.find_by_comienzo(params[:comienzo]).num
       mov_hora=" cambio de "+inicial_hora_ini+"-"+inicial_hora_fin+" a "+params[:comienzo]+"-"+horafin+"; "
-      asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ?',@asignacionexa.solicitudlabexa).all
+      asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ?',@asignacionexa.solicitudlabexa).to_a
       for asignacionexa in asignaciones # todas las que haya que modificar
         asignacionexa.update_attributes(:horaini=> Horasexa.find_by_num(Horasexa.find_by_comienzo(asignacionexa.horaini).num-diferencia).comienzo,
                                         :horafin=> Horasexa.find_by_num(Horasexa.find_by_comienzo(asignacionexa.horaini).num-diferencia).fin,
@@ -267,7 +267,7 @@ class AsignacionexasController < ApplicationController
                                       :mov_dia=> mov_dia,
                                       :mov_hora=> mov_hora ) 
     end    
-        @asignacionexas=Asignacionlabexa.all
+        @asignacionexas=Asignacionlabexa.to_a
         respond_to do |format|
           format.js
         end
@@ -277,7 +277,7 @@ class AsignacionexasController < ApplicationController
 
 
   def revisar
-    @asignacionexas=Asignacionlabexa.all
+    @asignacionexas=Asignacionlabexa.to_a
     cuadro=Array3d.new
 
 
@@ -291,8 +291,8 @@ class AsignacionexasController < ApplicationController
        end
     end
 
-    horas=Horasexa.all.map{|h| h.id}
-    laboratorios=Laboratorio.all.map{|l| l.id}
+    horas=Horasexa.to_a.map{|h| h.id}
+    laboratorios=Laboratorio.to_a.map{|l| l.id}
     periodo=Periodo.where('tipo = ? and inicio > ?','Examenes',Date.today).first #cambiar Date.parse por Date.today
     
 
@@ -313,7 +313,7 @@ class AsignacionexasController < ApplicationController
   end
   
   def consulta
-    @asignacionexas = Asignacionlabexadef.order('dia,solicitudlabexa_id,laboratorio_id').all
+    @asignacionexas = Asignacionlabexadef.order('dia,solicitudlabexa_id,laboratorio_id').to_a
 
     respond_to do |format|
       format.html # index.html.erb
@@ -375,7 +375,7 @@ class AsignacionexasController < ApplicationController
         end
                        
     # hasta aqui --------                   
-        @asignacionexas = Asignacionlabexadef.all
+        @asignacionexas = Asignacionlabexadef.to_a
         format.html { redirect_to('/asignacionexas/consulta') }
         format.xml  { render :xml => @solicitudlabs, :status => :created, :location => @solicitudlabs }
       else
@@ -392,9 +392,9 @@ class AsignacionexasController < ApplicationController
   def borranormal
     asignacionexa=Asignacionlabexa.find(params[:asigna])
     #asignacionexa.delete
-    otrasasignacionexas=Asignacionlabexa.where('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id).all
+    otrasasignacionexas=Asignacionlabexa.where('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id).to_a
     otrasasignacionexas.each {|o| o.delete }
-    @asignacionexas=Asignacionlabexa.all
+    @asignacionexas=Asignacionlabexa.to_a
 
     respond_to do |format|
       format.js
@@ -404,9 +404,9 @@ class AsignacionexasController < ApplicationController
   def borranormalasignada 
     asignacionexa=Asignacionlabexa.find(params[:asigna])
     #asignacionexa.delete
-    otrasasignacionexas=Asignacionlabexa.all('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id)
+    otrasasignacionexas=Asignacionlabexa.to_a('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id)
     otrasasignacionexas.each {|o| o.delete }
-    @asignacionexas=Asignacionlabexa.all
+    @asignacionexas=Asignacionlabexa.to_a
     respond_to do |format|
         format.js
     end
@@ -415,11 +415,11 @@ class AsignacionexasController < ApplicationController
   def borradirasignada
     asignacionexa=Asignacionlabexadef.find(params[:asigna].to_i)
     solicitudlab=Solicitudlabexa.find(asignacionexa.solicitudlabexa_id)
-    otrasasignacionexas=Asignacionlabexadef.where('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id).all
+    otrasasignacionexas=Asignacionlabexadef.where('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id).to_a
     #asignacionexa.delete
     otrasasignacionexas.each {|o| o.delete }
     #solicitudlab.delete
-    @asignacionexas=Asignacionlabexadef.order('dia,solicitudlabexa_id,laboratorio_id').all
+    @asignacionexas=Asignacionlabexadef.order('dia,solicitudlabexa_id,laboratorio_id').to_a
     respond_to do |format|
       format.js
     end
@@ -428,11 +428,11 @@ class AsignacionexasController < ApplicationController
   def borradir
     asignacionexa=Asignacionlabexa.find(params[:asigna])
     solicitudlab=Solicitudlab.find(asignacionexa.solicitudlabexa_id)
-    otrasasignacionexas=Asignacionlabexa.all('solicitudlabexa_id = ?',asignacionexa.solicitudlab_id)
+    otrasasignacionexas=Asignacionlabexa.to_a('solicitudlabexa_id = ?',asignacionexa.solicitudlab_id)
     #asignacionexa.delete
     otrasasignacionexas.each {|o| o.delete }
     #solicitudlab.delete
-    @asignacionexas=Asignacionlabexa.all
+    @asignacionexas=Asignacionlabexa.to_a
     
     respond_to do |format|
       format.js
@@ -458,17 +458,17 @@ class AsignacionexasController < ApplicationController
       cadena="sin curso"
     end
     cadena=(params[:query].nil?)? "%" : "%#{params[:query]}%"
-    @titulaciones=Titulacion.where("abrevia||nombre LIKE ?",cadena).all
+    @titulaciones=Titulacion.where("abrevia||nombre LIKE ?",cadena).to_a
     codtits=@titulaciones.map{|t| t.id}
-    @asignaturas=Asignatura.where("abrevia_asig||nombre_asig LIKE ? or titulacion_id in (?)",cadena,codtits).all
+    @asignaturas=Asignatura.where("abrevia_asig||nombre_asig LIKE ? or titulacion_id in (?)",cadena,codtits).to_a
     codasigs=@asignaturas.map { |a| a.id}
-    @profesores=Usuario.where("nombre||apellidos LIKE ?",cadena).all
+    @profesores=Usuario.where("nombre||apellidos LIKE ?",cadena).to_a
     codprofs=@profesores.map {|p| p.id}
-    @solicitudlabexas=Solicitudlabexa.where("asignatura_id in (?) or usuario_id in (?) or curso LIKE ?",codasigs,codprofs,cadena).all
+    @solicitudlabexas=Solicitudlabexa.where("asignatura_id in (?) or usuario_id in (?) or curso LIKE ?",codasigs,codprofs,cadena).to_a
     codsols=@solicitudlabexas.map{|s| s.id}
-    @laboratorios=Laboratorio.where("nombre_lab LIKE ?",cadena).all
+    @laboratorios=Laboratorio.where("nombre_lab LIKE ?",cadena).to_a
     codlabs=@laboratorios.map{|l| l.id}
-    @asignacionexas=Asignacionlabexadef.where("solicitudlabexa_id in (?) or laboratorio_id in (?) or dia LIKE ?",codsols,codlabs,cadena).all
+    @asignacionexas=Asignacionlabexadef.where("solicitudlabexa_id in (?) or laboratorio_id in (?) or dia LIKE ?",codsols,codlabs,cadena).to_a
 
     respond_to do |format| 
       format.js 

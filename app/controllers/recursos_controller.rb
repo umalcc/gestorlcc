@@ -4,7 +4,7 @@ class RecursosController < ApplicationController
 before_filter :login_requerido, :admin?
 
   def index
-    @recursos = Recurso.order("descripcion").all 
+    @recursos = Recurso.order("descripcion").to_a 
     @cuenta=@recursos.size
 
     respond_to do |format|
@@ -38,7 +38,7 @@ before_filter :login_requerido, :admin?
     respond_to do |format|
       if @recurso.save
       #  flash[:notice] = 'El recurso fue creado con &eacute;xito.'
-        @recursos = Recurso.order("descripcion").all 
+        @recursos = Recurso.order("descripcion").to_a 
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @recurso, :status => :created, :location => @recurso }
       else
@@ -56,7 +56,7 @@ before_filter :login_requerido, :admin?
     respond_to do |format|
       if @recurso.update_attributes(params[:recurso])
         #flash[:notice] = 'El recurso fue actualizado con &eacute;xito.'
-        @recursos = Recurso.order("descripcion").all 
+        @recursos = Recurso.order("descripcion").to_a 
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else
@@ -80,7 +80,7 @@ before_filter :login_requerido, :admin?
 
   def listar
     cadena=(params[:query].nil?)? "%" : "%#{params[:query]}%"
-    @recursos=Recurso.where("descripcion||identificador||caracteristicas LIKE ?",cadena).all
+    @recursos=Recurso.where("descripcion||identificador||caracteristicas LIKE ?",cadena).to_a
     @cuenta=@recursos.size
     logger.debug "RECURSO"
     respond_to do |format|

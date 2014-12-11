@@ -45,7 +45,7 @@
        <!-- busco las asignaciones a ese lab ese dia a esa hora -->
          <% as=@asignacionexas.select {|a| a.laboratorio_id==lab.id and a.horaini.to_s==hora.comienzo.to_s and dia==a.dia} %>
          <!-- ordenamos las asignaciones por fechaini -->
-         <% as_ordenadas=as.sort_by{|a| a.solicitudlab.fechaini}.to_a %>
+         <% as_ordenadas=as.sort_by{|a| a.solicitudlab.fechaini}.all %>
          <% solapa=0 %><!-- contamos los solapamientos -->
          <% for i in 0..as_ordenadas.size-2 %>
              <% if as_ordenadas[i].solicitudlab.fechafin>as_ordenadas[i+1].solicitudlab.fechaini %>

@@ -10,7 +10,7 @@ class PeriodosController < ApplicationController
   @@tipo=''
 
   def index
-    @periodos = Periodo.order("inicio").all
+    @periodos = Periodo.order("inicio").to_a
     session[:cambia_activo]=cambia_admision=false
 
     respond_to do |format|
@@ -87,7 +87,7 @@ class PeriodosController < ApplicationController
 
     respond_to do |format|
       if @periodo.save
-        @periodos = Periodo.order("inicio").all
+        @periodos = Periodo.order("inicio").to_a
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @periodo, :status => :created, :location => @periodo }
       else
@@ -136,7 +136,7 @@ class PeriodosController < ApplicationController
     respond_to do |format|
            if @periodo.update_attributes(params[:periodo])
               
-              @periodos = Periodo.order("inicio").all
+              @periodos = Periodo.order("inicio").to_a
               format.html { redirect_to :action => "index" }
               format.xml  { head :ok }
            else
@@ -190,7 +190,7 @@ class PeriodosController < ApplicationController
     
 ### FALTA PASAR CADA ASIGNACION AL HISTORICO
  
-    asignaciones=Asignaciondef.all
+    asignaciones=Asignaciondef.to_a
 
     if !asignaciones.nil?
       conta=0
@@ -214,9 +214,9 @@ class PeriodosController < ApplicationController
                              a.destroy      }
     end
    
-    solicitudes=Solicitudlab.where("asignado = ?","D").all
+    solicitudes=Solicitudlab.where("asignado = ?","D").to_a
     solicitudes.each{|s| 
-                   peticiones= Peticionlab.where("solicitudlab_id = ? ",s.id).all
+                   peticiones= Peticionlab.where("solicitudlab_id = ? ",s.id).to_a
                    peticiones.each{|p| p.destroy}
                    s.destroy}
 
@@ -234,7 +234,7 @@ class PeriodosController < ApplicationController
     
 ### FALTA PASAR CADA ASIGNACION AL HISTORICO
  
-    asignaciones=Asignacionlabexadef.all
+    asignaciones=Asignacionlabexadef.to_a
 
     if !asignaciones.nil?
       conta=0
@@ -256,7 +256,7 @@ class PeriodosController < ApplicationController
                              conta+=1 }
     end
 
-    solicitudes=Solicitudlabexa.where("asignado = ?","D").all
+    solicitudes=Solicitudlabexa.where("asignado = ?","D").to_a
     solicitudes.each{|s| s.destroy}
 
     @mensaje="Grabadas en archivo historico "+conta.to_s+" asignaciones"

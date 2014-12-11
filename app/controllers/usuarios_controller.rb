@@ -5,7 +5,7 @@ class UsuariosController < ApplicationController
 before_filter :login_requerido, :admin?
 
   def index
-    @usuarios = Usuario.order("apellidos").all
+    @usuarios = Usuario.order("apellidos").to_a
     @cuenta = @usuarios.size
 
     respond_to do |format|
@@ -73,7 +73,7 @@ before_filter :login_requerido, :admin?
   
       if @usuario.update_attributes(params[:usuario]) 
      #   flash[:notice] = 'El usuario fue actualizado con &eacute;xito.'
-        @usuarios = Usuario.order("apellidos").all
+        @usuarios = Usuario.order("apellidos").to_a
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else
@@ -116,7 +116,7 @@ before_filter :login_requerido, :admin?
       
      if @usuario.update_attribute("password", params[:usuario][:password])
      #   flash[:notice] = 'La password ha sido correctamente actualizada.'
-        @usuarios=Usuario.all
+        @usuarios=Usuario.to_a
         format.html { render :action => "index" }
         format.xml  { head :ok }
       else
@@ -128,7 +128,7 @@ before_filter :login_requerido, :admin?
  
   def listar
     cadena=(params[:query].nil?)? "%" : "%#{params[:query]}%"
-    @usuarios=Usuario.order("apellidos").where("nombre||' '||apellidos||' '||identificador||' '||email||' '||despacho||' '||telefono LIKE ?",cadena).all
+    @usuarios=Usuario.order("apellidos").where("nombre||' '||apellidos||' '||identificador||' '||email||' '||despacho||' '||telefono LIKE ?",cadena).to_a
     @cuenta=@usuarios.size
     respond_to {|format| format.js }
   end

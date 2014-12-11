@@ -22,12 +22,12 @@ class AsignacionexasController < ApplicationController
 
   def asignar
     @admision=Periodo.find(:all,:conditions=>["admision = ? and tipo= ?","t","Examenes"])
-    @totalprov=Asignacionlabexa.all.size
+    @totalprov=Asignacionlabexa.to_a.size
 
   end
 
   def asignar_continuar
-       @asignacionexas=Asignacionlabexa.all
+       @asignacionexas=Asignacionlabexa.to_a
     
       render :update do |page|
         page.replace_html(:'cuadrante', :partial=>"/asignacionexas/cuadrante", :object=>@asignacionexas)
@@ -170,7 +170,7 @@ class AsignacionexasController < ApplicationController
     # OJOOOOOO VER QUE HACER CUANDO SE ACTIVEN NUEVOS PERIODOS
 
    
-        Asignacionlabexa.all.each { |a| a.destroy }
+        Asignacionlabexa.to_a.each { |a| a.destroy }
 
         @asignacionexas.each { |a| nueva_asig=Asignacionlabexa.new
                             nueva_asig=a
@@ -194,14 +194,14 @@ class AsignacionexasController < ApplicationController
     # eliminar las provisionales
     
     
-    @asignacionlabexadefs=Asignacionlabexadef.all
+    @asignacionlabexadefs=Asignacionlabexadef.to_a
     if @asignacionlabexadefs.size!=0
       solicitudes=@asignacionlabexadefs.map{|a| a.solicitudlabexa_id}.uniq
       solicitudes.each{|s| sol=Solicitudlabexa.find(s)
                            sol.destroy}
       @asignacionlabexadefs.each{|a| a.destroy}
     end
-    @asignacionexas=Asignacionlabexa.all
+    @asignacionexas=Asignacionlabexa.to_a
     @asignacionexas.each { |a| asig_def=Asignacionlabexadef.new(:solicitudlabexa_id=>a.solicitudlabexa_id,
                                                                  :laboratorio_id=>a.laboratorio_id,
                                                                  :dia=>a.dia,              
@@ -267,7 +267,7 @@ class AsignacionexasController < ApplicationController
     #                                  :mov_dia=> mov_dia,
     #                                  :mov_hora=> mov_hora ) 
     #end    
-        @asignacionexas=Asignacionlabexa.all
+        @asignacionexas=Asignacionlabexa.to_a
         render :update do |page|
           page.replace_html(:'cuadrante', :partial=>"/asignacionexas/cuadrante", :object=>@asignacionexas)
         end
@@ -277,7 +277,7 @@ class AsignacionexasController < ApplicationController
 
 
   def revisar
-    @asignacionexas=Asignacionlabexa.all
+    @asignacionexas=Asignacionlabexa.to_a
     cuadro=Array3d.new
 
 
@@ -291,8 +291,8 @@ class AsignacionexasController < ApplicationController
        end
     end
 
-    horas=Horasexa.all.map{|h| h.id}
-    laboratorios=Laboratorio.all.map{|l| l.id}
+    horas=Horasexa.to_a.map{|h| h.id}
+    laboratorios=Laboratorio.to_a.map{|l| l.id}
     periodo=Periodo.find(:all,:conditions=>['tipo = ? and inicio > ?','Examenes',Date.today]).first
     
 
@@ -375,7 +375,7 @@ class AsignacionexasController < ApplicationController
         end
                        
     # hasta aqui --------                   
-        @asignacionexas = Asignacionlabexadef.all
+        @asignacionexas = Asignacionlabexadef.to_a
         format.html { redirect_to('/asignacionexas/consulta') }
         format.xml  { render :xml => @solicitudlabs, :status => :created, :location => @solicitudlabs }
       else
@@ -394,7 +394,7 @@ class AsignacionexasController < ApplicationController
     #asignacionexa.delete
     otrasasignacionexas=Asignacionlabexa.find(:all,:conditions=>['solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id])
     otrasasignacionexas.each {|o| o.delete }
-    @asignacionexas=Asignacionlabexa.all
+    @asignacionexas=Asignacionlabexa.to_a
         render :update do |page|
           page.replace_html(:'cuadrante', :partial=>"/asignacionexas/cuadrante", :object=>@asignacionexas)
         end
@@ -405,7 +405,7 @@ class AsignacionexasController < ApplicationController
     # asignacionexa.delete
     otrasasignacionexas=Asignacionlabexa.find(:all,:conditions=>['solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id])
     otrasasignacionexas.each {|o| o.delete }
-    @asignacionexas=Asignacionlabexa.all
+    @asignacionexas=Asignacionlabexa.to_a
         render :update do |page|
           page.replace_html(:'cuadrante2', :partial=>"/asignacionexas/cuadrante2", :object=>@asignacionexas)
         end
@@ -418,7 +418,7 @@ class AsignacionexasController < ApplicationController
     #asignacionexa.delete
     otrasasignacionexas.each {|o| o.delete }
     solicitudlab.delete
-    @asignacionexas=Asignacionlabexadef.all
+    @asignacionexas=Asignacionlabexadef.to_a
         render :update do |page|
           page.replace_html(:'cuadrante2', :partial=>"/asignacionexas/cuadrante2", :object=>@asignacionexas)
         end
@@ -431,7 +431,7 @@ class AsignacionexasController < ApplicationController
     #asignacionexa.delete
     otrasasignacionexas.each {|o| o.delete }
     solicitudlab.delete
-    @asignacionexas=Asignacionlabexa.all
+    @asignacionexas=Asignacionlabexa.to_a
         render :update do |page|
           page.replace_html(:'cuadrante', :partial=>"/asignacionexas/cuadrante", :object=>@asignacionexas)
         end

@@ -38,7 +38,7 @@ def estadisticas_examenes
 end
 
 def borrar_historico_lectivo
-  registros=Historicoasig.all
+  registros=Historicoasig.to_a
   @total=0
   registros.each{|r| r.destroy
                      @total+=1}
@@ -49,7 +49,7 @@ def borrar_historico_lectivo
 end
 
 def borrar_historico_examenes
-  registros=Historicoasigexa.all
+  registros=Historicoasigexa.to_a
   @total=0
   registros.each{|r| r.destroy
                      @total+=1}

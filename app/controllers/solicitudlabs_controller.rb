@@ -4,7 +4,7 @@ class SolicitudlabsController < ApplicationController
   before_filter :login_requerido, :admin?
 
   def index
-    @solicitudlabs = Solicitudlab.all 
+    @solicitudlabs = Solicitudlab.to_a 
     @cuenta = @solicitudlabs.size
     
     respond_to do |format|
@@ -37,7 +37,7 @@ class SolicitudlabsController < ApplicationController
     @solicitudlab = Solicitudlab.find(params[:id])
    
     session[:tramos_horarios]=Solicitudhoraria.new
-    session[:tramos_horarios].solicitudes=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).all 
+    session[:tramos_horarios].solicitudes=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).to_a 
     session[:codigo_tramo]=0
     session[:borrar]=[]
     logger.debug @solicitudlab.fechaini.to_s+" "+formato_europeo(@solicitudlab.fechaini).to_s
@@ -105,7 +105,7 @@ class SolicitudlabsController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.where('especial=?',"t").all
+    @especiales=Laboratorio.where('especial=?',"t").to_a
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -194,7 +194,7 @@ class SolicitudlabsController < ApplicationController
     end
 
     pref=""
-    @especiales=Laboratorio.where('especial=?',"t").all 
+    @especiales=Laboratorio.where('especial=?',"t").to_a 
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -238,7 +238,7 @@ class SolicitudlabsController < ApplicationController
                                 end } unless @borrados.empty?
         CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Cambios en ").deliver
 
-        @solicitudlabs = Solicitudlab.all
+        @solicitudlabs = Solicitudlab.to_a
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else
@@ -256,7 +256,7 @@ class SolicitudlabsController < ApplicationController
  def destroy
     @solicitudlab = Solicitudlab.find(params[:id])
     @solicitudlab.destroy
-    @tramos=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).all # busco todos los tramos que tenian el id
+    @tramos=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).to_a # busco todos los tramos que tenian el id
     @correotramos=''
     @tramos.each {|tramo| @correotramos+=' - '+tramo.diasemana+' de '+tramo.horaini+' a '+tramo.horafin
                           tramo.destroy} # los elimino en cascada
@@ -284,16 +284,16 @@ class SolicitudlabsController < ApplicationController
 
     cadena=(cadena.nil?)? "%" : "%#{cadena}%"
     
-    @usuarios=Usuario.where("nombre || apellidos LIKE ?",cadena).all
+    @usuarios=Usuario.where("nombre || apellidos LIKE ?",cadena).to_a
     codigos_u=@usuarios.map { |t| t.id}
-    @asignaturas=Asignatura.where("nombre_asig || abrevia_asig || curso LIKE ?",cadena).all
+    @asignaturas=Asignatura.where("nombre_asig || abrevia_asig || curso LIKE ?",cadena).to_a
     codigos_a=@asignaturas.map { |t| t.id}
-    @tramos=Peticionlab.where("diasemana || horaini || horafin LIKE ?",cadena).all
+    @tramos=Peticionlab.where("diasemana || horaini || horafin LIKE ?",cadena).to_a
     codigos_t=@tramos.map { |t| t.solicitudlab_id}
-    @labs_especiales=Laboratorio.where("ssoo || nombre_lab like ? and especial=?",cadena,"t").all
+    @labs_especiales=Laboratorio.where("ssoo || nombre_lab like ? and especial=?",cadena,"t").to_a
     nombre_l=@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'si'+';'}
     nombre_l=nombre_l+@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'no'+';'}
-    @solicitudlabs=Solicitudlab.where("npuestos || curso || fechaini || fechafin || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, codigos_t,nombre_l).all
+    @solicitudlabs=Solicitudlab.where("npuestos || curso || fechaini || fechafin || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, codigos_t,nombre_l).to_a
     @cuenta=@solicitudlabs.size
     respond_to {|format| format.js }
   end
