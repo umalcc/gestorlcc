@@ -134,7 +134,7 @@ class PeriodosController < ApplicationController
     end
 
     respond_to do |format|
-           if @periodo.update_attributes(params[:periodo])
+           if @periodo.update(params[:periodo])
               
               @periodos = Periodo.order("inicio").to_a
               format.html { redirect_to :action => "index" }

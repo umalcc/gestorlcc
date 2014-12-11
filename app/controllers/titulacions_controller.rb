@@ -43,7 +43,7 @@ before_filter :login_requerido, :admin?
   # POST /titulacions
   # POST /titulacions.xml
   def create
-    @titulacion = Titulacion.new(params[:titulacion])
+    @titulacion = Titulacion.new(titulacion_params)
 
     respond_to do |format|
       if @titulacion.save
@@ -64,7 +64,7 @@ before_filter :login_requerido, :admin?
     @titulacion = Titulacion.find(params[:id])
 
     respond_to do |format|
-      if @titulacion.update_attributes(params[:titulacion])
+      if @titulacion.update(titulacion_params)
      #   flash[:notice] = 'Titulacion was successfully updated.'
         @titulacions = Titulacion.order("abrevia").to_a
         format.html { redirect_to :action => "index"  }
@@ -87,4 +87,11 @@ before_filter :login_requerido, :admin?
       format.xml  { head :ok }
     end
   end
+
+private
+
+def titulacion_params
+ params.require(:titulacion).permit(:codigo,:nombre,:abrevia)
+end
+
 end

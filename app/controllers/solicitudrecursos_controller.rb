@@ -69,7 +69,6 @@ class SolicitudrecursosController < ApplicationController
 
 
   def create
-    logger.debug  params[:tipo]
     @solicitudrecurso = Solicitudrecurso.new
     @solicitudrecurso.tipo=params[:tipo]
     @solicitudrecurso.fechasol=Date.today

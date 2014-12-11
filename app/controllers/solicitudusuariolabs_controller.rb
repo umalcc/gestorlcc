@@ -66,7 +66,7 @@ def new
   
   def create
     
-    @solicitudlab = Solicitudlab.new(params[:solicitudlab])
+    @solicitudlab = Solicitudlab.new(solicitudusuariolab_params)
     @solicitudlab.usuario_id = @usuario_actual.id
     @solicitudlab.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
 
@@ -84,7 +84,6 @@ def new
     @solicitudlab.npuestos=params[:npuestos].to_s
     @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
     @solicitudlab.asignado="N"
-    @solicitudlab.asignatura=Asignatura.new
 # HACER UN DRYYYYYYY!!!!!
     periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
     if periodoact.nil? # si es un user no puede cursar en periodo sin activaRRRRRRRR!!!!!!!!!
@@ -145,9 +144,7 @@ def new
       format.html { render :action => "new" }
     else
       @solicitudlab.asignatura=Asignatura.where("id = ?",@solicitudlab.asignatura_id ).first
-      logger.debug "Asignaturaaa :"+ @solicitudlab.asignatura_id.to_s
       if @solicitudlab.save
-        logger.debug "Asignaturaaa :"+ @solicitudlab.asignatura_id.to_s
         nuevo_id=@solicitudlab.id                       
         @tramos=session[:tramos_horarios].solicitudes
         @correotramos=''
@@ -313,5 +310,11 @@ def update
     @cuenta=@solicitudlabs.size
     respond_to {|format| format.js }
   end
+
+  private
+def solicitudusuariolab_params
+  params.require(:solicitudlab).permit(:id)
+
+end
 
 end

@@ -40,13 +40,10 @@ class SolicitudlabsController < ApplicationController
     session[:tramos_horarios].solicitudes=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).to_a 
     session[:codigo_tramo]=0
     session[:borrar]=[]
-    logger.debug @solicitudlab.fechaini.to_s+" "+formato_europeo(@solicitudlab.fechaini).to_s
     @solicitudlab.fechaini=formato_europeo(@solicitudlab.fechaini)
-    logger.debug @solicitudlab.fechaini.to_s
     fecha=@solicitudlab.fechaini.to_s.split('-')
     nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
     @solicitudlab.fechaini=nfechaini
-    logger.debug @solicitudlab.fechaini.to_s
     fecha=@solicitudlab.fechafin.to_s.split('-')
     nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
   end
@@ -298,5 +295,4 @@ class SolicitudlabsController < ApplicationController
     respond_to {|format| format.js }
   end
 
- 
 end

@@ -209,5 +209,10 @@ CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud 
     end
   end
 
+private
+def solicitudlabexas_params
+  params.require(:solicitudlabexa).permit()
+end
+
  
 end

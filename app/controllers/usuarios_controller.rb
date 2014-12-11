@@ -45,7 +45,7 @@ before_filter :login_requerido, :admin?
   # POST /usuarios
   # POST /usuarios.xml
   def create
-    @usuario = Usuario.new(params[:usuario])
+    @usuario = Usuario.new(usuario_params)
     @usuario.password=Digest::MD5.hexdigest(@usuario.password)
     @usuario.password_confirmation=Digest::MD5.hexdigest(@usuario.password_confirmation)
     @usuario.admin=false
@@ -71,7 +71,7 @@ before_filter :login_requerido, :admin?
       #params[:usuario][:password]=Digest::MD5.hexdigest(params[:usuario][:password])
       #params[:usuario][:password_confirmation]=Digest::MD5.hexdigest(params[:usuario][:password_confirmation])
   
-      if @usuario.update_attributes(params[:usuario]) 
+      if @usuario.update(usuario_params) 
      #   flash[:notice] = 'El usuario fue actualizado con &eacute;xito.'
         @usuarios = Usuario.order("apellidos").to_a
         format.html { redirect_to :action => "index" }
@@ -133,5 +133,10 @@ before_filter :login_requerido, :admin?
     respond_to {|format| format.js }
   end
 
+private
+
+def usuario_params
+  params.require(:usuario).permit(:identificador,:password,:password_confirmation,:nombre,:apellidos,:email,:despacho,:telefono,:admin)
+  end
   
 end

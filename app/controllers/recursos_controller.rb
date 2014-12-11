@@ -33,7 +33,7 @@ before_filter :login_requerido, :admin?
   # POST /recursos
   # POST /recursos.xml
   def create
-    @recurso = Recurso.new(params[:recurso])
+    @recurso = Recurso.new(recurso_params)
 
     respond_to do |format|
       if @recurso.save
@@ -54,7 +54,7 @@ before_filter :login_requerido, :admin?
     @recurso = Recurso.find(params[:id])
 
     respond_to do |format|
-      if @recurso.update_attributes(params[:recurso])
+      if @recurso.update(recurso_params)
         #flash[:notice] = 'El recurso fue actualizado con &eacute;xito.'
         @recursos = Recurso.order("descripcion").to_a 
         format.html { redirect_to :action => "index" }
@@ -88,8 +88,10 @@ before_filter :login_requerido, :admin?
     end
   end
 
-
-
+private
+def recurso_params
+  params.require(:recurso).permit(:identificador, :descripcion, :caracteristicas, :disponible, :aviso)
+end
 
 
 end
