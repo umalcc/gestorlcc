@@ -23,6 +23,6 @@
       <%= image_tag("bg_separ_nav.gif") %>
    </p>
    
-   <p><span class="rotulo-menu"><%= link_to "Salir" , session_path, :method => 'delete',:style=>"color:black"  %></span>
+   <p><span class="rotulo-menu"><%= link_to "Salir" , '/sessions/destroy', :method => 'delete',:style=>"color:black"  %></span>
    </p>
 </div>

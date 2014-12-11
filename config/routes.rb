@@ -128,6 +128,7 @@ post 'asignacionexas/borradirasignada', :to => 'asignacionexas#borradirasignada'
 post 'asignacionexas/borranormal', :to => 'asignacionexas#borranormal'
 post 'asignacionexas/borranormalasignada', :to => 'asignacionexas#borranormalasignada'
 post 'asignacionexas/listar', :to => 'asignacionexas#listar'
+delete 'sessions/destroy', :to => 'sessions#destroy'
 
 
   # See how all your routes lay out with "rake routes"
