@@ -11,7 +11,7 @@ Gestorlcc::Application.routes.draw do
   resources :solicitudrecursousuarios, :solicitudusuariolabs,:solicitudusuariolabexas
 
   #cambiar 'usuarios/:id/cambiar', :to => 'usuarios#cambiar'
-  match 'usuarios/:id/cambiar', :to => 'usuarios#cambiar' 
+  get 'usuarios/:id/cambiar', :to => 'usuarios#cambiar' 
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
@@ -46,21 +46,21 @@ Gestorlcc::Application.routes.draw do
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
 root :to => 'sessions#index'
 
-match 'anonimo/new', :to=>'anonimo#new'
-match 'anonimo/general', :to=>'anonimo#general'
-match 'anonimo/labgeneral', :to=>'anonimo#labgeneral'
-match 'estadisticas/periodo_lectivo', :to=>'estadisticas#periodo_lectivo'
-match 'estadisticas/periodo_examenes', :to=>'estadisticas#periodo_examenes'
-match 'estadisticas/estadisticas_lectivo', :to=>'estadisticas#estadisticas_lectivo'
-match 'estadisticas/estadisticas_examenes', :to=>'estadisticas#estadisticas_examenes'
-match 'estadisticas/borrar_historico_lectivo', :to=>'estadisticas#borrar_historico_lectivo'
-match 'estadisticas/borrar_historico_examenes', :to=>'estadisticas#borrar_historico_examenes'
-match 'periodos/cambia_admision', :to=>'periodos#cambia_admision'
-match 'periodos/cambia_activo', :to=>'periodos#cambia_activo'
-match 'periodos/enviar_correo_lectivo_on', :to=>'periodos#enviar_correo_lectivo_on'
-match 'periodos/enviar_correo_activo_off', :to=>'periodos#enviar_correo_activo_off'
-match 'periodos/enviar_correo_activo_on', :to=>'periodos#enviar_correo_activo_on'
-match 'periodos/enviar_correo_lectivo_off', :to=>'periodos#enviar_correo_lectivo_off'
+get 'anonimo/new', :to=>'anonimo#new'
+get 'anonimo/general', :to=>'anonimo#general'
+get 'anonimo/labgeneral', :to=>'anonimo#labgeneral'
+get 'estadisticas/periodo_lectivo', :to=>'estadisticas#periodo_lectivo'
+get 'estadisticas/periodo_examenes', :to=>'estadisticas#periodo_examenes'
+get 'estadisticas/estadisticas_lectivo', :to=>'estadisticas#estadisticas_lectivo'
+get 'estadisticas/estadisticas_examenes', :to=>'estadisticas#estadisticas_examenes'
+post 'estadisticas/borrar_historico_lectivo', :to=>'estadisticas#borrar_historico_lectivo'
+post 'estadisticas/borrar_historico_examenes', :to=>'estadisticas#borrar_historico_examenes'
+post 'periodos/cambia_admision', :to=>'periodos#cambia_admision'
+post 'periodos/cambia_activo', :to=>'periodos#cambia_activo'
+post 'periodos/enviar_correo_lectivo_on', :to=>'periodos#enviar_correo_lectivo_on'
+post 'periodos/enviar_correo_activo_off', :to=>'periodos#enviar_correo_activo_off'
+post 'periodos/enviar_correo_activo_on', :to=>'periodos#enviar_correo_activo_on'
+post 'periodos/enviar_correo_lectivo_off', :to=>'periodos#enviar_correo_lectivo_off'
 post 'periodos/grabar_historico', :to=>'periodos#grabar_historico'
 post 'periodos/grabar_historico_examen', :to=>'periodos#grabar_historico_examen'
 post 'solicitar/anadir', :to=>'solicitar#anadir'
