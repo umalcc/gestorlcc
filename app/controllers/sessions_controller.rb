@@ -55,9 +55,6 @@ class SessionsController < ApplicationController
 # y se redirije a la creaciÃ³n de una nueva sesion
 
   def destroy
-    logger.debug "Saliendooo"
-    #@usuario_actual.sesion=false
-    #@usuario_actual.save
     session[:user_id]=@usuario_actual=nil
     redirect_to new_session_path
   end
