@@ -2,7 +2,7 @@ class SolicitudusuariolabexasController < ApplicationController
   # GET /solicitudlabexas
   # GET /solicitudlabexas.xml
 
-  before_filter :login_requerido,:usuario?
+  before_action :login_requerido,:usuario?
 
   def index
     @solicitudlabexas = Solicitudlabexa.where("usuario_id = ? ",@usuario_actual.id).to_a
@@ -75,7 +75,7 @@ class SolicitudusuariolabexasController < ApplicationController
     respond_to do |format|
 
       if @solicitudlabexa.save   
-        CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Nueva ").deliver                                 
+        CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Nueva ").deliver_later                                  
         @solicitudlabexas = Solicitudlabexa.where("usuario_id = ?",@usuario_actual.id).to_a
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @solicitudlabexas, :status => :created, :location => @solicitudlabexas }
@@ -125,7 +125,7 @@ class SolicitudusuariolabexasController < ApplicationController
 					     :npuestos => params[:npuestos].to_s,
                                              :comentarios => Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios]))
 
-        CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Cambios en ").deliver  
+        CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Cambios en ").deliver_later   
         @solicitudlabexas = Solicitudlabexa.where("usuario_id = ? ",@usuario_actual.id).to_a
         @cuenta=@solicitudlabexas.size
         format.html { redirect_to :action => "index" }
@@ -145,7 +145,7 @@ class SolicitudusuariolabexasController < ApplicationController
  def destroy
     @solicitudlabexa = Solicitudlabexa.find(params[:id])
     @solicitudlabexa.destroy
-    CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Borrado de ").deliver  
+    CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Borrado de ").deliver_later   
     respond_to do |format|
       format.html { redirect_to(solicitudusuariolabexas_url) }
       format.xml  { head :ok }

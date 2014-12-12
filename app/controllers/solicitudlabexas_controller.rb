@@ -2,7 +2,7 @@ class SolicitudlabexasController < ApplicationController
   # GET /solicitudlabexas
   # GET /solicitudlabexas.xml
 
-  before_filter :login_requerido, :admin?
+  before_action :login_requerido, :admin?
 
   def index
     @solicitudlabexas = Solicitudlabexa.order("fecha").to_a
@@ -81,7 +81,7 @@ class SolicitudlabexasController < ApplicationController
     respond_to do |format|
 
       if @solicitudlabexa.save      
-       CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Nueva ").deliver       
+       CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Nueva ").deliver_later        
               
         @solicitudlabexas = Solicitudlabexa.all
         
@@ -152,7 +152,7 @@ class SolicitudlabexasController < ApplicationController
 					     :npuestos => params[:npuestos].to_s,
                                              :comentarios=>Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios]))
 
-CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Cambios en ").deliver      
+CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Cambios en ").deliver_later       
         @solicitudlabexas = Solicitudlabexa.all
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
@@ -171,7 +171,7 @@ CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud 
  def destroy
     @solicitudlabexa = Solicitudlabexa.find(params[:id])
     @solicitudlabexa.destroy
-    CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Borrado de ").deliver      
+    CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Borrado de ").deliver_later       
     respond_to do |format|
       format.html { redirect_to(solicitudlabexas_url) }
       format.xml  { head :ok }

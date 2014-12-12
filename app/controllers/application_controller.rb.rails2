@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   
 
-  before_filter :comprobar_usuario_login
+  before_action :comprobar_usuario_login
 
   protected
 

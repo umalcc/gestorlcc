@@ -2,8 +2,8 @@ class AsignacionsController < ApplicationController
   # GET /asignacions
   # GET /asignacions.xml
 
- before_filter :login_requerido
- before_filter :admin?
+ before_action :login_requerido
+ before_action :admin?
 
 
 

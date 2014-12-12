@@ -2,8 +2,8 @@ class AsignacionexasController < ApplicationController
   # GET /asignacionexas
   # GET /asignacionexas.xml
 
- before_filter :login_requerido
- before_filter :admin?
+ before_action :login_requerido
+ before_action :admin?
 
 
 

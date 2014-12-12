@@ -1,7 +1,7 @@
 class SolicitudlabsController < ApplicationController
 
 
-  before_filter :login_requerido, :admin?
+  before_action :login_requerido, :admin?
 
   def index
     @solicitudlabs = Solicitudlab.all
@@ -131,7 +131,7 @@ class SolicitudlabsController < ApplicationController
                               p.save
                               @correotramos+=' - '+p.diasemana+' de '+p.horaini+' a '+p.horafin }
          
-        CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Nueva ").deliver     
+        CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Nueva ").deliver_later      
         
         format.js
         format.html { redirect_to :action => "index" }
@@ -233,7 +233,7 @@ class SolicitudlabsController < ApplicationController
                                   reg=Peticionlab.find(tramo)
                                   reg.destroy
                                 end } unless @borrados.empty?
-        CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Cambios en ").deliver
+        CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Cambios en ").deliver_later 
 
         @solicitudlabs = Solicitudlab.all
         format.html { redirect_to :action => "index" }
@@ -257,7 +257,7 @@ class SolicitudlabsController < ApplicationController
     @correotramos=''
     @tramos.each {|tramo| @correotramos+=' - '+tramo.diasemana+' de '+tramo.horaini+' a '+tramo.horafin
                           tramo.destroy} # los elimino en cascada
-    CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Borrado de ").deliver
+    CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Borrado de ").deliver_later 
     respond_to do |format|
       format.html { redirect_to(solicitudlabs_url) }
       format.xml  { head :ok }

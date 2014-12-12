@@ -4,9 +4,9 @@ class AsignaturasController < ApplicationController
 
 #  @@asignaturas=[]
 
-  before_filter :login_requerido 
+  before_action :login_requerido 
 
-  before_filter :admin?, :except=> [:combo_por_titulacion, :combo_por_nivel]
+  before_action :admin?, :except=> [:combo_por_titulacion, :combo_por_nivel]
 
   def index
     @asignaturas = Asignatura.order("titulacion_id,curso,cuatrimestre").to_a

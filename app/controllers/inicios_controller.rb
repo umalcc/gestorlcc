@@ -1,6 +1,6 @@
 class IniciosController < ApplicationController
 
-before_filter :login_requerido, :admin?
+before_action :login_requerido, :admin?
 
   def new
   end

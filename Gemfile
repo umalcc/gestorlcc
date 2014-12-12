@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.0'
+gem 'rails', '4.2.0.rc2'
 
 #gem 'limited_sessions'
 # Bundle edge Rails instead:
@@ -31,8 +31,10 @@ gem 'therubyracer'
 #gem 'jquery-rails'
 gem 'activerecord-session_store'
 gem 'sprockets'#,'~> 2.0.4'
+gem 'responders', '~> 2.0'
 gem 'sprockets-rails', :require => 'sprockets/railtie'
 group :development, :test do
+  gem 'web-console', '~> 2.0'
   gem "mocha"
   gem "rspec-rails", ">= 2.0.0.beta.19"
   #gem "factory_girl_rails"

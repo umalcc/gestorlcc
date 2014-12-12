@@ -1,7 +1,7 @@
 class RecursosController < ApplicationController
   # GET /recursos
   # GET /recursos.xml
-before_filter :login_requerido, :admin?
+before_action :login_requerido, :admin?
 
   def index
     @recursos = Recurso.order("descripcion").to_a 

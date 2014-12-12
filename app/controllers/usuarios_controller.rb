@@ -2,7 +2,7 @@ class UsuariosController < ApplicationController
   # GET /usuarios
   # GET /usuarios.xml
 
-before_filter :login_requerido, :admin?
+before_action :login_requerido, :admin?
 
   def index
     @usuarios = Usuario.order("apellidos").to_a

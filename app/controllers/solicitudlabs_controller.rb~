@@ -1,7 +1,7 @@
 class SolicitudlabsController < ApplicationController
 
 
-  before_filter :login_requerido, :admin?
+  before_action :login_requerido, :admin?
 
   def index
     @solicitudlabs = Solicitudlab.all 

@@ -3,8 +3,8 @@ class PeriodosController < ApplicationController
   # GET /periodos.xml
 
 
-  before_filter :login_requerido
-  before_filter :admin?
+  before_action :login_requerido
+  before_action :admin?
  
 
   @@tipo=''
@@ -157,9 +157,9 @@ class PeriodosController < ApplicationController
 
   def enviar_correo_activo_on
    if params[:tipo]=="Lectivo"
-    CorreoTecnicos::adjudicalectivo.deliver
+    CorreoTecnicos::adjudicalectivo.deliver_later 
    else
-    CorreoTecnicos::adjudicaexamen.deliver
+    CorreoTecnicos::adjudicaexamen.deliver_later 
    end
     @mensaje="Correo enviado"
 
@@ -173,9 +173,9 @@ class PeriodosController < ApplicationController
 
   def enviar_correo_activo_off
     if params[:tipo]=="Lectivo"
-    CorreoTecnicos::cierreadjudicalectivo.deliver
+    CorreoTecnicos::cierreadjudicalectivo.deliver_later 
    else
-    CorreoTecnicos::cierreadjudicaexamen.deliver
+    CorreoTecnicos::cierreadjudicaexamen.deliver_later 
    end
     @mensaje="Correo enviado"
      respond_to do |format|
@@ -287,9 +287,9 @@ class PeriodosController < ApplicationController
       @mensaje="Correo enviado"
      
       if p.tipo=="Lectivo"
-        CorreoTecnicos::aperturalectivo(p.nombre,formato_europeo(p.finsol)).deliver
+        CorreoTecnicos::aperturalectivo(p.nombre,formato_europeo(p.finsol)).deliver_later 
       else
-        CorreoTecnicos::aperturaexamen(p.nombre,formato_europeo(p.finsol)).deliver
+        CorreoTecnicos::aperturaexamen(p.nombre,formato_europeo(p.finsol)).deliver_later 
       end
     end
    
@@ -304,9 +304,9 @@ class PeriodosController < ApplicationController
   def enviar_correo_lectivo_off
    p=Periodo.find(session[:periodo])
    if p.tipo=="Lectivo"
-    CorreoTecnicos::cierrelectivo(p.nombre).deliver
+    CorreoTecnicos::cierrelectivo(p.nombre).deliver_later 
    else
-    CorreoTecnicos::cierreexamen(p.nombre).deliver
+    CorreoTecnicos::cierreexamen(p.nombre).deliver_later 
    end
     @mensaje="Correo enviado"
      respond_to do |format|
@@ -321,9 +321,9 @@ class PeriodosController < ApplicationController
 def enviar_correo_activo_on
    p=Periodo.find(session[:periodo])
    if p.tipo=="Lectivo"
-    CorreoTecnicos::adjudicalectivo(p.nombre).deliver
+    CorreoTecnicos::adjudicalectivo(p.nombre).deliver_later 
    else
-    CorreoTecnicos::adjudicaexamen(p.nombre).deliver
+    CorreoTecnicos::adjudicaexamen(p.nombre).deliver_later 
    end
     @mensaje="Correo enviado"
      respond_to do |format|
@@ -337,9 +337,9 @@ def enviar_correo_activo_on
   def enviar_correo_activo_off
    p=Periodo.find(session[:periodo])
    if p.tipo=="Lectivo"
-    CorreoTecnicos::cierreadjudicalectivo(p.nombre).deliver
+    CorreoTecnicos::cierreadjudicalectivo(p.nombre).deliver_later 
    else
-    CorreoTecnicos::cierreadjudicaexamen(p.nombre).deliver
+    CorreoTecnicos::cierreadjudicaexamen(p.nombre).deliver_later 
    end
     @mensaje="Correo enviado"
      respond_to do |format|

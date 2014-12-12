@@ -2,7 +2,7 @@ class HorariosController < ApplicationController
   # GET /horarios
   # GET /horarios.xml
 
-before_filter :login_requerido, :admin?
+before_action :login_requerido, :admin?
 
   def index
     @horarios = Horario.order("num").to_a

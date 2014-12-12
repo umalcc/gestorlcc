@@ -177,9 +177,9 @@ class PeriodosController < ApplicationController
 
   def enviar_correo_activo_on
    if params[:tipo]=="Lectivo"
-    CorreoTecnicos::adjudicalectivo.deliver
+    CorreoTecnicos::adjudicalectivo.deliver_later _later
    else
-    CorreoTecnicos::adjudicaexamen.deliver
+    CorreoTecnicos::adjudicaexamen.deliver_later _later
    end
     @mensaje="Correo enviado"
     render :update do |page|
@@ -189,9 +189,9 @@ class PeriodosController < ApplicationController
 
   def enviar_correo_activo_off
     if params[:tipo]=="Lectivo"
-    CorreoTecnicos::cierreadjudicalectivo.deliver
+    CorreoTecnicos::cierreadjudicalectivo.deliver_later 
    else
-    CorreoTecnicos::cierreadjudicaexamen.deliver
+    CorreoTecnicos::cierreadjudicaexamen.deliver_later 
    end
     @mensaje="Correo enviado"
     render :update do |page|
@@ -229,9 +229,9 @@ class PeriodosController < ApplicationController
 
   def enviar_correo_lectivo_on
    if params[:tipo]=="Lectivo"
-    CorreoTecnicos::aperturalectivo.deliver
+    CorreoTecnicos::aperturalectivo.deliver_later 
    else
-    CorreoTecnicos::aperturaexamen.deliver
+    CorreoTecnicos::aperturaexamen.deliver_later 
    end
     @mensaje="Correo enviado"
     render :update do |page|
@@ -241,9 +241,9 @@ class PeriodosController < ApplicationController
 
   def enviar_correo_lectivo_off
    if params[:tipo]=="Lectivo"
-    CorreoTecnicos::cierrelectivo.deliver
+    CorreoTecnicos::cierrelectivo.deliver_later 
    else
-    CorreoTecnicos::cierreexamen.deliver
+    CorreoTecnicos::cierreexamen.deliver_later 
    end
     @mensaje="Correo enviado"
     render :update do |page|

@@ -2,7 +2,7 @@ class DiasController < ApplicationController
   # GET /dias
   # GET /dias.xml
 
-before_filter :login_requerido, :admin?
+before_action :login_requerido, :admin?
 
   def index
     @dias = Dia.order("num").to_a

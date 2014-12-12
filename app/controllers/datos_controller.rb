@@ -1,7 +1,7 @@
 class DatosController < ApplicationController
 
-  before_filter :login_requerido
-  before_filter :usuario?
+  before_action :login_requerido
+  before_action :usuario?
 
 
   #def show

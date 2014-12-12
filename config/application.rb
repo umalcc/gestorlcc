@@ -16,7 +16,7 @@ module Gestorlcc
     config.i18n.enforce_available_locales = true
     # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += %W(#{Rails.root}/lib)
-
+    config.active_record.raise_in_transactional_callbacks = true
     
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.

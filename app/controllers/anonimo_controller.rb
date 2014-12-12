@@ -1,6 +1,6 @@
 class AnonimoController < ApplicationController
 
-#before_filter :login_requerido
+#before_action :login_requerido
 
   def general
     @asignacions = Asignaciondef.all

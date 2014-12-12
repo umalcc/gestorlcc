@@ -1,6 +1,6 @@
 class UseriniciosController < ApplicationController
 
-before_filter :login_requerido,:usuario?
+before_action :login_requerido,:usuario?
 
   def new
   end

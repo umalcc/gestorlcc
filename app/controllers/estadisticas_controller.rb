@@ -1,7 +1,7 @@
 class EstadisticasController < ApplicationController
 
-before_filter :login_requerido
-before_filter :admin?
+before_action :login_requerido
+before_action :admin?
 
 def periodo_lectivo
 

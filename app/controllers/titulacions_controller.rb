@@ -2,7 +2,7 @@ class TitulacionsController < ApplicationController
   # GET /titulacions
   # GET /titulacions.xml
 
-before_filter :login_requerido, :admin?
+before_action :login_requerido, :admin?
 
   def index
     @titulacions = Titulacion.order("id").to_a

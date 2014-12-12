@@ -3,8 +3,8 @@ class PeticionsController < ApplicationController
   # GET /peticions.xml
 
 
-  before_filter :login_requerido
-  before_filter :admin?
+  before_action :login_requerido
+  before_action :admin?
 
   def index
     @peticions = Peticion.all

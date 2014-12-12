@@ -1,6 +1,6 @@
 class SolicitudusuariolabsController < ApplicationController
 
-  before_filter :login_requerido,:usuario?
+  before_action :login_requerido,:usuario?
 
   def index
     @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
@@ -157,7 +157,7 @@ def new
                               @correotramos+=' - '+p.diasemana+' de '+p.horaini+' a '+p.horafin}
 
       
-        CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Nueva ").deliver                       
+        CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Nueva ").deliver_later                        
         @solicitudlabs = Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @solicitudlabs, :status => :created, :location => @solicitudlabs }
@@ -257,7 +257,7 @@ def update
                                   reg.destroy
                                 end } unless @borrados.empty?
         # flash[:notice] = 'Solicitudrecurso was successfully updated.'
-        CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Cambios en ").deliver      
+        CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Cambios en ").deliver_later       
         @solicitudlabs = Solicitudlab.where("usuario_id = ?", @usuario_actual.id).to_a
         format.html { render :action => "index" }
         format.xml  { head :ok }
@@ -275,7 +275,7 @@ def update
     @solicitudlab.destroy
     @tramos=Peticionlab.where("solicitudlab_id = ?", @solicitudlab.id).to_a # busco todos los tramos que tenian el id
     @tramos.each {|tramo| tramo.destroy} # los elimino en cascada
-    CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Borrado de ").deliver      
+    CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Borrado de ").deliver_later       
     respond_to do |format|
       format.html { redirect_to(solicitudusuariolabs_url) }
       format.xml  { head :ok }

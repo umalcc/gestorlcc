@@ -2,7 +2,7 @@ class LaboratoriosController < ApplicationController
   # GET /laboratorios
   # GET /laboratorios.xml
 
-before_filter :login_requerido, :admin?
+before_action :login_requerido, :admin?
 
   def index
     @laboratorios = Laboratorio.order("nombre_lab").to_a

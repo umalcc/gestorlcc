@@ -3,7 +3,7 @@ class SolicitudrecursosController < ApplicationController
   # GET /solicitudrecursos.xml
   protect_from_forgery :only=>[:create,:update,:destroy]
 
-  before_filter :login_requerido, :admin?
+  before_action :login_requerido, :admin?
 
 
   def index

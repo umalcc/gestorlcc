@@ -1,6 +1,6 @@
 class SolicitudusuariolabsController < ApplicationController
 
-  before_filter :login_requerido,:usuario?
+  before_action :login_requerido,:usuario?
 
   def index
     @solicitudlabs= Solicitudlab.find_all_by_usuario_id(@usuario_actual.id)

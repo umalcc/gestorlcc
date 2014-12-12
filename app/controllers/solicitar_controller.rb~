@@ -1,6 +1,6 @@
 class SolicitarController < ApplicationController
 
-before_filter :login_requerido
+before_action :login_requerido
 
   def anadir
     @peticion=Solicitud.new

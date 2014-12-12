@@ -1,6 +1,6 @@
 class ConsultasasigController < ApplicationController
 
-  before_filter :login_requerido
+  before_action :login_requerido
 
   def porusuario
     @solicitudes = Solicitudlab.where("usuario_id = ?",session[:user_id]).to_a

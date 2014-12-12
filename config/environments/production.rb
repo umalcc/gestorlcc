@@ -5,6 +5,10 @@ Gestorlcc::Application.configure do
   # Code is not reloaded between requests
   config.cache_classes = true
 
+# Set to `:info` to match the current default, or set to `:debug` to opt-into
+# the future default.
+config.log_level = :info
+
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
