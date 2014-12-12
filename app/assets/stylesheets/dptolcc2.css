@@ -34,14 +34,14 @@ body {                       	font-size: 75%;
 }
 
 #conta_login {
-	background: url(../images/tr_lycc.gif) center top repeat-x;
+	background: url(tr_lycc.gif) center top repeat-x;
 	width: 100%;
 	height: 140px;
 	margin: 200px auto
 }
 
 #log-in {
-	background: url(../images/bg_login.png) center top no-repeat;
+	background: url(bg_login.png) center top no-repeat;
 	width: 760px;
 	height: 140px;
 	margin: 0 auto
@@ -127,7 +127,7 @@ p.edited {
 
 #cubos {
         position: absolute;
-        top: 710px;
+        top: 825px;
         float: center;
         padding: 25px;
         width: 100px;
@@ -954,7 +954,7 @@ dd ol li {
 
 dl.paginaslcc dt span {
 	line-height: 18px;
-	background: url(../images/ic_hoja.png) no-repeat left top;
+	background: url(ic_hoja.png) no-repeat left top;
 	padding: 2px 0 2px 16px
 }
 
@@ -972,7 +972,7 @@ ul.documentos {
 }
 
 ul.documentos li {
-	background: url(../images/px_col1.gif) left bottom repeat-x;
+	background: url(px_col1.gif) left bottom repeat-x;
 	text-align: left;
 	width: 170px;
 	float: left;
@@ -1033,7 +1033,7 @@ ul.publicado {
 
 ul.publicado li {
 	font-size: 1.1em;
-	background: url(../images/px_dl.gif) repeat-x left bottom;
+	background: url(px_dl.gif) repeat-x left bottom;
 	width: 542px;
 	float: left;
 	clear: both;
@@ -1064,7 +1064,7 @@ dl.pfcs {
 dl.pfcs dt {
 	font-size: 1.1em;
 	font-weight: bold;
-	background: url(../images/px_dl.gif) repeat-x left bottom;
+	background: url(px_dl.gif) repeat-x left bottom;
 	width: 570px;
 	float: left;
 	clear: both;
