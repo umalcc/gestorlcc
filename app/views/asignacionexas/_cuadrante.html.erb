@@ -134,13 +134,13 @@
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
 			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"),
-                                "#", :id => "borraDir"%>
+                                "#", :name => "borraDir"%>
                             <% else %>
                               <% formid3="formborra"+hora.id.to_s+dia.to_s+a.id.to_s %>
 			      <div id="formid3" >
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
-			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16), "#", :id=>"borraNorm"%>
+			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16), "#", :name=>"borraNorm"%>
                             <% end %>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <!-- NO PUEDE BORRAR AQUI TAMBIEN LAS ASIGNACIONES **** VER CONTROLLER -->
@@ -206,7 +206,7 @@
                                               <td><%= hidden_field_tag "id", a.id %>
                                               </td>
                                               <td>
-                                          <input id="moverBtnnn" type="button" value="Mover" 
+                                          <input name="moverBtn" type="button" value="Mover" 
                                                 style="width:45px;height:20px;" />
                                               </td>
                                             </tr>
@@ -237,7 +237,7 @@
 <script type="text/javascript">
 $(function()
 {
-   $('#borraNorm').click(function () {    
+   $('a[name=borraNorm]').click(function () {    
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
             $.ajax({
@@ -251,7 +251,7 @@ $(function()
 
 $(function()
 {
-   $('#borraDir').click(function () {    
+   $('a[name=borraDir]').click(function () {    
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
             $.ajax({
@@ -265,7 +265,8 @@ $(function()
 
 $(function()
 {
-     $("#moverBtnnn").click(function (e) {    
+     $('input[name=moverBtn]').click(function () { 
+  
        $.ajax({
                  type: "POST",
                  url: "mover",

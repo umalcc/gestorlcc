@@ -45,7 +45,7 @@ class PeriodosController < ApplicationController
   # POST /periodos
   # POST /periodos.xml
   def create
-    @periodo = Periodo.new(params[:periodo])
+    @periodo = Periodo.new(periodo_params)
     @periodo.tipo=params[:tipo]
  #   @periodo.activo=params[:activo]=="SI"
  

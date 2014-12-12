@@ -36,9 +36,9 @@
    <% @asignacionexas.each do |a| %>
   
   <% if aant_id!=a.solicitudlabexa_id %>
-   <% if diaant != a.dia %>
-   <tr><td colspan=8 ></td></tr>
-  <% end %>
+   <% if diaant != a.dia %> <!-- Maria: no entiendo esta línea, ¿para qué se comparan las fechas?-->
+      <tr><td colspan=8 ></td></tr>
+    <% end %>
   
    <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
     <td style="text-align:center"><% if diaant != a.dia %>
@@ -78,7 +78,7 @@
             <% if antlab!=" " %>
                <%= " - " %>
             <% end %>
-            <%= l %><%= link_to image_tag("borrar.png",:border=>0,:height => "50%"), "#", id:"borraDirAsig"%>
+            <%= l %><%= link_to image_tag("borrar.png",:border=>0,:height => "50%"), "#", name:"borraDirAsig"%>
           <% end %>
           <% antlab= l %>
         <% end %></td>
@@ -96,7 +96,8 @@
 
 $(function()
 {
-   $('#borraDirAsig').click(function () { 
+  
+   $('a[name=borraDirAsig]').click(function () { 
 
          var aux=$("div[id^='asignatura']").attr("id"); 
          var asignaId = aux.replace("asignatura",""); 

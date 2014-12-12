@@ -43,7 +43,7 @@ class AsignacionsController < ApplicationController
 
     if solicitudes.size!=0 
      
-     @solicitudlabs=solicitudes.all
+     @solicitudlabs=solicitudes
 
   # ordenacion de solicitudes segun metodo de ascenso de burbujas por tres criterios:
   # 1- por coeficiente de experimentabilidad, inicialmente el mismo en todas
@@ -393,8 +393,8 @@ class AsignacionsController < ApplicationController
                               p.horaini=tramo.horaini
                               p.horafin=tramo.horafin
                               p.save }
-    # esto es lo quedebe cambiar, hay que ir a generar la asignacion nueva y hay que grabarla
-    # y redirigir a la consulta de asignaciones  
+      # esto es lo quedebe cambiar, hay que ir a generar la asignacion nueva y hay que grabarla
+      # y redirigir a la consulta de asignaciones  
       l=Laboratorio.find_by_nombre_lab(params[:laboratorio_id][:nombre_lab]).id
       peticiones=Peticionlab.where('solicitudlab_id = ?',@solicitudlab.id).to_a
       peticiones.each {|p|  

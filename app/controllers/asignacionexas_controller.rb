@@ -41,13 +41,13 @@ class AsignacionexasController < ApplicationController
     #@adjudicado=Periodo.where(:conditions=>["activo = ? and tipo= ?","t","Examenes"]).to_a
     if solicitudes.size!=0 
      
-     @solicitudlabexas=solicitudes.all
+     @solicitudlabexas=solicitudes
 
-  # ordenacion de solicitudes de examen segun metodo de ascenso de burbujas por los criterios:
-  # 1- por numero de horas totales
-  # 2- por numero de puestos descendentemente
+     logger.debug "Num de solicitudes:" + (@solicitudlabexas.size).to_s
 
-
+     # ordenacion de solicitudes de examen segun metodo de ascenso de burbujas por los criterios:
+     # 1- por numero de horas totales
+     # 2- por numero de puestos descendentemente
      for i in 0..@solicitudlabexas.size-1
        for j in 0..@solicitudlabexas.size-2-i
          if horasexa(@solicitudlabexas[j])<horasexa(@solicitudlabexas[j+1])
@@ -66,35 +66,37 @@ class AsignacionexasController < ApplicationController
      end
 
      # los componentes ordenados secuencialmente, se cargan en un array 3d de horas x labs x ### FECHA ####
-
      cuadrante=Array3d.new
      @asignacionexas=[]
    
-   ####### VER FECHA EN NUMERICO ENTERO Y COMO MANTENER LA CONTINUIDAD DE HORAS (LAS DE IGUAL SOLICITUDLABEXA_ID)
-    @nhoras=[]
+     ####### VER FECHA EN NUMERICO ENTERO Y COMO MANTENER LA CONTINUIDAD DE HORAS (LAS DE IGUAL SOLICITUDLABEXA_ID)
+     @nhoras=[]
      @solicitudlabexas.each { |sol|     #por cada una de las @solicitudlabexas, buscamos los lab que tienen ese n. de puestos
-       #sol.peticionlab.each { |pet|     #por cada peticion de tramo de cada solicitud NO HAY TRAMOS
-        
+      
+       
+
+                   
          # tomamos la fecha, la hora de inicio y la de fin ###### FECHA NO DIA DE LA SEMANA ##################
          dia=sol.fecha.yday  ####### poner fecha en formato enteroooooooo
          hi=Horasexa.find_by_comienzo(sol.horaini).id.to_i  #### LA SOLICITUD TIENE HORAINI
          hf=Horasexa.find_by_fin(sol.horafin).id.to_i 
          nhoras=hf-hi+1 #### las horas a partir de la inicial que ocupa el examen
          # for hora in hi..hf     #   for cada hora del tramo,una asignacionexa MIRAR SI LIBRE LA PRIMERA HORA Y LAS RESTANTES 
-          @nhoras<<nhoras
-          if sol.npuestos<Laboratorio::DOS_LAB 
+         @nhoras<<nhoras
+         if sol.npuestos<Laboratorio::DOS_LAB 
            
-            @todoslab=Laboratorio.order("nombre_lab desc").to_a("puestos = ?",sol.npuestos)
+            @todoslab=Laboratorio.order("nombre_lab desc").where("puestos = ?",sol.npuestos).to_a
             # en principio el laboratorio asignado es ninguno y buscamos uno libre de ese tamaño
             lab=nil
-          if sol.preferencias=="" or sol.preferencias==nil
-            @todoslab.each {|laboratorio|  
-                               if sol.npuestos<=laboratorio.puestos and cuadrante[hi, laboratorio.id,dia].nil?           
-                                  lab=[laboratorio.id]  # si el laboratorio está libre y cabe el num de puestos 
-                               end       
-                          }
-               # si no habia ninguno libre, colisionamos en el primero de los lab de esa capacidad  
-          else # el usuario manifesto una preferencia favorable o desfavorable
+            if sol.preferencias=="" or sol.preferencias==nil
+               @todoslab.each {|laboratorio|  
+                                 if sol.npuestos<=laboratorio.puestos and cuadrante[hi, laboratorio.id,dia].nil?           
+                                    lab=[laboratorio.id]  # si el laboratorio está libre y cabe el num de puestos 
+                                 end       
+                              }#todoslab.each
+
+             # si no habia ninguno libre, colisionamos en el primero de los lab de esa capacidad  
+             else # el usuario manifesto una preferencia favorable o desfavorable
              preferencias=sol.preferencias.split(";")        # troceo la cadena de preferencias por el ;  
              preferencias.each { |p| trestramos=p.split("-") # e itero sobre cada trozo y vuelvo a trocear
                                  l=Laboratorio.find_by_nombre_lab(trestramos[0]).id    #  en 3.1.4-Apple-no por el guion
@@ -106,16 +108,16 @@ class AsignacionexasController < ApplicationController
                                    if sol.npuestos<=laboratorio.puestos and cuadrante[hi, laboratorio.id,dia].nil?           
                                        lab=[laboratorio.id]   
                                    end       
-                                }
+                                   } # todoslab.each
                                  end 
-                               }
+                               } # preferencias.each
              
-           end
+           end # if sol.preferencias
            if lab.nil?
              lab=[@todoslab.first.id]
            end
            
-          else 
+          else # de if sol.npuestos<...
            uno=Laboratorio.find_by_nombre_lab("3.1.1").id
            dos=Laboratorio.find_by_nombre_lab("3.1.2").id
            tres=Laboratorio.find_by_nombre_lab("3.1.3").id
@@ -138,10 +140,10 @@ class AsignacionexasController < ApplicationController
                
              end # if == 150
            end # if == DOSLAB
-          end # if < DOSLAB
+          end # if < DOSLAB de if sol.npuestos<...
            # siempre habra al menos una asignacionexa para todos
            # CONSTRUIR UNA LISTA Y UNA ITERACION  SOBRE ELLA DE ASIGNACIONES
-           lab.each {|l| for horconditioa in hi..hf
+           lab.each {|l| for hora in hi..hf
                          @asignacionexas<<asignacionexa=Asignacionlabexa.new(:solicitudlabexa_id=>sol.id,
                                                                  :laboratorio_id=>l,
                                                                  :dia=>sol.fecha,              #aqui hay cambio
@@ -156,31 +158,52 @@ class AsignacionexasController < ApplicationController
                             cuadrante[hora,l,dia]<<[asignacionexa]
                          end  
                          end # del for
-                         # HASTA AQUI
-                     }       
-          #end # for horas
-         
-         
-      #} # for pet
+                     } # de lab.each 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
      }  # for sol
+
+
      
     # finalmente, se vuelcan todas las asignacionexas sobre el archivo persistente
     # eliminando primero los registros que hubiera de una asignacionexa anterior
     # OJOOOOOO VER QUE HACER CUANDO SE ACTIVEN NUEVOS PERIODOS
+    Asignacionlabexa.all.each { |a| a.destroy }
 
-   
-        Asignacionlabexa.all.each { |a| a.destroy }
-
-        @asignacionexas.each { |a| nueva_asig=Asignacionlabexa.new
-                            nueva_asig=a
-                            a.solicitudlabexa.asignado="P"
-                            a.solicitudlabexa.save
-                            nueva_asig.save
-                      }
+    @asignacionexas.each { |a| nueva_asig=Asignacionlabexa.new
+                               nueva_asig=a
+                               a.solicitudlabexa.asignado="P"
+                               a.solicitudlabexa.save
+                               nueva_asig.save}
     else
       @asignacionexas=[]
-    end
-      respond_to do |format|
+    end # de if 
+
+    
+    #call js
+    respond_to do |format|
         format.js
     end
 

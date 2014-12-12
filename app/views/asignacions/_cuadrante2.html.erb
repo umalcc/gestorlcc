@@ -111,13 +111,13 @@
 			      <div id="formid2" >
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
-			      <%= link_to image_tag("borrar.png",:border=>0,:height=>16,:width=>16), "#", :id => "borraDirAsig"%>
+			      <%= link_to image_tag("borrar.png",:border=>0,:height=>16,:width=>16), "#", :name => "borraDirAsig"%>
                             <% else %>
                               <% formid3="formborra"+hora.id.to_s+dia.id.to_s+a.id.to_s %>
 			      <div id="formid3" >
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
-			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16), "#", :id => "borraNormAsig"%>
+			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16), "#", :name => "borraNormAsig"%>
                             <% end %>
                           
                        </a><br/>
@@ -136,7 +136,7 @@
 <script type="text/javascript">
 $(function()
 {
-   $('#borraNormAsig').click(function () {    
+   $('a[name=borraNormAsig]').click(function () {    
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
             $.ajax({
@@ -150,7 +150,7 @@ $(function()
 
 $(function()
 {
-   $('#borraDirAsig').click(function () {    
+   $('a[name=borraDirAsig]').click(function () {    
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
             $.ajax({
