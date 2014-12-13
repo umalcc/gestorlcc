@@ -1,3 +1,0 @@
-page.replace_html(:'tabla', 
-                  :partial=>"/solicitudlabexas/items_lista", 
-                  :object=>@solicitudlabs)

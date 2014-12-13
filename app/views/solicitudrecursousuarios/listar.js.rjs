@@ -1,3 +1,0 @@
-page.replace_html(:'tabla', 
-                  :partial=>"/solicitudrecursousuarios/items_lista", 
-                  :object=>@solicitudrecursousuarios)

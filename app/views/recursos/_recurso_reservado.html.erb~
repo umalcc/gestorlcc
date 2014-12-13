@@ -1,4 +1,0 @@
-<%= for reserva in @reservas %>
-     reserva.tipo
-<% end %>
-

@@ -1,3 +1,0 @@
-page.replace_html("tramos", 
-                  :partial => solicitudrecursos/tramo_peticiones, 
-                  :collect => @tramos)

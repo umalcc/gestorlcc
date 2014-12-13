@@ -1,6 +1,0 @@
-<div id="central" >
-   <p>GESTOR DE RECURSOS <br/>
-   <%= image_tag ("pointer.gif") %>Inicio</p>
-   <p style="margin-left:100px" ><%= image_tag ("medios_b.jpg") %></p>
-</div>
-

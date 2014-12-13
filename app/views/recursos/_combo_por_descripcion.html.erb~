@@ -1,2 +1,0 @@
-<%= select "ident", "identificador", @recursos.map {|r| [r.identificador]} %>
-
