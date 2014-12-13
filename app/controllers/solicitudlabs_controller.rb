@@ -152,8 +152,9 @@ class SolicitudlabsController < ApplicationController
   # PUT /solicitudlabs/1.xml
 
  def update
+  logger.debug "!!!!!!!!!!!!!!!!!!!!!!11"
     @solicitudlab = Solicitudlab.find(params[:id])
-
+ logger.debug "TTTTTTTTTTTTTTT11"
     respond_to do |format|
 
 # UN DRYYY!!!!!
@@ -233,8 +234,9 @@ class SolicitudlabsController < ApplicationController
                                   reg=Peticionlab.find(tramo)
                                   reg.destroy
                                 end } unless @borrados.empty?
+        logger.debug "AAAAAA"
         CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Cambios en ").deliver_later 
-
+         logger.debug "BBBBBBBBBBBBBBB"
         @solicitudlabs = Solicitudlab.all
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
