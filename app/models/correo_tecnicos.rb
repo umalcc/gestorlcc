@@ -22,7 +22,7 @@ class CorreoTecnicos < ActionMailer::Base
     
     @nombre=nombre
     @fechafin=fechafin
-    mail(:to=>@recipients, :subject=>subject)
+    mail(:to=>@recipients, :subject=>@subject)
   end
 
 

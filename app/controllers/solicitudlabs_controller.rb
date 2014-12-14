@@ -152,9 +152,7 @@ class SolicitudlabsController < ApplicationController
   # PUT /solicitudlabs/1.xml
 
  def update
-  logger.debug "!!!!!!!!!!!!!!!!!!!!!!11"
     @solicitudlab = Solicitudlab.find(params[:id])
- logger.debug "TTTTTTTTTTTTTTT11"
     respond_to do |format|
 
 # UN DRYYY!!!!!
@@ -254,12 +252,12 @@ class SolicitudlabsController < ApplicationController
   # DELETE /solicitudlabs/1.xml
  def destroy
     @solicitudlab = Solicitudlab.find(params[:id])
+    CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Borrado de ").deliver_later 
     @solicitudlab.destroy
     @tramos=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).to_a # busco todos los tramos que tenian el id
     @correotramos=''
     @tramos.each {|tramo| @correotramos+=' - '+tramo.diasemana+' de '+tramo.horaini+' a '+tramo.horafin
                           tramo.destroy} # los elimino en cascada
-    CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Borrado de ").deliver_later 
     respond_to do |format|
       format.html { redirect_to(solicitudlabs_url) }
       format.xml  { head :ok }

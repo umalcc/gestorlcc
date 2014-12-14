@@ -18,7 +18,7 @@ class SolicitudlabexasController < ApplicationController
   # GET /solicitudlabexas/new.xml
   def new
     @solicitudlabexa = Solicitudlabexa.new
-
+    @especiales=Laboratorio.where('especial=?',"t").to_a 
     session[:titulacion]=Titulacion.first
     session[:nivel]=Asignatura::CURSO.first
     getViewModel
@@ -33,40 +33,31 @@ class SolicitudlabexasController < ApplicationController
     @solicitudlabexa = Solicitudlabexa.find(params[:id]) 
     getViewModel
        
-    @asignatura=Asignatura.find(@solicitudlabexa.asignatura_id)
-    @titulacionselec=@asignatura.titulacion_id
-    @cursoselec=@solicitudlabexa.curso
-    @solicitudlabexa.fecha=fecha_europea(@solicitudlabexa.fecha)
-    @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlabexa.asignatura.curso).order("nombre_asig").to_a
-    usuario=Usuario.find(@solicitudlabexa.usuario_id)
-    @usuarioselec=usuario.apellidos+", "+usuario.nombre
-    @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"}
-    @asignaturaselec=@solicitudlabexa.asignatura_id
+    #@asignatura=Asignatura.find(@solicitudlabexa.asignatura_id)
+    #@solicitudlabexa.fecha=fecha_europea(@solicitudlabexa.fecha)
+   # @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlabexa.asignatura.curso).order("nombre_asig").to_a
+    #@usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"}
+    getSelected
   end
 
   # POST /solicitudlabs
   # POST /solicitudlabs.xml
-  def create
-  
-    getViewModel
-    @solicitudlabexa = Solicitudlabexa.new(params[:solicitudlabexa])
+  def saveObject(params)
+ 
     @solicitudlabexa.usuario_id = params[:usuario][:identificador].to_i
-    @solicitudlabexa.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+    if params[:asignatura].nil?
+      @solicitudlabexa.asignatura_id=nil
+    else
+      @solicitudlabexa.asignatura_id = params[:asignatura][:id].to_i
+    end
     @solicitudlabexa.fechasol=Date.today
     @solicitudlabexa.npuestos=params[:npuestos].to_s
     @solicitudlabexa.curso=params[:nivel].to_s
     @solicitudlabexa.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
-        @solicitudlabexa.horaini=params[:horaini][:comienzo]
+    @solicitudlabexa.horaini=params[:horaini][:comienzo]
     @solicitudlabexa.horafin=params[:horafin][:fin]
     @solicitudlabexa.asignado="N"
-  
-    if params[:fecha]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfecha=formato_europeo(params[:fecha])
-      @solicitudlabexa.fecha=nfecha.to_date
-    else
-      @solicitudlabexa.fecha=nil
-    end
-
+    
     pref=""
     @especiales=Laboratorio.where('especial=?',"t").to_a 
     for especial in @especiales do
@@ -76,10 +67,25 @@ class SolicitudlabexasController < ApplicationController
       end
     end
     @solicitudlabexa.preferencias=pref
+
+     if params[:fecha]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
+      @solicitudlabexa.fecha=formato_europeo(params[:fecha])
+    else
+      @solicitudlabexa.fecha=nil
+    end
+  end
+
+  def create
+  
+    
+    @solicitudlabexa = Solicitudlabexa.new(params[:solicitudlabexa])
+     getViewModel
+    saveObject(params)
+  
     @solicitudlabexa.tipo="P"
     
     respond_to do |format|
-
+    getSelected
       if @solicitudlabexa.save      
        CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Nueva ").deliver_later        
               
@@ -88,6 +94,7 @@ class SolicitudlabexasController < ApplicationController
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @solicitudlabexas, :status => :created, :location => @solicitudlabexas }
       else
+     
         format.html { render :action => "new" }
         format.xml  { render :xml => @solicitudlabexas.errors, :status => :unprocessable_entity }
       end
@@ -95,73 +102,96 @@ class SolicitudlabexasController < ApplicationController
     end
     
   end
+  def getSelected
+     if @solicitudlabexa.asignatura == nil
+      @solicitudlabexa.asignatura=Asignatura.new
+    end   
+    if params[:titulacion] != nil 
+       @titulacionselec=params[:titulacion][:titulacion_id]
+     elsif @solicitudlabexa.asignatura.titulacion_id != nil
+      @titulacionselec=@solicitudlabexa.asignatura.titulacion_id
+     end
+    @cursoselec=@solicitudlabexa.curso
+    usuario=Usuario.find(@solicitudlabexa.usuario_id)
+    @usuarioselec=usuario.apellidos+", "+usuario.nombre
+    if @solicitudlabexa.asignatura_id != nil
+      @asignaturaselec=@solicitudlabexa.asignatura_id
+    end
+  end
 
   def getViewModel
     @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"} 
+      @especiales=Laboratorio.where('especial=?',"t").to_a 
+    @titulaciones=Titulacion.order("id").to_a
+    @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"}  
+   if (@solicitudlabexa.asignatura_id == nil)
     if (Asignatura::CURSO).first=="optativa"
       as='0'
     else 
       as=Asignatura::CURSO.first
     end
-    @titulaciones=Titulacion.order("id").to_a
-    @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"}  
-    @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?',@titulaciones.first.id,as).to_a
+       @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?',@titulaciones.first.id,as).to_a
+   else
+       @asignatura=Asignatura.find(@solicitudlabexa.asignatura_id)
+       @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlabexa.asignatura.curso).order("nombre_asig").to_a
+   end
+ 
     @puestos=Laboratorio.find_by_sql(["select distinct(puestos) from laboratorios order by puestos"]).map{|l| l.puestos}
     @horas=Horasexa.where('en_uso=?',"t").order("id").to_a
-    @especiales=Laboratorio.where('especial=?',"t").to_a 
   end
   # PUT /solicitudlabexas/1
   # PUT /solicitudlabexas/1.xml
 
  def update
     @solicitudlabexa = Solicitudlabexa.find(params[:id])
+    saveObject(params)
     getViewModel
-    @asignatura=Asignatura.find(@solicitudlabexa.asignatura_id)
-    @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlabexa.asignatura.curso).order("nombre_asig").to_a
-   
     respond_to do |format|
     
-    if params[:fecha]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfecha=formato_europeo(params[:fecha])
-    else
-      nfecha=@solicitudlabexa.fecha
-    end
+    #if params[:fecha]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
+    #  nfecha=formato_europeo(params[:fecha])
+    #else
+    #  nfecha=@solicitudlabexa.fecha
+    #end
 
-    pref=""
+    #pref=""
 
+    #@solicitudlabexa.fecha=nfecha
+    #@solicitudlabexa.usuario_id = params[:usuario][:identificador].to_i
+    #@solicitudlabexa.fechasol = Date.today
+    #@solicitudlabexa.horaini = params[:horaini][:comienzo]
+    #@solicitudlabexa.horafin = params[:horafin][:fin]
+    #@solicitudlabexa.curso = params[:nivel].to_s
+    #@solicitudlabexa.npuestos = params[:npuestos].to_s
+    #@solicitudlabexa.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
+    #for especial in @especiales do
+    #  nombre=especial.ssoo.to_s
+    #  if params[:"#{nombre}"].to_s!='in'
+    #    pref+=especial.nombre_lab.to_s+'-'+nombre+'-'+params[:"#{nombre}"]+";"
+    #  end
+    #end
+    #@solicitudlabexa.preferencias=pref
     
-    for especial in @especiales do
-      nombre=especial.ssoo.to_s
-      if params[:"#{nombre}"].to_s!='in'
-        pref+=especial.nombre_lab.to_s+'-'+nombre+'-'+params[:"#{nombre}"]+";"
-      end
-    end
-    @solicitudlabexa.preferencias=pref
+    #nombrecomp = params[:usuario][:identificador].to_s.split(', ')
+     #if((params[:asignatura]==nil)or (params[:asignatura][:id]==nil))
+     
+      #  flash[:notice]="El campo asignatura es obligatorio"
+      #  format.html { render :action=>"edit"}
+      #else 
+        #@solicitudlabexa.asignatura_id = params[:asignatura][:id].to_i
+        getSelected
 
-    nombrecomp = params[:usuario][:identificador].to_s.split(', ')
-     if((params[:asignatura]==nil)or (params[:asignatura][:id]==nil))
-        flash[:notice]="El campo asignatura es obligatorio"
-        format.html { render :action=>"edit"}
-      elsif @solicitudlabexa.update_attributes(:fecha => nfecha,                                             
-                                             :usuario_id => params[:usuario][:identificador].to_i,
-                                             :asignatura_id => params[:asignatura][:id].to_i,
-                                             :fechasol => Date.today,
-                                             :horaini => params[:horaini][:comienzo],
-                                             :horafin => params[:horafin][:fin],
-					     :curso => params[:nivel].to_s,
-					     :npuestos => params[:npuestos].to_s,
-                                             :comentarios=>Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios]))
-
-CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Cambios en ").deliver_later       
+        if @solicitudlabexa.save
+        CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Cambios en ").deliver_later       
         @solicitudlabexas = Solicitudlabexa.all
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else
+        getSelected
         format.html { render :action => "edit"}
         format.xml  { render :xml => @solicitudlabexa.errors, :status => :unprocessable_entity }
-      end
-   
-    end
+   end
+ end
   end
 
   
@@ -170,8 +200,8 @@ CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud 
   # DELETE /solicitudlabexas/1.xml
  def destroy
     @solicitudlabexa = Solicitudlabexa.find(params[:id])
-    @solicitudlabexa.destroy
     CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Borrado de ").deliver_later       
+    @solicitudlabexa.destroy
     respond_to do |format|
       format.html { redirect_to(solicitudlabexas_url) }
       format.xml  { head :ok }

@@ -139,9 +139,6 @@ class SolicitudrecursousuariosController < ApplicationController
     respond_to do |format|
       format.js
     end
-    #render :update do |page|
-    #  page.replace_html(:'reservas', :partial=>"/solicitudrecursousuarios/recurso_reservado", :object=>@reservas)
-    #end
   end
 
   def listar

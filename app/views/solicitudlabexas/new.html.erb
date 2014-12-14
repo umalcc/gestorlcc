@@ -13,11 +13,13 @@
             <dd><%= inicio=fecha_europea(Date.today) %></dd>
             <dt>Usuario *</dt>
             <dd>
-               <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]} %>
+               <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]},
+                              html_options={:selected=>@solicitudlabexa.usuario_id } %>
             </dd>
             <dt>Titulaci&oacute;n *</dt>
             <dd id="combo_titulacion">
-                <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]} %></dd>
+                <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]},
+          html_options={:selected=>@titulacionselec } %></dd>
             <dt>Curso *</dt>
             <dd id="combo_nivel"><%= select_tag "nivel", options_for_select(Asignatura::CURSO)%></dd>
 	    <dt>Asignatura *</dt>    
