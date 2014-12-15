@@ -1,2 +1,2 @@
-<%= select "asignatura","id", @asignaturas.map {|a| [ a.nombre_asig]}.uniq %>
+<%= select "asignatura","id", @asignaturas.map {|a| [ a.nombre_asig,a.id]}.uniq %>
 

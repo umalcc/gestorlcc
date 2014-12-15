@@ -137,10 +137,10 @@ class SolicitudrecursosController < ApplicationController
   # DELETE /solicitudrecursos/1.xml
   def destroy
     @solicitudrecurso = Solicitudrecurso.find(params[:id])
-    @solicitudrecurso.destroy
     @tramos=Peticion.where("solicitudrecurso_id = ?",@solicitudrecurso.id).to_a # busco todos los tramos que tenian el id
     @tramos.each {|tramo| tramo.destroy} # los elimino en cascada
-
+    @solicitudrecurso.destroy
+    
     respond_to do |format|
       format.html { redirect_to(solicitudrecursos_url) }
       format.xml  { head :ok }
@@ -159,9 +159,9 @@ class SolicitudrecursosController < ApplicationController
 
   def borra
     @solicitudrecurso = Solicitudrecurso.find(params[:reserva])
-    @solicitudrecurso.destroy
     familia=Recurso.where("identificador = ?",@solicitudrecurso.tipo).first.descripcion
     @recs=Recurso.where('descripcion = ? and disponible = ?',familia,"t").to_a
+    @solicitudrecurso.destroy
     @ids=@recs.map {|r| r.identificador}
     dia=formato_europeo(session[:fechares])
     @reservas = Solicitudrecurso.where('tipo in (?) and fechareserva = ?', @ids,dia).to_a

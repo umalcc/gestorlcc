@@ -144,8 +144,8 @@ class SolicitudusuariolabexasController < ApplicationController
   # DELETE /solicitudlabexas/1.xml
  def destroy
     @solicitudlabexa = Solicitudlabexa.find(params[:id])
-    @solicitudlabexa.destroy
     CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Borrado de ").deliver_later   
+    @solicitudlabexa.destroy
     respond_to do |format|
       format.html { redirect_to(solicitudusuariolabexas_url) }
       format.xml  { head :ok }

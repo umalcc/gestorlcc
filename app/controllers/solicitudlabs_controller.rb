@@ -16,7 +16,10 @@ class SolicitudlabsController < ApplicationController
   def new
     
     @solicitudlab = Solicitudlab.new
-
+    @solicitudlab.fechaini=Date.today
+    @solicitudlab.fechafin=Date.today
+    @solicitudlab.preferencias=""
+    getViewModel
     session[:titulacion]=Titulacion.first
     session[:nivel]=Asignatura::CURSO.first
  
@@ -40,66 +43,30 @@ class SolicitudlabsController < ApplicationController
     session[:tramos_horarios].solicitudes=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).to_a 
     session[:codigo_tramo]=0
     session[:borrar]=[]
-    @solicitudlab.fechaini=formato_europeo(@solicitudlab.fechaini)
-    fecha=@solicitudlab.fechaini.to_s.split('-')
-    nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-    @solicitudlab.fechaini=nfechaini
-    fecha=@solicitudlab.fechafin.to_s.split('-')
-    nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
+    getViewModel
+    #fecha=@solicitudlab.fechaini.to_s.split('-')
+    #nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
+    #@solicitudlab.fechaini=nfechaini
+    #fecha=@solicitudlab.fechafin.to_s.split('-')
+    #nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
   end
 
-  # POST /solicitudlabs
-  # POST /solicitudlabs.xml
-  def create 
-    @solicitudlab = Solicitudlab.new(params[:solicitudlab])
+
+  def saveModel(params)
     @solicitudlab.usuario_id = params[:usuario][:identificador].to_i
-    @solicitudlab.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+    if @solicitudlab.asignatura==nil
+      @solicitudlab.asignatura=Asignatura.new
+    end
+    @solicitudlab.asignatura.id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+    @solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
     @solicitudlab.fechasol=Date.today
     @solicitudlab.npuestos=params[:npuestos].to_s
-    @solicitudlab.curso=params[:nivel].to_s
+    @solicitudlab.asignatura.curso=params[:nivel].to_s
     @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
     @solicitudlab.asignado="N"
-   
-# HACER UN DRYYYYYYY!!!!! COMPROBAR SI DETECTA BIEN EL PERIODO
+    @solicitudlab.fechaini=params[:fechaini].to_date
 
-   periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
-    if periodoact.nil?
-       iniperiodoact=finperiodoact=Date.today 
-    else 
-       iniperiodoact=periodoact.inicio
-       finperiodoact=periodoact.fin
-       if formato_europeo(params[:fechaini])<iniperiodoact.to_s
-          params[:fechaini]=formato_europeo(iniperiodoact)
-       end
-       if formato_europeo(params[:fechafin])>finperiodoact.to_s
-          params[:fechafin]=formato_europeo(finperiodoact)
-       end
-    end
-     
-
-    if params[:fechaini]==params[:fechafin]
-       @solicitudlab.tipo="S"
-    else
-       if params[:fechaini]==iniperiodoact and params[:fechafin]==finperiodoact
-         @solicitudlab.tipo="T"
-       else
-         @solicitudlab.tipo="P"
-       end
-    end
-
-    if params[:fechaini]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfechaini=formato_europeo(params[:fechaini])
-      @solicitudlab.fechaini=nfechaini.to_date
-    else
-      @solicitudlab.fechaini=nil
-    end
-    
-    if params[:fechafin]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfechafin=formato_europeo(params[:fechafin])
-      @solicitudlab.fechafin=nfechafin.to_date
-    else
-      @solicitudlab.fechafin=nil
-    end
+    @solicitudlab.fechafin=params[:fechafin].to_date
 
     pref=""
     @especiales=Laboratorio.where('especial=?',"t").to_a
@@ -111,6 +78,33 @@ class SolicitudlabsController < ApplicationController
     end
 
     @solicitudlab.preferencias=pref
+    
+    periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
+    if periodoact.nil?
+       iniperiodoact=finperiodoact=Date.today 
+    else 
+       iniperiodoact=periodoact.inicio
+       finperiodoact=periodoact.fin
+    end
+
+    if params[:fechaini]==params[:fechafin]
+       @solicitudlab.tipo="S"
+    else
+       if params[:fechaini]==iniperiodoact and params[:fechafin]==finperiodoact
+         @solicitudlab.tipo="T"
+       else
+         @solicitudlab.tipo="P"
+       end
+    end
+
+  end
+  # POST /solicitudlabs
+  # POST /solicitudlabs.xml
+  def create 
+    @solicitudlab = Solicitudlab.new(params[:solicitudlab])
+    saveModel(params)
+
+    getViewModel
     respond_to do |format|
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
       flash[:notice]="No hay tramos horarios en su peticion"
@@ -138,6 +132,7 @@ class SolicitudlabsController < ApplicationController
         format.xml  { render :xml => @solicitudlabs, :status => :created, :location => @solicitudlabs }
          
       else
+        
         format.js
 	      format.html { render :action => "new" }
         format.xml  { render :xml => @solicitudlabs.errors, :status => :unprocessable_entity }
@@ -153,68 +148,16 @@ class SolicitudlabsController < ApplicationController
 
  def update
     @solicitudlab = Solicitudlab.find(params[:id])
+    saveModel(params)
     respond_to do |format|
-
-# UN DRYYY!!!!!
-
-    periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
-    if periodoact.nil?
-       iniperiodoact=finperiodoact=Date.today 
-    else 
-       iniperiodoact=periodoact.inicio
-       finperiodoact=periodoact.fin
-    #   if formato_europeo(params[:fechaini])<iniperiodoact.to_s
-    #      params[:fechaini]=formato_europeo(iniperiodoact)
-    #   end
-    #   if formato_europeo(params[:fechafin])>finperiodoact.to_s
-    #      params[:fechafin]=formato_europeo(finperiodoact)
-    #   end
-    end
-
-
-    if params[:fechaini]==params[:fechafin]
-       @solicitudlab.tipo="S"
-    else
-       if params[:fechaini]==iniperiodoact and params[:fechafin]==finperiodoact
-         @solicitudlab.tipo="T"
-       else
-         @solicitudlab.tipo="P"
-       end
-    end
-    if params[:fechaini]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfechaini=formato_europeo(params[:fechaini])
-    end
-    
-    if params[:fechafin]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfechafin=formato_europeo(params[:fechafin])
-    end
-
-    pref=""
-    @especiales=Laboratorio.where('especial=?',"t").to_a 
-    for especial in @especiales do
-      nombre=especial.ssoo.to_s
-      if params[:"#{nombre}"].to_s!='in'
-        pref+=especial.nombre_lab.to_s+'-'+nombre+'-'+params[:"#{nombre}"]+";"
-      end
-    end
-    @solicitudlab.preferencias=pref
-
+      getViewModel
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
       flash[:notice]="No hay tramos horarios en su peticion"
       @borrados=session[:borrar]
       format.html { render :action=> "edit"}
 
     else # VEREMOS SI LAS FECHAS SON CORRECTAS SEGUN EL PERIODO
-
-    nombrecomp = params[:usuario][:identificador].to_s.split(', ')
-      if @solicitudlab.update_attributes(:fechaini => nfechaini,
-                                             :fechafin => nfechafin,
-                                             :usuario_id => params[:usuario][:identificador].to_i,
-                                             :asignatura_id =>  params[:asignatura][:id].to_i,
-                                             :fechasol => Date.today,
-					     :curso => params[:nivel].to_s,
-					     :npuestos => params[:npuestos].to_s,
-                                             :comentarios => Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios]))
+      if @solicitudlab.save
 
         @tramos=session[:tramos_horarios].solicitudes
         @correotramos=''
@@ -232,9 +175,7 @@ class SolicitudlabsController < ApplicationController
                                   reg=Peticionlab.find(tramo)
                                   reg.destroy
                                 end } unless @borrados.empty?
-        logger.debug "AAAAAA"
         CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Cambios en ").deliver_later 
-         logger.debug "BBBBBBBBBBBBBBB"
         @solicitudlabs = Solicitudlab.all
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
@@ -243,21 +184,32 @@ class SolicitudlabsController < ApplicationController
         format.xml  { render :xml => @solicitudlab.errors, :status => :unprocessable_entity }
       end
     end
-    end
   end
+end
 
-  
+  def getViewModel
+     @especiales=Laboratorio.where('especial=?',"t").to_a 
+     @puestos=Laboratorio.find_by_sql(["select distinct(puestos) from laboratorios order by puestos"]).map{|l| l.puestos}
+     @titulaciones=Titulacion.order("nombre").to_a
+     @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"}
+     if(@solicitudlab.asignatura == nil)
+      @solicitudlab.asignatura=Asignatura.new
+     end
+     @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @solicitudlab.asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").to_a
+     @dias=Dia.where('en_uso=?',"t").to_a
+     @horas=Horario.where('en_uso=?',"t").to_a
+  end
 
   # DELETE /solicitudlabs/1
   # DELETE /solicitudlabs/1.xml
  def destroy
     @solicitudlab = Solicitudlab.find(params[:id])
     CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Borrado de ").deliver_later 
-    @solicitudlab.destroy
     @tramos=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).to_a # busco todos los tramos que tenian el id
     @correotramos=''
     @tramos.each {|tramo| @correotramos+=' - '+tramo.diasemana+' de '+tramo.horaini+' a '+tramo.horafin
                           tramo.destroy} # los elimino en cascada
+    @solicitudlab.destroy
     respond_to do |format|
       format.html { redirect_to(solicitudlabs_url) }
       format.xml  { head :ok }

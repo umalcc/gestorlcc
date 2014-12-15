@@ -1,6 +1,6 @@
 class SolicitudusuariolabsController < ApplicationController
 
-  before_action :login_requerido,:usuario?
+   before_action :login_requerido,:usuario?
 
   def index
     @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
@@ -21,13 +21,10 @@ class SolicitudusuariolabsController < ApplicationController
     session[:codigo_tramo]=0
     session[:borrar]=[]
     @asignatura=Asignatura.find(@solicitudlab.asignatura_id)
-    @titulacionselec=@asignatura.titulacion_id
-    @cursoselec=@solicitudlab.curso
     @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").to_a
-    @asignaturaselec=@solicitudlab.asignatura_id
-
     #@solicitudlab.fechaini=formato_europeo(@solicitudlab.fechaini)
     #@solicitudlab.fechafin=formato_europeo(@solicitudlab.fechafin)
+    getViewModel
     respond_to do |format|
       format.html
       format.xml  { render :xml => @solicitudusuariolab }
@@ -39,7 +36,7 @@ class SolicitudusuariolabsController < ApplicationController
 def new
     @solicitudlab = Solicitudlab.new
     @solicitudlab.preferencias=""
-    @solicitudlab.fechafin= formato_europeo(Date.today)
+    @solicitudlab.fechafin= Date.today
     @solicitudlab.fechaini=@solicitudlab.fechafin
     @solicitudlab.asignatura=Asignatura.new
     if (Asignatura::CURSO).first=="optativa"
@@ -47,7 +44,7 @@ def new
     else
       as=Asignatura::CURSO.first
     end
-    @titulaciones=Titulacion.order("id").to_a
+    getViewModel
     @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).to_a 
     session[:titulacion]=Titulacion.first
     session[:nivel]=Asignatura::CURSO.first
@@ -65,85 +62,21 @@ def new
 
   
   def create
-    
-    @solicitudlab = Solicitudlab.new(solicitudusuariolab_params)
-    @solicitudlab.usuario_id = @usuario_actual.id
-    @solicitudlab.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
-
-    @solicitudlab.fechasol=Date.today
-    if (Asignatura::CURSO).first=="optativa"
-      as='0'
-    else
-      as=Asignatura::CURSO.first
-    end
-    @titulaciones=Titulacion.order("id").to_a
-    @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).to_a 
-
-     
-    @solicitudlab.curso=params[:nivel].to_s
-    @solicitudlab.npuestos=params[:npuestos].to_s
-    @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
-    @solicitudlab.asignado="N"
+    @solicitudlab = Solicitudlab.new
+    #if (Asignatura::CURSO).first=="optativa"
+    #  as='0'
+    #else
+    #  as=Asignatura::CURSO.first
+    #end
+    saveModel(params)
+    #@asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).to_a 
 # HACER UN DRYYYYYYY!!!!!
-    periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
-    if periodoact.nil? # si es un user no puede cursar en periodo sin activaRRRRRRRR!!!!!!!!!
-       iniperiodoact=finperiodoact=Date.today 
-    else 
-       iniperiodoact=periodoact.inicio
-       finperiodoact=periodoact.fin
-        #if formato_europeo(params[:fechaini])<iniperiodoact.to_s
-        #  params[:fechaini]=formato_europeo(iniperiodoact)
-       #end
-       #if formato_europeo(params[:fechafin])>finperiodoact.to_s
-       #   params[:fechafin]=formato_europeo(finperiodoact)
-       #end
-    end
-
-    if params[:fechaini]==params[:fechafin]
-       @solicitudlab.tipo="S"
-    else
-       if params[:fechaini]==iniperiodoact and params[:fechafin]==finperiodoact
-         @solicitudlab.tipo="T"
-       else
-         @solicitudlab.tipo="P"
-       end
-    end
-  
-    if params[:fechaini]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-    
-      nfechaini=formato_europeo(params[:fechaini])
-      #fecha=params[:fechaini].to_s.split('-')
-      #nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-      @solicitudlab.fechaini=nfechaini.to_date
-    else
-      @solicitudlab.fechaini=nil
-    end
-
-    if params[:fechafin]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfechafin=formato_europeo(params[:fechafin])
-      #fecha=params[:fechafin].to_s.split('-')
-      #nfechafin=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-      @solicitudlab.fechafin=nfechafin.to_date
-    else
-      @solicitudlab.fechafin=nil
-    end
-
-    pref=""
-    @especiales=Laboratorio.where('especial=?',"t").to_a
-    for especial in @especiales do
-      nombre=especial.ssoo.to_s
-      if params[:"#{nombre}"].to_s!='in'
-        pref+=especial.nombre_lab.to_s+'-'+nombre+'-'+params[:"#{nombre}"]+";"
-      end
-    end
-    @solicitudlab.preferencias=pref
-    
+    getViewModel
     respond_to do |format|
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
       flash[:notice]="No hay tramos horarios en su peticion"
       format.html { render :action => "new" }
     else
-      @solicitudlab.asignatura=Asignatura.where("id = ?",@solicitudlab.asignatura_id ).first
       if @solicitudlab.save
         nuevo_id=@solicitudlab.id                       
         @tramos=session[:tramos_horarios].solicitudes
@@ -170,32 +103,42 @@ def new
     
   end
 
-def update
-    @solicitudlab = Solicitudlab.where("id = ? ",params[:solicitudlab][:id]).first
-    @asignatura=Asignatura.find(@solicitudlab.asignatura_id)
-   
-    @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").to_a
-   
-    respond_to do |format|
+def getViewModel
+@titulaciones=Titulacion.order("id").to_a
+@puestos=Laboratorio.find_by_sql(["select distinct(puestos) from laboratorios order by puestos"]).map{|l| l.puestos}
+if(@solicitudlab.asignatura == nil)
+  @solicitudlab.asignatura=Asignatura.new
+end
+@asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @solicitudlab.asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").to_a
 
-# UN DRYYY!!!!!
+end
 
-    periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
-    if periodoact.nil? # si es un user no puede cursar en periodo sin activaRRRRRRRR!!!!!!!!!
-       iniperiodoact=finperiodoact=Date.today 
-    else 
-       iniperiodoact=periodoact.inicio
-       finperiodoact=periodoact.fin
-        #if formato_europeo(params[:fechaini])<iniperiodoact.to_s
-        #  params[:fechaini]=formato_europeo(iniperiodoact)
-       #end
-       #if formato_europeo(params[:fechafin])>finperiodoact.to_s
-       #   params[:fechafin]=formato_europeo(finperiodoact)
-       #end
-    end
+def saveModel(params)
+  @solicitudlab.usuario_id = @usuario_actual.id
+  if @solicitudlab.asignatura==nil
+      @solicitudlab.asignatura=Asignatura.new
+  end
+  @solicitudlab.asignatura.id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+  @solicitudlab.asignatura.titulacion_id = params[:titulacion][:titulacion_id].to_i
+  @solicitudlab.asignatura.curso = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+  @solicitudlab.asignatura.curso = params[:nivel].to_s
+  @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
+  @solicitudlab.fechaini=params[:fechaini].to_date
+  logger.debug "Fechaaaa"+@solicitudlab.fechaini.to_s
+  @solicitudlab.fechafin = params[:fechafin].to_date
+  @solicitudlab.usuario_id = @usuario_actual.id
 
-    
-    if params[:fechaini]==params[:fechafin]
+  @solicitudlab.npuestos = params[:npuestos].to_s
+  @solicitudlab.fechasol = Date.today
+  periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
+  if periodoact.nil? # si es un user no puede cursar en periodo sin activaRRRRRRRR!!!!!!!!!
+    iniperiodoact=finperiodoact=Date.today 
+  else 
+    iniperiodoact=periodoact.inicio
+    finperiodoact=periodoact.fin
+  end
+  @solicitudlab.asignado="N"
+   if params[:fechaini]==params[:fechafin]
        @solicitudlab.tipo="S"
     else
        if params[:fechaini]==iniperiodoact and params[:fechafin]==finperiodoact
@@ -204,21 +147,8 @@ def update
          @solicitudlab.tipo="P"
        end
     end
-    if params[:fechaini]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfechaini=formato_europeo(params[:fechaini])
-      #fecha=params[:fechaini].to_s.split('-')
-      #nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-    end
-    
-    if params[:fechafin]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfechafin=formato_europeo(params[:fechafin])
-      #fecha=params[:fechafin].to_s.split('-')
-      #nfechafin=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-    end
-
-   pref=""
+     pref=""
    @especiales=Laboratorio.where("especial=?","t").to_a
-    
     for especial in @especiales do
       nombre=especial.ssoo.to_s
       if params[:"#{nombre}"].to_s!='in'
@@ -226,21 +156,20 @@ def update
       end
     end
     @solicitudlab.preferencias=pref
+end
 
+def update
+    @solicitudlab = Solicitudlab.where("id = ? ",params[:solicitudlab][:id]).first
+    saveModel(params)
+   
+    respond_to do |format|
+    getViewModel
+# UN DRYYY!!!!!
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
       flash[:notice]="No hay tramos horarios en su peticion"
       format.html { render :action => "edit" }
-    else
-      @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
-      if @solicitudlab.update_attributes(:fechaini => nfechaini,
-                                             :fechafin => nfechafin,
-                                             :usuario_id => @usuario_actual.id,
-                                             :asignatura_id => params[:asignatura][:id].to_i,
-                                             :curso => params[:nivel].to_s,
-					     :npuestos => params[:npuestos].to_s,
-					     :fechasol => Date.today
-                                             #:comentarios => Iconv.iconv('ascii//translit//ignore', 'utf-8', params[:comentarios])
-                                              )
+    else     
+      if @solicitudlab.save
 
         @tramos=session[:tramos_horarios].solicitudes
         @tramos.each {|tramo| if tramo.id.to_i<0

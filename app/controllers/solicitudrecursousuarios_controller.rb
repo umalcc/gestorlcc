@@ -115,10 +115,10 @@ class SolicitudrecursousuariosController < ApplicationController
   # DELETE /solicitudrecursos/1.xml
   def destroy
    @solicitudrecurso = Solicitudrecurso.find(params[:id])
-    @solicitudrecurso.destroy
+   @solicitudrecursos= Solicitudrecurso.where("usuario_id = ?",@usuario_actual.id).to_a 
+   @solicitudrecurso.destroy
     
     respond_to do |format|
-      @solicitudrecursos= Solicitudrecurso.where("usuario_id = ?",@usuario_actual.id).to_a
       format.html { render :action => "index" }
       format.xml  { head :ok }
     end
@@ -126,8 +126,8 @@ class SolicitudrecursousuariosController < ApplicationController
 
   def borra
     @solicitudrecurso = Solicitudrecurso.find(params[:reserva])
-    @solicitudrecurso.destroy
     familia=Recurso.where("identificador = ?",@solicitudrecurso.tipo).first.descripcion
+    @solicitudrecurso.destroy
     @recs=Recurso.where('descripcion = ? and disponible = ?',familia,"t").to_a
     @ids=@recs.map {|r| r.identificador}
     #session[:fechares]=params[:fecha]

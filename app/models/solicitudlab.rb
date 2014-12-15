@@ -10,6 +10,7 @@ has_many :asignacion
 # callbacks
 
 before_save:set_tipo
+
   
 def set_tipo
 if self.tipo!='X'  # si es una asignacion directa de admin
@@ -30,7 +31,7 @@ end
 # restricciones del modelo
 
 validate :fechas_correctas?, :fechaini_en_margenes?, :fechafin_en_margenes?
-validates_presence_of :fechaini, :fechafin, :asignatura_id,
+validates_presence_of :fechaini, :fechafin, :asignatura,
                        :message => ': No puede estar en blanco'
 
 def fechas_correctas?
