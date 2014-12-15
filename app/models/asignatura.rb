@@ -5,7 +5,7 @@ LETRA=["A","B","C","D"]
 TIPO=["OP","OB","TR"]
 AREA=["LSI","IT","CCIA"]
 COEF=[1,2,3,4,5]
-
+CUATRIMESTRE=["anual","1","2"]
 belongs_to :titulacion
 has_many :solicitudlab
 

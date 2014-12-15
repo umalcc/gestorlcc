@@ -17,18 +17,19 @@
           <dt>Acr&oacute;nimo *</dt>
           <dd><%= f.text_field :abrevia_asig, :size=>20 %></dd>
           <dt>Titulaci&oacute;n *</dt>
-          <dd><% @titulaciones=Titulacion.order("codigo").to_a %>
-              <%= select "titulacion", "nombre", @titulaciones.map {|t| [t.nombre]} %></dd>
+          <dd>
+              <%= select "asignatura", "titulacion", @titulaciones.map {|t| [t.nombre, t.id]},
+              html_options={:selected=>@asignatura.titulacion_id} %></dd>
           <dt>Curso *</dt>
-          <dd><%= select_tag "curso", options_for_select(Asignatura::CURSO)%></dd>
+          <dd><%= select_tag "curso", options_for_select(Asignatura::CURSO.each_with_index.map { |x,i| [x, i] },@asignatura.curso) %></dd>
           <dt>Area *</dt>
-          <dd><%= select_tag "area", options_for_select(Asignatura::AREA)%></dd>
+          <dd><%= select_tag "area", options_for_select(Asignatura::AREA,@asignatura.area_depto) %></dd>
           <dt>Coeficiente *</dt>
-          <dd><%= select_tag "coeficiente_exp", options_for_select(Asignatura::COEF)%></dd>
+          <dd><%= select_tag "coeficiente_exp", options_for_select(Asignatura::COEF,@asignatura.coeficiente_exp.to_i) %></dd>
           <dt>Tipo *</dt>
-          <dd><%= select_tag "caracter", options_for_select(Asignatura::TIPO)%></dd>
+          <dd><%= select_tag "caracter", options_for_select(Asignatura::TIPO,@asignatura.caracter) %></dd>
           <dt>Semes./Cuatr. *</dt>
-          <dd><%= select_tag "cuatrimestre", options_for_select(["anual","1","2"])%></dd>
+          <dd><%= select_tag "cuatrimestre", options_for_select(Asignatura::CUATRIMESTRE.each_with_index.map{|x,i| [x,i]},@asignatura.cuatrimestre)%></dd>
           <p><%= f.submit 'Guardar',:class=>"boton" %></p>     
       </dl> 
     </div><!-- del id="recuadro-azul" -->

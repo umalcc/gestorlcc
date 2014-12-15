@@ -147,45 +147,13 @@ class SolicitudlabexasController < ApplicationController
     saveObject(params)
     getViewModel
     respond_to do |format|
-    
-    #if params[:fecha]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-    #  nfecha=formato_europeo(params[:fecha])
-    #else
-    #  nfecha=@solicitudlabexa.fecha
-    #end
-
-    #pref=""
-
-    #@solicitudlabexa.fecha=nfecha
-    #@solicitudlabexa.usuario_id = params[:usuario][:identificador].to_i
-    #@solicitudlabexa.fechasol = Date.today
-    #@solicitudlabexa.horaini = params[:horaini][:comienzo]
-    #@solicitudlabexa.horafin = params[:horafin][:fin]
-    #@solicitudlabexa.curso = params[:nivel].to_s
-    #@solicitudlabexa.npuestos = params[:npuestos].to_s
-    #@solicitudlabexa.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
-    #for especial in @especiales do
-    #  nombre=especial.ssoo.to_s
-    #  if params[:"#{nombre}"].to_s!='in'
-    #    pref+=especial.nombre_lab.to_s+'-'+nombre+'-'+params[:"#{nombre}"]+";"
-    #  end
-    #end
-    #@solicitudlabexa.preferencias=pref
-    
-    #nombrecomp = params[:usuario][:identificador].to_s.split(', ')
-     #if((params[:asignatura]==nil)or (params[:asignatura][:id]==nil))
-     
-      #  flash[:notice]="El campo asignatura es obligatorio"
-      #  format.html { render :action=>"edit"}
-      #else 
-        #@solicitudlabexa.asignatura_id = params[:asignatura][:id].to_i
         getSelected
 
         if @solicitudlabexa.save
-        CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Cambios en ").deliver_later       
-        @solicitudlabexas = Solicitudlabexa.all
-        format.html { redirect_to :action => "index" }
-        format.xml  { head :ok }
+          CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Cambios en ").deliver_later       
+          @solicitudlabexas = Solicitudlabexa.all
+          format.html { redirect_to :action => "index" }
+          format.xml  { head :ok }
       else
         getSelected
         format.html { render :action => "edit"}

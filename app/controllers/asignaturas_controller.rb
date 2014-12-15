@@ -24,7 +24,7 @@ class AsignaturasController < ApplicationController
     @asignatura = Asignatura.new
     session[:titulacion]=Titulacion.order("id").first.id
     session[:nivel]=Asignatura::CURSO.first
-   
+    getViewModel
 
     respond_to do |format|
       format.html # new.html.erb
@@ -35,32 +35,27 @@ class AsignaturasController < ApplicationController
   # GET /asignaturas/1/edit
   def edit
     @asignatura = Asignatura.find(params[:id])
-    @titulaciones=Titulacion.order("codigo").to_a
-    @titulaselec=Titulacion.find(@asignatura.titulacion_id).nombre
-    @cursoselec=@asignatura.curso
-    @areaselec=@asignatura.area_depto
+    getViewModel
   end
 
-  # POST /asignaturas
-  # POST /asignaturas.xml
-  def create
-
-    @asignatura = Asignatura.new
+  def saveModel(params)
     @asignatura.codigo_asig=params[:asignatura][:codigo_asig]
     @asignatura.nombre_asig=params[:asignatura][:nombre_asig]
     @asignatura.caracter=params[:caracter]
     @asignatura.coeficiente_exp=params[:coeficiente_exp]
     @asignatura.curso=params[:curso]
     @asignatura.area_depto=params[:area]
-    if params[:cuatrimestre]=="anual"
-      @asignatura.cuatrimestre=0
-    else
-      @asignatura.cuatrimestre=params[:cuatrimestre]
-    end
+    @asignatura.cuatrimestre=params[:cuatrimestre]
     @asignatura.abrevia_asig=params[:asignatura][:abrevia_asig]
-    @asignatura.titulacion_id = Titulacion.find_by_nombre(params[:titulacion][:nombre]).id
-    
+    @asignatura.titulacion = Titulacion.find(params[:asignatura][:titulacion])
+  end
+  # POST /asignaturas
+  # POST /asignaturas.xml
+  def create
 
+    @asignatura = Asignatura.new
+    saveModel(params)
+ 
     respond_to do |format|
       if @asignatura.save
        # flash[:notice] = 'Asignatura fue creada con &eacute;xito.'
@@ -69,32 +64,31 @@ class AsignaturasController < ApplicationController
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @asignatura, :status => :created, :location => @asignatura }
       else
+        getViewModel
         format.html { render :action => "new"  }
         format.xml  { render :xml => @asignatura.errors, :status => :unprocessable_entity }
       end
     end
   end
 
+  def getViewModel
+    @titulaciones=Titulacion.order("codigo").to_a
+  end
+
   # PUT /asignaturas/1
   # PUT /asignaturas/1.xml
   def update
     @asignatura = Asignatura.find(params[:id])
-    @asignatura.titulacion_id = Titulacion.find_by_nombre(params[:titulacion][:nombre]).id
-    @asignatura.caracter=params[:caracter]
-    if params[:cuatrimestre]=="anual"
-      @asignatura.cuatrimestre=0
-    else
-      @asignatura.cuatrimestre=params[:cuatrimestre]
-    end
-
+    saveModel(params)
     respond_to do |format|
-      if @asignatura.update(asignatura_params)
+      if @asignatura.save
       #  flash[:notice] = 'Asignatura fue actualizada con &eacute;xito.'
         @asignaturas = Asignatura.order("titulacion_id,curso,cuatrimestre").to_a
         @cuenta = @asignaturas.size
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
       else
+
         format.html { render :action => "edit" }
         format.xml  { render :xml => @asignatura.errors, :status => :unprocessable_entity }
       end
@@ -149,7 +143,7 @@ class AsignaturasController < ApplicationController
  #render(:partial => 'listar', :layout => false)
 
     respond_to do |format|
-	format.js 
+	    format.js 
     end
   end
 
