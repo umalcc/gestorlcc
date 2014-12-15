@@ -24,7 +24,7 @@
             <dd id="combo_nivel"><%= select_tag "nivel", options_for_select(Asignatura::CURSO)%></dd>
 	    <dt>Asignatura *</dt>    
             <dd><SPAN id="combo_asignatura">
-                 <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]} %>
+                <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]}.uniq %>
                 </span><dd>
             </dd>
             <dt>Puestos *</dt>
@@ -97,10 +97,12 @@
         {
           var url="/asignaturas/combo_por_titulacion";
           var query=$("#titulacion_titulacion_id").val();
+          var nivel=$("#nivel").val();
           $.ajax({
             type:"POST",
             url:url,
-            data:{combo_titulacion:query}
+            data:{combo_titulacion:query,combo_nivel:nivel}
+
           });
         });
 
@@ -108,10 +110,11 @@
         {
           var url="/asignaturas/combo_por_nivel";
           var query=$("#nivel").val();
+           var titulacion=$("#titulacion_titulacion_id").val();
           $.ajax({
             type:"POST",
             url:url,
-            data:{combo_nivel:query}
+            data:{combo_nivel:query,combo_titulacion:titulacion}
           });
         });
     });

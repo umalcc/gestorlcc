@@ -126,10 +126,9 @@ p.edited {
 }
 
 #cubos {
-        position: absolute;
         top: 825px;
         float: center;
-        padding: 25px;
+        padding: 55px 25px 25px 25px;
         width: 100px;
 	height: 80px;
 }
