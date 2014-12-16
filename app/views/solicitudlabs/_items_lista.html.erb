@@ -72,14 +72,14 @@
                                         <%="Titulacion :"+asig.titulacion.abrevia %>
 			    </div>
              <%= asig.abrevia_asig %></td><!-- nombre abreviado de la asignatura -->
-         <td style="text-align:center"><% if i.curso.to_s=="sin curso" %>
+         <td style="text-align:center"><% if i.asignatura.curso.to_s=="sin curso" %>
                                           <%= "-" %>
                                        <% else %>
                                           <%= i.curso %>
                                        <% end %></td>
          <td style="text-align:center"><%= i.npuestos %></td>
-         <td><%= fecha_europea(i.fechaini) %></td>
-         <td><%= fecha_europea(i.fechafin) %></td>
+         <td><%= i.fechaini %></td>
+         <td><%= i.fechafin %></td>
          <td><% @tramos=i.peticionlab %>
              <table>
                 <%=render(:partial => "/solicitudrecursos/tramo_peticion", :collection=> @tramos ) %>
