@@ -69,6 +69,7 @@ def new
     #  as=Asignatura::CURSO.first
     #end
     saveModel(params)
+    logger.debug "Asignaturaaa"+@solicitudlab.asignatura.id.to_s
     #@asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).to_a 
 # HACER UN DRYYYYYYY!!!!!
     getViewModel
@@ -118,13 +119,11 @@ def saveModel(params)
   if @solicitudlab.asignatura==nil
       @solicitudlab.asignatura=Asignatura.new
   end
-  @solicitudlab.asignatura.id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+  @solicitudlab.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
   @solicitudlab.asignatura.titulacion_id = params[:titulacion][:titulacion_id].to_i
-  @solicitudlab.asignatura.curso = params[:asignatura][:id].to_i unless params[:asignatura].nil?
   @solicitudlab.asignatura.curso = params[:nivel].to_s
   @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
   @solicitudlab.fechaini=params[:fechaini].to_date
-  logger.debug "Fechaaaa"+@solicitudlab.fechaini.to_s
   @solicitudlab.fechafin = params[:fechafin].to_date
   @solicitudlab.usuario_id = @usuario_actual.id
 

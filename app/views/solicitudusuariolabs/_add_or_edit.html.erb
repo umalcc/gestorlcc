@@ -151,28 +151,29 @@
 <script type="text/javascript">
 $(function()
   {
-     $("#titulacion_titulacion_id").change(function()
-      {
-        var url="/asignaturas/combo_por_titulacion";
-        var query=$("#titulacion_titulacion_id").val();
-        $.ajax({
-          url:url,
-          type:"POST",
-          data:{combo_titulacion:query}
+    $("#titulacion_titulacion_id").change(function()
+        {
+          var url="/asignaturas/combo_por_titulacion";
+          var nivel=$("#nivel").val();
+          var query=$("#titulacion_titulacion_id").val();
+          $.ajax({
+            type:"POST",
+            url:url,
+            data:{combo_titulacion:query,combo_nivel:nivel}
+          });
         });
-      });
 
-      $("#nivel").change(function()
-      {
-        var url="/asignaturas/combo_por_nivel";
-        var query=$("#nivel").val();
-        var titulacion = $("#titulacion_titulacion_id").val();
-        $.ajax({
-          url:url,
-          type:"POST",
-          data:{combo_nivel:query,titulacion:titulacion}
+       $("#nivel").change(function()
+        {
+          var url="/asignaturas/combo_por_nivel";
+          var query=$("#nivel").val();
+          var titulacion=$("#titulacion_titulacion_id").val();
+          $.ajax({
+            type:"POST",
+            url:url,
+            data:{combo_nivel:query,titulacion:titulacion}
+          });
         });
-      });
    $("#anadirLink").click(function()
       {
         var url="/solicitar/anadir";

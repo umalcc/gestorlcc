@@ -31,7 +31,7 @@ end
 # restricciones del modelo
 
 validate :fechas_correctas?, :fechaini_en_margenes?, :fechafin_en_margenes?
-validates_presence_of :fechaini, :fechafin, :asignatura,
+validates_presence_of :fechaini, :fechafin, :asignatura_id,
                        :message => ': No puede estar en blanco'
 
 def fechas_correctas?

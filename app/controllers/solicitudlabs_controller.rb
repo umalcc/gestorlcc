@@ -57,7 +57,7 @@ class SolicitudlabsController < ApplicationController
     if @solicitudlab.asignatura==nil
       @solicitudlab.asignatura=Asignatura.new
     end
-    @solicitudlab.asignatura.id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+    @solicitudlab.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
     @solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
     @solicitudlab.fechasol=Date.today
     @solicitudlab.npuestos=params[:npuestos].to_s
