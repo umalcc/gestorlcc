@@ -9,174 +9,176 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended to check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141111193309) do
+ActiveRecord::Schema.define(version: 20141220100555) do
 
-  create_table "asignaciondefs", :force => true do |t|
+  create_table "asignaciondefs", force: :cascade do |t|
     t.integer  "solicitudlab_id"
     t.integer  "peticionlab_id"
     t.integer  "laboratorio_id"
-    t.string   "horaini"
-    t.string   "horafin"
+    t.string   "horaini",         limit: 255
+    t.string   "horafin",         limit: 255
     t.integer  "dia_id"
-    t.string   "mov_dia"
-    t.string   "mov_hora"
+    t.string   "mov_dia",         limit: 255
+    t.string   "mov_hora",        limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "generica"
+  end
+
+  create_table "asignacionexas", force: :cascade do |t|
+    t.integer  "solicitudlab_id"
+    t.integer  "peticionlab_id"
+    t.integer  "laboratorio_id"
+    t.string   "horaini",         limit: 255
+    t.string   "horafin",         limit: 255
+    t.integer  "dia_id"
+    t.string   "mov_dia",         limit: 255
+    t.string   "mov_hora",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "asignacionexas", :force => true do |t|
-    t.integer  "solicitudlab_id"
-    t.integer  "peticionlab_id"
-    t.integer  "laboratorio_id"
-    t.string   "horaini"
-    t.string   "horafin"
-    t.integer  "dia_id"
-    t.string   "mov_dia"
-    t.string   "mov_hora"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "asignacionlabexadefs", :force => true do |t|
+  create_table "asignacionlabexadefs", force: :cascade do |t|
     t.integer  "solicitudlabexa_id"
     t.integer  "laboratorio_id"
     t.date     "dia"
-    t.string   "horaini"
-    t.string   "horafin"
-    t.string   "mov_dia"
-    t.string   "mov_hora"
+    t.string   "horaini",            limit: 255
+    t.string   "horafin",            limit: 255
+    t.string   "mov_dia",            limit: 255
+    t.string   "mov_hora",           limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "asignacionlabexas", :force => true do |t|
+  create_table "asignacionlabexas", force: :cascade do |t|
     t.integer  "solicitudlabexa_id"
     t.integer  "laboratorio_id"
     t.date     "dia"
-    t.string   "horaini"
-    t.string   "horafin"
-    t.string   "mov_dia"
-    t.string   "mov_hora"
+    t.string   "horaini",            limit: 255
+    t.string   "horafin",            limit: 255
+    t.string   "mov_dia",            limit: 255
+    t.string   "mov_hora",           limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "asignacions", :force => true do |t|
+  create_table "asignacions", force: :cascade do |t|
     t.integer  "solicitudlab_id"
     t.integer  "peticionlab_id"
     t.integer  "laboratorio_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "horaini"
-    t.string   "horafin"
+    t.string   "horaini",         limit: 255
+    t.string   "horafin",         limit: 255
     t.integer  "dia_id"
-    t.string   "mov_dia"
-    t.string   "mov_hora"
+    t.string   "mov_dia",         limit: 255
+    t.string   "mov_hora",        limit: 255
+    t.boolean  "generica"
   end
 
-  create_table "asignaturas", :force => true do |t|
-    t.string   "codigo_asig"
-    t.string   "nombre_asig"
-    t.string   "area_depto"
-    t.string   "caracter"
+  create_table "asignaturas", force: :cascade do |t|
+    t.string   "codigo_asig",     limit: 255
+    t.string   "nombre_asig",     limit: 255
+    t.string   "area_depto",      limit: 255
+    t.string   "caracter",        limit: 255
     t.float    "coeficiente_exp"
     t.integer  "curso"
     t.integer  "cuatrimestre"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "abrevia_asig"
+    t.string   "abrevia_asig",    limit: 255
     t.integer  "titulacion_id"
   end
 
-  create_table "dias", :force => true do |t|
+  create_table "dias", force: :cascade do |t|
     t.integer  "num"
-    t.string   "nombre"
+    t.string   "nombre",     limit: 255
     t.boolean  "en_uso"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "historicoasigexas", :force => true do |t|
+  create_table "historicoasigexas", force: :cascade do |t|
     t.date     "fecha_archivo"
-    t.string   "periodo"
-    t.string   "nombre_usu"
-    t.string   "apellidos_usu"
-    t.string   "nombre_asig"
-    t.string   "nombre_tit"
-    t.string   "curso"
-    t.string   "nombre_lab"
+    t.string   "periodo",       limit: 255
+    t.string   "nombre_usu",    limit: 255
+    t.string   "apellidos_usu", limit: 255
+    t.string   "nombre_asig",   limit: 255
+    t.string   "nombre_tit",    limit: 255
+    t.string   "curso",         limit: 255
+    t.string   "nombre_lab",    limit: 255
     t.integer  "puestos"
-    t.string   "horaini"
-    t.string   "horafin"
+    t.string   "horaini",       limit: 255
+    t.string   "horafin",       limit: 255
     t.date     "dia"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "historicoasigs", :force => true do |t|
+  create_table "historicoasigs", force: :cascade do |t|
     t.date     "fecha_archivo"
-    t.string   "periodo"
-    t.string   "nombre_usu"
-    t.string   "apellidos_usu"
-    t.string   "nombre_asig"
-    t.string   "nombre_tit"
-    t.string   "curso"
-    t.string   "nombre_lab"
+    t.string   "periodo",       limit: 255
+    t.string   "nombre_usu",    limit: 255
+    t.string   "apellidos_usu", limit: 255
+    t.string   "nombre_asig",   limit: 255
+    t.string   "nombre_tit",    limit: 255
+    t.string   "curso",         limit: 255
+    t.string   "nombre_lab",    limit: 255
     t.integer  "puestos"
-    t.string   "horaini"
-    t.string   "horafin"
+    t.string   "horaini",       limit: 255
+    t.string   "horafin",       limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "diasem"
+    t.string   "diasem",        limit: 255
   end
 
-  create_table "horarios", :force => true do |t|
+  create_table "horarios", force: :cascade do |t|
     t.integer  "num"
-    t.string   "comienzo"
-    t.string   "fin"
+    t.string   "comienzo",   limit: 255
+    t.string   "fin",        limit: 255
     t.boolean  "en_uso"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "horasexas", :force => true do |t|
+  create_table "horasexas", force: :cascade do |t|
     t.integer  "num"
-    t.string   "comienzo"
-    t.string   "fin"
+    t.string   "comienzo",   limit: 255
+    t.string   "fin",        limit: 255
     t.boolean  "en_uso"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "laboratorios", :force => true do |t|
-    t.string   "nombre_lab"
+  create_table "laboratorios", force: :cascade do |t|
+    t.string   "nombre_lab",  limit: 255
     t.integer  "puestos"
-    t.string   "ssoo"
-    t.string   "descr_HW"
-    t.string   "descr_SW"
-    t.string   "comentarios"
+    t.string   "ssoo",        limit: 255
+    t.string   "descr_HW",    limit: 255
+    t.string   "descr_SW",    limit: 255
+    t.string   "comentarios", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "aviso"
     t.boolean  "especial"
   end
 
-  create_table "periodos", :force => true do |t|
-    t.string   "nombre"
+  create_table "periodos", force: :cascade do |t|
+    t.string   "nombre",     limit: 255
     t.date     "inicio"
     t.date     "fin"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.date     "iniciosol"
     t.date     "finsol"
-    t.string   "tipo"
+    t.string   "tipo",       limit: 255
     t.boolean  "activo"
     t.boolean  "admision"
   end
 
-  create_table "peticionlabs", :force => true do |t|
+  create_table "peticionlabs", force: :cascade do |t|
     t.text     "diasemana"
     t.text     "horaini"
     t.text     "horafin"
@@ -185,36 +187,36 @@ ActiveRecord::Schema.define(:version => 20141111193309) do
     t.integer  "solicitudlab_id"
   end
 
-  create_table "peticions", :force => true do |t|
+  create_table "peticions", force: :cascade do |t|
     t.integer  "solicitudrecurso_id"
-    t.string   "diasemana"
-    t.string   "horaini"
-    t.string   "horafin"
+    t.string   "diasemana",           limit: 255
+    t.string   "horaini",             limit: 255
+    t.string   "horafin",             limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "recursos", :force => true do |t|
-    t.string   "descripcion"
-    t.string   "identificador"
-    t.string   "caracteristicas"
+  create_table "recursos", force: :cascade do |t|
+    t.string   "descripcion",     limit: 255
+    t.string   "identificador",   limit: 255
+    t.string   "caracteristicas", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "disponible"
     t.text     "aviso"
   end
 
-  create_table "sessions", :force => true do |t|
-    t.string   "session_id", :null => false
+  create_table "sessions", force: :cascade do |t|
+    t.string   "session_id", limit: 255, null: false
     t.text     "data"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
-  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id"
+  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at"
 
-  create_table "solicitudlabexas", :force => true do |t|
+  create_table "solicitudlabexas", force: :cascade do |t|
     t.date     "fechasol"
     t.integer  "usuario_id"
     t.integer  "asignatura_id"
@@ -227,11 +229,11 @@ ActiveRecord::Schema.define(:version => 20141111193309) do
     t.text     "horafin"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "tipo"
-    t.string   "asignado"
+    t.string   "tipo",          limit: 255
+    t.string   "asignado",      limit: 255
   end
 
-  create_table "solicitudlabs", :force => true do |t|
+  create_table "solicitudlabs", force: :cascade do |t|
     t.date     "fechaini"
     t.date     "fechafin"
     t.date     "fechasol"
@@ -243,41 +245,41 @@ ActiveRecord::Schema.define(:version => 20141111193309) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "preferencias"
-    t.string   "tipo"
-    t.string   "asignado"
+    t.string   "tipo",          limit: 255
+    t.string   "asignado",      limit: 255
   end
 
-  create_table "solicitudrecursos", :force => true do |t|
+  create_table "solicitudrecursos", force: :cascade do |t|
     t.date     "fechareserva"
     t.date     "fechasol"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "usuario"
-    t.string   "tipo"
-    t.string   "motivos"
+    t.string   "usuario",      limit: 255
+    t.string   "tipo",         limit: 255
+    t.string   "motivos",      limit: 255
     t.integer  "usuario_id"
-    t.string   "horaini"
-    t.string   "horafin"
+    t.string   "horaini",      limit: 255
+    t.string   "horafin",      limit: 255
   end
 
-  create_table "titulacions", :force => true do |t|
+  create_table "titulacions", force: :cascade do |t|
     t.integer  "codigo"
-    t.string   "nombre"
-    t.string   "abrevia"
+    t.string   "nombre",     limit: 255
+    t.string   "abrevia",    limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "usuarios", :force => true do |t|
-    t.string   "identificador"
-    t.string   "password"
-    t.string   "nombre"
-    t.string   "apellidos"
-    t.string   "email"
+  create_table "usuarios", force: :cascade do |t|
+    t.string   "identificador", limit: 255
+    t.string   "password",      limit: 255
+    t.string   "nombre",        limit: 255
+    t.string   "apellidos",     limit: 255
+    t.string   "email",         limit: 255
     t.boolean  "admin"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "despacho"
+    t.string   "despacho",      limit: 255
     t.integer  "telefono"
     t.integer  "usuario_id"
   end
