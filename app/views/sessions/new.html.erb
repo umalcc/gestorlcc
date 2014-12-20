@@ -6,7 +6,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
   <title>Gestor de recursos del Depto. de LCC (UMA)</title>
-  <link rel="shortcut icon" href="../images/favicon.ico">
+  <link rel="shortcut icon" href="/images/favicon.ico">
   <%= stylesheet_link_tag 'scaffold','dptolcc2' %>
 </head>
 
@@ -18,7 +18,7 @@
     <a href="http://www.lcc.uma.es">
     <%= image_tag ("logo_lcc.png"), :border=>0,:width=>"195",:height=>"100",:id=>"logotipo" %></a>
     <div class="centre0" id="autenticacion">
-       <%= form_tag session_path, :name=>"login_form",:onsubmit=>"return true;" do %>
+       <%= form_tag session_path, :name=>"login_form",:submit=>"return true;" do %>
           <p><%= label(:nombre, "Identificador:") %>
              <%= text_field_tag 'login', nil,:class=>"usuario", :size=>10 %></p>
           <p><%= label(:password, "Password:") %>

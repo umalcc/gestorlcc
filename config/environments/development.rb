@@ -26,7 +26,7 @@ Gestorlcc::Application.configure do
 # with SQLite, MySQL, and PostgreSQL)
 #config.active_record.auto_explain_threshold_in_seconds = 0.5
 # Configure static asset server for tests with Cache-Control for performance
-config.serve_static_assets = true
+config.serve_static_files = true
 config.static_cache_control = 'public, max-age=3600'
 config.eager_load=false
 end

@@ -22,9 +22,7 @@ class ApplicationController < ActionController::Base
 
     def comprobar_usuario_login
       @usuario_actual=nil
-     logger.debug "Comprobandoooooooooo"+session[:user_id].to_s
        return unless session[:user_id]
-	logger.debug "Usuariooooooo"+ session[:user_id].to_s
        @usuario_actual = Usuario.find_by_id(session[:user_id])
     end
 
