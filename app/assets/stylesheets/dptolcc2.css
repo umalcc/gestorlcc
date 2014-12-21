@@ -1558,3 +1558,9 @@ div.centrepeque form {
 	float: left;
 	padding: 0 20px
 }
+
+table#tipo_reserva, td
+{
+
+	width:450px;
+}

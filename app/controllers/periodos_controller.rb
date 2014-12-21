@@ -23,7 +23,11 @@ class PeriodosController < ApplicationController
   # GET /periodos/new.xml
   def new
     @periodo = Periodo.new
-    @dia=formato_europeo(Date.today)
+    @periodo.inicio = Date.today
+    @periodo.fin = Date.today
+    @periodo.iniciosol = Date.today
+    @periodo.finsol = Date.today
+    ##@dia=formato_europeo(Date.today)
     #hoy=Date.today.to_s.split('-') 
     #@dia=hoy[2]+'-'+hoy[1]+'-'+hoy[0]
 
@@ -38,52 +42,16 @@ class PeriodosController < ApplicationController
     @periodo = Periodo.find(params[:id])
     @tipoact=@periodo.tipo
     @activo="NO" unless @periodo.activo?
-    @admision="NO" unless @periodo.admision?
-    logger.debug "Fechaa"+ @periodo.iniciosol.to_s 
+    @admision="NO" unless @periodo.admision? 
   end
 
   # POST /periodos
   # POST /periodos.xml
   def create
-    @periodo = Periodo.new(periodo_params)
-    @periodo.tipo=params[:tipo]
- #   @periodo.activo=params[:activo]=="SI"
- 
-    if params[:inicio]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      ninicio=formato_europeo(params[:inicio])
-      #fecha=params[:inicio].to_s.split('-')
-      #ninicio=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-      @periodo.inicio=ninicio.to_date
-    else
-      @periodo.inicio=nil
-    end
-    
-    if params[:fin]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfin=formato_europeo(params[:fin])
-      #fecha=params[:fin].to_s.split('-')
-      #nfin=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-      @periodo.fin=nfin.to_date
-    else
-      @periodo.fin=nil
-    end
-
-    if params[:iniciosol]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      ninicio=formato_europeo(params[:iniciosol])
-      #fecha=params[:iniciosol].to_s.split('-')
-      #ninicio=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-      @periodo.iniciosol=ninicio.to_date
-    else
-      @periodo.iniciosol=nil
-    end
-
-    if params[:finsol]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfin=formato_europeo(params[:finsol])
-      #fecha=params[:finsol].to_s.split('-')
-      #nfin=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-      @periodo.finsol=nfin.to_date
-    else
-      @periodo.finsol=nil
-    end
+    @periodo = Periodo.new
+    saveModel(params)
+    ###@periodo.tipo=params[:tipo]
+    #@periodo.activo=params[:activo]=="SI"
 
     respond_to do |format|
       if @periodo.save
@@ -101,49 +69,19 @@ class PeriodosController < ApplicationController
   # PUT /periodos/1.xml
   def update
     @periodo = Periodo.find(params[:id])
-    @periodo.tipo=params[:tipo]
+    saveModel(params)
     @periodo.activo=params[:activo]=="1"
     @periodo.admision=params[:admision]=="1"
 
-    if params[:inicio]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      ninicio=formato_europeo(params[:inicio])
-      @periodo.inicio=ninicio.to_date
-    else
-      @periodo.inicio=nil
-    end
-    
-    if params[:fin]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfin=formato_europeo(params[:fin])
-      @periodo.fin=nfin.to_date
-    else
-      @periodo.fin=nil
-    end
-
-    if params[:iniciosol]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      ninicio=formato_europeo(params[:iniciosol])
-      @periodo.iniciosol=ninicio.to_date
-    else
-      @periodo.iniciosol=nil
-    end
-
-    if params[:finsol]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfin=formato_europeo(params[:finsol])
-      @periodo.finsol=nfin.to_date
-    else
-      @periodo.finsol=nil
-    end
-
     respond_to do |format|
-           if @periodo.update(periodo_params)
-              
-              @periodos = Periodo.order("inicio").to_a
-              format.html { redirect_to :action => "index" }
-              format.xml  { head :ok }
-           else
-
-              format.html { render :action => "edit" }
-              format.xml  { render :xml => @periodo.errors, :status => :unprocessable_entity }
-           end
+      if @periodo.update(periodo_params)  
+         @periodos = Periodo.order("inicio").to_a
+         format.html { redirect_to :action => "index" }
+         format.xml  { head :ok }
+      else
+         format.html { render :action => "edit" }
+         format.xml  { render :xml => @periodo.errors, :status => :unprocessable_entity }
+      end
     end
   end
 
@@ -363,6 +301,15 @@ def enviar_correo_activo_on
   end
 
   private
+
+   def saveModel(params)
+    @periodo.nombre = params[:nombre]
+    @periodo.tipo=params[:tipo]
+    @periodo.inicio=params[:inicio]
+    @periodo.fin=params[:fin]
+    @periodo.iniciosol=params[:iniciosol]
+    @periodo.finsol=params[:finsol]
+   end
 
    def periodo_params
       params.require(:periodo).permit(:nombre, :inicio, :fin, :tipo, :iniciosol, :finsol, :admision, :activo)

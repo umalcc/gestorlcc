@@ -77,9 +77,15 @@
       					           border-style: solid;
       					           background-color: white;width:200px;
 					                 font-weight: bold; padding: 5px;';>
-                                   <%= "Asig: "+a.solicitudlab.asignatura.abrevia_asig %><br>
+                           <!--Si la reserva es normal, es decir, generica = false, mostrar datos asignatura, titulación y curso-->
+                           <% if a.generica == 'f' %>
+                                <%= "Asig: "+a.solicitudlab.asignatura.abrevia_asig %><br>
                                    <%= "( "+a.solicitudlab.asignatura.titulacion.abrevia+" )" %><br/>
-				   <%= "Curso: "+a.solicitudlab.curso %><%=" Puestos: "+a.solicitudlab.npuestos.to_s %><br>
+				                           <%= "Curso: "+a.solicitudlab.curso %>
+                           <%else%>
+                              Reserva genérica<br>
+                           <%end%>
+                                   <%=" Puestos: "+a.solicitudlab.npuestos.to_s %><br>
                                    <%= "Profesor: "+a.solicitudlab.usuario.nombre+" "+a.solicitudlab.usuario.apellidos %><br>
                                    <%= "Soft: "+a.solicitudlab.comentarios %><br>
                                    <%= "Ocupacion: "%>
@@ -103,7 +109,11 @@
 			      <div style="color:#15611c"><!-- puntual -->
                              <% end %>
                             <% end %><% end %>
+                            <%if a.generica == 'f'%>
                             <%= a.solicitudlab.asignatura.abrevia_asig %><!-- se muestra abrevia_asig e info flotante -->
+                            <%else%>
+                              RG
+                            <%end%>
                             </div>
 
 			    <% if a.solicitudlab.tipo=="X" %><!-- si la asignacion es directa, se podra eliminar -->

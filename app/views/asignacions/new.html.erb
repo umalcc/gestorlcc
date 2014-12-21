@@ -3,59 +3,62 @@
         <%= image_tag ("pointer.gif") %>Asignaci&oacute;n de laboratorios: Asignaci&oacute;n directa
      </p>
      <div id="recuadro">
-        <p><%= image_tag ("bg_separ.gif") %></p>
+       <p><%= image_tag ("bg_separ.gif") %></p>
         <div id="recuadro-azul" style="height:600px">
-          <%= form_for @solicitudlab,  :html=> {:name => "formulario"} do |f| %>
+          <%= form_for @asignacion,:url => '/asignacions/graba', :action=>"graba",  :html=> {:name => "formulario"} do |f| %>
           <dl>
+
             <dt>Fecha solicitud</dt>
-            <dd><%= @dia=@solicitudlab.fechaini=@solicitudlab.fechafin= fecha_europea(Date.today) %></dd>
+            <dd><%= @asignacion.solicitudlab.fechasol%></dd>
+
             <dt>Usuario *</dt>
-            <dd><% @usuarios=Usuario.order("apellidos").to_a %>
-                <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre]} %>
+            <dd>
+                <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]},
+                              html_options={:selected=>@asignacion.solicitudlab.usuario_id } %>
             </dd>
+
             <dt>Titulaci&oacute;n *</dt>
-            <dd id="combo_titulacion"><%@titulaciones=Titulacion.order("nombre").to_a%>
-                <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]} %></dd>
-            <dt>Curso *</dt>
-            <dd id="combo_nivel"><%= select_tag "nivel", options_for_select(Asignatura::CURSO)%></dd>
-            <dt>Grupo *</dt>
-            <dd><%= select_tag "curso", options_for_select(Asignatura::LETRA)%></dd>
-	    <dt>Asignatura *</dt>    
-            <dd><SPAN id="combo_asignatura">
-                <% @asignaturas=Asignatura.order("nombre_asig").to_a %>
-                <%= select "asignatura", "nombre_asig", @asignaturas.map {|t| [t.nombre_asig]} %>
-                </span><dd>
-                <%= observe_field 'titulacion_titulacion_id', 
-                            :url =>{:controller => 'asignaturas', :action => 'combo_por_titulacion'}, 
-                            :update => 'combo_asignatura', 
-                            :with => 'combo_titulacion' %>
-                <%= observe_field 'nivel', 
-                            :url =>{:controller => 'asignaturas', :action => 'combo_por_nivel'}, 
-                            :update => 'combo_asignatura', 
-                            :with => 'combo_nivel' %>
+            <dd id="combo_titulacion">
+                <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]}, 
+                    html_options={:selected=>@asignacion.solicitudlab.asignatura.titulacion_id } %>
             </dd>
+
+            <dt>Curso *</dt>
+            <dd id="combo_nivel">
+            <%= select_tag "nivel", options_for_select(Asignatura::CURSO.each_with_index.map{|x,i|[x,i]},@asignacion.solicitudlab.asignatura.curso)%>
+            </dd>
+
+            <dt>Asignatura *</dt>    
+            <dd><SPAN id="combo_asignatura">
+                                <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]}, 
+                    html_options={:selected=>@asignacion.solicitudlab.asignatura.id } %>
+                </span><dd>
+            </dd>
+
             <dt>Laboratorio *</dt>
-            <dd><% @laboratorios=Laboratorio.order("nombre_lab").to_a %>                                             
-                <%= select "laboratorio_id", "nombre_lab", @laboratorios.map {|l| [l.nombre_lab]} %>
-            </dd>            
+            <dd>                                             
+                <%= select "laboratorio", "laboratorio_id", @laboratorios.map {|l| [l.nombre_lab, l.id]}, 
+                    html_options={:selected=>@asignacion.laboratorio_id } %>
+            </dd>  
+
             <dt>Fecha inicio *</dt>
             <dd>
               <%= f.text_field :fechaini, :size=>12, :name=>"fechaini",  :id=>"DPC_fechaini_DD-MM-YYYY", 
-                  :value=>@dia %></dd>
+                  :value=>@asignacion.solicitudlab.fechaini.strftime('%d-%m-%Y') %></dd>
             <dt>Fecha fin *</dt>
             <dd><%= f.text_field :fechafin, :size=>12, :name=>"fechafin", :id=>"DPC_fechafin_DD-MM-YYYY",
-                  :value=>@dia %>  </dd>
+                  :value=>@asignacion.solicitudlab.fechafin.strftime('%d-%m-%Y')  %>  </dd>
             <dt>Soft. requerido</dt>
-            <dd><%= f.text_area :comentarios, :rows =>4, :cols=>40, :name=>"comentarios" %></dd>
+            <dd><%= f.text_area :comentarios, :rows =>4, :cols=>40, :name=>"comentarios", :value =>@asignacion.solicitudlab.comentarios  %></dd>
             
            <dt>Tramos horarios *</dt>
            <dd><table>
                 <tr> 
                   <td id="subform"><!-- los tramos a visualizar -->
-                    <% @tramos=session[:tramos_horarios].solicitudes %> 
+                    
                     <table id="tramos">
                       <% if @tramos.empty? %>
-                        <tr><td><%= h "Introduzca tramos horarios" %></td></tr>
+                        <tr><td><%= "Introduzca tramos horarios" %></td></tr>
                       <% else %>
                         <%=render(:partial => "solicitudlabs/muestra_tramo", :collection=> @tramos) %> 
                       <% end %>
@@ -87,20 +90,15 @@
                                        <%= select "horaini", "comienzo", @horas.map {|h| [h.comienzo] }%></td>
                           <td width=60><%= select "horafin", "fin", @horas.map {|h| [h.fin] }%></td>
                           <td width=15>
-                              <%= link_to(image_tag("mas.png",:border=>0),
-                                            :submit   => "subformulario",
-                                            :url      => { :controller=>:solicitar,:action => 'anadir' },
-                                            :success  => 'mostrardiv
-                                                         ("asignar")',
-                                            :remote => true ) %>
+                              <%= link_to(image_tag("mas.png",:border=>0), "#", :id => "anadirLink") %>
                           </td>
                         </tr>
                       </table><!-- de subformulario --></td>
                  </tr>
                 </table></dd><!-- de tramos horarios -->
-               <p><%= form_tag '../asignar/asigna_directa', :method=>:get do -%>
-                     <%= submit_tag "Asignar", :class=>"botonescondido",:id=>"asignar" %>
-                  <% end -%></p>
+               <p>
+                     <%= f.submit "Asignar",:id=>"asignar" %>
+               </p>
           </dl>  
         </div><!-- de recuadro-azul -->
         <div id="errores">
@@ -116,3 +114,58 @@
         <% end %><!-- de form_for -->
      </div><!-- de recuadro -->
 </div><!-- de central -->
+
+<script type="text/javascript" charset="utf-8">
+
+$(function(){
+  $("#titulacion_titulacion_id").change(function()
+{
+  var nivel=$("#nivel").val();
+  var titulacion=$("#titulacion_titulacion_id").val();
+  $.ajax({
+           beforeSend:function(xhr)
+           {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+           },
+           type:"POST",
+           url:"/asignaturas/combo_por_titulacion",
+           data:{combo_nivel:nivel,titulacion:titulacion}
+        });
+});
+
+$("#nivel").change(function()
+{
+  var titulacion=$("#titulacion_titulacion_id").val();
+  $.ajax({
+           beforeSend:function(xhr)
+           {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+           },
+           type:"POST",
+           url:"/asignaturas/combo_por_nivel",
+           data:{combo_nivel:$("#nivel").val(),titulacion:titulacion}
+        });
+});
+
+$("#anadirLink").click(function()
+{
+  $.ajax({
+           beforeSend:function(xhr)
+           {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+           },
+           type:"POST",
+           url:"/solicitar/anadir",
+           data:{diasemana_nombre:$("#diasemana_nombre").val(), horafin_fin:$("#horafin_fin").val(), 
+                 horaini_comienzo:$("#horaini_comienzo").val()},
+           success: function()
+           {
+                mostrardiv("asignar");
+           }
+        });
+   });
+
+});
+
+
+</script>

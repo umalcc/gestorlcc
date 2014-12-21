@@ -110,10 +110,12 @@ class AsignaturasController < ApplicationController
   def combo_por_titulacion
 
     session[:titulacion]=params[:combo_titulacion]
+    logger.debug "nivel" + params[:combo_nivel].to_s
     if(params[:combo_nivel]!=nil)
       session[:combo_nivel]=params[:combo_nivel]
     end
-    @asignaturas=Asignatura.order("nombre_asig").where('titulacion_id = ? and curso = ?', session[:titulacion].to_i,session[:nivel].to_i).to_a
+    logger.debug "session nivel " + session[:combo_nivel].to_s
+    @asignaturas=Asignatura.order("nombre_asig").where('titulacion_id = ? and curso = ?', session[:titulacion].to_i,params[:combo_nivel]).to_a
 
     respond_to do |format|
       format.js

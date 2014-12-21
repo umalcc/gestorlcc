@@ -339,53 +339,65 @@ class AsignacionsController < ApplicationController
   end
 
   def asigna_directa
-    @solicitudlab = Solicitudlab.new
+    @asignacion = Asignacion.new
+    @asignacion.generica = false
+    @asignacion.solicitudlab=Solicitudlab.new
+    @asignacion.solicitudlab.asignatura=Asignatura.new(:curso =>0)
+    @asignacion.solicitudlab.fechasol= Date.today
+    @asignacion.solicitudlab.fechaini= Date.today
+    @asignacion.solicitudlab.fechafin= Date.today
+   
+    getViewModel
     session[:tramos_horarios]=Solicitudhoraria.new
     session[:codigo_tramo]=0
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @solicitudlab }
+      format.xml  { render :xml => @asignacion.solicitudlab }
     end
   end
 #aqui debe ir otra funcion tras captar el formulario anterior
 
   def graba
-    @solicitudlab = Solicitudlab.new(params[:solicitudlab])
-    @solicitudlab.usuario_id = params[:usuario][:identificador].to_i
-    @solicitudlab.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
-    @solicitudlab.fechasol=Date.today
-    @solicitudlab.npuestos=Laboratorio.find_by_nombre_lab(params[:laboratorio_id][:nombre_lab]).puestos
-    @solicitudlab.curso=params[:nivel].to_s
-    @solicitudlab.comentarios=params[:comentarios].to_s
-    @solicitudlab.asignado="D"
-    @solicitudlab.tipo="X"
-    
-    if params[:fechaini]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfechaini=formato_europeo(params[:fechaini])
-      #nfechaini=params[:fechaini].to_s.split('-')
-      #nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-      @solicitudlab.fechaini=nfechaini.to_date
+    @asignacion = Asignacion.new
+    @asignacion.solicitudlab=Solicitudlab.new
+    @asignacion.solicitudlab.asignatura=Asignatura.new
+    @asignacion.solicitudlab.usuario_id = params[:usuario][:identificador].to_i
+
+    if params[:asignacion][:generica] == "ReservaGenerica"
+      @asignacion.generica = true
+      titulacionId=Titulacion.where('abrevia = ?',"SD").first.id
+      asignaturaId = Asignatura.where('abrevia_asig = ?', "Var. Sit.").first.id
+      @asignacion.solicitudlab.asignatura.id = asignaturaId
+      @asignacion.solicitudlab.asignatura.titulacion_id= titulacionId
+      @asignacion.solicitudlab.asignatura.curso="optativa"
+      @asignacion.solicitudlab.curso ="optativa"
     else
-      @solicitudlab.fechaini=nil
+      @asignacion.generica = false
+      @asignacion.solicitudlab.asignatura.id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+      @asignacion.solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
+      @asignacion.solicitudlab.asignatura.curso=params[:nivel].to_s 
+      @asignacion.solicitudlab.curso =params[:nivel].to_s
     end
+    @asignacion.solicitudlab.fechasol=Date.today
+    @asignacion.solicitudlab.npuestos=Laboratorio.where("id= ?",params[:laboratorio][:laboratorio_id]).first.puestos
+    logger.debug "Num puestos: "+ @asignacion.solicitudlab.npuestos.to_s
+    @asignacion.solicitudlab.comentarios=params[:comentarios].to_s
+    @asignacion.solicitudlab.asignado="D"
+    @asignacion.solicitudlab.tipo="X"
+    @asignacion.laboratorio_id=params[:laboratorio][:laboratorio_id].to_i
     
-    if params[:fechafin]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfechafin=formato_europeo(params[:fechafin])
-      #fecha=params[:fechafin].to_s.split('-')
-      #nfechafin=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-      @solicitudlab.fechafin=nfechafin.to_date
-    else
-      @solicitudlab.fechafin=nil
-    end
-    
+    @asignacion.solicitudlab.fechaini=params[:fechaini].to_date
+    @asignacion.solicitudlab.fechafin=params[:fechafin].to_date
+    getViewModel
+    #@asignaturas=Asignatura.where('titulacion_id = ? and curso = ?',params[:titulacion][:titulacion_id],params[:nivel])
     respond_to do |format|
-    if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
+    if session[:tramos_horarios].solicitudes.empty? 
       flash[:notice]="No hay tramos horarios en su peticion"
       format.html { render :action => 'asigna_directa' }
     else
-      if @solicitudlab.save
-        nuevo_id=@solicitudlab.id                       
+      if @asignacion.solicitudlab.save
+        nuevo_id=@asignacion.solicitudlab.id                       
         @tramos=session[:tramos_horarios].solicitudes
         @tramos.each {|tramo| p=Peticionlab.new
                               p.solicitudlab_id=nuevo_id
@@ -395,20 +407,21 @@ class AsignacionsController < ApplicationController
                               p.save }
       # esto es lo quedebe cambiar, hay que ir a generar la asignacion nueva y hay que grabarla
       # y redirigir a la consulta de asignaciones  
-      l=Laboratorio.find_by_nombre_lab(params[:laboratorio_id][:nombre_lab]).id
-      peticiones=Peticionlab.where('solicitudlab_id = ?',@solicitudlab.id).to_a
+      l=params[:laboratorio][:laboratorio_id].to_i
+      peticiones=Peticionlab.where('solicitudlab_id = ?',@asignacion.solicitudlab.id).to_a
       peticiones.each {|p|  
                            hi=Horario.find_by_comienzo(p.horaini).id.to_i
                            hf=Horario.find_by_fin(p.horafin).id.to_i
                            dia_id=Dia.find_by_nombre(p.diasemana).id
                            for hora in hi..hf 
-                               asignacion=Asignaciondef.new(:solicitudlab_id=>@solicitudlab.id,
+                               @asignacion=Asignaciondef.new(:solicitudlab_id=>@asignacion.solicitudlab.id,
                                                                  :laboratorio_id=>l,
                                                                  :peticionlab_id=>p.id,
                                                                  :dia_id=>dia_id,                      #aqui hay cambio
                                                                  :horaini=>Horario.find(hora).comienzo,
-                                                                 :horafin=>Horario.find(hora).fin)
-                               asignacion.save
+                                                                 :horafin=>Horario.find(hora).fin,
+                                                                 :generica=>@asignacion.generica)
+                               @asignacion.save
                            end
                        }
     # hasta aqui --------                   
@@ -472,6 +485,41 @@ class AsignacionsController < ApplicationController
     respond_to do |format|
       format.js
     end
+  end
+
+  def saveSolicitudLabModel(params)
+    ##@solicitudlab.usuario_id = params[:usuario][:identificador].to_i
+    if @solicitudlab.asignatura==nil
+      @solicitudlab.asignatura=Asignatura.new
+    end
+    @solicitudlab.asignatura.id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+    @solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
+    @solicitudlab.fechasol=Date.today
+    @solicitudlab.asignatura.curso=params[:nivel].to_s
+    @solicitudlab.fechaini=params[:fechaini].to_date
+    @solicitudlab.fechafin=params[:fechafin].to_date
+    @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
+    
+    
+    if params[:fechaini]==params[:fechafin]
+       @solicitudlab.tipo="S"
+    else
+       if params[:fechaini]==iniperiodoact and params[:fechafin]==finperiodoact
+         @solicitudlab.tipo="T"
+       else
+         @solicitudlab.tipo="P"
+       end
+    end
+  end
+
+  def getViewModel
+    @dia= Date.today
+    @usuarios=Usuario.order("apellidos").to_a
+    @titulaciones=Titulacion.order("id").where.not(abrevia: "SD").to_a
+    @laboratorios=Laboratorio.order("nombre_lab").to_a 
+    asignatura = @asignacion.solicitudlab.asignatura
+    @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?',asignatura.titulacion_id,asignatura.curso)
+    @tramos=session[:tramos_horarios].solicitudes
   end
 
     

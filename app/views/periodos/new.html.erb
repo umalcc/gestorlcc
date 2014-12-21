@@ -9,23 +9,22 @@
      <%= form_for(@periodo) do |f| %>
         <dl>
           <dt>Nombre *</dt>
-          <dd><%= f.text_field :nombre, :size =>25 %></dd>
-              <% @dia=fecha_europea(Date.today) %>
+          <dd><%= f.text_field :nombre, :size =>25, :name => "nombre" %></dd>
           <dt>Inicio *</dt>
           <dd><%= f.text_field :inicio, :size=>12, :name=>"inicio",  
-               :id=>"DPC_inicio_DD-MM-YYYY",:value=>@dia %></dd>
-	  <dt>Fin *</dt>
+               :id=>"DPC_inicio_DD-MM-YYYY",:value=> @periodo.inicio.strftime("%d-%m-%Y") %></dd>
+	        <dt>Fin *</dt>
           <dd><%= f.text_field :fin, :size=>12, :name=>"fin",  
-               :id=>"DPC_fin_DD-MM-YYYY",:value=>@dia  %></dd>
+               :id=>"DPC_fin_DD-MM-YYYY",:value=> @periodo.fin.strftime("%d-%m-%Y")%></dd>
           <dt>Tipo *</dt>
-          <dd><%= select_tag "tipo", options_for_select(["Lectivo","Examenes","Festivo"]) %></dd>
+          <dd><%= select_tag "tipo", options_for_select(["Lectivo","Examenes","Festivo"], @periodo.tipo) %></dd>
               <div id="opcional" style="visibility:visible">
                 <dt>F.Inic. Solicitudes</dt>
                 <dd><%= f.text_field :iniciosol, :size=>12, :name=>"iniciosol",  
-                        :id=>"DPC_iniciosol_DD-MM-YYYY" %></dd>
+                        :id=>"DPC_iniciosol_DD-MM-YYYY",:value=> @periodo.iniciosol.strftime("%d-%m-%Y") %></dd>
                 <dt>F.Final. Solicitudes</dt>
                 <dd><%= f.text_field :finsol, :size=>12, :name=>"finsol",  
-                       :id=>"DPC_finsol_DD-MM-YYYY" %></dd>
+                       :id=>"DPC_finsol_DD-MM-YYYY",:value=> @periodo.finsol.strftime("%d-%m-%Y") %></dd>
               </div>
               <%= f.hidden_field :activo,:value=>:false %>
               <%= f.hidden_field :activo,:value=>:false %>
