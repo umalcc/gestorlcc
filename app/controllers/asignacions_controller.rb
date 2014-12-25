@@ -327,7 +327,9 @@ class AsignacionsController < ApplicationController
   end
   
   def consulta
-    @asignacions = Asignaciondef.all
+    ActiveRecord::Base.include_root_in_json = false
+    @laboratorios=Laboratorio.all.select("id,nombre_lab").as_json
+    @asignacions = Asignaciondef.all.as_json
     if @asignacions.size!=0
      @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
     end

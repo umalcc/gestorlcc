@@ -1,3 +1,42 @@
+
+<script type="text/javascript">
+$(function() 
+{
+
+    $('#tabs').tabs({
+       activate: function(event, ui) 
+       {
+          $("div.calendario").each(function(index, element)
+          {  var divId =  $(element).attr("id");
+             $('#'+divId).fullCalendar('render');
+          });
+       }
+   });
+     var asignacions= '<%= raw @asignacions %>';
+     var laboratorios= '<%= raw @laboratorios %>';
+     laboratorios=laboratorios.replace(/nombre_lab/g,"name");
+     laboratorios=laboratorios.replace(/=>/g, ":");
+   $("div.calendario").each(function(index, element)
+   {
+      var divId =  $(element).attr("id");
+      $("#"+divId).fullCalendar({
+        header: {
+                  left: '',
+                  center: 'title',
+                  right: ''
+                },
+        allDaySlot:false,
+            defaultDate: '2014-09-12',
+            defaultView:'agendaWeek',
+            editable: true,
+            eventLimit: true, // allow "more" link when too many events
+            rooms:$.parseJSON(laboratorios),
+            events:$.parseJSON(asignacions),
+          });
+    });
+ });
+
+</script>
 <div id="central" >
   <p>GESTOR DE RECURSOS<br>
      <%= image_tag ("pointer.gif") %>Asignaci&oacute;n general de laboratorios en periodo lectivo
