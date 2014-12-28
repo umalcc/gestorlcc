@@ -128,8 +128,18 @@
 </div><!-- de central -->
 
 <script type="text/javascript" charset="utf-8">
+function checkReservaGenerica()
+{
+  var reservaGenerica=$("#asignacion_generica_reservagenerica").attr("checked");
+
+  if(reservaGenerica=="checked")
+  {
+    $("#infoAsig").hide();
+  }
+}
 
 $(function(){
+  checkReservaGenerica();
   $("#titulacion_titulacion_id").change(function()
 {
   var nivel=$("#nivel").val();

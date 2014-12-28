@@ -11,9 +11,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141220100555) do
+ActiveRecord::Schema.define(version: 20141222001600) do
 
-  create_table "asignaciondefs", force: :cascade do |t|
+  create_table "asignaciondefs", force: true do |t|
     t.integer  "solicitudlab_id"
     t.integer  "peticionlab_id"
     t.integer  "laboratorio_id"
@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.boolean  "generica"
   end
 
-  create_table "asignacionexas", force: :cascade do |t|
+  create_table "asignacionexas", force: true do |t|
     t.integer  "solicitudlab_id"
     t.integer  "peticionlab_id"
     t.integer  "laboratorio_id"
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.datetime "updated_at"
   end
 
-  create_table "asignacionlabexadefs", force: :cascade do |t|
+  create_table "asignacionlabexadefs", force: true do |t|
     t.integer  "solicitudlabexa_id"
     t.integer  "laboratorio_id"
     t.date     "dia"
@@ -52,7 +52,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.datetime "updated_at"
   end
 
-  create_table "asignacionlabexas", force: :cascade do |t|
+  create_table "asignacionlabexas", force: true do |t|
     t.integer  "solicitudlabexa_id"
     t.integer  "laboratorio_id"
     t.date     "dia"
@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.datetime "updated_at"
   end
 
-  create_table "asignacions", force: :cascade do |t|
+  create_table "asignacions", force: true do |t|
     t.integer  "solicitudlab_id"
     t.integer  "peticionlab_id"
     t.integer  "laboratorio_id"
@@ -78,7 +78,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.boolean  "generica"
   end
 
-  create_table "asignaturas", force: :cascade do |t|
+  create_table "asignaturas", force: true do |t|
     t.string   "codigo_asig",     limit: 255
     t.string   "nombre_asig",     limit: 255
     t.string   "area_depto",      limit: 255
@@ -92,7 +92,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.integer  "titulacion_id"
   end
 
-  create_table "dias", force: :cascade do |t|
+  create_table "dias", force: true do |t|
     t.integer  "num"
     t.string   "nombre",     limit: 255
     t.boolean  "en_uso"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.datetime "updated_at"
   end
 
-  create_table "historicoasigexas", force: :cascade do |t|
+  create_table "historicoasigexas", force: true do |t|
     t.date     "fecha_archivo"
     t.string   "periodo",       limit: 255
     t.string   "nombre_usu",    limit: 255
@@ -117,7 +117,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.datetime "updated_at"
   end
 
-  create_table "historicoasigs", force: :cascade do |t|
+  create_table "historicoasigs", force: true do |t|
     t.date     "fecha_archivo"
     t.string   "periodo",       limit: 255
     t.string   "nombre_usu",    limit: 255
@@ -134,7 +134,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.string   "diasem",        limit: 255
   end
 
-  create_table "horarios", force: :cascade do |t|
+  create_table "horarios", force: true do |t|
     t.integer  "num"
     t.string   "comienzo",   limit: 255
     t.string   "fin",        limit: 255
@@ -143,7 +143,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.datetime "updated_at"
   end
 
-  create_table "horasexas", force: :cascade do |t|
+  create_table "horasexas", force: true do |t|
     t.integer  "num"
     t.string   "comienzo",   limit: 255
     t.string   "fin",        limit: 255
@@ -152,7 +152,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.datetime "updated_at"
   end
 
-  create_table "laboratorios", force: :cascade do |t|
+  create_table "laboratorios", force: true do |t|
     t.string   "nombre_lab",  limit: 255
     t.integer  "puestos"
     t.string   "ssoo",        limit: 255
@@ -165,7 +165,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.boolean  "especial"
   end
 
-  create_table "periodos", force: :cascade do |t|
+  create_table "periodos", force: true do |t|
     t.string   "nombre",     limit: 255
     t.date     "inicio"
     t.date     "fin"
@@ -178,7 +178,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.boolean  "admision"
   end
 
-  create_table "peticionlabs", force: :cascade do |t|
+  create_table "peticionlabs", force: true do |t|
     t.text     "diasemana"
     t.text     "horaini"
     t.text     "horafin"
@@ -187,7 +187,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.integer  "solicitudlab_id"
   end
 
-  create_table "peticions", force: :cascade do |t|
+  create_table "peticions", force: true do |t|
     t.integer  "solicitudrecurso_id"
     t.string   "diasemana",           limit: 255
     t.string   "horaini",             limit: 255
@@ -196,7 +196,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.datetime "updated_at"
   end
 
-  create_table "recursos", force: :cascade do |t|
+  create_table "recursos", force: true do |t|
     t.string   "descripcion",     limit: 255
     t.string   "identificador",   limit: 255
     t.string   "caracteristicas", limit: 255
@@ -206,7 +206,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.text     "aviso"
   end
 
-  create_table "sessions", force: :cascade do |t|
+  create_table "sessions", force: true do |t|
     t.string   "session_id", limit: 255, null: false
     t.text     "data"
     t.datetime "created_at"
@@ -216,7 +216,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
   add_index "sessions", ["session_id"], name: "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at"
 
-  create_table "solicitudlabexas", force: :cascade do |t|
+  create_table "solicitudlabexas", force: true do |t|
     t.date     "fechasol"
     t.integer  "usuario_id"
     t.integer  "asignatura_id"
@@ -233,7 +233,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.string   "asignado",      limit: 255
   end
 
-  create_table "solicitudlabs", force: :cascade do |t|
+  create_table "solicitudlabs", force: true do |t|
     t.date     "fechaini"
     t.date     "fechafin"
     t.date     "fechasol"
@@ -249,7 +249,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.string   "asignado",      limit: 255
   end
 
-  create_table "solicitudrecursos", force: :cascade do |t|
+  create_table "solicitudrecursos", force: true do |t|
     t.date     "fechareserva"
     t.date     "fechasol"
     t.datetime "created_at"
@@ -262,7 +262,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.string   "horafin",      limit: 255
   end
 
-  create_table "titulacions", force: :cascade do |t|
+  create_table "titulacions", force: true do |t|
     t.integer  "codigo"
     t.string   "nombre",     limit: 255
     t.string   "abrevia",    limit: 255
@@ -270,7 +270,7 @@ ActiveRecord::Schema.define(version: 20141220100555) do
     t.datetime "updated_at"
   end
 
-  create_table "usuarios", force: :cascade do |t|
+  create_table "usuarios", force: true do |t|
     t.string   "identificador", limit: 255
     t.string   "password",      limit: 255
     t.string   "nombre",        limit: 255

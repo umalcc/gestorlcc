@@ -2,7 +2,7 @@
 
 <% if @asignacionexas.size!=0  %>
 
- <% periodo=Periodo.where("tipo = ? and inicio > ?",'Examenes',Date.today).order('inicio').first %> 
+ <% periodo=Periodo.where("tipo = ? and inicio > ?",'Examenes',Date.today).order('inicio').first %>
 
  <% fechas=[] %>
  <% for dia in periodo.inicio..periodo.fin %>

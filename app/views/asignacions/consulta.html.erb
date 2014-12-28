@@ -1,39 +1,34 @@
 <script type="text/javascript">
-  $(function() {
+$(function() 
+{
     $( "#tabs" ).tabs();
     $('#tabs').tabs({
-    activate: function(event, ui) {
-        $('#sabado').fullCalendar('render');
-         $('#viernes').fullCalendar('render');
-    }
-});
+       activate: function(event, ui) 
+       {
+          $("div.calendario").each(function(index, element)
+          {  var divId =  $(element).attr("id");
+             $('#'+divId).fullCalendar('render');
+          });
+       }
+   });
 
-    $("#sabado").fullCalendar({
-      header: {
-            left: '',
-            center: 'title',
-            right: ''
-          },
-      allDaySlot:false,
-          defaultDate: '2014-09-12',
-          defaultView:'agendaWeek',
-          editable: true,
-          eventLimit: true, // allow "more" link when too many events
-        });
-
-    $("#viernes").fullCalendar({
-          header: {
-            left: '',
-            center: 'title',
-            right: ''
-          },
-          allDaySlot:false,
-          defaultDate: '2014-09-12',
-          defaultView:'agendaWeek',
-          editable: true,
-          eventLimit: true, // allow "more" link when too many events
-        });
-  });
+   $("div.calendario").each(function(index, element)
+   {
+      var divId =  $(element).attr("id");
+      $("#"+divId).fullCalendar({
+        header: {
+                  left: '',
+                  center: 'title',
+                  right: ''
+                },
+        allDaySlot:false,
+            defaultDate: '2014-09-12',
+            defaultView:'agendaWeek',
+            editable: true,
+            eventLimit: true, // allow "more" link when too many events
+          });
+    });
+ });
 
 </script>
 <div id="central" >
@@ -49,20 +44,14 @@
        <% end %>
        <% nasig=Asignaciondef.all.size %>
        <div id="tabs">
-       <ul>
-       <li><a href="#lunes">Lunes</a></li>
-       <li><a href="#martes">Martes</a></li>
-       <li><a href="#miercoles">Miercoles</a></li>
-       <li><a href="#jueves">Jueves</a></li>
-       <li><a href="#viernes">Viernes</a></li>
-       <li><a href="#sabado">Sabado</a></li>
+       <ul id="diasSemana">
+       <% for dia in @dias %>
+          <li><a href="#<%=dia.nombre%>"><%=dia.nombre%></a></li>
+       <%end%>
        </ul>
-       <div class="calendario" id="lunes"></div>
-       <div class="calendario" id="martes"></div>
-       <div class="calendario" id="miercoles"></div>
-       <div class="calendario" id="jueves"></div>
-       <div class="calendario" id="viernes"></div>
-       <div class="calendario" id="sabado"></div>
+       <% for dia in @dias %>
+          <div class="calendario" id="<%=dia.nombre%>"></div>
+       <%end%>
        </div>
        <% if nasig>0 %>
            <div id="cuadrante2"><!--< render :partial => "cuadrante2" ></div> -->

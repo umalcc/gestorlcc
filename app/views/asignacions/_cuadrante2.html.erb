@@ -78,7 +78,7 @@
       					           background-color: white;width:200px;
 					                 font-weight: bold; padding: 5px;';>
                            <!--Si la reserva es normal, es decir, generica = false, mostrar datos asignatura, titulación y curso-->
-                           <% if a.generica == 'f' %>
+                           <% if a.generica == false || a.generica == nil %>
                                 <%= "Asig: "+a.solicitudlab.asignatura.abrevia_asig %><br>
                                    <%= "( "+a.solicitudlab.asignatura.titulacion.abrevia+" )" %><br/>
 				                           <%= "Curso: "+a.solicitudlab.curso %>
@@ -109,7 +109,7 @@
 			      <div style="color:#15611c"><!-- puntual -->
                              <% end %>
                             <% end %><% end %>
-                            <%if a.generica == 'f'%>
+                            <%if a.generica == false || a.generica == nil %>
                             <%= a.solicitudlab.asignatura.abrevia_asig %><!-- se muestra abrevia_asig e info flotante -->
                             <%else%>
                               RG
@@ -121,7 +121,7 @@
 			      <div id="formid2" >
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
-			      <%= link_to image_tag("borrar.png",:border=>0,:height=>16,:width=>16), "#", :name => "borraDirAsig"%>
+			      <%= link_to image_tag("borrar.png",:border=>0,:height=>16,:width=>16), a, data:{ confirm: '¿Seguro que desea eliminar la reserva?'}, :method => :delete%>
                             <% else %>
                               <% formid3="formborra"+hora.id.to_s+dia.id.to_s+a.id.to_s %>
 			      <div id="formid3" >
@@ -161,12 +161,20 @@ $(function()
 $(function()
 {
    $('a[name=borraDirAsig]').click(function () {    
+         
+         var asignaVal = $("input[name=asigna]").val();
+         alert("elemento a borrar: "+ asignaVal);
+
+            var id = $("a[name=borraDirAsig]").prev('a').attr("onmouseout");
+            alert(id);
+         
+
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
             $.ajax({
                      type: "POST",
                      url: "borradirasignada",
-                     data: { asigna:$("#asigna").val() }
+                     data: { asigna: asignaVal }
                    })
          }  
     }) 

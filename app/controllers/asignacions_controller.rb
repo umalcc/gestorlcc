@@ -332,6 +332,10 @@ class AsignacionsController < ApplicationController
      @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
     end
 
+    #load days from database
+    @dias = Dia.all
+    
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @asignacions }
@@ -369,19 +373,21 @@ class AsignacionsController < ApplicationController
       titulacionId=Titulacion.where('abrevia = ?',"SD").first.id
       asignaturaId = Asignatura.where('abrevia_asig = ?', "Var. Sit.").first.id
       @asignacion.solicitudlab.asignatura.id = asignaturaId
+      @asignacion.solicitudlab.asignatura_id = asignaturaId
       @asignacion.solicitudlab.asignatura.titulacion_id= titulacionId
       @asignacion.solicitudlab.asignatura.curso="optativa"
       @asignacion.solicitudlab.curso ="optativa"
     else
       @asignacion.generica = false
-      @asignacion.solicitudlab.asignatura.id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+      asignaturaId = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+      @asignacion.solicitudlab.asignatura.id = asignaturaId
+      @asignacion.solicitudlab.asignatura_id = asignaturaId
       @asignacion.solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
       @asignacion.solicitudlab.asignatura.curso=params[:nivel].to_s 
       @asignacion.solicitudlab.curso =params[:nivel].to_s
     end
     @asignacion.solicitudlab.fechasol=Date.today
     @asignacion.solicitudlab.npuestos=Laboratorio.where("id= ?",params[:laboratorio][:laboratorio_id]).first.puestos
-    logger.debug "Num puestos: "+ @asignacion.solicitudlab.npuestos.to_s
     @asignacion.solicitudlab.comentarios=params[:comentarios].to_s
     @asignacion.solicitudlab.asignado="D"
     @asignacion.solicitudlab.tipo="X"
@@ -429,6 +435,8 @@ class AsignacionsController < ApplicationController
         format.html { redirect_to('/asignacions/consulta') }
         format.xml  { render :xml => @solicitudlabs, :status => :created, :location => @solicitudlabs }
       else
+        logger.debug @asignacion.solicitudlab.errors.full_messages
+
         format.html { render :action => "asigna_directa" }
         format.xml  { render :xml => @solicitudlabs.errors, :status => :unprocessable_entity }
       end
