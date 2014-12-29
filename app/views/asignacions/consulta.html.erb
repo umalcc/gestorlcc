@@ -1,54 +1,3 @@
-<script type="text/javascript">
-$(function() 
-{
-    $( "#tabs" ).tabs();
-    $('#tabs').tabs({
-       activate: function(event, ui) 
-       {
-          $("div.calendario").each(function(index, element)
-          {  var divId =  $(element).attr("id");
-             $('#'+divId).fullCalendar('render');
-          });
-       }
-   });
-
-   $("div.calendario").each(function(index, element)
-   {
-      var divId =  $(element).attr("id");
-      $("#"+divId).fullCalendar({
-        header: {
-                  left: '',
-                  center: 'title',
-                  right: ''
-                },
-        allDaySlot:false,
-            defaultDate: '2014-09-12',
-            defaultView:'agendaWeek',
-            editable: true,
-            eventLimit: true, // allow "more" link when too many events
-            rooms:[
-        {
-          id:100,
-          name:"Laboratorio pppp"
-        },
-        {
-          id:101,
-          name:"Laboratorio 2"
-        },
-        {
-          id:102,
-          name:"Laboratorio 3"
-        },
-        {
-          id:103,
-          name:"Laboratorio 4"
-        }
-      ],
-          });
-    });
- });
-
-</script>
 <div id="central" >
   <p>GESTOR DE RECURSOS<br>
      <%= image_tag ("pointer.gif") %>Asignaci&oacute;n general de laboratorios en periodo lectivo
@@ -61,18 +10,9 @@ $(function()
           <% inactivo=true %>
        <% end %>
        <% nasig=Asignaciondef.all.size %>
-       <div id="tabs">
-       <ul id="diasSemana">
-       <% for dia in @dias %>
-          <li><a href="#<%=dia.nombre%>"><%=dia.nombre%></a></li>
-       <%end%>
-       </ul>
-       <% for dia in @dias %>
-          <div class="calendario" id="<%=dia.nombre%>"></div>
-       <%end%>
-       </div>
        <% if nasig>0 %>
-           <div id="cuadrante2"><!--< render :partial => "cuadrante2" ></div> -->
+           <!--<div id="cuadrante2">< render :partial => "cuadrante2" ></div> -->
+           <div id="cuadrante3"><%= render :partial => "cuadrante3" %></div>
         <% else %>
             <div class="aviso">
                <p>No hay ningun periodo lectivo o asignaci&oacute;n vigente </p>

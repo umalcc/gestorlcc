@@ -1,0 +1,160 @@
+<script type="text/javascript">
+$(function() 
+{
+    $('#tabs').tabs({
+       activate: function(event, ui) 
+       {
+          $("div.calendario").each(function(index, element)
+          {  var divId =  $(element).attr("id");
+             $('#'+divId).fullCalendar('render');
+          });
+       }
+   });
+
+   /* initialize the events -------------*/
+
+	$('#external-events .fc-event').each(function() {
+
+		// store data so the calendar knows to render an event upon drop
+		$(this).data('event', {
+			title: $.trim($(this).text()), // use the element's text as the event title
+			stick: true // maintain when user navigates (see docs on the renderEvent method)
+		});
+
+		// make the event draggable using jQuery UI
+		$(this).draggable({
+			zIndex: 999,
+			revert: true,      // will cause the event to go back to its
+			revertDuration: 0  //  original position after the drag
+		});
+
+	}); 
+
+   /* initialize the calendar */
+   $("div.calendario").each(function(index, element)
+   {
+      var divId =  $(element).attr("id");
+      $("#"+divId).fullCalendar({
+        header: {
+                  left: '',
+                  center: 'title',
+                  right: ''
+                },
+        allDaySlot:false,
+            defaultDate: '2014-09-12',
+            defaultView:'agendaWeek',
+            editable: true,
+            droppable: true,
+            drop: function(index) { 
+
+            	//alert(index);
+            	var eventId = $(this).attr("id");
+            	alert(eventId);
+                // is the "remove after drop" checkbox checked?
+				if ($('#drop-remove').is(':checked')) 
+				{
+					// if so, remove the element from the "Draggable Events" list
+					$(this).remove();
+				}},
+            eventLimit: true, // allow "more" link when too many events
+            rooms:
+            [
+		        {
+		          id:100,
+		          name:"Laboratorio pppp"
+		        },
+		        {
+		          id:101,
+		          name:"Laboratorio 2"
+		        },
+		        {
+		          id:102,
+		          name:"Laboratorio 3"
+		        },
+		        {
+		          id:103,
+		          name:"Laboratorio 4"
+		        }
+		    ],
+
+          });
+    });
+ });
+
+</script>
+
+<style>
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 14px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+	}
+		
+	#wrap {
+		width: 1100px;
+		margin: 0 auto;
+	}
+		
+	#external-events {
+		float: left;
+		width: 150px;
+		padding: 0 10px;
+		border: 1px solid #ccc;
+		background: #eee;
+		text-align: left;
+	}
+		
+	#external-events h4 {
+		font-size: 16px;
+		margin-top: 0;
+		padding-top: 1em;
+	}
+		
+	#external-events .fc-event {
+		margin: 10px 0;
+		cursor: pointer;
+	}
+
+	#external-events p {
+		margin: 1.5em 0;
+		font-size: 11px;
+		color: #666;
+	}
+		
+	#external-events p input {
+		margin: 0;
+		vertical-align: middle;
+	}
+
+	#tabs { /*debe sustituirse por otro tabs que hay en otra hoja css*/
+		float: right;
+		width: 900px;
+	}
+</style>
+
+<div id="wrap">
+<div id='external-events'>
+			<h4>Lista de asignaciones</h4>
+			<div class='fc-event' id="id1">Asignacion 1</div>
+			<div class='fc-event' id="id2">Asignacion 2</div>
+			<div class='fc-event' id="id3">Asignacion 3</div>
+			<div class='fc-event' id="id4">Asignacion 4</div>
+			<div class='fc-event' id="id5">Asignacion 5</div>
+			<p>
+			  <input type='checkbox' id='drop-remove' />
+			  <label for='drop-remove'>borrar después de mover</label>
+			</p>
+</div>
+
+<div id="tabs">
+	       <ul id="diasSemana">
+	       <% for dia in @dias %>
+	          <li><a href="#<%=dia.nombre%>"><%=dia.nombre%></a></li>
+	       <%end%>
+	       </ul>
+	       <% for dia in @dias %>
+	          <div class="calendario" id="<%=dia.nombre%>"></div>
+	       <%end%>
+</div>
+</div>
