@@ -29,6 +29,11 @@ $(function()
 		});
 
 	});
+
+	var asignacions= '<%= raw @asignacions %>';
+     var laboratorios= '<%= raw @laboratorios %>';
+     laboratorios=laboratorios.replace(/nombre_lab/g,"name");
+     laboratorios=laboratorios.replace(/=>/g, ":");
  	 
    /* initialize the calendar */
    $("div.calendario").each(function(index, element)
@@ -59,26 +64,7 @@ $(function()
 
 			},
             eventLimit: true, // allow "more" link when too many events
-            rooms:
-            [
-		        {
-		          id:100,
-		          name:"Laboratorio pppp"
-		        },
-		        {
-		          id:101,
-		          name:"Laboratorio 2"
-		        },
-		        {
-		          id:102,
-		          name:"Laboratorio 3"
-		        },
-		        {
-		          id:103,
-		          name:"Laboratorio 4"
-		        }
-		    ],
-
+            rooms:$.parseJSON(laboratorios),
 		    eventMouseover: function(event,jsEvent){
                   $(jsEvent.target).attr('title',event.title);
 		    },
