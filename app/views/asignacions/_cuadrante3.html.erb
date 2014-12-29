@@ -28,8 +28,8 @@ $(function()
 			revertDuration: 0  //  original position after the drag
 		});
 
-	}); 
-
+	});
+ 	 
    /* initialize the calendar */
    $("div.calendario").each(function(index, element)
    {
@@ -45,7 +45,7 @@ $(function()
             defaultView:'agendaWeek',
             editable: true,
             droppable: true,
-            drop: function(index) { 
+            drop: function(index, event) { 
 
             	//alert(index);
             	var eventId = $(this).attr("id");
@@ -55,7 +55,9 @@ $(function()
 				{
 					// if so, remove the element from the "Draggable Events" list
 					$(this).remove();
-				}},
+				}
+
+			},
             eventLimit: true, // allow "more" link when too many events
             rooms:
             [
@@ -77,8 +79,27 @@ $(function()
 		        }
 		    ],
 
+		    eventMouseover: function(event,jsEvent){
+                  $(jsEvent.target).attr('title',event.title);
+		    },
+
+		    eventDestroy: function(event, element, view)
+        {
+            alert("removing stuff");
+        },
+
+            eventClick: function(event){
+                 var r = confirm("Delete "+ event.title);
+                 if(r===true)
+                 {
+                 	$("#"+divId).fullCalendar('removeEvents',event._id);
+                 }
+            },
+
           });
     });
+
+
  });
 
 </script>
@@ -145,6 +166,7 @@ $(function()
 			  <input type='checkbox' id='drop-remove' />
 			  <label for='drop-remove'>borrar después de mover</label>
 			</p>
+			<%=image_tag("borrar.png", :id =>"borrarAsig", :border=>0,:height=>24,:width=>24)%>
 </div>
 
 <div id="tabs">
