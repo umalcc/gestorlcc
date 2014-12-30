@@ -4,26 +4,12 @@ $(function()
    function isElemOverDiv(draggedItem, dropArea) 
    {
    // Prep coords for our two elements
-	//var a = $(draggedItem).position();	
-	//a.right = $(draggedItem).outerWidth() + a.left;
-	//a.bottom = $(draggedItem).outerHeight() + a.top;
 	var b = $(dropArea).offset();
 	b.right = $(dropArea).outerWidth() + b.left;
 	b.bottom = $(dropArea).outerHeight() + b.top;
-     //alert($(draggedItem).html());
-    
-     //alert("Area "+draggedItem.pageX+" "+draggedItem.pageY);
-     //alert("SA "+b.left+" "+b.right +" "+b.top+" "+b.bottom);
-     //alert(a.left >= b.left);
-     //alert($(dropArea).outerWidth);
    // Compare
   if (draggedItem.pageX >= b.left && draggedItem.pageX<= b.right &&
     draggedItem.pageY>= b.top && draggedItem.pageY <= b.bottom){return true;}
-   /*if (a.left >= b.left
-       && a.top >= b.top
-       && a.right <= b.right
-       && a.bottom <= b.bottom) { return true; }
-*/
    return false;
 }
 
@@ -87,9 +73,9 @@ $(function()
             defaultView:'agendaWeek',
             editable: true,
             droppable: true,
-            drop: function(index, event) { 
+            drop: function(index, event, ui, selectedRoom) { 
 
-            	//alert(index);
+            	alert("Habitacionn id: "+selectedRoom.id+" Nombre: "+selectedRoom.name);
             	var eventId = $(this).attr("id");
             	//alert(eventId);
             	//alert(event.title + " was dropped on " + event.start+"   "+ "  "+eventId);

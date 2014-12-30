@@ -7643,7 +7643,7 @@ View.prototype = {
 
 		if (this.opt('droppable')) { // only listen if this setting is on
 			el = $(ev.target);
-
+			rooms=this.opt('rooms');
 			// Test that the dragged element passes the dropAccept selector or filter function.
 			// FYI, the default is "*" (matches all)
 			accept = this.opt('dropAccept');
@@ -7656,6 +7656,8 @@ View.prototype = {
 				dragListener = new DragListener(this.coordMap, {
 					cellOver: function(cell, cellDate) {
 						eventStart = cellDate;
+						selectedRoom=rooms[cell.col];
+						
 						eventEnd = meta.duration ? eventStart.clone().add(meta.duration) : null;
 						visibleEnd = eventEnd || calendar.getDefaultEventEnd(!eventStart.hasTime(), eventStart);
 
@@ -7668,12 +7670,14 @@ View.prototype = {
 							_this.renderDrag(eventStart, visibleEnd);
 						}
 						else {
+						    selectedRoom=null;
 							eventStart = null; // signal unsuccessful
 							disableCursor();
 						}
 					},
 					cellOut: function() {
 						eventStart = null;
+						selectedRoom=null;
 						_this.destroyDrag();
 						enableCursor();
 					}
@@ -7694,8 +7698,7 @@ View.prototype = {
 						}
 
 						// trigger 'drop' regardless of whether element represents an event
-						_this.trigger('drop', el[0], eventStart, ev, ui);
-
+						_this.trigger('drop', el[0], eventStart, ev, ui, selectedRoom);
 						// create an event from the given properties and the latest dates
 						if (eventProps) {
 							renderedEvents = calendar.renderEvent(eventProps, meta.stick);
@@ -8045,6 +8048,12 @@ function View(calendar) {
 		var dayOffset = cellOffsetToDayOffset(cellOffset);
 		var date = dayOffsetToDate(dayOffset);
 		return date;
+	}
+	
+	function cellToRoom()
+	{
+	  var cellOffset = cellToCellOffset.apply(null,arguments);
+	  var room= cellOffset;
 	}
 
 	// cell -> cell offset
