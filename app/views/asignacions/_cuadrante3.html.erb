@@ -1,6 +1,42 @@
 <script type="text/javascript">
 $(function() 
 {
+   function isElemOverDiv(draggedItem, dropArea) 
+   {
+   // Prep coords for our two elements
+	//var a = $(draggedItem).position();	
+	//a.right = $(draggedItem).outerWidth() + a.left;
+	//a.bottom = $(draggedItem).outerHeight() + a.top;
+	var b = $(dropArea).offset();
+	b.right = $(dropArea).outerWidth() + b.left;
+	b.bottom = $(dropArea).outerHeight() + b.top;
+     //alert($(draggedItem).html());
+    
+     //alert("Area "+draggedItem.pageX+" "+draggedItem.pageY);
+     //alert("SA "+b.left+" "+b.right +" "+b.top+" "+b.bottom);
+     //alert(a.left >= b.left);
+     //alert($(dropArea).outerWidth);
+   // Compare
+  if (draggedItem.pageX >= b.left && draggedItem.pageX<= b.right &&
+    draggedItem.pageY>= b.top && draggedItem.pageY <= b.bottom){return true;}
+   /*if (a.left >= b.left
+       && a.top >= b.top
+       && a.right <= b.right
+       && a.bottom <= b.bottom) { return true; }
+*/
+   return false;
+}
+
+	$( "#borrarAsig" ).droppable(
+		//{
+      //drop: function( event, ui ) {
+      //	alert("A");
+        //$( this )
+         // .addClass( "ui-state-highlight" )
+          //.find( "p" )
+           // .html( "Dropped!" );
+      //}}
+      );
     $('#tabs').tabs({
        activate: function(event, ui) 
        {
@@ -17,6 +53,7 @@ $(function()
 
 		// store data so the calendar knows to render an event upon drop
 		$(this).data('event', {
+			id: $.trim($(this).attr("id")),
 			title: $.trim($(this).text()), // use the element's text as the event title
 			stick: true // maintain when user navigates (see docs on the renderEvent method)
 		});
@@ -54,7 +91,8 @@ $(function()
 
             	//alert(index);
             	var eventId = $(this).attr("id");
-            	alert(eventId);
+            	//alert(eventId);
+            	//alert(event.title + " was dropped on " + event.start+"   "+ "  "+eventId);
                 // is the "remove after drop" checkbox checked?
 				if ($('#drop-remove').is(':checked')) 
 				{
@@ -68,17 +106,29 @@ $(function()
 		    eventMouseover: function(event,jsEvent){
                   $(jsEvent.target).attr('title',event.title);
 		    },
-
-		    eventDestroy: function(event, element, view)
-        {
-            alert("removing stuff");
-        },
+		   eventDragStop: function(event, jsEvent, ui, view) {
+		   	var active = $('#tabs .ui-state-active').children("a");
+		   	if (isElemOverDiv(jsEvent, '#borrarAsig')) {
+		   		$(active.attr("href")).fullCalendar('removeEvents', event.id);
+		   		$.ajax({
+		   			type:"POST",
+		   			url:"/asignacions/borranormalasignada",
+		   			data:{asigna:event.id},
+		   			success:function()
+		   			{
+		   			  //alert("La asignación ha sido eliminada de forma satisfactoria.");
+		   			
+		   			}
+		   		});
+		   		
+		   	}
+		   },
 
             eventClick: function(event){
                  var r = confirm("Delete "+ event.title);
                  if(r===true)
                  {
-                 	$("#"+divId).fullCalendar('removeEvents',event._id);
+                 	$("#"+divId).fullCalendar('removeEvents',event.id);
                  }
             },
 
@@ -141,6 +191,7 @@ $(function()
 </style>
 
 <div id="wrap">
+	<%=image_tag("borrar.png", :id =>"borrarAsig", :border=>0,:height=>150,:width=>150)%>
 <div id='external-events'>
 			<h4>Lista de asignaciones</h4>
 			<div class='fc-event' id="id1">Asignacion 1</div>
@@ -152,7 +203,7 @@ $(function()
 			  <input type='checkbox' id='drop-remove' />
 			  <label for='drop-remove'>borrar después de mover</label>
 			</p>
-			<%=image_tag("borrar.png", :id =>"borrarAsig", :border=>0,:height=>24,:width=>24)%>
+		
 </div>
 
 <div id="tabs">

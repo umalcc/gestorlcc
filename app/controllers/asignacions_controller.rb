@@ -462,8 +462,8 @@ class AsignacionsController < ApplicationController
   end
 
   def borranormalasignada
-    asignacion=Asignaciondef.find(params[:asigna])
-    asignacion.delete
+    #asignacion=Asignaciondef.find(params[:asigna])
+    # asignacion.delete
     # otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).to_a
     # otrasasignaciones.each {|o| o.delete }
     @asignacions=Asignaciondef.all
