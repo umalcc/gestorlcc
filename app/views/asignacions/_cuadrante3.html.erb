@@ -53,10 +53,11 @@ $(function()
 
 	});
 
-	var asignacions= '<%= raw @asignacions %>';
+	 var asignacions= '<%= raw @asignacions %>';
      var laboratorios= '<%= raw @laboratorios %>';
      laboratorios=laboratorios.replace(/nombre_lab/g,"name");
      laboratorios=laboratorios.replace(/=>/g, ":");
+     asignacions=asignacions.replace(/=>/g, ":");
  	 
    /* initialize the calendar */
    $("div.calendario").each(function(index, element)
@@ -75,8 +76,12 @@ $(function()
             droppable: true,
             drop: function(index, event, ui, selectedRoom) { 
 
-            	alert("Habitacionn id: "+selectedRoom.id+" Nombre: "+selectedRoom.name);
+                alert("Habitacionn id: "+selectedRoom.id+" Nombre: "+selectedRoom.name);
             	var eventId = $(this).attr("id");
+
+                //alert(asignacions);
+            	//alert(index);
+            	//var eventId = $(this).attr("id");
             	//alert(eventId);
             	//alert(event.title + " was dropped on " + event.start+"   "+ "  "+eventId);
                 // is the "remove after drop" checkbox checked?
@@ -88,6 +93,7 @@ $(function()
 
 			},
             eventLimit: true, // allow "more" link when too many events
+            events:$.parseJSON(asignacions), //carga de eventos
             rooms:$.parseJSON(laboratorios),
 		    eventMouseover: function(event,jsEvent){
                   $(jsEvent.target).attr('title',event.title);
