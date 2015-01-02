@@ -9230,8 +9230,8 @@ $.extend(AgendaWeekView.prototype, {
 	render: function(date) {
 
 		this.intervalStart = date.clone().stripTime().startOf('week');
-		this.intervalEnd = this.intervalStart.clone().add(1, 'weeks');
-
+		//this.intervalEnd = this.intervalStart.clone().add(1, 'weeks'); //Gerardo
+		this.intervalEnd = this.intervalStart.clone().add(1, 'days');
 		this.start = this.skipHiddenDays(this.intervalStart);
 		this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
 

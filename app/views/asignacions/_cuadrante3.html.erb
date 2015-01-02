@@ -1,7 +1,40 @@
 <script type="text/javascript">
-$(function() 
+
+
+function makeDroppable()
+{	$('#external-events .fc-event').each(function() {
+
+		// store data so the calendar knows to render an event upon drop
+		$(this).data('event', {
+			id: $.trim($(this).attr("id")),
+			title: $.trim($(this).text()), // use the element's text as the event title
+			stick: true // maintain when user navigates (see docs on the renderEvent method)
+		});
+
+		// make the event draggable using jQuery UI
+		$(this).draggable({
+			zIndex: 999,
+			revert: true,      // will cause the event to go back to its
+			revertDuration: 0  //  original position after the drag
+		});
+
+
+	});
+}
+
+function filterEventsByDay(eventsList,day)
 {
-	function makeDraggable()
+         var data = $.parseJSON(eventsList);
+         var returnedData = $.grep(data, function(dt) 
+         {
+             return dt.dayWeek == day;
+         
+         });
+
+         return returnedData;
+};
+
+function makeDraggable()
 	{
 
 		$('#external-events .fc-event').each(function() {
@@ -22,7 +55,8 @@ $(function()
 
 	});
 	}
-   function isElemOverDiv(draggedItem, dropArea) 
+
+	function isElemOverDiv(draggedItem, dropArea) 
    {
    // Prep coords for our two elements
 	var b = $(dropArea).offset();
@@ -34,8 +68,14 @@ $(function()
    return false;
 }
 
+$(function() 
+{
+	
+   
 
-	$( "#borrarAsig" ).droppable(
+	$( "#external-events" ).droppable();
+      
+    $( "#borrarAsig" ).droppable(
 		//{
       //drop: function( event, ui ) {
       //	alert("A");
@@ -45,6 +85,8 @@ $(function()
            // .html( "Dropped!" );
       //}}
       );
+
+
     $('#tabs').tabs({
        activate: function(event, ui) 
        {
@@ -57,55 +99,48 @@ $(function()
 
    /* initialize the events -------------*/
 	makeDraggable();
-	
+	makeDroppable();
 
-	 var asignacions= '<%= raw @asignacions %>';
-     var laboratorios= '<%= raw @laboratorios %>';
-     laboratorios=laboratorios.replace(/nombre_lab/g,"name");
-     laboratorios=laboratorios.replace(/=>/g, ":");
-     asignacions=asignacions.replace(/=>/g, ":");
- 	 
-   /* initialize the calendar */
-   $("div.calendario").each(function(index, element)
-   {
+	var asignacions= '<%= raw @asignacions %>';
+    var laboratorios= '<%= raw @laboratorios %>';
+    laboratorios=laboratorios.replace(/nombre_lab/g,"name");
+    laboratorios=laboratorios.replace(/=>/g, ":");
+    asignacions=asignacions.replace(/=>/g, ":");
+	 
+    /* initialize the calendar */
+    $("div.calendario").each(function(index, element)
+    {
       var divId =  $(element).attr("id");
+
+
       $("#"+divId).fullCalendar({
-        header: {
-                  left: '',
-                  center: 'title',
-                  right: ''
-                },
+        header: { left: '', center: 'title', right: '' },
         allDaySlot:false,
-            defaultDate: '2014-09-12',
-            defaultView:'agendaWeek',
-            editable: true,
-            droppable: true,
-            drop: function(index, event, ui, selectedRoom) { 
+        defaultDate: '2014-09-12',
+        defaultView:'agendaWeek',
+        editable: true,
+        droppable: true,
+        drop: function(date, jsEvent, ui, selectedRoom) { 
 
-                alert("Habitacionn id: "+selectedRoom.id+" Nombre: "+selectedRoom.name);
-            	var eventId = $(this).attr("id");
+                alert("Room: "+selectedRoom.name);
+                alert("Start = "+date.hours()+':'+date.minutes());
 
-                //alert(asignacions);
-            	//alert(index);
-            	//var eventId = $(this).attr("id");
-            	//alert(eventId);
-            	//alert(event.title + " was dropped on " + event.start+"   "+ "  "+eventId);
                 // is the "remove after drop" checkbox checked?
 				if ($('#drop-remove').is(':checked')) 
 				{
 					// if so, remove the element from the "Draggable Events" list
 					$(this).remove();
 				}
-
 			},
-            eventLimit: true, // allow "more" link when too many events
-            events:$.parseJSON(asignacions), //carga de eventos
+            eventLimit: true, //allow "more" link when too many events
+            events: filterEventsByDay(asignacions,divId), //carga de eventos
             rooms:$.parseJSON(laboratorios),
 		    eventMouseover: function(event,jsEvent){
                   $(jsEvent.target).attr('title',event.title);
 		    },
-		   eventDragStop: function(event, jsEvent, ui, view) {
-		   	var active = $('#tabs .ui-state-active').children("a");
+		    eventDragStop: function(event, jsEvent, ui, view) {
+		   	   var active = $('#tabs .ui-state-active').children("a");
+
 		   	if (isElemOverDiv(jsEvent, '#borrarAsig')) {
 		   		$(active.attr("href")).fullCalendar('removeEvents', event.id);
 		   		$.ajax({
@@ -115,14 +150,22 @@ $(function()
 		   			success:function()
 		   			{
 		   			  //alert("La asignación ha sido eliminada de forma satisfactoria.");
-		   			
 		   			}
-		   		});
-		   		
+		   		});	
+		   	}
+             
+            //Move event from calendar to external list
+		   	if(isElemOverDiv(jsEvent,'#external-events'))
+		   	{
+		   		$("#external-events").append("<div class='fc-event ui-draggable ui-draggable-handle' id='id6'>"+event.title+"</div>");
+		   		makeDraggable();
+		   		//ToDo:Borrar de la vista y de la base de datos
 		   	}
 		   },
+           eventClick: function(event){
 
-            eventClick: function(event){
+            	 alert(event.start.hours()+':'+event.start.minutes());
+            	 alert(event.end.time());
                  var r = confirm("Delete "+ event.title);
                  if(r===true)
                  {
@@ -171,7 +214,7 @@ $(function()
 		cursor: pointer;
 	}
 
-	#external-events p {
+	#dropMenu p {
 		margin: 1.5em 0;
 		font-size: 11px;
 		color: #666;
@@ -197,13 +240,15 @@ $(function()
 			<div class='fc-event' id="id3">Asignacion 3</div>
 			<div class='fc-event' id="id4">Asignacion 4</div>
 			<div class='fc-event' id="id5">Asignacion 5</div>
-			<p>
+			
+		
+</div>
+<div id="dropMenu">
+<p>
 			  <input type='checkbox' id='drop-remove' />
 			  <label for='drop-remove'>borrar después de mover</label>
 			</p>
-		
 </div>
-
 <div id="tabs">
 	       <ul id="diasSemana">
 	       <% for dia in @dias %>

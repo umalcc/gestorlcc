@@ -327,23 +327,19 @@ class AsignacionsController < ApplicationController
     end
   end
   
-  def consulta
+def consulta
+
     ActiveRecord::Base.include_root_in_json = false
     @laboratorios=Laboratorio.all.select("id,nombre_lab").as_json
-
     @asignacions = Asignaciondef.all
-    if @asignacions.size!=0
-     @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
-     @asignacions = @asignacions.map { |r| {:title => r.id.to_s ,:room_id => r.laboratorio_id, :start => r.horaini, :color => '#66FF33', :end => r.horafin, :id => r.id} } 
-     @asignacions = @asignacions.as_json
-     #no filtra las asignaciones bien...
 
+    if @asignacions.size!=0
+    # @asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
+     @asignacions = @asignacions.map { |r| {:title => r.id.to_s ,:room_id => r.laboratorio_id, :start => r.horaini, :color => '#66FF33', :end => r.horafin, :id => r.id, :dayWeek => r.dia.nombre} } 
+     @asignacions = @asignacions.as_json
     end
 
-    #load days from database
     @dias = Dia.all
-    
-
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @asignacions }
