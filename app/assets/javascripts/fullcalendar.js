@@ -5469,13 +5469,27 @@ $.extend(Grid.prototype, {
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 			seg.event = eventRange.event;
+			seg.col=this.searchPosByRoomId(seg.event.room_id);
 			seg.eventStartMS = eventRange.eventStartMS;
 			seg.eventDurationMS = eventRange.eventDurationMS;
 		}
 
 		return segs;
+	},
+	searchPosByRoomId: function(id)
+	{
+	  var position=-1;
+	  var rooms=view.opt('rooms');
+	  for(i=0;i<rooms.length;i++)
+	  {
+		if(room[i].room_id==id)
+		{
+			position=i;
+			break;
+		}
+	  }
+	  return position;
 	}
-
 });
 
 
@@ -6656,7 +6670,7 @@ $.extend(TimeGrid.prototype, {
 			colEnd = cellDate.clone().time(this.maxTime);
 			seg = intersectionToSeg(rangeStart, rangeEnd, colStart, colEnd);
 			if (seg) {
-				seg.col = col;
+				// seg.col = col; #Gerardo
 				segs.push(seg);
 			}
 		}

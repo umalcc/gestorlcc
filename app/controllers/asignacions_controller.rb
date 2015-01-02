@@ -7,6 +7,7 @@ class AsignacionsController < ApplicationController
 
 
 
+
   # DELETE /asignacions/1
   # DELETE /asignacions/1.xml
   def destroy
