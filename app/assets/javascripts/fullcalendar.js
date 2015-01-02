@@ -5479,10 +5479,10 @@ $.extend(Grid.prototype, {
 	searchPosByRoomId: function(id)
 	{
 	  var position=-1;
-	  var rooms=view.opt('rooms');
+	  var rooms=this.view.opt('rooms');
 	  for(i=0;i<rooms.length;i++)
 	  {
-		if(room[i].room_id==id)
+		if(rooms[i].id==id)
 		{
 			position=i;
 			break;

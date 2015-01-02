@@ -334,7 +334,7 @@ class AsignacionsController < ApplicationController
     @asignacions = Asignaciondef.all
     if @asignacions.size!=0
      @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
-     @asignacions = @asignacions.map { |r| {:title => r.id.to_s , :start => r.horaini, :color => '#66FF33', :end => r.horafin, :id => r.id} } 
+     @asignacions = @asignacions.map { |r| {:title => r.id.to_s ,:room_id => r.laboratorio_id, :start => r.horaini, :color => '#66FF33', :end => r.horafin, :id => r.id} } 
      @asignacions = @asignacions.as_json
      #no filtra las asignaciones bien...
 
