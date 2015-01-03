@@ -121,7 +121,7 @@ $(function()
         editable: true,
         droppable: true,
         drop: function(date, jsEvent, ui, selectedRoom) { 
-
+        	alert("Holaaa");
                 alert("Room: "+selectedRoom.name);
                 alert("Start = "+date.hours()+':'+date.minutes());
 
@@ -138,11 +138,15 @@ $(function()
 		    eventMouseover: function(event,jsEvent){
                   $(jsEvent.target).attr('title',event.title);
 		    },
+		    eventDrop: function(event)
+		    {
+		    	alert(event.room_id+" "+event.start);
+		    },
 		    eventDragStop: function(event, jsEvent, ui, view) {
 		   	   var active = $('#tabs .ui-state-active').children("a");
-
-		   	if (isElemOverDiv(jsEvent, '#borrarAsig')) {
-		   		$(active.attr("href")).fullCalendar('removeEvents', event.id);
+		   	 //  alert(event.room_id);
+		   	   if (isElemOverDiv(jsEvent, '#borrarAsig')) {
+		   	   	$(active.attr("href")).fullCalendar('removeEvents', event.id);
 		   		$.ajax({
 		   			type:"POST",
 		   			url:"/asignacions/borranormalasignada",

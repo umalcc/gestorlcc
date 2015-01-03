@@ -1960,7 +1960,7 @@ function EventManager(options) { // assumed to be a calendar
 	//
 	// Returns an object with delta information and a function to undo all operations.
 	//
-	function mutateEvent(event, newStart, newEnd) {
+	function mutateEvent(event, newStart, newEnd,newRoomId) {
 		var oldAllDay = event._allDay;
 		var oldStart = event._start;
 		var oldEnd = event._end;
@@ -2028,7 +2028,8 @@ function EventManager(options) { // assumed to be a calendar
 			clearEnd,
 			newAllDay,
 			dateDelta,
-			durationDelta
+			durationDelta,
+			newRoomId
 		);
 
 		return {
@@ -2047,7 +2048,7 @@ function EventManager(options) { // assumed to be a calendar
 	//
 	// Returns a function that can be called to undo all the operations.
 	//
-	function mutateEvents(events, clearEnd, forceAllDay, dateDelta, durationDelta) {
+	function mutateEvents(events, clearEnd, forceAllDay, dateDelta, durationDelta, newRoomId) {
 		var isAmbigTimezone = t.getIsAmbigTimezone();
 		var undoFunctions = [];
 
@@ -2058,10 +2059,9 @@ function EventManager(options) { // assumed to be a calendar
 			var newAllDay = forceAllDay != null ? forceAllDay : oldAllDay;
 			var newStart = oldStart.clone();
 			var newEnd = (!clearEnd && oldEnd) ? oldEnd.clone() : null;
-
+			var oldRoomId=event.room_id;
 			// NOTE: this function is responsible for transforming `newStart` and `newEnd`,
 			// which were initialized to the OLD values first. `newEnd` may be null.
-
 			// normlize newStart/newEnd to be consistent with newAllDay
 			if (newAllDay) {
 				newStart.stripTime();
@@ -2099,7 +2099,10 @@ function EventManager(options) { // assumed to be a calendar
 					}
 				}
 			}
-
+			if(newRoomId)
+			{
+				event.room_id=newRoomId;
+			}
 			event.allDay = newAllDay;
 			event.start = newStart;
 			event.end = newEnd;
@@ -2109,6 +2112,7 @@ function EventManager(options) { // assumed to be a calendar
 				event.allDay = oldAllDay;
 				event.start = oldStart;
 				event.end = oldEnd;
+				event.room_id=oldRoomId;
 				backupEventDates(event);
 			});
 		});
@@ -4584,7 +4588,7 @@ $.extend(Grid.prototype, {
 	// Renders a mock event over the given date(s).
 	// `end` can be null, in which case the mock event that is rendered will have a null end time.
 	// `sourceSeg` is the internal segment object involved in the drag. If null, something external is dragging.
-	renderRangeHelper: function(start, end, sourceSeg) {
+	renderRangeHelper: function(start, end, sourceSeg,newRoomId) {
 		var view = this.view;
 		var fakeEvent;
 
@@ -4594,6 +4598,7 @@ $.extend(Grid.prototype, {
 		}
 
 		fakeEvent = sourceSeg ? createObject(sourceSeg.event) : {}; // mask the original event object if possible
+		fakeEvent.room_id = newRoomId;
 		fakeEvent.start = start;
 		fakeEvent.end = end;
 		fakeEvent.allDay = !(start.hasTime() || (end && end.hasTime())); // freshly compute allDay
@@ -5079,7 +5084,7 @@ $.extend(Grid.prototype, {
 		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
-		var newStart, newEnd;
+		var newStart, newEnd, newRoomId;
 
 		// A clone of the original element that will move with the mouse
 		var mouseFollower = new MouseFollower(seg.el, {
@@ -5105,14 +5110,17 @@ $.extend(Grid.prototype, {
 				view.trigger('eventDragStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
 			cellOver: function(cell, date) {
+			    var rooms=view.opt('rooms');
 				var origDate = seg.cellDate || dragListener.origDate;
 				var res = _this.computeDraggedEventDates(seg, origDate, date);
 				newStart = res.start;
 				newEnd = res.end;
-
+				newRoomId=rooms[cell.col].id;
 				if (calendar.isEventAllowedInRange(event, newStart, res.visibleEnd)) { // allowed to drop here?
-					if (view.renderDrag(newStart, newEnd, seg)) { // have the view render a visual indication
+					if (view.renderDrag(newStart, newEnd, seg, newRoomId)) { // have the view render a visual indication
+					//alert(newStart +" "+newEnd);
 						mouseFollower.hide(); // if the view is already using a mock event "helper", hide our own
+						//mouseFollower.show();
 					}
 					else {
 						mouseFollower.show();
@@ -5121,18 +5129,20 @@ $.extend(Grid.prototype, {
 				else {
 					// have the helper follow the mouse (no snapping) with a warning-style cursor
 					newStart = null; // mark an invalid drop date
+					newRoomId=null;
 					mouseFollower.show();
 					disableCursor();
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
 				newStart = null;
+				newRoomId = null;
 				view.destroyDrag(); // unrender whatever was done in view.renderDrag
 				mouseFollower.show(); // show in case we are moving out of all cells
 				enableCursor();
 			},
 			dragStop: function(ev) {
-				var hasChanged = newStart && !newStart.isSame(event.start);
+				var hasChanged = (newStart && (newStart.get('hour')!=event.start.get('hour') || newStart.get('minute')!=event.start.get('minute')))||(newRoomId && event.room_id != newRoomId);
 
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
 				mouseFollower.stop(!hasChanged, function() {
@@ -5142,7 +5152,7 @@ $.extend(Grid.prototype, {
 					view.trigger('eventDragStop', el[0], event, ev, {}); // last argument is jqui dummy
 
 					if (hasChanged) {
-						view.eventDrop(el[0], event, newStart, ev); // will rerender all events...
+						view.eventDrop(el[0], event, newStart, ev, newRoomId); // will rerender all events...
 					}
 				});
 
@@ -5171,6 +5181,9 @@ $.extend(Grid.prototype, {
 		var visibleEnd;
 
 		if (dropDate.hasTime() === dragStartDate.hasTime()) {
+		    dragStartDate.set('day',dropDate.get('day'));
+			dragStartDate.set('month',dropDate.get('month'));
+			dragStartDate.set('year',dropDate.get('year'));
 			delta = dayishDiff(dropDate, dragStartDate);
 			newStart = start.clone().add(delta);
 			if (event.end === null) { // do we need to compute an end?
@@ -5235,15 +5248,19 @@ $.extend(Grid.prototype, {
 
 				if (calendar.isEventAllowedInRange(event, start, newEnd)) { // allowed to be resized here?
 					if (newEnd.isSame(end)) {
+					console.log("invalid resize 2222!!");
 						newEnd = null; // mark an invalid resize
 						destroy();
 					}
 					else {
+				    	newEnd.set('day',start.get('day'));
+					    newEnd.set('month',start.get('month'));
 						_this.renderResize(start, newEnd, seg);
 						view.hideEvent(event);
 					}
 				}
 				else {
+				console.log("invalid resize!!");
 					newEnd = null; // mark an invalid resize
 					destroy();
 					disableCursor();
@@ -6668,6 +6685,10 @@ $.extend(TimeGrid.prototype, {
 			cellDate = view.cellToDate(0, col); // use the View's cell system for this
 			colStart = cellDate.clone().time(this.minTime);
 			colEnd = cellDate.clone().time(this.maxTime);
+			/*colStart.set('day',cellDate.get('day'));
+			colStart.set('month',cellDate.get('month'));
+			colEnd.set('day',cellDate.get('day'));
+			colEnd.set('month',cellDate.get('month'));*/
 			seg = intersectionToSeg(rangeStart, rangeEnd, colStart, colEnd);
 			if (seg) {
 				// seg.col = col; #Gerardo
@@ -6802,11 +6823,11 @@ $.extend(TimeGrid.prototype, {
 
 	// Renders a visual indication of an event being dragged over the specified date(s).
 	// `end` and `seg` can be null. See View's documentation on renderDrag for more info.
-	renderDrag: function(start, end, seg) {
+	renderDrag: function(start, end, seg,newRoomId) {
 		var opacity;
 
 		if (seg) { // if there is event information for this drag, render a helper event
-			this.renderRangeHelper(start, end, seg);
+			this.renderRangeHelper(start, end, seg,newRoomId);
 
 			opacity = this.view.opt('dragOpacity');
 			if (opacity !== undefined) {
@@ -7906,8 +7927,8 @@ function View(calendar) {
 	---------------------------------------------------------------------------------*/
 
 	
-	function eventDrop(el, event, newStart, ev) {
-		var mutateResult = calendar.mutateEvent(event, newStart, null);
+	function eventDrop(el, event, newStart, ev, newRoomId) {
+		var mutateResult = calendar.mutateEvent(event, newStart, null,newRoomId);
 
 		trigger(
 			'eventDrop',
@@ -9159,9 +9180,9 @@ $.extend(AgendaView.prototype, {
 
 	// Renders a visual indication of an event being dragged over the view.
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(start, end, seg) {
+	renderDrag: function(start, end, seg,newRoomId) {
 		if (start.hasTime()) {
-			return this.timeGrid.renderDrag(start, end, seg);
+			return this.timeGrid.renderDrag(start, end, seg,newRoomId);
 		}
 		else if (this.dayGrid) {
 			return this.dayGrid.renderDrag(start, end, seg);

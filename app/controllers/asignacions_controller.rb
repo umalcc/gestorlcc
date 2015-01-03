@@ -463,10 +463,10 @@ def consulta
   end
 
   def borranormalasignada
-    #asignacion=Asignaciondef.find(params[:asigna])
-    # asignacion.delete
-    # otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).to_a
-    # otrasasignaciones.each {|o| o.delete }
+    asignacion=Asignaciondef.find(params[:asigna])
+    asignacion.delete
+    #otrasasignaciones=Asignacion.where('solicitudlab_id = ?',asignacion.solicitudlab_id).to_a
+    #otrasasignaciones.each {|o| o.delete }
     @asignacions=Asignaciondef.all
     respond_to do |format|
       format.js
