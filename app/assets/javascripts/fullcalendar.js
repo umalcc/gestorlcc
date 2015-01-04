@@ -5746,9 +5746,9 @@ $.extend(DayGrid.prototype, {
 
 
 	// Renders a visual indication of an event being resized
-	renderResize: function(start, end, seg) {
+	renderResize: function(start, end, seg,room_id) {
 		this.renderHighlight(start, end);
-		this.renderRangeHelper(start, end, seg);
+		this.renderRangeHelper(start, end, seg,room_id);
 	},
 
 
@@ -6860,8 +6860,8 @@ $.extend(TimeGrid.prototype, {
 
 
 	// Renders a visual indication of an event being resized
-	renderResize: function(start, end, seg) {
-		this.renderRangeHelper(start, end, seg);
+	renderResize: function(start, end, seg,room_id) {
+		this.renderRangeHelper(start, end, seg,room_id);
 	},
 
 
@@ -7735,7 +7735,7 @@ View.prototype = {
 						}
 
 						// trigger 'drop' regardless of whether element represents an event
-						_this.trigger('drop', el[0], eventStart, ev, ui, selectedRoom);
+						_this.trigger('drop', el[0], eventStart, ev, ui, selectedRoom.id);
 						// create an event from the given properties and the latest dates
 						if (eventProps) {
 							renderedEvents = calendar.renderEvent(eventProps, meta.stick);
