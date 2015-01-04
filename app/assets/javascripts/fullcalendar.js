@@ -4505,7 +4505,7 @@ $.extend(Grid.prototype, {
 			},
 			cellOver: function(cell, date) {
 				if (dragListener.origDate) { // click needs to have started on a cell
-
+					selectedRoom=rooms[cell.col];
 					dayEl = _this.getCellDayEl(cell);
 
 					dates = [ date, dragListener.origDate ].sort(compareNumbers); // works with Moments
@@ -4525,6 +4525,7 @@ $.extend(Grid.prototype, {
 			},
 			cellOut: function(cell, date) {
 				dates = null;
+				selectedRoom=null;
 				_this.destroySelection();
 				enableCursor();
 			},
@@ -5240,12 +5241,13 @@ $.extend(Grid.prototype, {
 				view.trigger('eventResizeStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
 			cellOver: function(cell, date) {
+			    var rooms=view.opt('rooms');
 				// compute the new end. don't allow it to go before the event's start
 				if (date.isBefore(start)) { // allows comparing ambig to non-ambig
 					date = start;
 				}
 				newEnd = date.clone().add(_this.cellDuration); // make it an exclusive end
-
+				var selectedRoom= rooms[cell.col].id;
 				if (calendar.isEventAllowedInRange(event, start, newEnd)) { // allowed to be resized here?
 					if (newEnd.isSame(end)) {
 					console.log("invalid resize 2222!!");
@@ -5255,7 +5257,7 @@ $.extend(Grid.prototype, {
 					else {
 				    	newEnd.set('day',start.get('day'));
 					    newEnd.set('month',start.get('month'));
-						_this.renderResize(start, newEnd, seg);
+						_this.renderResize(start, newEnd, seg,selectedRoom);
 						view.hideEvent(event);
 					}
 				}
@@ -6691,7 +6693,7 @@ $.extend(TimeGrid.prototype, {
 			colEnd.set('month',cellDate.get('month'));*/
 			seg = intersectionToSeg(rangeStart, rangeEnd, colStart, colEnd);
 			if (seg) {
-				// seg.col = col; #Gerardo
+			    seg.col = col;// #Gerardo
 				segs.push(seg);
 			}
 		}
@@ -7698,11 +7700,11 @@ View.prototype = {
 
 						// keep the start/end up to date when dragging
 						if (eventProps) {
-							$.extend(eventProps, { start: eventStart, end: eventEnd });
+							$.extend(eventProps, { start: eventStart, end: eventEnd ,room_id:selectedRoom.id});
 						}
 
 						if (calendar.isExternalDragAllowedInRange(eventStart, visibleEnd, eventProps)) {
-							_this.renderDrag(eventStart, visibleEnd);
+							_this.renderDrag(eventStart, visibleEnd,null,selectedRoom.id);
 						}
 						else {
 						    selectedRoom=null;

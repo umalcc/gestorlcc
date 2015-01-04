@@ -121,15 +121,15 @@ $(function()
         editable: true,
         droppable: true,
         drop: function(date, jsEvent, ui, selectedRoom) { 
-        	alert("Holaaa");
-                alert("Room: "+selectedRoom.name);
-                alert("Start = "+date.hours()+':'+date.minutes());
+        	//alert("Holaaa");
+              //  alert("Room: "+selectedRoom.name);
+                //alert("Start = "+date.hours()+':'+date.minutes());
 
                 // is the "remove after drop" checkbox checked?
 				if ($('#drop-remove').is(':checked')) 
 				{
 					// if so, remove the element from the "Draggable Events" list
-					$(this).remove();
+				//	$(this).remove();
 				}
 			},
             eventLimit: true, //allow "more" link when too many events
@@ -140,7 +140,7 @@ $(function()
 		    },
 		    eventDrop: function(event)
 		    {
-		    	alert(event.room_id+" "+event.start);
+		    	//alert(event.room_id+" "+event.start);
 		    },
 		    eventDragStop: function(event, jsEvent, ui, view) {
 		   	   var active = $('#tabs .ui-state-active').children("a");
