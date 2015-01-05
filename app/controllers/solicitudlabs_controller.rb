@@ -4,7 +4,7 @@ class SolicitudlabsController < ApplicationController
   before_action :login_requerido, :admin?
 
   def index
-    @solicitudlabs = Solicitudlab.all
+    getIndexView
     @cuenta = @solicitudlabs.size
     
     respond_to do |format|
@@ -34,6 +34,31 @@ class SolicitudlabsController < ApplicationController
     end
   end
 
+  def isLabRequestCurrent?(labRequest)
+      primerCuatrimestre=Periodo.where("id =?",1).first
+      segundoCuatrimestre=Periodo.where("id =?",2).first
+      
+      return true if (labRequest.fechaini >= primerCuatrimestre.inicio and labRequest.fechafin <= primerCuatrimestre.fin) or
+      (labRequest.fechaini >= segundoCuatrimestre.inicio and labRequest.fechafin <= segundoCuatrimestre.fin)
+    end
+
+  def getIndexView
+      @solicitudlabs= Solicitudlab.all.select{|s| isLabRequestCurrent?(s)}
+      #mostrar sólo las solicitudes del curso académico actual
+      @cuenta=@solicitudlabs.size
+
+      @labRequestsAllowed = labRequestsAllowed?
+    end
+
+    def getPeriodWithAdmission
+      # Obtener el período lectivo que permite admisiones
+      @periodo=Periodo.where("admision = ? AND tipo = ?","t","Lectivo").first
+      return @periodo
+    end
+
+    def labRequestsAllowed?     
+       return (getPeriodWithAdmission.nil? == false) 
+    end
   # GET /solicitudlabs/1/edit
   def edit
     

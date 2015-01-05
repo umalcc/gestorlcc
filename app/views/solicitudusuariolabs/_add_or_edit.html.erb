@@ -8,6 +8,7 @@
 
          <dl>
           <dt>Fecha solicitud</dt>
+          <dd><%= @solicitudlab.fechasol.strftime("%d-%m-%Y")  %></dd>
           <dt>Titulaci&oacute;n *</dt>
             <dd id="combo_titulacion">
               <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]},

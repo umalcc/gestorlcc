@@ -93,7 +93,6 @@ class SolicitudusuariolabsController < ApplicationController
     end
     getIndexView
 
-    logger.debug("Erroresss"+statusMessage)
     respond_to do |format| format.json {render :json => {:error => statusMessage},:status => statusCode}  end
 
   end
@@ -121,6 +120,7 @@ def new
     @periodo=Periodo.where("admision = ?",'t').first
     @solicitudlab = Solicitudlab.new
     @solicitudlab.preferencias=""
+    @solicitudlab.fechasol=Date.today
     @solicitudlab.fechafin= @periodo.fin
     @solicitudlab.fechaini=@periodo.inicio
     @solicitudlab.asignatura=Asignatura.new
