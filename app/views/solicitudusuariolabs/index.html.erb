@@ -15,21 +15,22 @@
                 </tr>
                </table>
              </div>
-             <!--Si no hay solicitudes actuales, se debe mostrar la opción copiar las solicitudes del año pasado si las hubiese-->
+             <!--Si no hay solicitudes actuales, se debe mostrar la opción copiar las solicitudes del año pasado si las hubiese , { :multiple => true, :size =>3 }-->
              <%if @labRequestsAllowed and @numSolLabAñoPasado != 0%>
              <div style="float:left;">
               <table>
                 <tr>
-                  <!--<td>    
-                  <%= select_tag 'asignatura', options_for_select(@solicitudlabs.map {|s| [ s.asignatura.abrevia_asig, s.asignatura_id ]}), { :multiple => true, :size =>3 } %>
-                  </td>-->
-                  <td><input name="copyBtn" type="button" value="Copiar solicitudes" style="width:130px;height:30px;" /></td>   
+                  <td>    
+                  <%= select_tag 'asignatura', options_for_select(@solicitudlabs.map {|s| [ s.asignatura.abrevia_asig, s.asignatura_id ]}.uniq) %>
+                  </td> 
                 </tr>
+                <tr> <td><input name="copyBtn" type="button" value="Copiar solicitudes" style="width:130px;height:30px;" /></td>  </tr>
                </table>
              </div>
              <%end%>
             </div>
-       
+            <div id="errores">
+       </div>
              <div id="tabla" style="float:left;">
               <%= render :partial => "items_lista" %>  
              </div> 
@@ -60,18 +61,22 @@ $(function()
      $('input[name=copyBtn]').click(function () { 
   
        $.ajax({
-                 type: "POST",
                  dataType:"json",
-                 url: "solicitudusuariolabs/copy",
-                 data: {},
+                 type: "POST",
+                 url: "/solicitudusuariolabs/copy",
+                 data: {asignatura:$("#asignatura").val()},
                  success: function(data)
                  {
-                    alert(data);
-                    //window.location.href="solicitudusuariolabs";  
+                  errors=xhr.responseJSON.error
+                   $("#errores").append("<div id='errorExplanation'><p>La copia se ha realizado con éxito.</p></div>");
+                    window.location="/solicitudusuariolabs";  
                  },
-                 fail: function(data)
+                 error: function(evt, xhr, status, error)
                  {
-                  alert("Fallo");
+                  var errors=xhr.responseJSON.error
+                   $("#errores").append("<div id='errorExplanation'><p>Imposible copiar las solicitudes:</p><ul>"+errors+"</ul></div>");
+                  //for message of errors
+
                  }
               });
        
