@@ -34,10 +34,11 @@ class SolicitudusuariolabsController < ApplicationController
   end
 
 def new
+    @periodo=Periodo.where("admision = ?",'t').first
     @solicitudlab = Solicitudlab.new
     @solicitudlab.preferencias=""
-    @solicitudlab.fechafin= Date.today
-    @solicitudlab.fechaini=@solicitudlab.fechafin
+    @solicitudlab.fechafin= @periodo.fin
+    @solicitudlab.fechaini=@periodo.inicio
     @solicitudlab.asignatura=Asignatura.new
     if (Asignatura::CURSO).first=="optativa"
       as='0'
@@ -69,7 +70,6 @@ def new
     #  as=Asignatura::CURSO.first
     #end
     saveModel(params)
-    logger.debug "Asignaturaaa"+@solicitudlab.asignatura.id.to_s
     #@asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).to_a 
 # HACER UN DRYYYYYYY!!!!!
     getViewModel
@@ -200,10 +200,10 @@ def update
   # DELETE /solicitudlabs/1.xml
  def destroy
     @solicitudlab = Solicitudlab.find(params[:id])
-    @solicitudlab.destroy
     @tramos=Peticionlab.where("solicitudlab_id = ?", @solicitudlab.id).to_a # busco todos los tramos que tenian el id
     @tramos.each {|tramo| tramo.destroy} # los elimino en cascada
     CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Borrado de ").deliver_later       
+    @solicitudlab.destroy
     respond_to do |format|
       format.html { redirect_to(solicitudusuariolabs_url) }
       format.xml  { head :ok }
