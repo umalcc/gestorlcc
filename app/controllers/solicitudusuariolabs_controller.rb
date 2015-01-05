@@ -67,11 +67,26 @@ class SolicitudusuariolabsController < ApplicationController
             nuevaPeticion.save
         end
     end
+<<<<<<< HEAD
  
     getIndexView
 
     #ToDo: enviar info de error al ajax
     respond_to do |format| format.js  end
+=======
+    statusCode=0
+    statusMessage=""
+    if (nuevaPeticion.errors.length>0)
+      statusCode=422
+      nuevaPeticion.errors.each{|x| statusMessage += x}
+    else
+      statusCode=500
+      statusMessage="La copia se ha realizado con éxito"
+    end
+    getIndexView
+ 
+    respond_to do |format| format.json  end
+>>>>>>> Copia solicitudes
 
   end
 

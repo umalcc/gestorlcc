@@ -61,12 +61,17 @@ $(function()
   
        $.ajax({
                  type: "POST",
+                 dataType:"json",
                  url: "solicitudusuariolabs/copy",
                  data: {},
-                 success: function()
+                 success: function(data)
                  {
-                    alert("Copiado satisfactoriamente");
+                    alert(data);
                     //window.location.href="solicitudusuariolabs";  
+                 },
+                 fail: function(data)
+                 {
+                  alert("Fallo");
                  }
               });
        
