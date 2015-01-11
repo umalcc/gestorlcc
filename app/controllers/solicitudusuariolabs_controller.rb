@@ -1,10 +1,11 @@
 class SolicitudusuariolabsController < ApplicationController
 
    before_action :login_requerido,:usuario?
+   before_action :getIndexView, :only=> [:index,:copy]
 
   def index
-    @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
-    @cuenta=@solicitudlabs.size
+     
+    getIndexView
 
     respond_to do |format|
       format.html # index.html.erb
@@ -12,6 +13,66 @@ class SolicitudusuariolabsController < ApplicationController
     end
   end
 
+  #método para realizar la copia de solicitudes del año anterior
+  def copy
+    
+    solicitudlabsAñoPasado = getLabRequestsLastYear
+    #coger sólo las solicitudes correspondientes al período lectivo actual con admision = true
+    periodo = getPeriodWithAdmission
+    solicitudlabsAñoPasado = filterLabRequestsLastYearForPeriod(solicitudlabsAñoPasado, periodo)
+
+    #actualizar fechaini, fechafin y fechasol al curso académico actual
+    #y guardar las solicitudes en la bbdd
+    solicitudesIds = Hash.new
+    solicitudlabsAñoPasado.each do |s| 
+      nuevaSolicitud = Solicitudlab.new
+
+      if s.fechaini.month < periodo.inicio.month and s.fechaini.day < periodo.inicio.day
+        nuevaSolicitud.fechaini = periodo.inicio
+      else
+        nuevaSolicitud.fechaini = Date.new(s.fechaini.next_year.year,s.fechaini.month, s.fechaini.day)
+      end
+      
+      if s.fechafin.month > periodo.fin.month and s.fechafin.day > periodo.fin.day
+        nuevaSolicitud.fechafin = periodo.fin
+      else
+        nuevaSolicitud.fechafin = Date.new(s.fechafin.next_year.year, s.fechafin.month, s.fechafin.day)
+      end
+      
+      nuevaSolicitud.fechasol = Date.today
+      nuevaSolicitud.usuario_id = s.usuario_id
+      nuevaSolicitud.asignatura_id = s.asignatura_id
+      nuevaSolicitud.curso = s.curso
+      nuevaSolicitud.npuestos = s.npuestos
+      nuevaSolicitud.comentarios = s.comentarios
+      nuevaSolicitud.preferencias = s.preferencias
+      nuevaSolicitud.tipo = s.tipo
+      nuevaSolicitud.asignado = 'N'  
+      nuevaSolicitud.save
+
+      logger.debug(nuevaSolicitud.errors.inspect) 
+      solicitudesIds[s.id] = nuevaSolicitud.id
+    end
+
+    #obtener las peticiones de laboratorios asociadas a las solicitudes del año pasado
+    #y guardarlas actualizas en la bbdd
+    peticionlabsAñoPasado = getLabPetitionsLastYear(solicitudlabsAñoPasado)
+    peticionlabsAñoPasado.each do |p|
+        nuevaPeticion = Peticionlab.new
+        nuevaPeticion.diasemana = p.diasemana
+        nuevaPeticion.horaini = p.horaini
+        nuevaPeticion.horafin = p.horafin
+        nuevaPeticion.solicitudlab_id = solicitudesIds[p.solicitudlab_id]
+        if !nuevaPeticion.solicitudlab_id.nil?
+            nuevaPeticion.save
+        end
+    end
+
+    getIndexView
+ 
+    respond_to do |format| format.js  end
+
+  end
 
   def edit
     
@@ -240,9 +301,75 @@ def update
   end
 
   private
-def solicitudusuariolab_params
-  params.require(:solicitudlab).permit(:id)
 
-end
+    def solicitudusuariolab_params
+      params.require(:solicitudlab).permit(:id)
+    end
+
+    def getPeriodWithAdmission
+      # Obtener el período lectivo que permite admisiones
+      @periodo=Periodo.where("admision = ? AND tipo = ?","t","Lectivo").first
+      return @periodo
+    end
+
+    def isLabRequestCurrent?(labRequest)
+      primerCuatrimestre=Periodo.where("id =?",1).first
+      segundoCuatrimestre=Periodo.where("id =?",2).first
+      
+      return true if (labRequest.fechaini >= primerCuatrimestre.inicio and labRequest.fechafin <= primerCuatrimestre.fin) or
+      (labRequest.fechaini >= segundoCuatrimestre.inicio and labRequest.fechafin <= segundoCuatrimestre.fin)
+    end
+
+    def labRequestsAllowed?     
+       return (getPeriodWithAdmission.nil? == false) 
+    end
+
+    def getIndexView
+      @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
+      #mostrar sólo las solicitudes del curso académico actual
+      @solicitudlabs = @solicitudlabs.select{|s| isLabRequestCurrent?(s)}
+      @cuenta=@solicitudlabs.size
+
+      logger.debug "hay nuevas solicitudes-----" + @cuenta.to_s
+      @labRequestsAllowed = labRequestsAllowed?
+    end
+
+    def getLabRequestsLastYear
+      primerCuatrimestre=Periodo.where("id =?",1).first
+      segundoCuatrimestre=Periodo.where("id =?",2).first
+
+      iniCursoAcademicoPasado = Date.new(primerCuatrimestre.inicio.prev_year.year,9,1)
+      finCursoAcademicoPasado = Date.new(segundoCuatrimestre.inicio.prev_year.year,9,1)
+
+      @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
+      return @solicitudlabs.select {|s| s.fechaini >= iniCursoAcademicoPasado and s.fechaini< finCursoAcademicoPasado}
+
+    end
+
+    def getLabPetitionsLastYear(labRequestsLastYear)
+      labRequestsLastYearIds = labRequestsLastYear.collect {|r| r.id}.to_a
+      labPetitionsLastYear = Peticionlab.all.select {|p| labRequestsLastYearIds.include?(p.solicitudlab_id)}
+      return labPetitionsLastYear
+    end
+
+    def filterLabRequestsLastYearForPeriod(labRequestsLastYear, periodo)
+    
+    solicitudlabs=Array.new
+
+    if (!periodo.nil?)
+      if (periodo.id == 1) #primer cuatrimestre
+        solicitudlabs = labRequestsLastYear.select{|a| !a.asignatura.nil? and a.asignatura.cuatrimestre == 1}.uniq
+        #ver las asignaturas anuales con reservas en el primer cuatrimestre
+      end
+      if (periodo.id == 2) #segundo cuatrimestre
+        solicitudlabs = labRequestsLastYear.select{|a| !a.asignatura.nil? and a.asignatura.cuatrimestre == 2}.uniq
+        #ver las asignaturas anuales con reservas en el segundo cuatrimestre
+      end
+    end
+
+    return solicitudlabs
+
+    end
+
 
 end

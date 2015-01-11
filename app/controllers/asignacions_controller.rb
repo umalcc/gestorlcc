@@ -334,8 +334,9 @@ def consulta
     @asignacions = Asignaciondef.all
 
     if @asignacions.size!=0
-    # @asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
-     @asignacions = @asignacions.map { |r| {:title => r.id.to_s ,:room_id => r.laboratorio_id, :start => r.horaini, :color => '#66FF33', :end => r.horafin, :id => r.id, :dayWeek => r.dia.nombre} } 
+     #@asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
+     # ToDo:asignatura puede ser null en la base de datos, controlarlo...
+     @asignacions = @asignacions.map { |r| {:title => r.id.to_s ,:room_id => r.laboratorio_id, :start => r.horaini, :color => '#66FF33', :end => r.horafin, :id => r.id, :dayWeek => r.dia.nombre} }     
      @asignacions = @asignacions.as_json
     end
 

@@ -4,17 +4,35 @@
     </p>
     <div id="recuadro">
         <div id="lista-gestion">
-             <p><%= image_tag ("bg_separ.gif") %></p>
-             <div id="busqueda">
+            <p><%= image_tag ("bg_separ.gif") %></p>
+            <div style="display:inline;">
+            <div id="busqueda" style="float:left;">
                <table>
                 <tr>
                   <td><%= image_tag("search.png") %></td>
                   <td>Buscar  : 
-                  <td><%= text_field_tag "query" %></td>     
+                  <td><%= text_field_tag "query" %></td>    
                 </tr>
                </table>
              </div>
-             <div id="tabla"><%= render :partial => "items_lista" %></div> 
+             <!--Si no hay solicitudes actuales, se debe mostrar la opción copiar las solicitudes del año pasado si las hubiese-->
+             <%if @labRequestsAllowed%>
+             <div style="float:left;">
+              <table>
+                <tr>
+                  <!--<td>    
+                  <%= select_tag 'asignatura', options_for_select(@solicitudlabs.map {|s| [ s.asignatura.abrevia_asig, s.asignatura_id ]}), { :multiple => true, :size =>3 } %>
+                  </td>-->
+                  <td><input name="copyBtn" type="button" value="Copiar solicitudes" style="width:130px;height:30px;" /></td>   
+                </tr>
+               </table>
+             </div>
+             <%end%>
+            </div>
+       
+             <div id="tabla" style="float:left;">
+              <%= render :partial => "items_lista" %>  
+             </div> 
          </div><!-- de lista-gestion -->
      </div><!-- de recuadro -->
 </div><!-- de central -->
@@ -35,4 +53,24 @@
       });
    
   });
+
+
+$(function()
+{
+     $('input[name=copyBtn]').click(function () { 
+  
+       $.ajax({
+                 type: "POST",
+                 url: "solicitudusuariolabs/copy",
+                 data: {},
+                 success: function()
+                 {
+                    alert("Copiado satisfactoriamente");
+                    //window.location.href="solicitudusuariolabs";  
+                 }
+              });
+       
+    });
+});
+
 </script>

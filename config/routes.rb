@@ -81,6 +81,7 @@ post 'solicitudrecursousuarios/buscar', :to => 'solicitudrecursousuarios#buscar'
 post 'solicitudusuariolabs/listar', :to => 'solicitudusuariolabs#listar'
 post 'solicitudusuariolabs/crear', :to => 'solicitudusuariolabs#create'
 post 'solicitudusuariolabs/update', :to => 'solicitudusuariolabs#update'
+post 'solicitudusuariolabs/copy', :to => 'solicitudusuariolabs#copy'
 
 post 'solicitudrecursos/buscar', :to => 'solicitudrecursos#buscar'
 post 'solicitudrecursos/crear', :to => 'solicitudrecursos#create'
