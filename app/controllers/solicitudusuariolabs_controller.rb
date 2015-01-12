@@ -1,11 +1,13 @@
 class SolicitudusuariolabsController < ApplicationController
 
    before_action :login_requerido,:usuario?
-   before_action :getIndexView, :only=> [:index,:copy]
+   #before_action :getIndexView, :only=> [:index,:copy]
 
   def index
      
     getIndexView
+
+    getCopyInfo
 
     respond_to do |format|
       format.html # index.html.erb
@@ -16,25 +18,23 @@ class SolicitudusuariolabsController < ApplicationController
   #método para realizar la copia de solicitudes del año anterior
   def copy
     
-    solicitudlabsAñoPasado = getLabRequestsLastYear
-    #coger sólo las solicitudes correspondientes al período lectivo actual con admision = true
-    periodo = getPeriodWithAdmission
-    solicitudlabsAñoPasado = filterLabRequestsLastYearForPeriod(solicitudlabsAñoPasado, periodo)
+
+    getCopyInfo
 
     #actualizar fechaini, fechafin y fechasol al curso académico actual
     #y guardar las solicitudes en la bbdd
     solicitudesIds = Hash.new
-    solicitudlabsAñoPasado.each do |s| 
+    @solicitudlabsAñoPasado.each do |s| 
       nuevaSolicitud = Solicitudlab.new
 
-      if s.fechaini.month < periodo.inicio.month and s.fechaini.day < periodo.inicio.day
-        nuevaSolicitud.fechaini = periodo.inicio
+      if s.fechaini.month <= @periodo.inicio.month and s.fechaini.day <= @periodo.inicio.day
+        nuevaSolicitud.fechaini = @periodo.inicio
       else
         nuevaSolicitud.fechaini = Date.new(s.fechaini.next_year.year,s.fechaini.month, s.fechaini.day)
       end
       
-      if s.fechafin.month > periodo.fin.month and s.fechafin.day > periodo.fin.day
-        nuevaSolicitud.fechafin = periodo.fin
+      if s.fechafin.month >= @periodo.fin.month and s.fechafin.day >= @periodo.fin.day
+        nuevaSolicitud.fechafin = @periodo.fin
       else
         nuevaSolicitud.fechafin = Date.new(s.fechafin.next_year.year, s.fechafin.month, s.fechafin.day)
       end
@@ -56,7 +56,7 @@ class SolicitudusuariolabsController < ApplicationController
 
     #obtener las peticiones de laboratorios asociadas a las solicitudes del año pasado
     #y guardarlas actualizas en la bbdd
-    peticionlabsAñoPasado = getLabPetitionsLastYear(solicitudlabsAñoPasado)
+    peticionlabsAñoPasado = getLabPetitionsLastYear(@solicitudlabsAñoPasado)
     peticionlabsAñoPasado.each do |p|
         nuevaPeticion = Peticionlab.new
         nuevaPeticion.diasemana = p.diasemana
@@ -67,9 +67,10 @@ class SolicitudusuariolabsController < ApplicationController
             nuevaPeticion.save
         end
     end
-
-    getIndexView
  
+    getIndexView
+
+    #ToDo: enviar info de error al ajax
     respond_to do |format| format.js  end
 
   end
@@ -324,16 +325,6 @@ def update
        return (getPeriodWithAdmission.nil? == false) 
     end
 
-    def getIndexView
-      @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
-      #mostrar sólo las solicitudes del curso académico actual
-      @solicitudlabs = @solicitudlabs.select{|s| isLabRequestCurrent?(s)}
-      @cuenta=@solicitudlabs.size
-
-      logger.debug "hay nuevas solicitudes-----" + @cuenta.to_s
-      @labRequestsAllowed = labRequestsAllowed?
-    end
-
     def getLabRequestsLastYear
       primerCuatrimestre=Periodo.where("id =?",1).first
       segundoCuatrimestre=Periodo.where("id =?",2).first
@@ -357,18 +348,34 @@ def update
     solicitudlabs=Array.new
 
     if (!periodo.nil?)
-      if (periodo.id == 1) #primer cuatrimestre
-        solicitudlabs = labRequestsLastYear.select{|a| !a.asignatura.nil? and a.asignatura.cuatrimestre == 1}.uniq
-        #ver las asignaturas anuales con reservas en el primer cuatrimestre
+      if (periodo.id == 1) #primer cuatrimestre: asignaturas del primer cuatrimestre y anuales en el primer cuatrimestre
+        solicitudlabs = labRequestsLastYear.select{|a| !a.asignatura.nil? and (a.asignatura.cuatrimestre == 1 or (a.asignatura.cuatrimestre==0 and a.fechafin.month <= periodo.fin.month))}.uniq
       end
-      if (periodo.id == 2) #segundo cuatrimestre
-        solicitudlabs = labRequestsLastYear.select{|a| !a.asignatura.nil? and a.asignatura.cuatrimestre == 2}.uniq
-        #ver las asignaturas anuales con reservas en el segundo cuatrimestre
+      if (periodo.id == 2) #segundo cuatrimestre: asignaturas del segundo cuatrimestre y anuales en el segundo cuatrimestre
+        solicitudlabs = labRequestsLastYear.select{|a| !a.asignatura.nil? and (a.asignatura.cuatrimestre == 2 or (a.asignatura.cuatrimestre==0 and a.fechaini.month >= periodo.inicio.month))}.uniq
       end
     end
 
     return solicitudlabs
 
+    end
+
+    def getIndexView
+      @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
+      #mostrar sólo las solicitudes del curso académico actual
+      @solicitudlabs = @solicitudlabs.select{|s| isLabRequestCurrent?(s)}
+      @cuenta=@solicitudlabs.size
+
+    end
+
+    def getCopyInfo
+      #ver si hay solicitudes del año pasado
+      @solicitudlabsAñoPasado = getLabRequestsLastYear
+      #coger sólo las solicitudes correspondientes al período lectivo actual con admision = true
+      @periodo = getPeriodWithAdmission
+      @solicitudlabsAñoPasado = filterLabRequestsLastYearForPeriod(@solicitudlabsAñoPasado, @periodo)
+      @numSolLabAñoPasado = @solicitudlabsAñoPasado.size
+      @labRequestsAllowed = !@periodo.nil?
     end
 
 

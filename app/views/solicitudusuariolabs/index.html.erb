@@ -16,7 +16,7 @@
                </table>
              </div>
              <!--Si no hay solicitudes actuales, se debe mostrar la opción copiar las solicitudes del año pasado si las hubiese-->
-             <%if @labRequestsAllowed%>
+             <%if @labRequestsAllowed and @numSolLabAñoPasado != 0%>
              <div style="float:left;">
               <table>
                 <tr>
