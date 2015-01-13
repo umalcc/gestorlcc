@@ -527,12 +527,15 @@ def consulta
 
   def getViewModel
     @dia= Date.today
+    @tramos= []
     @usuarios=Usuario.order("apellidos").to_a
     @titulaciones=Titulacion.order("id").where.not(abrevia: "SD").to_a
     @laboratorios=Laboratorio.order("nombre_lab").to_a 
     asignatura = @asignacion.solicitudlab.asignatura
     @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?',asignatura.titulacion_id,asignatura.curso)
-    @tramos=session[:tramos_horarios].solicitudes
+    if(session[:tramos_horarios] != nil)
+      @tramos=session[:tramos_horarios].solicitudes
+    end
   end
 
     
