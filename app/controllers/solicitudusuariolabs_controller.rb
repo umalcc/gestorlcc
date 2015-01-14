@@ -79,7 +79,7 @@ class SolicitudusuariolabsController < ApplicationController
         @correotramos+=' - '+nuevaPeticion.diasemana+' de '+nuevaPeticion.horaini+' a '+nuevaPeticion.horafin
         if !nuevaPeticion.solicitudlab_id.nil?
             nuevaPeticion.save
-            CorreoTecnicos::emitesolicitudlectivo(nuevaSolicitud,nuevaSolicitud.fechaini,nuevaSolicitud.fechafin,@correotramos,"","Nueva ").deliver_later                        
+            #CorreoTecnicos::emitesolicitudlectivo(nuevaSolicitud,nuevaSolicitud.fechaini,nuevaSolicitud.fechafin,@correotramos,"","Nueva ").deliver_later                        
 
              if (nuevaPeticion.errors.keys.length>0)
               statusCode=422
@@ -341,7 +341,17 @@ def update
       segundoCuatrimestre=Periodo.where("id =?",2).first
       
       return true if (labRequest.fechaini >= primerCuatrimestre.inicio and labRequest.fechafin <= primerCuatrimestre.fin) or
-      (labRequest.fechaini >= segundoCuatrimestre.inicio and labRequest.fechafin <= segundoCuatrimestre.fin)
+      (labRequest.fechaini >= segundoCuatrimestre.inicio and labRequest.fechafin <= segundoCuatrimestre.fin) or
+      (labRequest.fechaini >= primerCuatrimestre.inicio and labRequest.fechafin <= segundoCuatrimestre.fin)
+    end
+
+     def isLabRequestLastYear?(labRequest)
+      primerCuatrimestre=Periodo.where("id =?",1).first
+      segundoCuatrimestre=Periodo.where("id =?",2).first
+      
+      return true if (labRequest.fechaini >= primerCuatrimestre.inicio.prev_year and labRequest.fechafin.prev_year <= primerCuatrimestre.fin) or
+      (labRequest.fechaini >= segundoCuatrimestre.inicio.prev_year and labRequest.fechafin.prev_year <= segundoCuatrimestre.fin) or
+      (labRequest.fechaini >= primerCuatrimestre.inicio.prev_year and labRequest.fechafin.prev_year <= segundoCuatrimestre.fin)
     end
 
     def labRequestsAllowed?     
@@ -351,9 +361,10 @@ def update
     def getIndexView
       @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
       #mostrar sólo las solicitudes del curso académico actual
+      solicitudlabsTmp=@solicitudlabs.select{|s| isLabRequestLastYear?(s)}
+      @asignaturas=solicitudlabsTmp.map {|s|  s.asignatura }.uniq
       @solicitudlabs = @solicitudlabs.select{|s| isLabRequestCurrent?(s)}
       @cuenta=@solicitudlabs.size
-
       logger.debug "hay nuevas solicitudes-----" + @cuenta.to_s
       @labRequestsAllowed = labRequestsAllowed?
     end

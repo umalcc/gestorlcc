@@ -4505,6 +4505,7 @@ $.extend(Grid.prototype, {
 			},
 			cellOver: function(cell, date) {
 				if (dragListener.origDate) { // click needs to have started on a cell
+				    rooms=view.opt('rooms');
 					selectedRoom=rooms[cell.col];
 					dayEl = _this.getCellDayEl(cell);
 
@@ -4774,9 +4775,10 @@ $.extend(Grid.prototype, {
 		var calendar = view.calendar;
 		var colFormat = view.opt('columnFormat');
 		var rooms=view.opt('rooms');
+		var currentRoom=rooms[col];
 		//Gerardo
 		return '' +
-			'<th class="fc-day-header ' + view.widgetHeaderClass+ 'fc-' + rooms[col].id + '" data-id="'+rooms[col].id +'">' +
+			'<th class="fc-day-header ' + view.widgetHeaderClass+ ' fc-' + currentRoom.id + '" data-id="'+currentRoom.id +'" data-ssoo="' +currentRoom.ssoo+'" data-size="'+currentRoom.size+'" data-specialLab="'+currentRoom.special+'">' +
 				rooms[col].name +
 			'</th>';
 	},
@@ -8807,7 +8809,7 @@ setDefaults({
 
 	scrollTime: '06:00:00',
 
-	slotDuration: '00:30:00',
+	slotDuration: '00:15:00',
 
 	axisFormat: generateAgendaAxisFormat,
 	timeFormat: {

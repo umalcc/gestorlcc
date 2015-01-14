@@ -21,7 +21,7 @@
               <table>
                 <tr>
                   <td>    
-                  <%= select_tag 'asignatura', options_for_select(@solicitudlabs.map {|s| [ s.asignatura.abrevia_asig, s.asignatura_id ]}.uniq) %>
+                  <%= select_tag 'asignatura', options_for_select(@asignaturas.map {|s| [ s.abrevia_asig, s.id ]}.uniq) %>
                   </td> 
                 </tr>
                 <tr> <td><input name="copyBtn" type="button" value="Copiar solicitudes" style="width:130px;height:30px;" /></td>  </tr>
@@ -67,9 +67,9 @@ $(function()
                  data: {asignatura:$("#asignatura").val()},
                  success: function(data)
                  {
-                  errors=xhr.responseJSON.error
-                   $("#errores").append("<div id='errorExplanation'><p>La copia se ha realizado con éxito.</p></div>");
-                    window.location="/solicitudusuariolabs";  
+                  //errors=xhr.responseJSON.error
+                  alert("La copia se ha realizado con éxito.");
+                    window.location="/solicitudusuariolabs"; 
                  },
                  error: function(evt, xhr, status, error)
                  {
