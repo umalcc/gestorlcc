@@ -27,11 +27,26 @@ function filterEventsByDay(eventsList,day)
          var data = $.parseJSON(eventsList);
          var returnedData = $.grep(data, function(dt) 
          {
-             return dt.dayWeek == day;
+             return dt.dia_id == day;
          
          });
 
          return returnedData;
+};
+
+function updateEvent(event)
+{
+   var active = $('#tabs .ui-state-active').children("a");
+   var dia_id = active.attr("href").substring(1);
+
+   var horaini = event.start.hours()+":"+event.start.minutes();
+   var horafin = event.end.hours()+":"+event.end.minutes();
+   $.ajax({
+	    type:"POST",
+	   	url:"/asignacions/actualizar",
+	   	data:{asigna:event.id, dia_id:dia_id ,horaini:horaini, horafin:horafin, lab_id:event.room_id},
+	   	success:function(){}
+	});	
 };
 
 function makeDraggable()
@@ -58,33 +73,21 @@ function makeDraggable()
 
 	function isElemOverDiv(draggedItem, dropArea) 
    {
-   // Prep coords for our two elements
-	var b = $(dropArea).offset();
-	b.right = $(dropArea).outerWidth() + b.left;
-	b.bottom = $(dropArea).outerHeight() + b.top;
-   // Compare
-  if (draggedItem.pageX >= b.left && draggedItem.pageX<= b.right &&
-    draggedItem.pageY>= b.top && draggedItem.pageY <= b.bottom){return true;}
-   return false;
-}
-
+     // Prep coords for our two elements
+	 var b = $(dropArea).offset();
+	 b.right = $(dropArea).outerWidth() + b.left;
+	 b.bottom = $(dropArea).outerHeight() + b.top;
+     // Compare
+     if (draggedItem.pageX >= b.left && draggedItem.pageX<= b.right &&
+         draggedItem.pageY>= b.top && draggedItem.pageY <= b.bottom){return true;}
+     return false;
+   }
 
 $(function() 
-{
-	
+{	
 	$( "#external-events" ).droppable();
       
-    $( "#borrarAsig" ).droppable(
-		//{
-      //drop: function( event, ui ) {
-      //	alert("A");
-        //$( this )
-         // .addClass( "ui-state-highlight" )
-          //.find( "p" )
-           // .html( "Dropped!" );
-      //}}
-      );
-
+    $( "#borrarAsig" ).droppable();
 
     $('#tabs').tabs({
        activate: function(event, ui) 
@@ -103,6 +106,8 @@ $(function()
 	var asignacions= '<%= raw @asignacions %>';
     var laboratorios= '<%= raw @laboratorios %>';
     laboratorios=laboratorios.replace(/nombre_lab/g,"name");
+     laboratorios=laboratorios.replace(/especial/g,"special");
+      laboratorios=laboratorios.replace(/puestos/g,"size");
     laboratorios=laboratorios.replace(/=>/g, ":");
     asignacions=asignacions.replace(/=>/g, ":");
 	 
@@ -111,74 +116,128 @@ $(function()
     {
       var divId =  $(element).attr("id");
 
-
-      $("#"+divId).fullCalendar({
+      $("#"+divId).fullCalendar
+      ({
         header: { left: '', center: 'title', right: '' },
+        slotDuration: '00:15:00',
+        minTime: '08:00:00',
+        maxTime: '22:00:00',
         allDaySlot:false,
         defaultDate: '2014-09-12',
         defaultView:'agendaWeek',
         editable: true,
         droppable: true,
-        drop: function(date, jsEvent, ui, selectedRoom) { 
-        	//alert("Holaaa");
-              //  alert("Room: "+selectedRoom.name);
-                //alert("Start = "+date.hours()+':'+date.minutes());
+        drop: function(date, jsEvent, ui, selectedRoom) 
+        { 
+			 $(this).remove(); //elimina el evento de la lista externa visualmente
 
-                // is the "remove after drop" checkbox checked?
-				if ($('#drop-remove').is(':checked')) 
-				{
-					// if so, remove the element from the "Draggable Events" list
-				//	$(this).remove();
-				}
-			},
-            eventLimit: true, //allow "more" link when too many events
-            events: filterEventsByDay(asignacions,divId), //carga de eventos
-            rooms:$.parseJSON(laboratorios),
-		    eventMouseover: function(event,jsEvent){
-                  $(jsEvent.target).attr('title',event.title);
-		    },
-		    eventDrop: function(event)
-		    {
-		    	//alert(event.room_id+" "+event.start);
-		    },
-		    eventDragStop: function(event, jsEvent, ui, view) {
-		   	   var active = $('#tabs .ui-state-active').children("a");
-		   	 //  alert(event.room_id);
-		   	   if (isElemOverDiv(jsEvent, '#borrarAsig')) {
-		   	   	$(active.attr("href")).fullCalendar('removeEvents', event.id);
-		   		$.ajax({
-		   			type:"POST",
-		   			url:"/asignacions/borranormalasignada",
-		   			data:{asigna:event.id},
-		   			success:function()
-		   			{
-		   			  //alert("La asignación ha sido eliminada de forma satisfactoria.");
-		   			}
-		   		});	
-		   	}
-             
-            //Move event from calendar to external list
-		   	if(isElemOverDiv(jsEvent,'#external-events'))
-		   	{
-		   		$("#external-events").append("<div class='fc-event ui-draggable ui-draggable-handle' id='id6'>"+event.title+"</div>");
-		   		makeDraggable();
-		   		//ToDo:Borrar de la vista y de la base de datos
-		   	}
-		   },
-           eventClick: function(event){
+			 var active = $('#tabs .ui-state-active').children("a");
+             var dia_id = active.attr("href").substring(1);	
+		},
+        eventLimit: true, //allow "more" link when too many events
+        events: filterEventsByDay(asignacions,divId), //load events
+        rooms:$.parseJSON(laboratorios),
+	    eventMouseover: function(event,jsEvent)
+	    {
+              //Las tildes no salen bien en event.comentarios
 
-            	 alert(event.start.hours()+':'+event.start.minutes());
-            	 alert(event.end.time());
-                 var r = confirm("Delete "+ event.title);
-                 if(r===true)
-                 {
-                 	$("#"+divId).fullCalendar('removeEvents',event.id);
-                 }
-            },
+              var ocupacion = " "                           
+              if (event.tipo == "T")
+              {
+                  ocupacion = "Todo el período"
+              }
+              else if (event.tipo == "I")
+              {
+                  ocupacion = "Del " + event.fechaIniSol + " al " + event.fechaFinSol
+              }else if (event.tipo == "X")
+              {
+                  ocupacion = "Asignación directa - Del " + event.fechaIniSol + " al " + event.fechaFinSol
+              }else
+              {
+                  ocupacion = "Puntual-" + event.fechaIniSol
+              }
 
-          });
+              var info = "Asig: " + event.title + "(" + event.titulacion + ")\nCurso: " + event.curso + 
+                         "\nPuestos: " + event.puestos + "\nProfesor: " + event.profesor +
+                         "\nSoft: " + event.comentarios + "\nOcupación: " + ocupacion
+
+              if (!event.generica) 
+              {
+                 alert("generica es null");
+              }else
+              {
+                 alert("generica es " + a.generica.to_s);
+              }         
+
+              //$(jsEvent.target).attr('title',info);
+
+              //ToDo: ver lo de generica, para ver si funciona o no
+	    },
+	    eventResize: function(event)
+	    {
+            updateEvent(event);
+            //ToDo: actualizar tabla peticionlabs tb
+	    },
+	    eventDrop: function(event)
+	    {
+             updateEvent(event);
+             //ToDo: actualizar tabla peticionlabs tb
+	    },
+	    eventDragStop: function(event, jsEvent, ui, view) 
+	    {
+	   	   var active = $('#tabs .ui-state-active').children("a");
+	   	 
+	   	   if (isElemOverDiv(jsEvent, '#borrarAsig')) {
+	   	   	$(active.attr("href")).fullCalendar('removeEvents', event.id);
+	   		$.ajax({
+	   			type:"POST",
+	   			url:"/asignacions/borranormalasignada",
+	   			data:{asigna:event.id},
+	   			success:function()
+	   			{
+	   			  //alert("La asignación ha sido eliminada de forma satisfactoria.");
+	   			}
+	   		});	
+	   	}
+         
+        //Move event from calendar to external list
+	   	if(isElemOverDiv(jsEvent,'#external-events'))
+	   	{
+	   		$("#external-events").append("<div class='fc-event ui-draggable ui-draggable-handle' id="+event.id+">"+event.title+"</div>");
+
+	   		makeDraggable();
+
+	   		//Eliminar evento del calendario, visualmente
+	   		$("#"+divId).fullCalendar('removeEvents',event.id);
+
+	   		//Eliminar evento de la lista de asignacions pero no de la bbdd y dejarlo que permanezca
+	   		//en la lista externa
+
+	   	}
+	   }/*,
+       eventClick: function(event){
+
+        	 alert(event.start.hours()+':'+event.start.minutes());
+        	 alert(event.end.time());
+             var r = confirm("Delete "+ event.title);
+             if(r===true)
+             {
+             	$("#"+divId).fullCalendar('removeEvents',event.id);
+             }
+        },*/
+
+        });
+
+        //Función para mostrar información adicional sobre los laboratorios cuando el
+        //ratón está encima de la columna de laboratorio
+        $(".fc-day-header").mouseover(function(ev)
+        {
+            var labEspecial = ( $(this).attr("data-speciallab") == "true" ) ? 'Sí' : 'No';
+            var labInfo = "Denominación: " + $(this).attr("data-ssoo") + "\nNum. puestos: " + $(this).attr("data-size") + "\nLab especial?: " + labEspecial; 
+            $(this).attr('title',labInfo);
+        });         
+
     });
-
 
  });
 
@@ -236,13 +295,9 @@ $(function()
 <tr>
 	<td valign="top">
 <table>
-<tr><td><div id='external-events'>
-			<h4>Lista de asignaciones</h4>
-			<div class='fc-event' id="id1">Asignacion 1</div>
-			<div class='fc-event' id="id2">Asignacion 2</div>
-			<div class='fc-event' id="id3">Asignacion 3</div>
-			<div class='fc-event' id="id4">Asignacion 4</div>
-			<div class='fc-event' id="id5">Asignacion 5</div>
+<tr><h4>Lista de asignaciones</h4></tr>
+<tr><td><div id='external-events' style="height:40px">
+			<!--Meter las asignaciones que están en la lista externa, pero cómo saber cuáles son?-->
 </div></td></tr>
 <tr><td><%=image_tag("IconoBorrar.png", :id =>"borrarAsig", :border=>0,:height=>128,:width=>128)%></td></tr>
 <tr><td> <div id="asignadirecta">
@@ -266,11 +321,11 @@ $(function()
       <div id="tabs">
 	       <ul id="diasSemana">
 	       <% for dia in @dias %>
-	          <li><a href="#<%=dia.nombre%>"><%=dia.nombre%></a></li>
+	          <li><a href="#<%=dia.id%>"><%=dia.nombre%></a></li>
 	       <%end%>
 	       </ul>
 	       <% for dia in @dias %>
-	          <div class="calendario" id="<%=dia.nombre%>"></div>
+	          <div class="calendario" id="<%=dia.id%>"></div>
 	       <%end%>
 </div>
 </div></td>

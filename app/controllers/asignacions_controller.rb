@@ -20,7 +20,7 @@ class AsignacionsController < ApplicationController
     end
   end
 
-
+  
   def asignar
     @admision=Periodo.where("admision = ? and tipo= ?","t","Lectivo").to_a
     @totalprov=Asignacion.all.size
@@ -330,21 +330,37 @@ class AsignacionsController < ApplicationController
 def consulta
 
     ActiveRecord::Base.include_root_in_json = false
-    @laboratorios=Laboratorio.all.select("id,nombre_lab").as_json
+    @laboratorios=Laboratorio.all.select("id,nombre_lab, ssoo, puestos, especial").as_json
     @asignacions = Asignaciondef.all
 
     if @asignacions.size!=0
      #@asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
      # ToDo:asignatura puede ser null en la base de datos, controlarlo...
-     @asignacions = @asignacions.map { |r| {:title => r.id.to_s ,:room_id => r.laboratorio_id, :start => r.horaini, :color => '#66FF33', :end => r.horafin, :id => r.id, :dayWeek => r.dia.nombre} }     
+     @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :peticionlab_id => r.peticionlab_id, :room_id => r.laboratorio_id, 
+                                            :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => r.solicitudlab.asignatura.abrevia_asig.to_s, :titulacion => r.solicitudlab.asignatura.titulacion.abrevia.to_s,
+                                            :curso => r.solicitudlab.curso.to_s, :puestos => r.solicitudlab.npuestos.to_s, :profesor => r.solicitudlab.usuario.nombre + " " + r.solicitudlab.usuario.apellidos,
+                                            :comentarios => r.solicitudlab.comentarios, :tipo => r.solicitudlab.tipo.to_s,
+                                            :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s, :generica => r.generica.to_s, :color => '#66FF33'} }     
      @asignacions = @asignacions.as_json
     end
 
     @dias = Dia.all
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @asignacions }
+      format.xml { render :xml => @asignacions }
     end
+  end
+
+  def actualizar
+
+    #actualizar día de la semana, horaini, horafin y laboratorio
+    Asignaciondef.update(params[:asigna], :horaini => params[:horaini], :horafin => params[:horafin], :dia_id => params[:dia_id],
+                         :laboratorio_id => params[:lab_id])
+
+    respond_to do |format|
+      format.js {render :nothing => true, :status => 200}
+    end
+    
   end
 
   def asigna_directa
