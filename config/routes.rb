@@ -90,7 +90,7 @@ post 'solicitudrecursousuarios/borra', :to => 'solicitudrecursousuarios#borra'
 post 'solicitudrecursousuarios/crear', :to => 'solicitudrecursousuarios#create'
 
 post 'solicitar/eliminar', :to => 'solicitar#eliminar'
-
+post 'asignacions/anadirListaExterna', :to => 'asignacions#anadirListaExterna'
 post 'asignacions/mover', :to => 'asignacions#mover'
 get 'asignacions/revisar', :to => 'asignacions#revisar'
 get 'asignacions/asignar', :to => 'asignacions#asignar'

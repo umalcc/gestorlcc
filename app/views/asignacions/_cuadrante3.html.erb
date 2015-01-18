@@ -4,9 +4,14 @@
 function makeDroppable()
 {	$('#external-events .fc-event').each(function() {
 
+//alert($.trim($(this).attr("generica")));
 		// store data so the calendar knows to render an event upon drop
+		var info= $.trim($(this).attr("title")).replace(/%/g, "\\n");
 		$(this).data('event', {
+			info: info,
+			generic: $.trim($(this).attr("data-generic")),
 			id: $.trim($(this).attr("id")),
+			color: '#66FF33',
 			title: $.trim($(this).text()), // use the element's text as the event title
 			stick: true // maintain when user navigates (see docs on the renderEvent method)
 		});
@@ -28,7 +33,6 @@ function filterEventsByDay(eventsList,day)
          var returnedData = $.grep(data, function(dt) 
          {
              return dt.dia_id == day;
-         
          });
 
          return returnedData;
@@ -38,9 +42,18 @@ function updateEvent(event)
 {
    var active = $('#tabs .ui-state-active').children("a");
    var dia_id = active.attr("href").substring(1);
-
+   var horafin;
    var horaini = event.start.hours()+":"+event.start.minutes();
-   var horafin = event.end.hours()+":"+event.end.minutes();
+   if(event.end == null)
+   {
+   	horafin=new Date(event.start.toDate());
+   	//horafin.setHours(horafin.getHours()+2);
+   	horafin = horafin.getHours()+":"+horafin.getMinutes();
+   }
+   else
+   {
+   	horafin = event.end.hours()+":"+event.end.minutes();
+   }
    $.ajax({
 	    type:"POST",
 	   	url:"/asignacions/actualizar",
@@ -48,28 +61,6 @@ function updateEvent(event)
 	   	success:function(){}
 	});	
 };
-
-function makeDraggable()
-{
-
-		$('#external-events .fc-event').each(function() {
-
-		// store data so the calendar knows to render an event upon drop
-		$(this).data('event', {
-			id: $.trim($(this).attr("id")),
-			title: $.trim($(this).text()), // use the element's text as the event title
-			stick: true // maintain when user navigates (see docs on the renderEvent method)
-		});
-
-		// make the event draggable using jQuery UI
-		$(this).draggable({
-			zIndex: 999,
-			revert: true,      // will cause the event to go back to its
-			revertDuration: 0  //  original position after the drag
-		});
-
-	});
-	}
 
 	function isElemOverDiv(draggedItem, dropArea) 
    {
@@ -83,12 +74,57 @@ function makeDraggable()
      return false;
    }
 
+   function getEventInfo(event)
+   {
+      //Obtener la ocupación del laboratorio para dicho evento
+      var ocupacion = " "                           
+
+      if (event.tipo == "T")
+      {
+          ocupacion = "Todo el período"
+      }
+      else if (event.tipo == "I")
+      {
+          ocupacion = "Del " + event.fechaIniSol + " al " + event.fechaFinSol
+
+      }else if (event.tipo == "X")
+
+      {
+          ocupacion = "Asignación directa - Del " + event.fechaIniSol + " al " + event.fechaFinSol
+      }else
+      {
+          ocupacion = "Puntual-" + event.fechaIniSol
+      }
+
+      var info = "Puestos: " + event.puestos + "\nProfesor: " + event.profesor +
+                 "\nSoft: " + event.comentarios + "\nOcupación: " + ocupacion;
+
+      //Si la reserva no es genérica, necesitamos añadir la información de la asignatura
+
+      if(!event.generica || event.generica == 'false')
+      {
+         var AsigInfo="Asig: " +event.title+"(" +event.titulacion + ")\nCurso: " + event.curso + "\n";
+         info = AsigInfo + info;
+      }
+      else
+      {
+         info = "Reserva genérica\n"+info;
+      }
+      return info;   
+   }
+
 $(function() 
 {	
 	$( "#external-events" ).droppable();
       
     $( "#borrarAsig" ).droppable();
-
+    /*$(".fc-event").mouseover(function()
+    	{
+    		var info=$(this).attr("title");
+    		$(this).attr('title',info);
+    		//alert($(this).attr("title"));
+    		//alert();
+    	});*/
     $('#tabs').tabs({
        activate: function(event, ui) 
        {
@@ -100,14 +136,15 @@ $(function()
    });
 
    /* initialize the events -------------*/
-	makeDraggable();
+	//makeDraggable();
 	makeDroppable();
 
 	var asignacions= '<%= raw @asignacions %>';
     var laboratorios= '<%= raw @laboratorios %>';
+    asignacions=asignacions.replace(/%/g, "\\n");
     laboratorios=laboratorios.replace(/nombre_lab/g,"name");
-     laboratorios=laboratorios.replace(/especial/g,"special");
-      laboratorios=laboratorios.replace(/puestos/g,"size");
+    laboratorios=laboratorios.replace(/especial/g,"special");
+    laboratorios=laboratorios.replace(/puestos/g,"size");
     laboratorios=laboratorios.replace(/=>/g, ":");
     asignacions=asignacions.replace(/=>/g, ":");
 	 
@@ -129,49 +166,29 @@ $(function()
         droppable: true,
         drop: function(date, jsEvent, ui, selectedRoom) 
         { 
-			 $(this).remove(); //elimina el evento de la lista externa visualmente
-
+        	tmpDate= new Date(date);
+        	//tmpDate.setHours(tmpDate.getHours()+2);
+        	horafin = moment(tmpDate);
+        	//horafin = horafin.getHours()+":"+horafin.getMinutes();
+        	event={id: $(this).attr("id"),
+        		   start:date,
+        		   end:horafin,
+        		   room_id:selectedRoom
+        		  };
+             updateEvent(event);
+        	 $(this).remove(); //elimina el evento de la lista externa visualmente
+        	 var height=$("#external-events").height();
+	   		 $("#external-events").height(height-30);
 			 var active = $('#tabs .ui-state-active').children("a");
              var dia_id = active.attr("href").substring(1);	
 		},
         eventLimit: true, //allow "more" link when too many events
         events: filterEventsByDay(asignacions,divId), //load events
         rooms:$.parseJSON(laboratorios),
-	    eventMouseover: function(event,jsEvent)
-	    {
-              //Las tildes no salen bien en event.comentarios
-
-              var ocupacion = " "                           
-              if (event.tipo == "T")
-              {
-                  ocupacion = "Todo el período"
-              }
-              else if (event.tipo == "I")
-              {
-                  ocupacion = "Del " + event.fechaIniSol + " al " + event.fechaFinSol
-              }else if (event.tipo == "X")
-              {
-                  ocupacion = "Asignación directa - Del " + event.fechaIniSol + " al " + event.fechaFinSol
-              }else
-              {
-                  ocupacion = "Puntual-" + event.fechaIniSol
-              }
-
-              var info = "Asig: " + event.title + "(" + event.titulacion + ")\nCurso: " + event.curso + 
-                         "\nPuestos: " + event.puestos + "\nProfesor: " + event.profesor +
-                         "\nSoft: " + event.comentarios + "\nOcupación: " + ocupacion
-
-              if (!event.generica) 
-              {
-                 alert("generica es null");
-              }else
-              {
-                 alert("generica es " + a.generica.to_s);
-              }         
-
-              //$(jsEvent.target).attr('title',info);
-
-              //ToDo: ver lo de generica, para ver si funciona o no
+        eventMouseover: function(event,jsEvent)
+        {
+            info = event.info;
+            $(jsEvent.target).attr('title',info);
 	    },
 	    eventResize: function(event)
 	    {
@@ -186,7 +203,6 @@ $(function()
 	    eventDragStop: function(event, jsEvent, ui, view) 
 	    {
 	   	   var active = $('#tabs .ui-state-active').children("a");
-	   	 
 	   	   if (isElemOverDiv(jsEvent, '#borrarAsig')) {
 	   	   	$(active.attr("href")).fullCalendar('removeEvents', event.id);
 	   		$.ajax({
@@ -203,13 +219,27 @@ $(function()
         //Move event from calendar to external list
 	   	if(isElemOverDiv(jsEvent,'#external-events'))
 	   	{
-	   		$("#external-events").append("<div class='fc-event ui-draggable ui-draggable-handle' id="+event.id+">"+event.title+"</div>");
+	   		//alert(event.info);
+	   		var elemento=$("<div class='fc-event ui-draggable ui-draggable-handle'></div>");
+	   		elemento.attr("title",event.info);
+	   		elemento.attr("id",event.id);
+	   		elemento.attr("data-generic",event.generic);
+	   		elemento.text(event.title);
+	   		var height=$("#external-events").height();
+	   		$("#external-events").height(30+height);
+	   		$("#external-events").append(elemento);
+	   		/*$("#external-events").append("<div class='fc-event ui-draggable ui-draggable-handle'  data-info="+event.info +" data-generic="+event.generic+" id="+event.id+">"+event.title+"</div>");*/
 
-	   		makeDraggable();
+	   		makeDroppable();
 
 	   		//Eliminar evento del calendario, visualmente
 	   		$("#"+divId).fullCalendar('removeEvents',event.id);
+	   		$.ajax({
+	   			type:"POST",
+	   			url:"/asignacions/anadirListaExterna",
+	   			data:{id:event.id},
 
+	   		});
 	   		//Eliminar evento de la lista de asignacions pero no de la bbdd y dejarlo que permanezca
 	   		//en la lista externa
 
@@ -257,6 +287,7 @@ $(function()
 		
 	#external-events {
 		float: left;
+		width: 30px;
 		width: 150px;
 		padding: 0 10px;
 		border: 1px solid #ccc;
@@ -296,7 +327,12 @@ $(function()
 	<td valign="top">
 <table>
 <tr><h4>Lista de asignaciones</h4></tr>
-<tr><td><div id='external-events' style="height:40px">
+<tr><td><div id='external-events' style="height:<%= 30+30*@asignacionsListaExterna.size %>px">
+		<% for asignacion in @asignacionsListaExterna %>
+		<%  info=asignacion[:info].to_s
+			info.gsub!('%',"&#13;&#10")%>
+			<div class="fc-event ui-draggable ui-draggable-handle" title="<%= info.html_safe %>" data-generic="<%= asignacion[:generica].to_s %>" id="<%= asignacion [:id] %>"><%=asignacion[:asignatura].to_s %></div>
+		<% end %> 
 			<!--Meter las asignaciones que están en la lista externa, pero cómo saber cuáles son?-->
 </div></td></tr>
 <tr><td><%=image_tag("IconoBorrar.png", :id =>"borrarAsig", :border=>0,:height=>128,:width=>128)%></td></tr>

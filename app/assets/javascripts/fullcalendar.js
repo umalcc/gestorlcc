@@ -1614,6 +1614,7 @@ function EventManager(options) { // assumed to be a calendar
 
 
 	var miscCopyableProps = [
+	    'generic',
 		'title',
 		'url',
 		'allDay',
@@ -7690,7 +7691,6 @@ View.prototype = {
 
 				meta = getDraggedElMeta(el); // data for possibly creating an event
 				eventProps = meta.eventProps;
-
 				// listener that tracks mouse movement over date-associated pixel regions
 				dragListener = new DragListener(this.coordMap, {
 					cellOver: function(cell, cellDate) {
