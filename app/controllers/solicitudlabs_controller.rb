@@ -87,6 +87,7 @@ class SolicitudlabsController < ApplicationController
     @solicitudlab.fechasol=Date.today
     @solicitudlab.npuestos=params[:npuestos].to_s
     @solicitudlab.asignatura.curso=params[:nivel].to_s
+    @solicitudlab.curso = params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
     @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
     @solicitudlab.asignado="N"
     @solicitudlab.fechaini=params[:fechaini].to_date
@@ -127,6 +128,7 @@ class SolicitudlabsController < ApplicationController
   # POST /solicitudlabs.xml
   def create 
     @solicitudlab = Solicitudlab.new(params[:solicitudlab])
+
     saveModel(params)
 
     getViewModel

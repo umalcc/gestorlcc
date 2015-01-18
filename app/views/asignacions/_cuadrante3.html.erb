@@ -1,11 +1,10 @@
 <script type="text/javascript">
 
-
 function makeDroppable()
-{	$('#external-events .fc-event').each(function() {
-
-//alert($.trim($(this).attr("generica")));
-		// store data so the calendar knows to render an event upon drop
+{	
+	$('#external-events .fc-event').each(function() 
+	{
+        // store data so the calendar knows to render an event upon drop
 		var info= $.trim($(this).attr("title")).replace(/%/g, "\\n");
 		$(this).data('event', {
 			info: info,
@@ -13,7 +12,7 @@ function makeDroppable()
 			id: $.trim($(this).attr("id")),
 			color: '#66FF33',
 			title: $.trim($(this).text()), // use the element's text as the event title
-			stick: true // maintain when user navigates (see docs on the renderEvent method)
+			stick: true //maintain when user navigates(see docs on the renderEvent method)
 		});
 
 		// make the event draggable using jQuery UI
@@ -22,20 +21,18 @@ function makeDroppable()
 			revert: true,      // will cause the event to go back to its
 			revertDuration: 0  //  original position after the drag
 		});
-
-
 	});
 }
 
 function filterEventsByDay(eventsList,day)
 {
-         var data = $.parseJSON(eventsList);
-         var returnedData = $.grep(data, function(dt) 
-         {
-             return dt.dia_id == day;
-         });
+     var data = $.parseJSON(eventsList);
+     var returnedData = $.grep(data, function(dt) 
+     {
+         return dt.dia_id == day;
+     });
 
-         return returnedData;
+     return returnedData;
 };
 
 function updateEvent(event)
@@ -44,87 +41,43 @@ function updateEvent(event)
    var dia_id = active.attr("href").substring(1);
    var horafin;
    var horaini = event.start.hours()+":"+event.start.minutes();
+
    if(event.end == null)
    {
-   	horafin=new Date(event.start.toDate());
-   	//horafin.setHours(horafin.getHours()+2);
-   	horafin = horafin.getHours()+":"+horafin.getMinutes();
+   	  horafin=new Date(event.start.toDate());
+   	  horafin = horafin.getHours()+":"+horafin.getMinutes();
    }
    else
    {
-   	horafin = event.end.hours()+":"+event.end.minutes();
+   	  horafin = event.end.hours()+":"+event.end.minutes();
    }
+
    $.ajax({
 	    type:"POST",
 	   	url:"/asignacions/actualizar",
-	   	data:{asigna:event.id, dia_id:dia_id ,horaini:horaini, horafin:horafin, lab_id:event.room_id},
+	   	data:{asigna:event.id, peticionlabId: event.peticionlab_id, dia_id:dia_id ,   horaini:horaini, horafin:horafin, lab_id:event.room_id},
 	   	success:function(){}
 	});	
 };
 
-	function isElemOverDiv(draggedItem, dropArea) 
-   {
-     // Prep coords for our two elements
+function isElemOverDiv(draggedItem, dropArea) 
+{
+	 // Prep coords for our two elements
 	 var b = $(dropArea).offset();
 	 b.right = $(dropArea).outerWidth() + b.left;
 	 b.bottom = $(dropArea).outerHeight() + b.top;
-     // Compare
-     if (draggedItem.pageX >= b.left && draggedItem.pageX<= b.right &&
-         draggedItem.pageY>= b.top && draggedItem.pageY <= b.bottom){return true;}
-     return false;
-   }
-
-   function getEventInfo(event)
-   {
-      //Obtener la ocupación del laboratorio para dicho evento
-      var ocupacion = " "                           
-
-      if (event.tipo == "T")
-      {
-          ocupacion = "Todo el período"
-      }
-      else if (event.tipo == "I")
-      {
-          ocupacion = "Del " + event.fechaIniSol + " al " + event.fechaFinSol
-
-      }else if (event.tipo == "X")
-
-      {
-          ocupacion = "Asignación directa - Del " + event.fechaIniSol + " al " + event.fechaFinSol
-      }else
-      {
-          ocupacion = "Puntual-" + event.fechaIniSol
-      }
-
-      var info = "Puestos: " + event.puestos + "\nProfesor: " + event.profesor +
-                 "\nSoft: " + event.comentarios + "\nOcupación: " + ocupacion;
-
-      //Si la reserva no es genérica, necesitamos añadir la información de la asignatura
-
-      if(!event.generica || event.generica == 'false')
-      {
-         var AsigInfo="Asig: " +event.title+"(" +event.titulacion + ")\nCurso: " + event.curso + "\n";
-         info = AsigInfo + info;
-      }
-      else
-      {
-         info = "Reserva genérica\n"+info;
-      }
-      return info;   
-   }
+	 // Compare
+	 if (draggedItem.pageX >= b.left && draggedItem.pageX<= b.right &&
+	     draggedItem.pageY>= b.top && draggedItem.pageY <= b.bottom){return true;}
+	 return false;
+}
 
 $(function() 
 {	
 	$( "#external-events" ).droppable();
       
     $( "#borrarAsig" ).droppable();
-    /*$(".fc-event").mouseover(function()
-    	{
-    		var info=$(this).attr("title");
-    		$(this).attr('title',info);
-    		//alert($(this).attr("title"));
-    		//alert();
-    	});*/
+
     $('#tabs').tabs({
        activate: function(event, ui) 
        {
@@ -136,7 +89,6 @@ $(function()
    });
 
    /* initialize the events -------------*/
-	//makeDraggable();
 	makeDroppable();
 
 	var asignacions= '<%= raw @asignacions %>';
@@ -155,6 +107,7 @@ $(function()
 
       $("#"+divId).fullCalendar
       ({
+        //theme: true,
         header: { left: '', center: 'title', right: '' },
         slotDuration: '00:15:00',
         minTime: '08:00:00',
@@ -193,12 +146,10 @@ $(function()
 	    eventResize: function(event)
 	    {
             updateEvent(event);
-            //ToDo: actualizar tabla peticionlabs tb
 	    },
 	    eventDrop: function(event)
 	    {
              updateEvent(event);
-             //ToDo: actualizar tabla peticionlabs tb
 	    },
 	    eventDragStop: function(event, jsEvent, ui, view) 
 	    {
@@ -240,9 +191,6 @@ $(function()
 	   			data:{id:event.id},
 
 	   		});
-	   		//Eliminar evento de la lista de asignacions pero no de la bbdd y dejarlo que permanezca
-	   		//en la lista externa
-
 	   	}
 	   }/*,
        eventClick: function(event){
@@ -286,7 +234,7 @@ $(function()
 	}
 		
 	#external-events {
-		float: left;
+		float: center;
 		width: 30px;
 		width: 150px;
 		padding: 0 10px;
@@ -322,35 +270,35 @@ $(function()
 		width: 900px;
 	}
 </style>
+
 <table>
 <tr>
 	<td valign="top">
-<table>
-<tr><h4>Lista de asignaciones</h4></tr>
-<tr><td><div id='external-events' style="height:<%= 30+30*@asignacionsListaExterna.size %>px">
-		<% for asignacion in @asignacionsListaExterna %>
-		<%  info=asignacion[:info].to_s
-			info.gsub!('%',"&#13;&#10")%>
-			<div class="fc-event ui-draggable ui-draggable-handle" title="<%= info.html_safe %>" data-generic="<%= asignacion[:generica].to_s %>" id="<%= asignacion [:id] %>"><%=asignacion[:asignatura].to_s %></div>
-		<% end %> 
-			<!--Meter las asignaciones que están en la lista externa, pero cómo saber cuáles son?-->
-</div></td></tr>
-<tr><td><%=image_tag("IconoBorrar.png", :id =>"borrarAsig", :border=>0,:height=>128,:width=>128)%></td></tr>
-<tr><td> <div id="asignadirecta">
+      <table>
+      	<tr><td> <div id="asignadirecta">
         <%= link_to 'Asignación directa','/asignacions/asigna_directa' %>
-      </div></td></tr>
-      <tr> <td> <span style="margin-left:40px;color:blue;"> 
-         <%= link_to image_tag("iconoImpresora.png",:alt=>"Para imprimir",:height=>128,:width=>128), '/listado/asignacion_lectivo_impresa',{:target => "_blank" } %>
+        </div></td></tr>
+        <tr><td><br/></td></tr>
+        <tr ><td align="center" valign="middle"><h4>Lista de asignaciones</h4></td></tr>
+        <tr>
+          <td align="center" valign="middle">
+            <div id='external-events' style="height:<%= 30+30*@asignacionsListaExterna.size %>px;">
+		    <% for asignacion in @asignacionsListaExterna %>
+		    <%  info=asignacion[:info].to_s
+			    info.gsub!('%',"&#13;&#10")%>
+			    <div class="fc-event ui-draggable ui-draggable-handle" title="<%= info.html_safe %>" data-generic="<%= asignacion[:generica].to_s %>" id="<%= asignacion [:id] %>"><%=asignacion[:asignatura].to_s %></div>
+		    <% end %> 
+			<!--Meter las asignaciones que están en la lista externa, pero cómo saber cuáles son?-->
+            </div>
+         </td>
+      </tr>
+      <tr><td><br/></td></tr>
+      <tr><td><%=image_tag("IconoBorrar.png", :id =>"borrarAsig", :border=>0,:height=>64,:width=>64)%></td></tr>
+      
+      <tr> <td> <span style="color:blue;"> 
+         <%= link_to image_tag("iconoImpresora.png",:alt=>"Para imprimir",:height=>64,:width=>64), '/listado/asignacion_lectivo_impresa',{:target => "_blank" } %>
       </span></td></tr>
-</table>
-	
-
-<!--<div id="dropMenu">
-<p>
-			  <input type='checkbox' id='drop-remove' />
-			  <label for='drop-remove'>borrar después de mover</label>
-			</p>
-</div>-->
+    </table>
 
     </td>
       <td><div id="wrap">
@@ -363,8 +311,7 @@ $(function()
 	       <% for dia in @dias %>
 	          <div class="calendario" id="<%=dia.id%>"></div>
 	       <%end%>
-</div>
-</div></td>
+      </div>
+    </div></td>
 </tr>
 </table>
-

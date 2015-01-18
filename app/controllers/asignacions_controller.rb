@@ -29,7 +29,7 @@ class AsignacionsController < ApplicationController
 
   def asignar_continuar
        @asignacions=Asignacion.all
-    
+
       respond_to do |format|
         format.js
     end
@@ -348,17 +348,20 @@ def getAsignacionInfo(asignacion)
       else
           ocupacion = "Puntual-" + asignacion.solicitudlab.fechaini.to_s
     end
-   info = "Puestos: " + asignacion.solicitudlab.npuestos.to_s  + "%Profesor: " + asignacion.solicitudlab.usuario.nombre.to_s  + "%Soft: " + asignacion.solicitudlab.comentarios + "%Ocupación: " + ocupacion
-   titulo=((asignacion.generica.to_s == 'null' || asignacion.generica == false)? asignacion.solicitudlab.asignatura.abrevia_asig.to_s : "RG")
-      #Si la reserva no es genérica, necesitamos añadir la información de la asignatura
-      #|| asignacion.generica.to_s == 'false'
-      if asignacion.generica.nil? || asignacion.generica == false
-         asigInfo="Asig " +titulo+"(" +asignacion.solicitudlab.asignatura.abrevia_asig.to_s + ") %Curso: " + asignacion.solicitudlab.curso + "%"
-         info = asigInfo + info
-      else
-         info = "Reserva genérica%"+info
-      end
-      return info   
+    info = "Puestos: " + asignacion.solicitudlab.npuestos.to_s 
+    info= info + "%Profesor: " + asignacion.solicitudlab.usuario.nombre.to_s
+    info= info +" "+  asignacion.solicitudlab.usuario.apellidos.to_s
+    info= info + "%Soft: " + asignacion.solicitudlab.comentarios 
+    info= info + "%Ocupación: " + ocupacion
+    #Si la reserva no es genérica, necesitamos añadir la información de la asignatura
+    #|| asignacion.generica.to_s == 'false'
+    if asignacion.generica.nil? || asignacion.generica == false
+       asigInfo="Asig: " +asignacion.solicitudlab.asignatura.titulacion.abrevia+"(" +asignacion.solicitudlab.asignatura.abrevia_asig.to_s + ") %Curso: " + asignacion.solicitudlab.curso + "%"
+       info = asigInfo + info
+    else
+       info = "Reserva genérica%"+info
+    end
+    return info   
   end
 
 
@@ -366,7 +369,13 @@ def consulta
 
     ActiveRecord::Base.include_root_in_json = false
     @laboratorios=Laboratorio.all.select("id,nombre_lab, ssoo, puestos, especial").as_json
-    @asignacions = Asignaciondef.where("id not in (?)",session[:lista_externa]).all
+    
+    if(session[:lista_externa] == nil )
+      @asignacions = Asignaciondef.all
+    else
+       @asignacions = Asignaciondef.where("id not in (?)",session[:lista_externa]).all
+    end
+    
     @asignacionsListaExterna=Asignaciondef.where("id in (?)",session[:lista_externa]).all#.map{|r|{:id => r.id,:title => r.solicitudlab.asignatura.abrevia_asig.to_s}}
     if @asignacions.size!=0
       @asignacionsListaExterna = @asignacionsListaExterna.map { |r| {:id => r.id,
@@ -376,16 +385,9 @@ def consulta
                                                                      :info =>getAsignacionInfo(r) }}
      #@asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
      # ToDo:asignatura puede ser null en la base de datos, controlarlo...
-    @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :peticionlab_id => r.peticionlab_id, :room_id => r.laboratorio_id, 
-
-                                            :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => ((r.generica.to_s == 'null' || r.generica.to_s == 'false')? r.solicitudlab.asignatura.abrevia_asig.to_s : "RG"), :titulacion => r.solicitudlab.asignatura.titulacion.abrevia.to_s,
-
-                                            :curso => r.solicitudlab.curso.to_s, :puestos => r.solicitudlab.npuestos.to_s, :profesor => r.solicitudlab.usuario.nombre + " " + r.solicitudlab.usuario.apellidos,
-
-                                            :comentarios => r.solicitudlab.comentarios, :tipo => r.solicitudlab.tipo.to_s,
-                                            :info => getAsignacionInfo(r),
-                                            :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s, :generica => r.generica.to_s, :color => '#66FF33'} }    
-   @asignacions = @asignacions.as_json
+    @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :peticionlab_id => r.peticionlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => ((r.generica == nil || r.generica.to_s == 'false')? r.solicitudlab.asignatura.abrevia_asig.to_s : "RG"), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s, :generica => r.generica.to_s, :color => '#66FF33'} }    
+    @asignacions = @asignacions.as_json
+    logger.debug 
     end
 
     @dias = Dia.all
@@ -402,6 +404,7 @@ def consulta
                          :laboratorio_id => params[:lab_id])
     session[:lista_externa].delete(params[:asigna])
     logger.debug session[:lista_externa]
+
     respond_to do |format|
       format.js {render :nothing => true, :status => 200}
     end

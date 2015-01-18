@@ -18,79 +18,39 @@ class SolicitudusuariolabsController < ApplicationController
     @correotramos=""
     statusMessage=""
     statusCode=200
+
+    periodo = getPeriodWithAdmission
     solicitudlabsAñoPasado = getLabRequestsLastYear(params[:asignatura])
     #coger sólo las solicitudes correspondientes al período lectivo actual con admision = true
-    periodo = getPeriodWithAdmission
     solicitudlabsAñoPasado = filterLabRequestsLastYearForPeriod(solicitudlabsAñoPasado, periodo)
-
-    #actualizar fechaini, fechafin y fechasol al curso académico actual
-    #y guardar las solicitudes en la bbdd
-    solicitudesIds = Hash.new
     solicitudlabsAñoPasado.each do |s| 
-      nuevaSolicitud = Solicitudlab.new
+       
+      nuevaSolicitud = createNewRequest(s,periodo) 
+      if (nuevaSolicitud.save)
 
-      if s.fechaini.month < periodo.inicio.month and s.fechaini.day < periodo.inicio.day
-        nuevaSolicitud.fechaini = periodo.inicio
-      else
-        nuevaSolicitud.fechaini = Date.new(s.fechaini.next_year.year,s.fechaini.month, s.fechaini.day)
-      end
-      
-      if s.fechafin.month > periodo.fin.month and s.fechafin.day > periodo.fin.day
-        nuevaSolicitud.fechafin = periodo.fin
-      else
-        nuevaSolicitud.fechafin = Date.new(s.fechafin.next_year.year, s.fechafin.month, s.fechafin.day)
-      end
-      
-      nuevaSolicitud.fechasol = Date.today
-      nuevaSolicitud.usuario_id = s.usuario_id
-      nuevaSolicitud.asignatura_id = s.asignatura_id
-      nuevaSolicitud.curso = s.curso
-      nuevaSolicitud.npuestos = s.npuestos
-      nuevaSolicitud.comentarios = s.comentarios
-      nuevaSolicitud.preferencias = s.preferencias
-      nuevaSolicitud.tipo = s.tipo
-      nuevaSolicitud.asignado = 'N'  
-      nuevaSolicitud.save
-      
-      if (nuevaSolicitud.errors.keys.length>0)
+         #crear peticiones de laboratorios para la nueva solicitud
+         labPetitions = getLabPetitionsForRequest(s.id)
+         labPetitions.each do |p|
+            nuevaPeticionLab = createNewLabPetition(p, nuevaSolicitud.id)
+            if(nuevaPeticionLab.save)
+                @correotramos+=' - '+nuevaPeticionLab.diasemana+' de '+nuevaPeticionLab.horaini+' a '+nuevaPeticionLab.horafin
+                CorreoTecnicos::emitesolicitudlectivo(nuevaSolicitud,nuevaSolicitud.fechaini.to_s,nuevaSolicitud.fechafin.to_s,@correotramos,"","Nueva ").deliver_later                        
+            else
+              statusCode=422
+              statusMessage +=nuevaPeticionLab.errors.full_messages
+            end
+         end
+      else 
         statusCode=422
         statusMessage +=nuevaSolicitud.errors.full_messages
-      end
-      logger.debug(nuevaSolicitud.errors.inspect) 
-      solicitudesIds[s.id] = nuevaSolicitud.id
-    end
- #@tramos.each {|tramo| p=Peticionlab.new
- #                             p.solicitudlab_id=nuevo_id
- #                             p.diasemana=tramo.diasemana
- #                             p.horaini=tramo.horaini
- #                             p.horafin=tramo.horafin
- #                             p.save 
- #                             @correotramos+=' - '+p.diasemana+' de '+p.horaini+' a '+p.horafin}
-
-    #obtener las peticiones de laboratorios asociadas a las solicitudes del año pasado
-    #y guardarlas actualizas en la bbdd
-    peticionlabsAñoPasado = getLabPetitionsLastYear(solicitudlabsAñoPasado)
-    peticionlabsAñoPasado.each do |p|
-        nuevaPeticion = Peticionlab.new
-        nuevaPeticion.diasemana = p.diasemana
-        nuevaPeticion.horaini = p.horaini
-        nuevaPeticion.horafin = p.horafin
-        nuevaPeticion.solicitudlab_id = solicitudesIds[p.solicitudlab_id]
-        @correotramos+=' - '+nuevaPeticion.diasemana+' de '+nuevaPeticion.horaini+' a '+nuevaPeticion.horafin
-        if !nuevaPeticion.solicitudlab_id.nil?
-            nuevaPeticion.save
-            #CorreoTecnicos::emitesolicitudlectivo(nuevaSolicitud,nuevaSolicitud.fechaini,nuevaSolicitud.fechafin,@correotramos,"","Nueva ").deliver_later                        
-
-             if (nuevaPeticion.errors.keys.length>0)
-              statusCode=422
-              statusMessage +=nuevaPeticion.errors.full_messages
-            end
-        end
+      end 
+      
     end
 
     if statusCode == 200
       statusMessage="<li>La copia se ha realizado con éxito</li>"
     end
+
     getIndexView
 
     respond_to do |format| format.json {render :json => {:error => statusMessage},:status => statusCode}  end
@@ -387,6 +347,11 @@ def update
       return labPetitionsLastYear
     end
 
+    def getLabPetitionsForRequest(requestId)
+      labPetitions = Peticionlab.all.select {|p| p.solicitudlab_id == requestId}
+      return labPetitions
+    end
+
     def filterLabRequestsLastYearForPeriod(labRequestsLastYear, periodo)
     
     solicitudlabs=Array.new
@@ -406,5 +371,52 @@ def update
 
     end
 
+    def calculateDatesForNewRequest(oldRequest, periodo)
+  
+      if oldRequest.fechaini.month < periodo.inicio.month and oldRequest.fechaini.day < periodo.inicio.day
+        fechaini = periodo.inicio
+      else
+        fechaini = Date.new(oldRequest.fechaini.next_year.year,oldRequest.fechaini.month, oldRequest.fechaini.day)
+      end
+      
+      if oldRequest.fechafin.month > periodo.fin.month and oldRequest.fechafin.day > periodo.fin.day
+        fechafin = periodo.fin
+      else
+        fechafin = Date.new(oldRequest.fechafin.next_year.year, oldRequest.fechafin.month, oldRequest.fechafin.day)
+      end
+
+      return {:fechafin => fechafin, :fechaini => fechaini}
+      
+    end
+
+    def createNewRequest(oldRequest,periodo)
+      
+      nuevaSolicitud = Solicitudlab.new
+      dates = calculateDatesForNewRequest(oldRequest,periodo)
+      nuevaSolicitud.fechaini = dates[:fechaini]
+      nuevaSolicitud.fechafin = dates[:fechafin]
+      nuevaSolicitud.fechasol = Date.today
+      nuevaSolicitud.usuario_id = oldRequest.usuario_id
+      nuevaSolicitud.asignatura_id = oldRequest.asignatura_id
+      nuevaSolicitud.curso = oldRequest.curso
+      nuevaSolicitud.npuestos = oldRequest.npuestos
+      nuevaSolicitud.comentarios = oldRequest.comentarios
+      nuevaSolicitud.preferencias = oldRequest.preferencias
+      nuevaSolicitud.tipo = oldRequest.tipo
+      nuevaSolicitud.asignado = 'N'
+
+      return nuevaSolicitud
+    end
+
+    def createNewLabPetition(oldLabPetition, requestId)
+
+        nuevaPeticionLab = Peticionlab.new
+        nuevaPeticionLab.diasemana = oldLabPetition.diasemana
+        nuevaPeticionLab.horaini = oldLabPetition.horaini
+        nuevaPeticionLab.horafin = oldLabPetition.horafin
+        nuevaPeticionLab.solicitudlab_id = requestId
+
+        return nuevaPeticionLab
+    end
 
 end
