@@ -139,11 +139,11 @@ $(function()
         eventLimit: true, //allow "more" link when too many events
         events: filterEventsByDay(asignacions,divId), //load events
         rooms:$.parseJSON(laboratorios),
-       /* eventMouseover: function(event,jsEvent)
+        eventMouseover: function(event,jsEvent)
         {
             info = event.info;
             $(jsEvent.target).attr('title',info);
-	    },*/
+	    },
 	    eventResize: function(event, delta, revertFunc)
 	    {
 	    	if(confirm("¿Está seguro del cambio?"))
