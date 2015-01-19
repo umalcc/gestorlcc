@@ -4779,7 +4779,7 @@ $.extend(Grid.prototype, {
 		var currentRoom=rooms[col];
 		//Gerardo
 		return '' +
-			'<th class="fc-day-header ' + view.widgetHeaderClass+ ' fc-' + currentRoom.id + '" data-id="'+currentRoom.id +'" data-ssoo="' +currentRoom.ssoo+'" data-size="'+currentRoom.size+'" data-specialLab="'+currentRoom.special+'">' +
+			'<th class="fc-day-header ' + view.widgetHeaderClass+ ' fc-' + currentRoom.id + '" data-id="'+currentRoom.id +'" data-ssoo="' +currentRoom.ssoo+'" data-size="'+currentRoom.size+'" data-specialLab="'+currentRoom.special+'" title="'+currentRoom.title+'" >' +
 				rooms[col].name +
 			'</th>';
 	},

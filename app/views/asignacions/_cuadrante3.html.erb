@@ -94,6 +94,7 @@ $(function()
 	var asignacions= '<%= raw @asignacions %>';
     var laboratorios= '<%= raw @laboratorios %>';
     asignacions=asignacions.replace(/%/g, "\\n");
+    laboratorios=laboratorios.replace(/%/g, "\\n");
     laboratorios=laboratorios.replace(/nombre_lab/g,"name");
     laboratorios=laboratorios.replace(/especial/g,"special");
     laboratorios=laboratorios.replace(/puestos/g,"size");
@@ -110,14 +111,14 @@ $(function()
         //theme: true,
         header: { left: '', center: 'title', right: '' },
         slotDuration: '00:15:00',
-        minTime: '08:00:00',
-        maxTime: '22:00:00',
+        minTime: '<%=@horainicio%>',
+        maxTime: '<%=@horafin%>',
         allDaySlot:false,
         defaultDate: '2014-09-12',
         defaultView:'agendaWeek',
         editable: true,
         droppable: true,
-        drop: function(date, jsEvent, ui, selectedRoom) 
+                drop: function(date, jsEvent, ui, selectedRoom) 
         { 
         	tmpDate= new Date(date);
         	//tmpDate.setHours(tmpDate.getHours()+2);
@@ -138,23 +139,42 @@ $(function()
         eventLimit: true, //allow "more" link when too many events
         events: filterEventsByDay(asignacions,divId), //load events
         rooms:$.parseJSON(laboratorios),
-        eventMouseover: function(event,jsEvent)
+       /* eventMouseover: function(event,jsEvent)
         {
             info = event.info;
             $(jsEvent.target).attr('title',info);
-	    },
-	    eventResize: function(event)
+	    },*/
+	    eventResize: function(event, delta, revertFunc)
 	    {
-            updateEvent(event);
+	    	if(confirm("¿Está seguro del cambio?"))
+	    	{
+	    		 updateEvent(event);
+	    	}
+	    	else
+	    	{
+	    		revertFunc();
+	    	}
+            //ToDo: actualizar tabla peticionlabs tb
 	    },
-	    eventDrop: function(event)
+	    eventDrop: function(event, delta, revertFunc)
 	    {
-             updateEvent(event);
+	    	if(confirm("¿Está seguro del cambio?"))
+	    	{
+	    		 updateEvent(event);
+	    	}
+	    	else
+	    	{
+	    		revertFunc();
+	    	}
+            
+             //ToDo: actualizar tabla peticionlabs tb
 	    },
 	    eventDragStop: function(event, jsEvent, ui, view) 
 	    {
 	   	   var active = $('#tabs .ui-state-active').children("a");
 	   	   if (isElemOverDiv(jsEvent, '#borrarAsig')) {
+	   	   	if(confirm("¿Está seguro de que desea eliminar esta asignación?"))
+	   	   	{
 	   	   	$(active.attr("href")).fullCalendar('removeEvents', event.id);
 	   		$.ajax({
 	   			type:"POST",
@@ -164,11 +184,12 @@ $(function()
 	   			{
 	   			  //alert("La asignación ha sido eliminada de forma satisfactoria.");
 	   			}
-	   		});	
+	   		});
+	   		}	
 	   	}
          
         //Move event from calendar to external list
-	   	if(isElemOverDiv(jsEvent,'#external-events'))
+	   	if((isElemOverDiv(jsEvent,'#external-events')) && (confirm("¿Está seguro de que desea mover la asignación a la lista temporal?")))
 	   	{
 	   		//alert(event.info);
 	   		var elemento=$("<div class='fc-event ui-draggable ui-draggable-handle'></div>");
@@ -191,6 +212,9 @@ $(function()
 	   			data:{id:event.id},
 
 	   		});
+	   		//Eliminar evento de la lista de asignacions pero no de la bbdd y dejarlo que permanezca
+	   		//en la lista externa
+
 	   	}
 	   }/*,
        eventClick: function(event){
@@ -208,12 +232,12 @@ $(function()
 
         //Función para mostrar información adicional sobre los laboratorios cuando el
         //ratón está encima de la columna de laboratorio
-        $(".fc-day-header").mouseover(function(ev)
+        /*$(".fc-day-header").mouseover(function(ev)
         {
             var labEspecial = ( $(this).attr("data-speciallab") == "true" ) ? 'Sí' : 'No';
             var labInfo = "Denominación: " + $(this).attr("data-ssoo") + "\nNum. puestos: " + $(this).attr("data-size") + "\nLab especial?: " + labEspecial; 
             $(this).attr('title',labInfo);
-        });         
+        });    */     
 
     });
 

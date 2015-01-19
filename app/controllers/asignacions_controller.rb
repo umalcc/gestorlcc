@@ -365,18 +365,27 @@ def getAsignacionInfo(asignacion)
   end
 
 
-def consulta
 
+def consulta
     ActiveRecord::Base.include_root_in_json = false
-    @laboratorios=Laboratorio.all.select("id,nombre_lab, ssoo, puestos, especial").as_json
-    
+
+    @laboratorios=Laboratorio.all.select("id,nombre_lab, ssoo, puestos, especial")
+
+    @laboratorios=@laboratorios.map{|lab|{:id => lab.id,
+                                          :nombre_lab => lab.nombre_lab,
+                                          :ssoo => lab.ssoo,
+                                          :puestos => lab.puestos,
+                                          :especial => lab.especial,
+                                          :title => getLabInfo(lab)}}
+    @laboratorios = @laboratorios.as_json
     if(session[:lista_externa] == nil )
       @asignacions = Asignaciondef.all
     else
        @asignacions = Asignaciondef.where("id not in (?)",session[:lista_externa]).all
+
     end
-    
     @asignacionsListaExterna=Asignaciondef.where("id in (?)",session[:lista_externa]).all#.map{|r|{:id => r.id,:title => r.solicitudlab.asignatura.abrevia_asig.to_s}}
+
     if @asignacions.size!=0
       @asignacionsListaExterna = @asignacionsListaExterna.map { |r| {:id => r.id,
                                                                       :generica => r.generica,
@@ -386,15 +395,24 @@ def consulta
      #@asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
      # ToDo:asignatura puede ser null en la base de datos, controlarlo...
     @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :peticionlab_id => r.peticionlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => ((r.generica == nil || r.generica.to_s == 'false')? r.solicitudlab.asignatura.abrevia_asig.to_s : "RG"), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s, :generica => r.generica.to_s, :color => '#66FF33'} }    
-    @asignacions = @asignacions.as_json
-    logger.debug 
+    @asignacions = @asignacions.as_json 
     end
-
-    @dias = Dia.all
+    @dias = Dia.where('en_uso = ?','t')
+    #qué pasa si hay huecos? si hay horas intermedias que no se usan?
+    #cómo ordenar las horas?qué es num?
+    @horas = Horario.where('en_uso = ?','t').order("num")
+    @horainicio = @horas.first.comienzo
+    @horafin = @horas.last.fin
     respond_to do |format|
       format.html # index.html.erb
       format.xml { render :xml => @asignacions }
     end
+  end
+
+  def getLabInfo(lab)
+   labEspecial = (lab.especial) == "true"  ? 'Sí' : 'No'
+    labInfo = "Denominación: " + lab.ssoo + "%Num. puestos: " + lab.puestos.to_s + "%Lab especial?: " + labEspecial
+    return labInfo
   end
 
   def actualizar

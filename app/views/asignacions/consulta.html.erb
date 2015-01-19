@@ -1,3 +1,4 @@
+
 <div id="central" >
   <p>GESTOR DE RECURSOS<br>
      <%= image_tag ("pointer.gif") %>Asignaci&oacute;n general de laboratorios en periodo lectivo
@@ -11,8 +12,7 @@
        <% end %>
        <% nasig=Asignaciondef.all.size %>
        <% if nasig>0 %>
-           <!--<div id="cuadrante2">< render :partial => "cuadrante2" ></div> -->
-           <div id="cuadrante3"><%= render :partial => "cuadrante3" %></div>
+           <div id="cuadrante3"><%= render :partial => "cuadrante3" %></div> 
         <% else %>
             <div class="aviso">
                <p>No hay ningun periodo lectivo o asignaci&oacute;n vigente </p>
