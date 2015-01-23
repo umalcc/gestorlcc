@@ -160,33 +160,8 @@ class AsignacionexasController < ApplicationController
                          end # del for
                      } # de lab.each 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
      }  # for sol
 
-
-     
     # finalmente, se vuelcan todas las asignacionexas sobre el archivo persistente
     # eliminando primero los registros que hubiera de una asignacionexa anterior
     # OJOOOOOO VER QUE HACER CUANDO SE ACTIVEN NUEVOS PERIODOS
@@ -214,8 +189,7 @@ class AsignacionexasController < ApplicationController
     # leer asignacionexas provisionales
     # grabarlas en definitivas
     # eliminar las provisionales
-    
-    
+     
     @asignacionlabexadefs=Asignacionlabexadef.all
     if @asignacionlabexadefs.size!=0
       solicitudes=@asignacionlabexadefs.map{|a| a.solicitudlabexa_id}.uniq
@@ -346,51 +320,56 @@ class AsignacionexasController < ApplicationController
 
   def asigna_directa
     @solicitudlab = Solicitudlabexa.new
-   # session[:tramos_horarios]=Solicitudhoraria.new
-   # session[:codigo_tramo]=0
-
+    @solicitudlab.asignatura=Asignatura.new(:curso =>0)
+    @solicitudlab.fechasol= Date.today
+    
+    periodoact=Periodo.where("activo = ? AND tipo = ?","t","Examenes").first
+    if (periodoact.nil?)
+        inicio=Date.today
+    else
+        iniperiodoact=periodoact.inicio
+        inicio=iniperiodoact
+    end
+    @solicitudlab.fecha = inicio
+    
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @solicitudlabexa }
+      format.xml  { render :xml => @solicitudlab }
     end
   end
 #aqui debe ir otra funcion tras captar el formulario anterior
 
   def graba
     @solicitudlab = Solicitudlabexa.new(params[:solicitudlab])
+    @solicitudlab.asignatura=Asignatura.new
     @solicitudlab.usuario_id = params[:usuario][:identificador].to_i
-    @solicitudlab.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+    asignaturaId = params[:asignatura][:id].to_i unless params[:asignatura].nil?
+    @solicitudlab.asignatura_id = asignaturaId
+    @solicitudlab.asignatura.id = asignaturaId
+    @solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
     @solicitudlab.fechasol=Date.today
-    @solicitudlab.npuestos=Laboratorio.find_by_nombre_lab(params[:laboratorio_id][:nombre_lab]).puestos
-    @solicitudlab.curso=params[:nivel].to_s
+    @solicitudlab.fecha=params[:fecha].to_date
+    @solicitudlab.npuestos=Laboratorio.where("id= ?",params[:laboratorio_id][:nombre_lab]).first.puestos
+    @solicitudlab.asignatura.curso=params[:nivel].to_s 
+    @solicitudlab.curso =params[:nivel].to_s
     @solicitudlab.comentarios=params[:comentarios].to_s
     @solicitudlab.horaini=params[:horaini][:comienzo]
     @solicitudlab.horafin=params[:horafin][:fin]
     @solicitudlab.tipo="X"
     @solicitudlab.asignado="D"
+    @labId=params[:laboratorio_id][:nombre_lab].to_i
     
-    if params[:fecha]=~ /[0-3]?[0-9]\-[0-1]?[0-9]\-[0-9]{4}/
-      nfecha=formato_europeo(params[:fecha])
-      #fecha=params[:fechafin].to_s.split('-')
-      #nfechafin=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-      @solicitudlab.fecha=nfecha.to_date
-    else
-      @solicitudlab.fecha=nil
-    end
- 
 
     respond_to do |format|
       if @solicitudlab.save
         
     # esto es lo quedebe cambiar, hay que ir a generar la asignacionexa nueva y hay que grabarla
     # y redirigir a la consulta de asignacionexas  
-        l=Laboratorio.find_by_nombre_lab(params[:laboratorio_id][:nombre_lab]).id
         hi=Horasexa.find_by_comienzo(params[:horaini][:comienzo]).id.to_i
         hf=Horasexa.find_by_fin(params[:horafin][:fin]).id.to_i
         for hora in hi..hf 
            asignacionexa=Asignacionlabexadef.new(:solicitudlabexa_id=>@solicitudlab.id,
-                                              :laboratorio_id=>l,
-                                              
+                                              :laboratorio_id=>@labId,
                                               :dia=>@solicitudlab.fecha,                      #aqui hay cambio
                                               :horaini=>Horasexa.find(hora).comienzo,
                                               :horafin=>Horasexa.find(hora).fin)

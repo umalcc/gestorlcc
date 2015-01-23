@@ -77,27 +77,30 @@ class SolicitudusuariolabsController < ApplicationController
   end
 
 def new
-    @periodo=Periodo.where("admision = ?",'t').first
-    @solicitudlab = Solicitudlab.new
-    @solicitudlab.preferencias=""
-    @solicitudlab.fechasol=Date.today
-    @solicitudlab.fechafin= @periodo.fin
-    @solicitudlab.fechaini=@periodo.inicio
-    @solicitudlab.asignatura=Asignatura.new
-    if (Asignatura::CURSO).first=="optativa"
-      as='0'
-    else
-      as=Asignatura::CURSO.first
-    end
-    getViewModel
-    @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).to_a 
-    session[:titulacion]=Titulacion.first
-    session[:nivel]=Asignatura::CURSO.first
+    @periodo=Periodo.where("admision = ? and tipo = ?",'t','Lectivo').first
 
-    # esto es para crear un carro no persistente  
-    session[:tramos_horarios]=Solicitudhoraria.new
-    # y una identificacion de tramos horarios para poder borrarlos individualmente. Se ira decrementando
-    session[:codigo_tramo]=0
+    if(!@periodo.nil?)
+      @solicitudlab = Solicitudlab.new
+      @solicitudlab.preferencias=""
+      @solicitudlab.fechasol=Date.today
+      @solicitudlab.fechafin= @periodo.fin
+      @solicitudlab.fechaini=@periodo.inicio
+      @solicitudlab.asignatura=Asignatura.new
+      if (Asignatura::CURSO).first=="optativa"
+        as='0'
+      else
+        as=Asignatura::CURSO.first
+      end
+      getViewModel
+      @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).to_a 
+      session[:titulacion]=Titulacion.first
+      session[:nivel]=Asignatura::CURSO.first
+
+      # esto es para crear un carro no persistente  
+      session[:tramos_horarios]=Solicitudhoraria.new
+      # y una identificacion de tramos horarios para poder borrarlos individualmente. Se ira decrementando
+      session[:codigo_tramo]=0
+    end
 
     respond_to do |format|
       format.html # new.html.erb

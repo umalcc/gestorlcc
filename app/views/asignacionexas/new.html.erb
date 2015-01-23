@@ -25,14 +25,7 @@
                 <% @asignaturas=Asignatura.order("nombre_asig").to_a %>
                 <%= select "asignatura", "nombre_asig", @asignaturas.map {|t| [t.nombre_asig]} %>
                 </span><dd>
-                <%= observe_field 'titulacion_titulacion_id', 
-                            :url =>{:controller => 'asignaturas', :action => 'combo_por_titulacion'}, 
-                            :update => 'combo_asignatura', 
-                            :with => 'combo_titulacion' %>
-                <%= observe_field 'nivel', 
-                            :url =>{:controller => 'asignaturas', :action => 'combo_por_nivel'}, 
-                            :update => 'combo_asignatura', 
-                            :with => 'combo_nivel' %>
+                
             </dd>
             <dt>Laboratorio *</dt>
             <dd><% @laboratorios=Laboratorio.order("nombre_lab").to_a %>                                             

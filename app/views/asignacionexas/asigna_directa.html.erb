@@ -9,16 +9,17 @@
           <%= form_for @solicitudlab,:url => '/asignacionexas/graba', :action=>"graba",  :html=> {:name => "formulario"} do |f| %>
           <dl>
             <dt>Fecha solicitud</dt>
-            <dd><%= @dia=@solicitudlab.fecha= fecha_europea(Date.today) %></dd>
+            <dd><%= @solicitudlab.fechasol.strftime("%d-%m-%Y")%></dd>
             <dt>Usuario *</dt>
             <dd><% @usuarios=Usuario.order("apellidos").to_a %>
-                <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]} %>
+                  <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]},
+                              html_options={:selected=>@solicitudlab.usuario_id } %>
             </dd>
             <dt>Titulaci&oacute;n *</dt>
             <dd id="combo_titulacion"><%@titulaciones=Titulacion.order("id").to_a%>
-                <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]} %></dd>
+               <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]}, html_options={:selected=>@solicitudlab.asignatura.titulacion_id } %></dd>
             <dt>Curso *</dt>
-            <dd id="combo_nivel"><%= select_tag "nivel", options_for_select(Asignatura::CURSO)%></dd>
+            <dd id="combo_nivel"><%= select_tag "nivel", options_for_select(Asignatura::CURSO.each_with_index.map{|x,i|[x,i]},@solicitudlab.asignatura.curso)%></dd>
 	    <dt>Asignatura *</dt>    
             <dd><SPAN id="combo_asignatura">
                 <% if (Asignatura::CURSO).first=="sin curso" %>
@@ -27,27 +28,19 @@
                    <% as=Asignatura::CURSO.first %>
                 <% end %>
                 <% @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).to_a %>
-                <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]} %>
+                <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]}, html_options={:selected=>@solicitudlab.asignatura.id } %>
                 </span><dd>
                
             </dd>
             <dt>Laboratorio *</dt>
-            <dd><% @laboratorios=Laboratorio.order("nombre_lab").to_a %>                                             
-                <%= select "laboratorio_id", "nombre_lab", @laboratorios.map {|l| [l.nombre_lab]} %>
+            <dd><% @laboratorios=Laboratorio.order("nombre_lab").to_a %>            
+                <%= select "laboratorio_id", "nombre_lab", @laboratorios.map {|l| [l.nombre_lab, l.id]},html_options={:selected=>@labId } %>
             </dd>            
             <dt>Fecha *</dt>
             <dd>
-              <% periodoact=Periodo.where("activo = ? AND tipo = ?","t","Examenes").first %>
-                <% if periodoact.nil? %>
-                   <%  inicio=fecha_europea((Periodo.where("inicio >= ? AND tipo = ?",Date.today,"Examenes").first).inicio) %> <!--cambiar por Date.today-->
-                <% else %>
-                   <% iniperiodoact=periodoact.inicio %>
-                   <% inicio=fecha_europea(iniperiodoact) %>
-                <% end %>
-              <%= f.text_field :fecha, :size=>12, :name=>"fecha",  :id=>"DPC_fecha_DD-MM-YYYY", 
-                  :value=>inicio %></dd>
+              <%= f.text_field :fecha, :size=>12, :name=>"fecha",  :id=>"DPC_fecha_DD-MM-YYYY",:value=>@solicitudlab.fecha.strftime('%d-%m-%Y')%></dd>
             <dt>Soft. requerido</dt>
-            <dd><%= f.text_area :comentarios, :rows =>4, :cols=>40, :name=>"comentarios" %></dd>
+            <dd><%= f.text_area :comentarios, :rows =>4, :cols=>40, :name=>"comentarios", :value =>@solicitudlab.comentarios  %></dd>
             
            <dt>Tramo horario *</dt>
            <dd><table>
@@ -57,8 +50,8 @@
                        </tr>
                        <tr valign="top" style="text-align:center"> 
                           <td class="cien"><% @horas=Horasexa.where("en_uso=?","t").order("id").to_a %>
-                                       <%= select "horaini", "comienzo", @horas.map {|h| [h.comienzo] }%></td>
-                          <td class="cien"><%= select "horafin", "fin", @horas.map {|h| [h.fin] }%></td>
+                                       <%= select "horaini", "comienzo", @horas.map {|h| [h.comienzo]}, html_options={:selected=>@solicitudlab.horaini } %></td>
+                          <td class="cien"><%= select "horafin", "fin", @horas.map {|h| [h.fin]}, html_options={:selected=>@solicitudlab.horafin } %></td>
                        </tr>
                 </table><!-- de subformulario --></td>
             </dd><!-- de tramos horarios -->
