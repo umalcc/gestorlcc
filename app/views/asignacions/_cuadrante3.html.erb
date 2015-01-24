@@ -71,12 +71,30 @@ function isElemOverDiv(draggedItem, dropArea)
 	     draggedItem.pageY>= b.top && draggedItem.pageY <= b.bottom){return true;}
 	 return false;
 }
-
+function elimEventListaExt(el)
+{
+	var id=el.attr("id");
+		//alert(id);
+	el.parent().remove(); 
+			//elimina el evento de la lista externa visualmente
+	var height=$("#external-events").height();
+	$("#external-events").height(height-30);
+	/*$.ajax({
+	type:"POST",
+	url:"/asignacions/destroy",
+	data:{id:id},
+	success:function(){
+	
+	}
+    });*/
+}
 $(function() 
 {	
+	$(".elEvento").click(function()
+		{
+			elimEventListaExt($(this));
+		});
 	$( "#external-events" ).droppable();
-      
-    $( "#borrarAsig" ).droppable();
 
     $('#tabs').tabs({
        activate: function(event, ui) 
@@ -118,7 +136,7 @@ $(function()
         defaultView:'agendaWeek',
         editable: true,
         droppable: true,
-                drop: function(date, jsEvent, ui, selectedRoom) 
+        drop: function(date, jsEvent, ui, selectedRoom) 
         { 
         	tmpDate= new Date(date);
         	//tmpDate.setHours(tmpDate.getHours()+2);
@@ -146,35 +164,18 @@ $(function()
 	    },
 	    eventResize: function(event, delta, revertFunc)
 	    {
-	    	if(confirm("¿Está seguro del cambio?"))
-	    	{
-	    		 updateEvent(event);
-	    	}
-	    	else
-	    	{
-	    		revertFunc();
-	    	}
+	    	updateEvent(event);	
             //ToDo: actualizar tabla peticionlabs tb
 	    },
 	    eventDrop: function(event, delta, revertFunc)
 	    {
-	    	if(confirm("¿Está seguro del cambio?"))
-	    	{
-	    		 updateEvent(event);
-	    	}
-	    	else
-	    	{
-	    		revertFunc();
-	    	}
-            
+	    	updateEvent(event);
              //ToDo: actualizar tabla peticionlabs tb
 	    },
 	    eventDragStop: function(event, jsEvent, ui, view) 
 	    {
 	   	   var active = $('#tabs .ui-state-active').children("a");
-	   	   if (isElemOverDiv(jsEvent, '#borrarAsig')) {
-	   	   	if(confirm("¿Está seguro de que desea eliminar esta asignación?"))
-	   	   	{
+	   	   /*if (isElemOverDiv(jsEvent, '#borrarAsig')) {
 	   	   	$(active.attr("href")).fullCalendar('removeEvents', event.id);
 	   		$.ajax({
 	   			type:"POST",
@@ -185,18 +186,21 @@ $(function()
 	   			  //alert("La asignación ha sido eliminada de forma satisfactoria.");
 	   			}
 	   		});
-	   		}	
-	   	}
+	   	}*/
          
         //Move event from calendar to external list
-	   	if((isElemOverDiv(jsEvent,'#external-events')) && (confirm("¿Está seguro de que desea mover la asignación a la lista temporal?")))
+	   	if(isElemOverDiv(jsEvent,'#external-events'))
 	   	{
 	   		//alert(event.info);
 	   		var elemento=$("<div class='fc-event ui-draggable ui-draggable-handle'></div>");
+	   		var imagen=$("<input onClick=\"elimEventListaExt($(this));\" class='elEvento' type='image' style='position:absolute;right:0px;' src='/assets/borrar.png'/>");
+	   		//imssagen.attr("onClick","elimEventListaExt(this)");
+	   		imagen.attr("id",event.id);
+	   		elemento.append(imagen);
 	   		elemento.attr("title",event.info);
 	   		elemento.attr("id",event.id);
 	   		elemento.attr("data-generic",event.generic);
-	   		elemento.text(event.title);
+	   		elemento.append(event.title);
 	   		var height=$("#external-events").height();
 	   		$("#external-events").height(30+height);
 	   		$("#external-events").append(elemento);
@@ -276,6 +280,7 @@ $(function()
 	#external-events .fc-event {
 		margin: 10px 0;
 		cursor: pointer;
+		line-height: 2;
 	}
 
 	#dropMenu p {
@@ -310,18 +315,16 @@ $(function()
 		    <% for asignacion in @asignacionsListaExterna %>
 		    <%  info=asignacion[:info].to_s
 			    info.gsub!('%',"&#13;&#10")%>
-			    <div class="fc-event ui-draggable ui-draggable-handle" title="<%= info.html_safe %>" data-generic="<%= asignacion[:generica].to_s %>" id="<%= asignacion [:id] %>"><%=asignacion[:asignatura].to_s %></div>
+			    <div class="fc-event ui-draggable ui-draggable-handle" title="<%= info.html_safe %>" data-generic="<%= asignacion[:generica].to_s %>" id="<%= asignacion [:id] %>">
+			    	<input class="elEvento" type="image" style='position:absolute;right:0px;' id="<%= asignacion [:id] %>" src='/assets/borrar.png'/>
+			    	<%=asignacion[:asignatura].to_s %></div>
 		    <% end %> 
 			<!--Meter las asignaciones que están en la lista externa, pero cómo saber cuáles son?-->
             </div>
          </td>
       </tr>
       <tr><td><br/></td></tr>
-      <tr><td><%=image_tag("IconoBorrar.png", :id =>"borrarAsig", :border=>0,:height=>64,:width=>64)%></td></tr>
-      
-      <tr> <td> <span style="color:blue;"> 
-         <%= link_to image_tag("iconoImpresora.png",:alt=>"Para imprimir",:height=>64,:width=>64), '/listado/asignacion_lectivo_impresa',{:target => "_blank" } %>
-      </span></td></tr>
+      <!--<tr><td><image_tag("IconoBorrar.png", :id =>"borrarAsig", :border=>0,:height=>64,:width=>64)></td></tr>-->
     </table>
 
     </td>

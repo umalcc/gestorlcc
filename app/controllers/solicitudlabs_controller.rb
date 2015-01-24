@@ -88,7 +88,7 @@ class SolicitudlabsController < ApplicationController
     @solicitudlab.npuestos=params[:npuestos].to_s
     @solicitudlab.asignatura.curso=params[:nivel].to_s
     @solicitudlab.curso = params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
-    @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
+    @solicitudlab.comentarios= params[:comentarios]
     @solicitudlab.asignado="N"
     @solicitudlab.fechaini=params[:fechaini].to_date
 
