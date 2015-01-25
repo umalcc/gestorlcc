@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141222001600) do
+ActiveRecord::Schema.define(version: 20150124183043) do
 
   create_table "asignaciondefs", force: :cascade do |t|
     t.integer  "solicitudlab_id"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20141222001600) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "generica"
+    t.boolean  "temporal",                    default: false
   end
 
   create_table "asignacionexas", force: :cascade do |t|
@@ -76,6 +77,7 @@ ActiveRecord::Schema.define(version: 20141222001600) do
     t.string   "mov_dia",         limit: 255
     t.string   "mov_hora",        limit: 255
     t.boolean  "generica"
+    t.boolean  "temporal",                    default: false
   end
 
   create_table "asignaturas", force: :cascade do |t|

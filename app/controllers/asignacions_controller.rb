@@ -11,11 +11,11 @@ class AsignacionsController < ApplicationController
   # DELETE /asignacions/1
   # DELETE /asignacions/1.xml
   def destroy
-    @asignacion = Asignacion.find(params[:id])
+    @asignacion = Asignaciondef.find(params[:id])
     @asignacion.destroy
 
     respond_to do |format|
-      format.html { redirect_to(asignacions_url) }
+      format.html { render :nothing => true , :status => 200 }
       format.xml  { head :ok }
     end
   end
@@ -328,11 +328,46 @@ class AsignacionsController < ApplicationController
   end
   
 def anadirListaExterna
-  (session[:lista_externa] ||= []) << params[:id]
-
-  respond_to do |format|
-    format.js {render :nothing=>true}
+  #(session[:lista_externa] ||= []) << params[:id]
+  @asignacion = Asignaciondef.find(params[:id])
+  if(params[:copiar]=="true")
+    @asignacion = @asignacion.dup
   end
+  @asignacion.temporal=true
+  @asignacion.save
+   logger.debug "Numerooooo"+@asignacion.id.to_s
+  respond_to do |format|
+    format.json {render json:@asignacion}
+  end
+end
+
+def pegar
+  ActiveRecord::Base.include_root_in_json = false
+  @asignacion=Asignaciondef.find(params[:id])
+  @asignacion.dia_id=params[:dia_id]
+  @asignacion.temporal=false
+  info=getAsignacionInfo(@asignacion)
+  titulo=  getAsignacionTitulo(@asignacion)
+  @asignacion.save
+  @asignacion=@asignacion.as_json
+  @asignacion[:titulo]=titulo
+  @asignacion[:info]=info
+   
+  respond_to do |format|
+    format.json {render json:@asignacion}
+  end
+end
+
+def getAsignacionTitulo(asignacion)
+  result=""
+
+  if(asignacion.generica == nil || asignacion.generica.to_s == 'false')
+    result=asignacion.solicitudlab.asignatura.abrevia_asig.to_s
+  else
+    result="RG"
+  end
+
+return result
 end
 
 def getAsignacionInfo(asignacion)
@@ -342,11 +377,11 @@ def getAsignacionInfo(asignacion)
      if (asignacion.solicitudlab.tipo.to_s == "T")
           ocupacion = "Todo el período"
       elsif (asignacion.solicitudlab.tipo.to_s == "I")
-       ocupacion = "Del " + asignacion.solicitudlab.fechaini.to_s + " al " + asignacion.solicitudlab.fechafin.to_s
+       ocupacion = "Del " + asignacion.solicitudlab.fechaini.strftime("%d-%m-%Y") + " al " + asignacion.solicitudlab.fechafin.strftime("%d-%m-%Y")
       elsif (asignacion.solicitudlab.tipo.to_s == "X")
-          ocupacion = "Asignación directa - Del " + asignacion.solicitudlab.fechaini.to_s + " al " + asignacion.solicitudlab.fechafin.to_s
+          ocupacion = "Asignación directa - Del " + asignacion.solicitudlab.fechaini.strftime("%d-%m-%Y") + " al " + asignacion.solicitudlab.fechafin.strftime("%d-%m-%Y")
       else
-          ocupacion = "Puntual-" + asignacion.solicitudlab.fechaini.to_s
+          ocupacion = "Puntual-" + asignacion.solicitudlab.fechaini.strftime("%d-%m-%Y")
     end
     info = "Puestos: " + asignacion.solicitudlab.npuestos.to_s 
     info= info + "%Profesor: " + asignacion.solicitudlab.usuario.nombre.to_s
@@ -378,25 +413,27 @@ def consulta
                                           :title => getLabInfo(lab)}}
     @laboratorios = @laboratorios.as_json
 
-    if(session[:lista_externa] == nil or session[:lista_externa].size == 0 )
-      @asignacions = Asignaciondef.all
-    else
-       @asignacions = Asignaciondef.where("id not in (?)",session[:lista_externa]).all
-    end
+    #if(session[:lista_externa] == nil or session[:lista_externa].size == 0 )
+    #  @asignacions = Asignaciondef.all
+    #else
+       #@asignacions = Asignaciondef.where("id not in (?)",session[:lista_externa]).all
+       @asignacions=Asignaciondef.where("temporal= ?", 'f').all
+    #end
 
-    if(session[:lista_externa] != nil)
-      @asignacionsListaExterna=Asignaciondef.where("id in (?)",session[:lista_externa]).all#.map{|r|{:id => r.id,:title => r.solicitudlab.asignatura.abrevia_asig.to_s}}
-    end
+    #if(session[:lista_externa] != nil)
+      #@asignacionsListaExterna=Asignaciondef.where("id in (?)",session[:lista_externa]).all#.map{|r|{:id => r.id,:title => r.solicitudlab.asignatura.abrevia_asig.to_s}}
+      @asignacionsListaExterna=Asignaciondef.where("temporal= ?", 't').all
+    #end
 
     if @asignacions.size!=0
       @asignacionsListaExterna = @asignacionsListaExterna.map { |r| {:id => r.id,
-                                                                     :generica => r.generica,
                                                                      :asignatura => r.solicitudlab.asignatura.abrevia_asig.to_s,
                                                                      :title => ((r.generica.to_s == 'null' || r.generica.to_s == 'false')? r.solicitudlab.asignatura.abrevia_asig.to_s : "RG"),
                                                                      :info =>getAsignacionInfo(r) }}
+      #@asignacionsListaExterna = @asignacionsListaExterna.as_json                                                        
      #@asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
      # ToDo:asignatura puede ser null en la base de datos, controlarlo...
-    @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :peticionlab_id => r.peticionlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => ((r.generica == nil || r.generica.to_s == 'false')? r.solicitudlab.asignatura.abrevia_asig.to_s : "RG"), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s, :generica => r.generica.to_s, :color => '#66FF33'} }    
+    @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => getAsignacionTitulo(r), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s, :color => '#66FF33'} }    
     @asignacions = @asignacions.as_json 
     end
 
@@ -423,8 +460,8 @@ def consulta
 
     #actualizar día de la semana, horaini, horafin y laboratorio
     Asignaciondef.update(params[:asigna], :horaini => params[:horaini], :horafin => params[:horafin], :dia_id => params[:dia_id],
-                         :laboratorio_id => params[:lab_id])
-    session[:lista_externa].delete(params[:asigna])
+                         :laboratorio_id => params[:lab_id], :temporal => false)
+    #session[:lista_externa].delete(params[:asigna])
     logger.debug session[:lista_externa]
 
     respond_to do |format|

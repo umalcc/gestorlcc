@@ -130,6 +130,8 @@ post 'asignacionexas/borradirasignada', :to => 'asignacionexas#borradirasignada'
 post 'asignacionexas/borranormal', :to => 'asignacionexas#borranormal'
 post 'asignacionexas/borranormalasignada', :to => 'asignacionexas#borranormalasignada'
 post 'asignacionexas/listar', :to => 'asignacionexas#listar'
+post 'asignacions/destroy', :to => 'asignacions#destroy'
+post 'asignacions/pegar', :to => 'asignacions#pegar'
 delete 'sessions/destroy', :to => 'sessions#destroy'
 
 

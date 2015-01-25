@@ -1614,7 +1614,7 @@ function EventManager(options) { // assumed to be a calendar
 
 
 	var miscCopyableProps = [
-	    'generic',
+	    'id',
 		'title',
 		'url',
 		'allDay',
@@ -5982,7 +5982,9 @@ $.extend(DayGrid.prototype, {
 		if (!event.allDay && seg.isStart) {
 			timeHtml = '<span class="fc-time">' + htmlEscape(view.getEventTimeText(event)) + '</span>';
 		}
-
+		idHtml='<span class="fc-id">' +
+				(htmlEscape(event.id || '') || '&nbsp;') + // we always want one line of height
+			'</span>';
 		titleHtml =
 			'<span class="fc-title">' +
 				(htmlEscape(event.title || '') || '&nbsp;') + // we always want one line of height
@@ -6000,8 +6002,8 @@ $.extend(DayGrid.prototype, {
 			'>' +
 				'<div class="fc-content">' +
 					(isRTL ?
-						titleHtml + ' ' + timeHtml : // put a natural space in between
-						timeHtml + ' ' + titleHtml   //
+						idHtml+' '+titleHtml + ' ' + timeHtml : // put a natural space in between
+						idHtml+ ' '+timeHtml + ' ' + titleHtml   //
 						) +
 				'</div>' +
 				(isResizable ?
@@ -7143,6 +7145,7 @@ $.extend(TimeGrid.prototype, {
 				) +
 			'>' +
 				'<div class="fc-content">' +
+				        '<div class="fc-id" data-id="'+event.id+'"></div>'+
 					(timeText ?
 						'<div class="fc-time"' +
 						' data-start="' + htmlEscape(startTimeText) + '"' +
