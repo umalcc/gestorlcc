@@ -331,11 +331,12 @@ def anadirListaExterna
   #(session[:lista_externa] ||= []) << params[:id]
   @asignacion = Asignaciondef.find(params[:id])
   if(params[:copiar]=="true")
-    @asignacion = @asignacion.dup
+    @asignacion = Asignaciondef.new(@asignacion.attributes)
+  else
+
   end
   @asignacion.temporal=true
-  @asignacion.save
-   logger.debug "Numerooooo"+@asignacion.id.to_s
+  @asignacion.save!
   respond_to do |format|
     format.json {render json:@asignacion}
   end
