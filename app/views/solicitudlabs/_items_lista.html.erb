@@ -18,8 +18,7 @@
          <th class="cien">Fecha fin</th>
          <th>Petici&oacute;n</th>
          <th>Soft.</th>
-         <th class="cientoveinticinco">Elecci&oacute;n equipos</th>
-         
+         <th class="cientoveinticinco">Elecci&oacute;n equipos</th>  
         </tr>
 
         <tr>
@@ -35,7 +34,6 @@
                              <%= link_to image_tag("Editar.png", :border=>0),  edit_solicitudlab_path(i) %>
                            <% else %>
                              <% if i.asignado=="D" %>
-                               
                                   <%=link_to image_tag("mark.png", :border=>0, :size=>"24x24"),edit_solicitudlab_path(i) %>
                                <% else %>
                               <% if i.asignado=="N" %>
@@ -47,16 +45,16 @@
          <td><% usuario=Usuario.find(i.usuario_id) %><%= usuario.nombre+" "+usuario.apellidos %></td>
          <td><% asig=Asignatura.find(i.asignatura_id) %>
              <a onmouseover=ShowContent('asignatura<%=i.id.to_s%>'); return true;
-   			   onmouseout=HideContent('asignatura<%= i.id.to_s %>'); return true;>
-                           <div id="asignatura<%= i.id.to_s %>" 
-				style='display:none;position:absolute;
-      					border-style: solid;
-      					background-color: white;width:300px;
-      					padding: 5px;';>
-                                        <%= asig.nombre_asig %><br/><!-- nombre completo de la asignatura -->
-                                        <%="Titulacion :"+asig.titulacion.abrevia %>
-			    </div>
-             <%= asig.abrevia_asig %></td><!-- nombre abreviado de la asignatura -->
+   			        onmouseout=HideContent('asignatura<%= i.id.to_s %>'); return true;>
+                <div id="asignatura<%= i.id.to_s %>" 
+				             style='display:none;position:absolute;
+      					            border-style: solid;
+      					            background-color: white;width:300px;
+      					            padding: 5px;';>
+                      <%= asig.nombre_asig %><br/><!-- nombre completo de la asignatura -->
+                      <%="Titulacion :"+asig.titulacion.abrevia %>
+			          </div>
+                <%= asig.abrevia_asig %></td><!-- nombre abreviado de la asignatura -->
          <td style="text-align:center"><% if i.asignatura.curso.to_s=="sin curso" %>
                                           <%= "-" %>
                                        <% else %>
@@ -69,25 +67,26 @@
              <table>
                 <%=render(:partial => "/solicitudrecursos/tramo_peticion", :collection=> @tramos ) %>
              </table></td>
-         <td style="text-align:center"><a onmouseover=ShowContent("flotante<%= i.id.to_s %>"); return true;
-   			   onmouseout=HideContent('flotante<%= i.id.to_s %>'); return true;>
-                            <div id="flotante<%= i.id.to_s %>" 
-				style='display:none;position:absolute;
-      					border-style: solid;
-      					background-color: white;
-      					padding: 5px;';>
-                                        <%=i.comentarios %><!-- se visualiza el comentario completo -->
-			    </div>
-			    <%="SI" unless i.comentarios=="" %></a><!-- si hay comentarios, se indica --></td>
+         <td style="text-align:center">
+             <a onmouseover=ShowContent("flotante<%= i.id.to_s %>"); return true;
+   			        onmouseout=HideContent('flotante<%= i.id.to_s %>'); return true;>
+                <div id="flotante<%= i.id.to_s %>" 
+				             style='display:none;position:absolute;
+      					            border-style: solid;
+      					            background-color: white;
+      					            padding: 5px;';>
+                      <%=i.comentarios %><!-- se visualiza el comentario completo -->
+			          </div>
+			          <%="SI" unless i.comentarios=="" %></a><!-- si hay comentarios, se indica -->
+         </td>
          <td><% @preferencias=i.preferencias.split(";") unless i.preferencias.nil? %>  
             <table>
               <%=render(:partial => "/solicitudlabs/tramo_preferencia", :collection=> @preferencias ) %>
-            </table></td>    
-         <td class="icono"><% if total==0 or i.asignado!="D" %>
-                             <%= link_to image_tag("borrar.png", :border=>0), i, 
+            </table>
+         </td>    
+         <td class="icono"><%= link_to image_tag("borrar.png", :border=>0), i, 
                               data: { confirm: '¿Seguro que desea eliminar la solicitud?'}, :method => :delete %>
-                           <% end %>
-                           </td> 
+        </td> 
         </tr>
         <% end %><!-- de @solicitudlabs.each -->
        </table>

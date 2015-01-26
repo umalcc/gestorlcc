@@ -76,11 +76,9 @@
           <table>
             <%=render(:partial => "/solicitudlabs/tramo_preferencia", :collection=> @preferencias ) %>
           </table></td>    
-       <td class="icono"><% if total==0 and i.asignado=="N" %>
-                           <%= link_to image_tag("borrar.png", :border=>0), i, 
-                            data:{ confirm: '¿Seguro que desea eliminar la solicitud?'}, :method => :delete %>
-                         <% end %>
-                         </td> 
+       <td class="icono"><%= link_to image_tag("borrar.png", :border=>0), i, 
+                            data:{ confirm: '¿Seguro que desea eliminar la solicitud?'}, :method => :delete %>                    
+       </td> 
       </tr>
       <% end %><!-- de @solicitudlabexas.each -->
      </table>
