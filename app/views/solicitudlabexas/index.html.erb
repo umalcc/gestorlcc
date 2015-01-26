@@ -10,32 +10,76 @@
             <tr>
               <td><%= image_tag("search.png") %></td>
               <td>Buscar  : </td>
-              <td><%= text_field_tag "query" %></td>
-             
+              <td><%= text_field_tag "query" %></td> 
             </tr>
            </table>
           </div><!-- de busqueda -->
+    
+          <%= form_tag new_solicitudlabexa_path, :method=>:get do -%>
+             <%= submit_tag "Nueva solicitud", :class=>"botonindexsearch" %>
+          <% end -%>
+
+          <br/>
+      
+          <% if @solicitudlabexas %>
+              <% periodo=Periodo.where("tipo = ? AND (activo = ? OR admision = ?)","Examenes","t","t").order("admision DESC").first %>
+              <div id="nom_periodo">
+                <% if !periodo.nil? %><!-- si se esta en un periodo de asignaciones activadas o adjudicadas-->
+                  <%= periodo.nombre %>
+                <% else %>
+                  No hay ning&uacute;n periodo activo
+                <% end %>
+              </div>
+              <table>
+                <tr>
+                  <td><%= select "tiempoSolicitud", "tiempo", options_for_select(@tiempoSolicitudes.each_with_index.map{|x,i|[x,i]})%></td>
+                </tr>
+              </table>
+              <p><%= image_tag ("bg_separ.gif") %></p>
+
           <div id="tabla"><%= render :partial => "items_lista" %></div> 
+          <%end%><!-- de if @solicitudlabexas-->
        </div><!-- de lista-gestion -->
     </div><!-- de recuadro -->
 </div><!-- de central -->
 
-
-
 <script type="text/javascript">
-
-
 $(function()
 {
-  $("#query").keyup(function()
-  {
-    var url="/solicitudlabexas/listar";
-    var query=$("#query").val();
-    $.ajax({
-      type:"POST",
-      url:url,
-      data:{query:query}
-    });
-  });
+   $("#query").keyup(function()
+   {
+     var url="solicitudlabexas/listar"; 
+     var jqueryVal=$("#query").val();
+     var tiempoSol=$("#tiempoSolicitud_tiempo").val();
+     
+     $.ajax
+     ({
+       beforeSend:function(xhr)
+       {
+          xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+       },
+       type:"POST",
+       url:url,
+       data:{query:jqueryVal, tiempoSolicitud:tiempoSol}
+     });
+   });
 });
+
+$("#tiempoSolicitud_tiempo").change(function()
+{
+  var url="solicitudlabexas/listar"; 
+  var jqueryVal=$("#query").val();
+  var tiempoSol=$("#tiempoSolicitud_tiempo").val();
+
+  $.ajax({
+           beforeSend:function(xhr)
+           {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+           },
+           type:"POST",
+           url:url,
+           data:{query:jqueryVal, tiempoSolicitud:tiempoSol}
+        });
+});
+
 </script>

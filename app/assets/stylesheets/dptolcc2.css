@@ -364,7 +364,6 @@ table.flotante2 {
 
 #lista-gestion table tr td {
         padding: 5px;
-        vertical-align: top;
         text-align: left;
         overflow: auto;
 }

@@ -2,10 +2,20 @@ class SolicitudlabexasController < ApplicationController
   # GET /solicitudlabexas
   # GET /solicitudlabexas.xml
 
+  include SolicitudesHelper
+
   before_action :login_requerido, :admin?
+  before_action :initializeIndex, :only=> [:index,:listar]
+
+
+  def initializeIndex
+      @tiempoSolicitudes = ["Actuales", "Desde hace un año", "Desde hace dos años"]
+  end
 
   def index
+
     @solicitudlabexas = Solicitudlabexa.order("fecha").to_a
+    @solicitudlabexas = getCurrentRequests(@solicitudlabexas) 
     @cuenta = @solicitudlabexas.size
     
     respond_to do |format|
@@ -182,7 +192,16 @@ end
     nombre_l=@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'si'+';'}
     nombre_l=nombre_l+@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'no'+';'}
     @solicitudlabexas=Solicitudlabexa.where("npuestos || curso || fecha || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, nombre_l).to_a
-    @cuenta=@solicitudlabexas.size
+    
+    tiempoSolicitud = params[:tiempoSolicitud]
+    case tiempoSolicitud
+      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas)
+      when '1' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas)
+      when '2' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas)
+    end
+
+    @cuenta = @solicitudlabexas.size
+    
     respond_to do |format|
       format.js 
     end

@@ -5,18 +5,40 @@
     <div id="recuadro">
        <div id="lista-gestion">
           <p><%= image_tag ("bg_separ.gif") %></p>
+          
           <div id="busqueda">
            <table>
             <tr>
               <td><%= image_tag("search.png") %></td>
               <td>Buscar  : 
-              <td><%= text_field_tag "query" %>
-             
-                
+              <td><%= text_field_tag "query" %>     
             </tr>
            </table>
           </div><!-- de busqueda -->
-          <div id="tabla"><%= render :partial => "items_lista" %></div> 
+
+          <%= form_tag new_solicitudlab_path, :method=>:get do -%>
+             <%= submit_tag "Nueva solicitud", :class=>"botonindexsearch" %>
+          <% end -%>
+
+          <br/>
+      
+          <% if @solicitudlabs %>
+              <% periodo=Periodo.where("tipo = ? AND (activo = ? OR admision = ?)","Lectivo","t","t").order("admision DESC").first %>
+              <div id="nom_periodo">
+                <% if !periodo.nil? %><!-- si se esta en un periodo de asignaciones activadas o adjudicadas-->
+                  <%= periodo.nombre %>
+                <% else %>
+                  No hay ning&uacute;n periodo activo
+                <% end %>
+              </div>
+              <table>
+                <tr>
+                  <td><%= select "tiempoSolicitud", "tiempo", options_for_select(@tiempoSolicitudes.each_with_index.map{|x,i|[x,i]})%></td>
+                </tr>
+              </table>
+              <p><%= image_tag ("bg_separ.gif") %></p>
+              <div id="tabla"><%= render :partial => "items_lista" %></div> 
+          <%end%><!-- de if @solicitudlabs-->
        </div><!-- de lista-gestion -->
     </div><!-- de recuadro -->
 </div><!-- de central -->
@@ -28,19 +50,39 @@ $(function()
 {
    $("#query").keyup(function()
    {
-    var url="solicitudlabs/listar"; 
-	 var jqueryVal=$("#query").val();
-  $.ajax({
-  beforeSend:function(xhr)
-{
-  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
-},
-
-    type:"POST",
-   url:url,
-  data:{query:jqueryVal}
+     var url="solicitudlabs/listar"; 
+	   var jqueryVal=$("#query").val();
+     var tiempoSol=$("#tiempoSolicitud_tiempo").val();
+     
+     $.ajax
+     ({
+       beforeSend:function(xhr)
+       {
+          xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+       },
+       type:"POST",
+       url:url,
+       data:{query:jqueryVal, tiempoSolicitud:tiempoSol}
+     });
+   });
 });
-   });
-   });
+
+$("#tiempoSolicitud_tiempo").change(function()
+{
+  var url="solicitudlabs/listar"; 
+  var jqueryVal=$("#query").val();
+  var tiempoSol=$("#tiempoSolicitud_tiempo").val();
+
+  $.ajax({
+           beforeSend:function(xhr)
+           {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+           },
+           type:"POST",
+           url:url,
+           data:{query:jqueryVal, tiempoSolicitud:tiempoSol}
+        });
+});
+
 </script>
 

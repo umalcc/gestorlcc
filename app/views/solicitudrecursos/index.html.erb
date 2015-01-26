@@ -13,27 +13,64 @@
                <td><%= text_field_tag "query" %></td>     
               </tr>
             </table>
-         </div>  
-          <div id="tabla"><%= render :partial => "items_lista" %></div> 
+         </div> 
+
+         <%= form_tag new_solicitudrecurso_path, :method=>:get do -%>
+            <%= submit_tag "Consulta/Reserva", :class=>"botonindexsearch" %>
+         <% end -%>
+         
+         <br/>
+         
+         <% if @solicitudrecursos %>
+              <table>
+                <tr>
+                  <td><%= select "tiempoSolicitud", "tiempo", options_for_select(@tiempoSolicitudes.each_with_index.map{|x,i|[x,i]})%></td>
+                </tr>
+              </table>
+              <p><%= image_tag ("bg_separ.gif") %></p>
+              <div id="tabla"><%= render :partial => "items_lista" %></div>
+         <%end%> <!-- de @solicitudrecursos-->
         </div><!-- de lista-gestion -->
      </div><!-- de recuadro -->
 </div><!-- de central -->
 
-
 <script type="text/javascript">
 $(function()
 {
-  $("#query").keyup(function()
-    {
-      var url="/solicitudrecursos/listar";
-      var query=$("#query").val();
-      $.ajax(
-        {
-          type:"POST",
-          url:url,
-          data:{query:query}
+   $("#query").keyup(function()
+   {
+     var url="solicitudrecursos/listar"; 
+     var jqueryVal=$("#query").val();
+     var tiempoSol=$("#tiempoSolicitud_tiempo").val();
+     
+     $.ajax
+     ({
+       beforeSend:function(xhr)
+       {
+          xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+       },
+       type:"POST",
+       url:url,
+       data:{query:jqueryVal, tiempoSolicitud:tiempoSol}
+     });
+   });
+});
+
+$("#tiempoSolicitud_tiempo").change(function()
+{
+  var url="solicitudrecursos/listar"; 
+  var jqueryVal=$("#query").val();
+  var tiempoSol=$("#tiempoSolicitud_tiempo").val();
+
+  $.ajax({
+           beforeSend:function(xhr)
+           {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+           },
+           type:"POST",
+           url:url,
+           data:{query:jqueryVal, tiempoSolicitud:tiempoSol}
         });
-    });
 });
 
 </script>

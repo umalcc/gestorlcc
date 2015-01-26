@@ -1,12 +1,20 @@
 class SolicitudlabsController < ApplicationController
 
+  include SolicitudesHelper
 
   before_action :login_requerido, :admin?
+  before_action :initializeIndex, :only=> [:index,:listar]
+
+
+  def initializeIndex
+      @tiempoSolicitudes = ["Actuales", "Desde hace un año", "Desde hace dos años"]
+  end
 
   def index
-    getIndexView
-    @cuenta = @solicitudlabs.size
     
+    @solicitudlabs = getCurrentRequests(Solicitudlab.all)
+    @cuenta=@solicitudlabs.size
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @solicitudlabs }
@@ -34,31 +42,6 @@ class SolicitudlabsController < ApplicationController
     end
   end
 
-  def isLabRequestCurrent?(labRequest)
-      primerCuatrimestre=Periodo.where("id =?",1).first
-      segundoCuatrimestre=Periodo.where("id =?",2).first
-      
-      return true if (labRequest.fechaini >= primerCuatrimestre.inicio and labRequest.fechafin <= primerCuatrimestre.fin) or
-      (labRequest.fechaini >= segundoCuatrimestre.inicio and labRequest.fechafin <= segundoCuatrimestre.fin)
-    end
-
-  def getIndexView
-      @solicitudlabs= Solicitudlab.all.select{|s| isLabRequestCurrent?(s)}
-      #mostrar sólo las solicitudes del curso académico actual
-      @cuenta=@solicitudlabs.size
-
-      @labRequestsAllowed = labRequestsAllowed?
-    end
-
-    def getPeriodWithAdmission
-      # Obtener el período lectivo que permite admisiones
-      @periodo=Periodo.where("admision = ? AND tipo = ?","t","Lectivo").first
-      return @periodo
-    end
-
-    def labRequestsAllowed?     
-       return (getPeriodWithAdmission.nil? == false) 
-    end
   # GET /solicitudlabs/1/edit
   def edit
     
@@ -246,6 +229,7 @@ end
  
   def listar
     cadena=params[:query]
+
     if cadena=~/\d{2}\-\d{2}\-(\d{4})/
         cadena=cadena.split('-')[2]+'-'+cadena.split('-')[1]+'-'+cadena.split('-')[0]
     else
@@ -270,8 +254,16 @@ end
     nombre_l=@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'si'+';'}
     nombre_l=nombre_l+@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'no'+';'}
     @solicitudlabs=Solicitudlab.where("npuestos || curso || fechaini || fechafin || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, codigos_t,nombre_l).to_a
-    @solicitudlabs=@solicitudlabs.select{|s| isLabRequestCurrent?(s)}
-    @cuenta=@solicitudlabs.size
+    
+    tiempoSolicitud = params[:tiempoSolicitud]
+    case tiempoSolicitud
+      when '0' then @solicitudlabs = getCurrentRequests(@solicitudlabs)
+      when '1' then @solicitudlabs = getFromLastYearRequests(@solicitudlabs)
+      when '2' then @solicitudlabs = getFromLast2YearsRequests(@solicitudlabs)
+    end
+
+    @cuenta = @solicitudlabs.size
+
     respond_to {|format| format.js }
   end
 

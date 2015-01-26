@@ -1,22 +1,13 @@
-<%= form_tag new_solicitudrecurso_path, :method=>:get do -%>
-     <%= submit_tag "Consulta/Reserva", :class=>"botonindexsearch" %>
-<% end -%>
+<p style="position:absolute;left:180px;top:110px">Nº reservas: <%=@cuenta %></p>
+<% if @cuenta!=0 %>
 
-<% if @solicitudrecursos %>
-   
-   
-    <p>Reservas : <%= @cuenta %></p>
-    <p><%= image_tag ("bg_separ.gif") %></p>
-    <% if @cuenta!=0 %>
+    <table style="margin-left:950px; margin-top:-20px;">
+      <tr>   
+        <td><%= link_to(image_tag("limpiar.jpeg",:border=>0,:width=>32,:height=>32),"#",id:"linkBorraReservas")%></td>
+        <td style="color:#010080;font-size:0.9em">Eliminar todas<br/>las reservas</td>
+      </tr>
+    </table>
 
-        <table style="margin-left:950px; margin-top:-20px;">
-          <tr>
-            
-            <td><%= link_to(image_tag("limpiar.jpeg",:border=>0,:width=>32,:height=>32),
-                        "#",id:"linkBorraReservas")%></td>
-            <td style="color:#010080;font-size:0.9em">Eliminar todas<br/>las reservas</td>
-          </tr>
-        </table>
     <table>
       <tr>
        <th> </th>
@@ -42,8 +33,7 @@
       </tr>
       <% end %><!-- de @solicitudrecursos.each -->
     </table>
-    <% end %><!-- de @cuenta!=0 -->  
-<% end %><!-- de @solicitudrecursos -->
+<% end %><!-- de @cuenta!=0 -->  
 
 <script type="text/javascript">
 

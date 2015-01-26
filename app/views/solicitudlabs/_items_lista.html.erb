@@ -3,25 +3,10 @@
 <% nasigdef=Asignaciondef.all.size %>
 <% total=nasig+nasigdef %>
 
-<%= form_tag new_solicitudlab_path, :method=>:get do -%>
-        <%= submit_tag "Nueva solicitud", :class=>"botonindexsearch" %>
-<% end -%>
-
-<% if @solicitudlabs %>
-    <% periodo=Periodo.where("tipo = ? AND (activo = ? OR admision = ?)","Lectivo","t","t").order("admision DESC").first %>
-    <div id="nom_periodo">
-    <% if !periodo.nil? %><!-- si se esta en un periodo de asignaciones activadas o adjudicadas-->
-      <%= periodo.nombre %>
-    <% else %>
-      No hay ning&uacute;n periodo activo
-    <% end %>
-    </div>
-     <p>Solicitudes : <%=@cuenta %></p>
-     <p><%= image_tag ("bg_separ.gif") %></p>
+    <p style="position:absolute;left:180px;top:150px">Nº solicitudes: <%=@cuenta %></p>
      <% if @cuenta!=0 %>
 
        <table >
-
         <tr>
          <th> </th>
          <th class="cien">Fecha sol.</th>  
@@ -107,5 +92,3 @@
         <% end %><!-- de @solicitudlabs.each -->
        </table>
      <% end %><!-- de if @cuenta!=0 -->  
-<% end %><!-- de if @solicitudlabs -->
-

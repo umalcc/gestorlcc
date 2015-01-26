@@ -1,13 +1,21 @@
 class SolicitudrecursosController < ApplicationController
   # GET /solicitudrecursos
   # GET /solicitudrecursos.xml
-  protect_from_forgery :only=>[:create,:update,:destroy]
 
+  include SolicitudesHelper
+
+  protect_from_forgery :only=>[:create,:update,:destroy]
   before_action :login_requerido, :admin?
+  before_action :initializeIndex, :only=> [:index,:listar]
+
+
+  def initializeIndex
+      @tiempoSolicitudes = ["Actuales", "Desde hace un año", "Desde hace dos años"]
+  end
 
 
   def index
-    @solicitudrecursos = Solicitudrecurso.all
+    @solicitudrecursos = getCurrentRequests(Solicitudrecurso.all)
     @cuenta = @solicitudrecursos.size
 
     respond_to do |format|
@@ -194,7 +202,17 @@ class SolicitudrecursosController < ApplicationController
     @tramos=Peticion.where("diasemana || horaini || horafin LIKE ?",cadena).to_a
     codigos_t=@tramos.map { |t| t.solicitudrecurso_id}
     @solicitudrecursos=Solicitudrecurso.where("fechareserva ||  fechasol LIKE ? or usuario_id in (?) or id in (?) or tipo in (?)",cadena,codigos_u,codigos_t,recs).to_a
-    @cuenta=@solicitudrecursos.size
+    
+    tiempoSolicitud = params[:tiempoSolicitud]
+    case tiempoSolicitud
+      when '0' then @solicitudrecursos = getCurrentRequests(@solicitudrecursos)
+      when '1' then @solicitudrecursos = getFromLastYearRequests(@solicitudrecursos)
+      when '2' then @solicitudrecursos = getFromLast2YearsRequests(@solicitudrecursos)
+    end
+
+    @cuenta = @solicitudrecursos.size
+
+
     respond_to {|format| format.js }
   end
 
