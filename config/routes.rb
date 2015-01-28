@@ -109,6 +109,9 @@ get 'listado/asignacion_lectivo_impresa', :to => 'listado#asignacion_lectivo_imp
 get 'listado/asignacion_examenes_impresa', :to => 'listado#asignacion_examenes_impresa'
 get 'listado/asignacion_lectivo_usuario_impresa', :to => 'listado#asignacion_lectivo_usuario_impresa'
 get 'listado/asignacion_examenes_usuario_impresa', :to => 'listado#asignacion_examenes_usuario_impresa'
+get 'listado/solicitud_lectivo_impresa', :to => 'listado#solicitud_lectivo_impresa'
+get 'listado/solicitud_examen_impresa', :to => 'listado#solicitud_examen_impresa'
+get 'listado/solicitud_recurso_impresa', :to => 'listado#solicitud_recurso_impresa'
 
 get 'consultasasig/porusuario', :to => 'consultasasig#porusuario'
 get 'consultasasig/general', :to => 'consultasasig#general'

@@ -110,7 +110,7 @@ class SolicitudlabsController < ApplicationController
   # POST /solicitudlabs
   # POST /solicitudlabs.xml
   def create 
-    @solicitudlab = Solicitudlab.new(params[:solicitudlab])
+    @solicitudlab = Solicitudlab.new
 
     saveModel(params)
 

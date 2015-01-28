@@ -3,9 +3,9 @@
 <% nasigdef=Asignaciondef.all.size %>
 <% total=nasig+nasigdef %>
 
-    <p style="position:absolute;left:180px;top:150px">Nº solicitudes: <%=@cuenta %></p>
+    <p style="position:absolute;left:180px;top:140px">Nº solicitudes: <%=@cuenta %></p>
      <% if @cuenta!=0 %>
-
+      
        <table >
         <tr>
          <th> </th>
@@ -26,6 +26,10 @@
            <td><%=  "No hay solicitudes de laboratorios emitidas" %></td>
          <% end %> 
         </tr>
+
+        <%= content_tag :div, class: "solicitudlabs_class", 
+            data: {solicitudlabs: @solicitudlabs} do %>
+        <% end %>
 
         <% @solicitudlabs.each do |i| %>
         <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
@@ -61,8 +65,8 @@
                                           <%= i.curso %>
                                        <% end %></td>
          <td style="text-align:center"><%= i.npuestos %></td>
-         <td><%= i.fechaini %></td>
-         <td><%= i.fechafin %></td>
+         <td><%= fecha_europea(i.fechaini) %></td>
+         <td><%= fecha_europea(i.fechafin) %></td>
          <td><% @tramos=i.peticionlab %>
              <table>
                 <%=render(:partial => "/solicitudrecursos/tramo_peticion", :collection=> @tramos ) %>
@@ -91,3 +95,4 @@
         <% end %><!-- de @solicitudlabs.each -->
        </table>
      <% end %><!-- de if @cuenta!=0 -->  
+

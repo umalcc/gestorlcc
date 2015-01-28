@@ -1,0 +1,77 @@
+
+<style>
+@media print 
+{
+  @page {size: landscape} 
+
+
+}
+</style>
+
+<table>
+ <tr>
+   <td>
+     <p style="font-size:1em;margin-left:50px;">SOLICITUDES DE LABORATORIOS: EXÁMENES</p>
+     <% activo=Periodo.where("activo = ? AND tipo= ?","t","Lectivo").first %>
+     <% if activo.nil? %>
+        <% activo=Periodo.where("tipo= ? AND inicio>= ?","Lectivo",Date.today).order("inicio").first %>
+        <% inactivo=true %>
+     <% end %>
+     <div id="nom_periodo" style="margin-left:50px;">
+     <% if inactivo %>
+       <span style="color:red">(Consulta inactiva para usuarios)</span>
+     <% else %>
+       <%= activo.nombre %>
+     <% end %>
+     </div></td>
+   <td class="cientocincuenta"></td>
+   <td>
+     <%= image_tag("logo_lcc.png", :border=>0,:width=>"195", :height=>"100", :id=>"logotipo") %> </td>
+  </tr>
+</table>
+ <p style="margin-left:50px;"><%= image_tag ("bg_separ.gif") %></p>
+ <div id="recuadro">
+ <div id="lista-gestion">
+
+  <table style="margin-left:50px;margin-top:50px;" border="1">
+      <tr>
+       <th class="cien">Fecha sol.</th>  
+       <th class="doscientos">Usuario</th>
+       <th class="cientocincuenta">Asignatura</th>
+       <th class="cincuenta">Cur.</th>
+       <th class="cincuenta">Equ.</th>
+       <th class="cien">Fecha</th>
+       <th>Tramo horario</th>
+       <th class="cien">Soft.</th>
+       <th class="cientoveinticinco">Elecci&oacute;n equipos</th>       
+      </tr>
+
+      <% @solicitudlabexas.each do |a| %>
+      <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
+         <td style="text-align:center;vertical-align:middle" width="80px"><%= fecha_europea(a.fechasol) %></td> 
+         <td style="vertical-align:middle">
+              <%if a.usuario_id == 135%>
+                 <%= a.usuario.nombre%>
+               <%else%>
+                 <%= a.usuario.nombre+" "+a.usuario.apellidos %>
+               <%end%>
+         </td>
+         <td style="text-align:center;vertical-align:middle"><%= a.asignatura.abrevia_asig %></td>
+         <td style="text-align:center;vertical-align:middle">
+                <% if a.asignatura.curso.to_s=="sin curso" %>
+                    <%= "-" %>
+                <% else %>
+                    <%= a.curso %>
+                <% end %>
+         </td>
+         <td style="text-align:center;vertical-align:middle"><%= a.npuestos %></td>
+         <td style="text-align:center;vertical-align:middle"><%= fecha_europea(a.fecha) %></td>
+         <td style="text-align:center;vertical-align:middle"><%= a.horaini+" - "+a.horafin %></td>
+         <td style="text-align:center;vertical-align:middle"><%="SI" unless a.comentarios=="" %><!-- si hay comentarios, se indica --></td>
+         <td style="text-align:center;vertical-align:middle"><% @preferencias=a.preferencias.split(";") unless a.preferencias.nil? %>  
+          <table>
+            <%=render(:partial => "/solicitudlabs/tramo_preferencia", :collection=> @preferencias ) %>
+          </table></td>    
+      </tr>
+      <% end %><!-- de @solicitudlabexas.each -->
+     </table>

@@ -35,8 +35,12 @@
                   <td><%= select "tiempoSolicitud", "tiempo", options_for_select(@tiempoSolicitudes.each_with_index.map{|x,i|[x,i]})%></td>
                 </tr>
               </table>
-              <p><%= image_tag ("bg_separ.gif") %></p>
-
+              <table>
+                <tr>
+                  <td style="vertical-align:top"><%= image_tag ("bg_separ.gif") %></td>
+                  <td style="vertical-align:middle"><%= link_to image_tag("print.png",:alt=>"Para imprimir"), '',{:id => 'printLink',:target => "_blank" } %></td>
+                </tr>
+              </table>
           <div id="tabla"><%= render :partial => "items_lista" %></div> 
           <%end%><!-- de if @solicitudlabexas-->
        </div><!-- de lista-gestion -->
@@ -63,7 +67,7 @@ $(function()
        data:{query:jqueryVal, tiempoSolicitud:tiempoSol}
      });
    });
-});
+
 
 $("#tiempoSolicitud_tiempo").change(function()
 {
@@ -80,6 +84,19 @@ $("#tiempoSolicitud_tiempo").change(function()
            url:url,
            data:{query:jqueryVal, tiempoSolicitud:tiempoSol}
         });
+});
+
+$("#printLink").click(function()
+   {
+       var url="listado/solicitud_examen_impresa"; 
+       var jqueryVal=$("#query").val();
+       var tiempoSol=$("#tiempoSolicitud_tiempo").val();
+
+       var params = "?query=" + jqueryVal + "&tiempoSol=" + tiempoSol;
+       $(this).attr('href',url + params);
+     
+   });
+
 });
 
 </script>
