@@ -130,7 +130,6 @@ def getAsignacionInfo(asignacion)
     #|| asignacion.generica.to_s == 'false'
     if asignacion.generica.nil? || asignacion.generica == false
        curso=asignacion.solicitudlab.curso == "0" ? "optativa" : asignacion.solicitudlab.curso
-       logger.debug "AAAAAA"+asignacion.solicitudlab.curso
        asigInfo="Asig: " +asignacion.solicitudlab.asignatura.titulacion.abrevia+"(" +asignacion.solicitudlab.asignatura.abrevia_asig.to_s + ") %Curso: " + curso + "%"
        info = asigInfo + info
     else
