@@ -1,26 +1,31 @@
-
 <style>
 @media print 
 {
-   @page {size: landscape} 
+    @page {size: landscape} 
   
-   /*table.print-friendly tr td, table.print-friendly tr th 
-   {
-      -webkit-column-break-inside: avoid; /*Chrome, Safari, Opera
-      page-break-inside: avoid;           /*Firefox
-      break-inside: avoid;                /*IE 10+
-   }*/
+    table 
+    {
+        border-collapse: collapse;
+    }
 
-table 
-{
-    border-collapse: collapse;
-}
+    td, th 
+    {
+        border: 1px solid black;
+    }
 
-td, th 
-{
-    border: 1px solid black;
-}
+    thead {
+        display: table-header-group;
+        text-align: center;
+    }
 
+    tbody {
+        display: table-row-group;
+    }
+
+    tr.breakRow{
+        page-break-inside: avoid;
+        margin-top: 10px;
+    }
 }
 </style>
 
@@ -48,11 +53,11 @@ td, th
 
  <p style="margin-left:50px;"><%= image_tag ("bg_separ.gif") %></p>
  <div>
- <div>
+ <div id="lista-gestion">
 
   <table style="margin-left:50px;margin-top:50px;">
    <thead>
-   <tr>
+   <tr class="breakRow">
      <th class="cien">Fecha sol.</th>  
      <th class="doscientos">Usuario</th>
      <th class="cien">Asignatura</th>
@@ -66,37 +71,37 @@ td, th
   </thead>
    <% @solicitudlabs.each do |a| %>
    <tbody>
-      <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
-         <td style="text-align:center;vertical-align:middle" width="80px"><div style="page-break-inside: avoid"><%= fecha_europea(a.fechasol) %></div></td> 
-         <td style="vertical-align:middle"><div style="page-break-inside: avoid">
+      <tr valign="top" class="<%=cycle('linea-impar','linea-par') %> breakRow">
+         <td style="text-align:center;vertical-align:middle" width="80px"><%= fecha_europea(a.fechasol) %></td> 
+         <td style="vertical-align:middle">
               <%if a.usuario_id == 135%>
                  <%= a.usuario.nombre%>
                <%else%>
                  <%= a.usuario.nombre+" "+a.usuario.apellidos %>
                <%end%>
-         </div></td>
-         <td style="text-align:center;vertical-align:middle"><div style="page-break-inside: avoid"><%= a.asignatura.abrevia_asig %></div></td>
-         <td style="text-align:center;vertical-align:middle"><div style="page-break-inside: avoid">
+         </td>
+         <td style="text-align:center;vertical-align:middle"><%= a.asignatura.abrevia_asig %></td>
+         <td style="text-align:center;vertical-align:middle">
                 <% if a.asignatura.curso.to_s=="sin curso" %>
                     <%= "-" %>
                 <% else %>
                     <%= a.curso %>
                 <% end %>
-         </div></td>
-         <td style="text-align:center;vertical-align:middle"><div style="page-break-inside: avoid"><%= a.npuestos %></div></td>
-         <td style="text-align:center;vertical-align:middle"><div style="page-break-inside: avoid"><%= fecha_europea(a.fechaini) %>/<%= fecha_europea(a.fechafin) %></div></td>
-         <td><div style="page-break-inside: avoid"><% @tramos=a.peticionlab %>
+         </td>
+         <td style="text-align:center;vertical-align:middle"><%= a.npuestos %></td>
+         <td style="text-align:center;vertical-align:middle"><%= fecha_europea(a.fechaini) %>/<br/><%= fecha_europea(a.fechafin) %></td>  
+          <td><% @tramos=a.peticionlab %>
              <table class="tramosTable">
                 <%=render(:partial => "/solicitudrecursos/tramo_peticion", :collection=> @tramos ) %>
              </table>
-         </div></td>
-         <td style="text-align:center;vertical-align:middle"><div style="page-break-inside: avoid"><%="SI" unless a.comentarios=="" %>
-         </div></td>
-         <td><div style="page-break-inside: avoid"><% @preferencias=a.preferencias.split(";") unless a.preferencias.nil? %>  
+         </td>
+         <td style="text-align:center;vertical-align:middle"><%="SI" unless a.comentarios=="" %>
+         </td>
+         <td><% @preferencias=a.preferencias.split(";") unless a.preferencias.nil? %>  
             <table class="prefTable" >
               <%=render(:partial => "/solicitudlabs/tramo_preferencia", :collection=> @preferencias ) %>
             </table>
-         </div></td>    
+         </td>  
    </tr>
    </tbody>
    <% end %><!-- de @solicitudlabs -->

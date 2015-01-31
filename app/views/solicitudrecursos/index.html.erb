@@ -20,6 +20,8 @@
          <% end -%>
          
          <br/>
+
+         <img id="cargando" style="vertical-align:middle;display:none;horizontal-align:middle;" src="/assets/ajax-loader.gif" />
          
          <% if @solicitudrecursos %>
               <table>
@@ -63,6 +65,8 @@ $(function()
 $("#tiempoSolicitud_tiempo").change(function()
 {
   var url="solicitudrecursos/listar"; 
+  $("#cargando").show();
+
   var jqueryVal=$("#query").val();
   var tiempoSol=$("#tiempoSolicitud_tiempo").val();
 
@@ -73,7 +77,11 @@ $("#tiempoSolicitud_tiempo").change(function()
            },
            type:"POST",
            url:url,
-           data:{query:jqueryVal, tiempoSolicitud:tiempoSol}
+           data:{query:jqueryVal, tiempoSolicitud:tiempoSol},
+           success: function()
+           {
+            $("#cargando").hide();
+           }
         });
 });
 

@@ -1,15 +1,37 @@
 <style>
 @media print 
 {
-  @page {size: landscape} 
+    @page {size: landscape} 
+  
+    table 
+    {
+        border-collapse: collapse;
+    }
 
+    td, th 
+    {
+        border: 1px solid black;
+    }
 
+    thead {
+        display: table-header-group;
+        text-align: center;
+    }
+
+    tbody {
+        display: table-row-group;
+    }
+    
+    tr.breakRow{
+        page-break-inside: avoid;
+        margin-top: 10px;
+    }
 }
 </style>
 
 <table>
  <tr>
-   <td>
+   <td style="border:none">
      <p style="font-size:1em;margin-left:50px;">SOLICITUDES DE RECURSOS</p>
      <% activo=Periodo.where("activo = ? AND tipo= ?","t","Lectivo").first %>
      <% if activo.nil? %>
@@ -23,17 +45,19 @@
        <%= activo.nombre %>
      <% end %>
      </div></td>
-   <td class="cientocincuenta"></td>
-   <td>
+   <td class="cientocincuenta" style="border:none"></td>
+   <td style="border:none">
      <%= image_tag("logo_lcc.png", :border=>0,:width=>"195", :height=>"100", :id=>"logotipo") %> </td>
   </tr>
 </table>
- <p style="margin-left:50px;"><%= image_tag ("bg_separ.gif") %></p>
-<div id="recuadro">
+
+<p style="margin-left:50px;"><%= image_tag ("bg_separ.gif") %></p>
+<div>
  <div id="lista-gestion">
 
-  <table style="margin-left:50px;margin-top:50px;" border="1">
-   <tr>
+  <table style="margin-left:50px;margin-top:50px;">
+  <thead>
+   <tr class="breakRow">
        <th class="cien">Fecha reserva</th>  
        <th class="doscientos">Usuario</th>
        <th class="doscientoscincuenta">Recurso</th>
@@ -41,9 +65,11 @@
        <th class="cien">Tramo horario</th>
        <th class="doscientos">Motivos</th>
    </tr>
+   </thead>
 
    <% @solicitudrecursos.each do |i| %>
-      <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>"> 
+   <tbody>
+      <tr valign="top" class="<%=cycle('linea-impar','linea-par') %> breakRow"> 
         <td width="80px"><%= i.fechasol.strftime("%d-%m-%Y")  %></td>  
         <td><% usuario=Usuario.find(i.usuario_id) %>    
               <%if i.usuario_id == 135%>
@@ -58,6 +84,7 @@
         <td class="cientocincuenta"><%= i.motivos %></td>
       </tr>
       <% end %><!-- de @solicitudrecursos.each -->
+      </tbody>
     </table>
  </div>
 </div>

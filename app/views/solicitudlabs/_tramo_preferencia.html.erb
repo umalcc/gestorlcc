@@ -1,7 +1,7 @@
 <% p=tramo_preferencia.split("-") %>
 <tr valign="top">
 <% if p[2]!='in' and p[0]!=' '%>
-  <td style="width:85px;border:none" ><div style="page-break-inside: avoid"><%= Laboratorio.find_by_nombre_lab(p[0]).ssoo %></div></td>  
-  <td style="width:40px;border:none" ><div style="page-break-inside: avoid"><%= p[2] %></div></td>
+  <td style="width:85px;border:none" ><%= Laboratorio.find_by_nombre_lab(p[0]).ssoo %></td>  
+  <td style="width:40px;border:none" ><%= p[2] %></td>
 <% end %> 
 </tr>

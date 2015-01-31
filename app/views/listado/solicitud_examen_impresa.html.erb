@@ -1,16 +1,37 @@
-
 <style>
 @media print 
 {
-  @page {size: landscape} 
+    @page {size: landscape} 
+  
+    table 
+    {
+        border-collapse: collapse;
+    }
 
+    td, th 
+    {
+        border: 1px solid black;
+    }
 
+    thead {
+        display: table-header-group;
+        text-align: center;
+    }
+
+    tbody {
+        display: table-row-group;
+    }
+    
+    tr.breakRow{
+        page-break-inside: avoid;
+        margin-top: 10px;
+    }
 }
 </style>
 
 <table>
  <tr>
-   <td>
+   <td style="border:none">
      <p style="font-size:1em;margin-left:50px;">SOLICITUDES DE LABORATORIOS: EXÁMENES</p>
      <% activo=Periodo.where("activo = ? AND tipo= ?","t","Lectivo").first %>
      <% if activo.nil? %>
@@ -24,17 +45,19 @@
        <%= activo.nombre %>
      <% end %>
      </div></td>
-   <td class="cientocincuenta"></td>
-   <td>
+   <td class="cientocincuenta" style="border:none"></td>
+   <td style="border:none">
      <%= image_tag("logo_lcc.png", :border=>0,:width=>"195", :height=>"100", :id=>"logotipo") %> </td>
   </tr>
 </table>
+
  <p style="margin-left:50px;"><%= image_tag ("bg_separ.gif") %></p>
- <div id="recuadro">
+ <div>
  <div id="lista-gestion">
 
-  <table style="margin-left:50px;margin-top:50px;" border="1">
-      <tr>
+  <table style="margin-left:50px;margin-top:50px;">
+   <thead>
+     <tr class="breakRow">
        <th class="cien">Fecha sol.</th>  
        <th class="doscientos">Usuario</th>
        <th class="cientocincuenta">Asignatura</th>
@@ -45,9 +68,11 @@
        <th class="cien">Soft.</th>
        <th class="cientoveinticinco">Elecci&oacute;n equipos</th>       
       </tr>
+    </thead>
 
-      <% @solicitudlabexas.each do |a| %>
-      <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
+    <% @solicitudlabexas.each do |a| %>
+    <tbody>
+      <tr valign="top" class="<%=cycle('linea-impar','linea-par') %> breakRow">
          <td style="text-align:center;vertical-align:middle" width="80px"><%= fecha_europea(a.fechasol) %></td> 
          <td style="vertical-align:middle">
               <%if a.usuario_id == 135%>
@@ -74,4 +99,5 @@
           </table></td>    
       </tr>
       <% end %><!-- de @solicitudlabexas.each -->
+      </tbody>
      </table>

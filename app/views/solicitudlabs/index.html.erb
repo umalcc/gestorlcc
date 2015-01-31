@@ -21,6 +21,9 @@
           <% end -%>
 
           <br/>
+
+          <img id="cargando" style="vertical-align:middle;display:none;horizontal-align:middle;" src="/assets/ajax-loader.gif" />
+
       
           <% if @solicitudlabs %>
               <% periodo=Periodo.where("tipo = ? AND (activo = ? OR admision = ?)","Lectivo","t","t").order("admision DESC").first %>
@@ -74,7 +77,9 @@ $(function()
 
 $("#tiempoSolicitud_tiempo").change(function()
 {
-  var url="solicitudlabs/listar"; 
+  var url="solicitudlabs/listar";
+  $("#cargando").show();
+
   var jqueryVal=$("#query").val();
   var tiempoSol=$("#tiempoSolicitud_tiempo").val();
 
@@ -85,7 +90,11 @@ $("#tiempoSolicitud_tiempo").change(function()
            },
            type:"POST",
            url:url,
-           data:{query:jqueryVal, tiempoSolicitud:tiempoSol}
+           data:{query:jqueryVal, tiempoSolicitud:tiempoSol},
+           success: function()
+           {
+            $("#cargando").hide();
+           }
         });
 });
 
