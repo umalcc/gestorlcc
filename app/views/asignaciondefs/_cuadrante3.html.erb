@@ -24,9 +24,9 @@ function makeDroppable()
 
 function deshacer()
 {
-	$.evento.source=null;
 	if($.isEmptyObject($.evento)==false)
 	{
+		$.evento.source=null;
 		switch($.evento.operacion)
 		{
 			case 'copiar':
@@ -392,6 +392,7 @@ $(function()
 	    },
 	    eventDrop: function(event, delta, revertFunc)
 	    {
+	    	event.operacion="";
 	    	updateEventCalendar(event);
              //ToDo: actualizar tabla peticionlabs tb
 	    },
