@@ -5,21 +5,6 @@ class AsignacionsController < ApplicationController
  before_action :login_requerido
  before_action :admin?
 
-
-
-
-  # DELETE /asignacions/1
-  # DELETE /asignacions/1.xml
-  def destroy
-    @asignacion = Asignaciondef.find(params[:id])
-    @asignacion.destroy
-
-    respond_to do |format|
-      format.html { render :nothing => true , :status => 200 }
-      format.xml  { head :ok }
-    end
-  end
-
   
   def asignar
     @admision=Periodo.where("admision = ? and tipo= ?","t","Lectivo").to_a
@@ -28,14 +13,68 @@ class AsignacionsController < ApplicationController
   end
 
   def asignar_continuar
-       @asignacions=Asignacion.all
+     ActiveRecord::Base.include_root_in_json = false
 
-      respond_to do |format|
-        format.js
+    @laboratorios=Laboratorio.all.select("id,nombre_lab, ssoo, puestos, especial")
+    @laboratorios=@laboratorios.map{|lab| {:id => lab.id,
+                                          :nombre_lab => lab.nombre_lab,
+                                          :ssoo => lab.ssoo,
+                                          :puestos => lab.puestos,
+                                          :especial => lab.especial,
+                                          :title => getLabInfo(lab)}}
+    @laboratorios = @laboratorios.as_json
+
+    #if(session[:lista_externa] == nil or session[:lista_externa].size == 0 )
+    #  @asignacions = Asignaciondef.all
+    #else
+       #@asignacions = Asignaciondef.where("id not in (?)",session[:lista_externa]).all
+       @asignacions=Asignacion.where("temporal= ?", 'f').all
+    #end
+
+    #if(session[:lista_externa] != nil)
+      #@asignacionsListaExterna=Asignaciondef.where("id in (?)",session[:lista_externa]).all#.map{|r|{:id => r.id,:title => r.solicitudlab.asignatura.abrevia_asig.to_s}}
+      @asignacionsListaExterna=Asignacion.where("temporal= ?", 't').all
+    #end
+
+    if @asignacions.size!=0
+      @asignacionsListaExterna = @asignacionsListaExterna.map { |r| {:id => r.id,
+                                                                     :asignatura => r.solicitudlab.asignatura.abrevia_asig.to_s,
+                                                                     :title => ((r.generica.to_s == 'null' || r.generica.to_s == 'false')? r.solicitudlab.asignatura.abrevia_asig.to_s : "RG"),
+                                                                     :info =>getAsignacionInfo(r) }}
+      #@asignacionsListaExterna = @asignacionsListaExterna.as_json                                                        
+     #@asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
+     # ToDo:asignatura puede ser null en la base de datos, controlarlo...
+    @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => getAsignacionTitulo(r), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s, :color => '#66FF33'} }    
+    @asignacions = @asignacions.as_json 
     end
-    
 
+    @dias = Dia.where('en_uso = ?','t')
+    #qué pasa si hay huecos? si hay horas intermedias que no se usan?
+    #cómo ordenar las horas?qué es num?
+    @horas = Horario.where('en_uso = ?','t').order("num")
+    @horainicio = @horas.first.comienzo
+    @horafin = @horas.last.fin
+
+    respond_to do |format|
+      format.js
+      format.html # index.html.erb
+      format.xml { render :xml => @asignacions }
+    end
   end
+
+def anadirListaExterna
+  #(session[:lista_externa] ||= []) << params[:id]
+  @asignacion = Asignacion.find(params[:id])
+  if(params[:copiar]=="true")
+    #@asignacion = Asignacion.new(@asignacion.attributes)
+    @asignacion = @asignacion.dup
+  end
+  @asignacion.temporal=true
+  @asignacion.save!
+  respond_to do |format|
+    format.json {render json:@asignacion}
+  end
+end
 
 # SI HIDDEN FIEL ES PRINCIPIO, SE LEEN SOLICITUDLAB, SINO DE ASIGNACIONPROV
   def asignar_iniciar
@@ -221,43 +260,6 @@ class AsignacionsController < ApplicationController
     end
     
   end
-
-  def grabar_asignacion
-    # borrar las antiguas asignaciones definitivas, y sus solicitudes asociadas
-    # leer asignaciones provisionales
-    # grabarlas en definitivas
-    # eliminar las provisionales
-
-  
-    @asignaciondefs=Asignaciondef.all
-    if @asignaciondefs.size!=0
-      solicitudes=@asignaciondefs.map{|a| a.solicitudlab_id}.uniq
-      solicitudes.each{|s|  sol=Solicitudlab.find(s)
-                            sol.destroy}
-      @asignaciondefs.each{|a| a.peticionlab.destroy
-                             a.destroy}
-    end
-    @asignacions=Asignacion.all
-    @asignacions.each { |a| asig_def=Asignaciondef.new( :solicitudlab_id=>a.solicitudlab_id,
-                                                        :peticionlab_id=>a.peticionlab_id,
-                                                        :laboratorio_id=>a.laboratorio_id,
-                                                        :horaini=>a.horaini,
-                                                        :horafin=>a.horafin,
-                                                        :dia_id=>a.dia_id,
-                                                        :mov_dia=>a.mov_dia,
-                                                        :mov_hora=>a.mov_hora)
-                            
-                            asig_def.save
-                            sol=Solicitudlab.find(a.solicitudlab.id)
-                            sol.asignado="D"
-                            sol.save
-                            a.destroy
-                      }
-    respond_to do |format|
-      format.js
-    end
-  end
-
  
   def mover
     @asignacion=Asignacion.find(params[:id])
@@ -291,6 +293,29 @@ class AsignacionsController < ApplicationController
     
   end  
 
+   def getAsignacion(id)
+    @asignacion=Asignacion.where("id= ?",id).first
+    titulo=getAsignacionTitulo(@asignacion)
+    info=getAsignacionInfo(@asignacion)
+    @asignacion=@asignacion.as_json
+
+    @asignacion[:title]=titulo
+    @asignacion[:info]=info
+    #respond_to do |format|
+    #  format.json {render json:@asignacion}
+    #end
+    return @asignacion
+  end
+
+def destroy
+    @asignacion = Asignacion.find(params[:id])
+    @asignacion.destroy
+
+    respond_to do |format|
+      format.html { render :nothing => true , :status => 200 }
+      format.xml  { head :ok }
+    end
+  end
 
   def revisar
     @asignaciones=Asignacion.all
@@ -327,24 +352,9 @@ class AsignacionsController < ApplicationController
     end
   end
   
-def anadirListaExterna
-  #(session[:lista_externa] ||= []) << params[:id]
-  @asignacion = Asignaciondef.find(params[:id])
-  if(params[:copiar]=="true")
-    @asignacion = Asignaciondef.new(@asignacion.attributes)
-  else
-
-  end
-  @asignacion.temporal=true
-  @asignacion.save!
-  respond_to do |format|
-    format.json {render json:@asignacion}
-  end
-end
-
 def pegar
   ActiveRecord::Base.include_root_in_json = false
-  @asignacion=Asignaciondef.find(params[:id])
+  @asignacion=Asignacion.find(params[:id])
   @asignacion.dia_id=params[:dia_id]
   @asignacion.temporal=false
   info=getAsignacionInfo(@asignacion)
@@ -392,7 +402,8 @@ def getAsignacionInfo(asignacion)
     #Si la reserva no es genérica, necesitamos añadir la información de la asignatura
     #|| asignacion.generica.to_s == 'false'
     if asignacion.generica.nil? || asignacion.generica == false
-       asigInfo="Asig: " +asignacion.solicitudlab.asignatura.titulacion.abrevia+"(" +asignacion.solicitudlab.asignatura.abrevia_asig.to_s + ") %Curso: " + asignacion.solicitudlab.curso + "%"
+      curso=asignacion.solicitudlab.curso== "0" ? "optativa" : asignacion.solicitudlab.curso
+       asigInfo="Asig: " +asignacion.solicitudlab.asignatura.titulacion.abrevia+"(" +asignacion.solicitudlab.asignatura.abrevia_asig.to_s + ") %Curso: " + curso + "%"
        info = asigInfo + info
     else
        info = "Reserva genérica%"+info
@@ -401,74 +412,24 @@ def getAsignacionInfo(asignacion)
   end
 
 
-
-def consulta
-    ActiveRecord::Base.include_root_in_json = false
-
-    @laboratorios=Laboratorio.all.select("id,nombre_lab, ssoo, puestos, especial")
-    @laboratorios=@laboratorios.map{|lab| {:id => lab.id,
-                                          :nombre_lab => lab.nombre_lab,
-                                          :ssoo => lab.ssoo,
-                                          :puestos => lab.puestos,
-                                          :especial => lab.especial,
-                                          :title => getLabInfo(lab)}}
-    @laboratorios = @laboratorios.as_json
-
-    #if(session[:lista_externa] == nil or session[:lista_externa].size == 0 )
-    #  @asignacions = Asignaciondef.all
-    #else
-       #@asignacions = Asignaciondef.where("id not in (?)",session[:lista_externa]).all
-       @asignacions=Asignaciondef.where("temporal= ?", 'f').all
-    #end
-
-    #if(session[:lista_externa] != nil)
-      #@asignacionsListaExterna=Asignaciondef.where("id in (?)",session[:lista_externa]).all#.map{|r|{:id => r.id,:title => r.solicitudlab.asignatura.abrevia_asig.to_s}}
-      @asignacionsListaExterna=Asignaciondef.where("temporal= ?", 't').all
-    #end
-
-    if @asignacions.size!=0
-      @asignacionsListaExterna = @asignacionsListaExterna.map { |r| {:id => r.id,
-                                                                     :asignatura => r.solicitudlab.asignatura.abrevia_asig.to_s,
-                                                                     :title => ((r.generica.to_s == 'null' || r.generica.to_s == 'false')? r.solicitudlab.asignatura.abrevia_asig.to_s : "RG"),
-                                                                     :info =>getAsignacionInfo(r) }}
-      #@asignacionsListaExterna = @asignacionsListaExterna.as_json                                                        
-     #@asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
-     # ToDo:asignatura puede ser null en la base de datos, controlarlo...
-    @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => getAsignacionTitulo(r), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s, :color => '#66FF33'} }    
-    @asignacions = @asignacions.as_json 
-    end
-
-    @dias = Dia.where('en_uso = ?','t')
-    #qué pasa si hay huecos? si hay horas intermedias que no se usan?
-    #cómo ordenar las horas?qué es num?
-    @horas = Horario.where('en_uso = ?','t').order("num")
-    @horainicio = @horas.first.comienzo
-    @horafin = @horas.last.fin
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.xml { render :xml => @asignacions }
-    end
-  end
-
   def getLabInfo(lab)
-   labEspecial = (lab.especial) == "true"  ? 'Sí' : 'No'
+    logger.debug "AAAAAAAAAAAAAA"+lab.especial.to_s
+   labEspecial = (lab.especial) == true  ? 'Sí' : 'No'
     labInfo = "Denominación: " + lab.ssoo + "%Num. puestos: " + lab.puestos.to_s + "%Lab especial?: " + labEspecial
     return labInfo
   end
 
   def actualizar
-
+    @asignacionAntigua=getAsignacion(params[:asigna])
     #actualizar día de la semana, horaini, horafin y laboratorio
-    Asignaciondef.update(params[:asigna], :horaini => params[:horaini], :horafin => params[:horafin], :dia_id => params[:dia_id],
-                         :laboratorio_id => params[:lab_id], :temporal => false)
+    Asignacion.update(params[:asigna], :horaini => params[:horaini], :horafin => params[:horafin], :dia_id => params[:dia_id],
+                         :laboratorio_id => params[:lab_id], :temporal => params[:temporal])
     #session[:lista_externa].delete(params[:asigna])
-    logger.debug session[:lista_externa]
+    #logger.debug session[:lista_externa]
 
     respond_to do |format|
-      format.js {render :nothing => true, :status => 200}
+      format.json {render json:@asignacionAntigua}
     end
-    
   end
 
   def asigna_directa
@@ -549,7 +510,7 @@ def consulta
                            hf=Horario.find_by_fin(p.horafin).id.to_i
                            dia_id=Dia.find_by_nombre(p.diasemana).id
                            for hora in hi..hf 
-                               @asignacion=Asignaciondef.new(:solicitudlab_id=>@asignacion.solicitudlab.id,
+                               @asignacion=Asignacion.new(:solicitudlab_id=>@asignacion.solicitudlab.id,
                                                                  :laboratorio_id=>l,
                                                                  :peticionlab_id=>p.id,
                                                                  :dia_id=>dia_id,                      #aqui hay cambio
@@ -560,8 +521,8 @@ def consulta
                            end
                        }
     # hasta aqui --------                   
-        @asignacions = Asignaciondef.all
-        format.html { redirect_to('/asignacions/consulta') }
+        @asignacions = Asignacion.all
+        format.html { redirect_to('/asignaciondefs/consulta') }
         format.xml  { render :xml => @solicitudlabs, :status => :created, :location => @solicitudlabs }
       else
         logger.debug @asignacion.solicitudlab.errors.full_messages
@@ -587,29 +548,6 @@ def consulta
     end
   end
 
-  def borranormalasignada
-    asignacion=Asignaciondef.find(params[:asigna])
-    asignacion.delete
-    #otrasasignaciones=Asignacion.where('solicitudlab_id = ?',asignacion.solicitudlab_id).to_a
-    #otrasasignaciones.each {|o| o.delete }
-    @asignacions=Asignaciondef.all
-    respond_to do |format|
-      format.js
-    end
-  end
-
-  def borradirasignada
-    asignacion=Asignaciondef.find(params[:asigna])
-    #solicitudlab=Solicitudlab.find(asignacion.solicitudlab_id)
-    #otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).to_a
-    asignacion.delete
-    #otrasasignaciones.each {|o| o.delete }
-    #solicitudlab.delete
-    @asignacions=Asignaciondef.all
-    respond_to do |format|
-      format.js
-    end
-  end
 
   def borradir
     asignacion=Asignacion.find(params[:asigna])
@@ -661,7 +599,5 @@ def consulta
       @tramos=session[:tramos_horarios].solicitudes
     end
   end
-
-    
 
 end

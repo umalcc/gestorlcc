@@ -35,6 +35,7 @@ function deshacer()
 
 			case 'cortar':
 			moverACalendario($.evento.id,$.evento.dia_id);
+			makeDroppable();
 			break;
 
 			case 'pegar':
@@ -102,7 +103,7 @@ function updateEvent(event, registrarAntiguo)
    $.ajax({
 	    type:"POST",
 	    dataType:"json",
-	   	url:"/asignacions/actualizar",
+	   	url:"/asignaciondefs/actualizar",
 	   	data:{asigna:event.id, peticionlabId: event.peticionlab_id, dia_id:event.dia_id ,   horaini:event.horaini, horafin:event.horafin, lab_id:event.room_id, temporal:event.temporal},
 	   	success:function(response)
 	   	{
@@ -146,7 +147,7 @@ function elimEventListaExt(id,confirmacionReq)
 	$("#external-events").height(height-35);
 	$.ajax({
 	type:"POST",
-	url:"/asignacions/destroy",
+	url:"/asignaciondefs/destroy",
 	data:{id:id}
     });
 	}
@@ -158,13 +159,13 @@ function documentClick(ev)
 	$(".fc-event").removeClass("seleccionado");
 }
 
-function moverEventoTmp(evento,copiar,diaId, funcionesEspeciales)
+function moverEventoTmp(evento,copiar,diaId,funcionEspecial)
 {
 	   		//Eliminar evento del calendario, visualmente
 	$.ajax({
 		type:"POST",
 	   	dataType:"json",
-	   	url:"/asignacions/anadirListaExterna",
+	   	url:"/asignaciondefs/anadirListaExterna",
 	   	data:{id:evento.id, copiar:copiar},
 	   	success:function(response)
 	   	{
@@ -179,18 +180,18 @@ function moverEventoTmp(evento,copiar,diaId, funcionesEspeciales)
 	   		}
 	   		evento.dia_id=diaId;
 	   		$.evento=evento;
-	   		generarAnadirListaExterna(evento,copiar,funcionesEspeciales);
+	   		generarAnadirListaExterna(evento,funcionEspecial);
 	   		makeDroppable();
 	   	}
 	   });
 	   		
 }
 
-function generarAnadirListaExterna(evento,copiar,funcionesEspeciales)
+function generarAnadirListaExterna(evento,funcionEspecial)
 {
 	var copiado="";
 	$("#external-events .fc-event").removeClass("clipBoard");
-	if(funcionesEspeciales==true)
+	if(funcionEspecial==true)
 	{
 		copiado="clipBoard";
 	}
@@ -221,7 +222,7 @@ function moverACalendario(id,actualTab)
 		$.ajax({
 			type:"POST",
 			dataType:"json",
-			url:"/asignacions/pegar",
+			url:"/asignaciondefs/pegar",
 			data:{id:id,dia_id:actualTab},
 			success:function(response)
 			{
@@ -251,7 +252,7 @@ function cortar(divId,evento)
 		$("#external-events .fc-event").removeClass("clipBoard");
 		var diaId = obtenerCalendarioActual();
 		moverEventoTmp(evento,false,diaId,true);
-		$("#external-events #"+evento.id).addClass("clipBoard");
+		//$("#external-events #"+evento.id).addClass("clipBoard");
 		$("#"+divId).fullCalendar('removeEvents',evento.id);
 		makeDroppable();
   }
@@ -299,7 +300,8 @@ function funcionesEspeciales(ev)
   		case teclaV:
   		var eventId= $("#external-events .clipBoard").attr("id");
   		moverACalendario(eventId,diaId);
-
+  		$("#"+evento.dia_id).fullCalendar('removeEvents',evento.id);
+		makeDroppable();
   		break;
 
   	}
@@ -394,21 +396,7 @@ $(function()
              //ToDo: actualizar tabla peticionlabs tb
 	    },
 	    eventDragStop: function(event, jsEvent, ui, view) 
-	    {
-	   	   //var active = $('#tabs .ui-state-active').children("a");
-	   	   /*if (isElemOverDiv(jsEvent, '#borrarAsig')) {
-	   	   	$(active.attr("href")).fullCalendar('removeEvents', event.id);
-	   		$.ajax({
-	   			type:"POST",
-	   			url:"/asignacions/borranormalasignada",
-	   			data:{asigna:event.id},
-	   			success:function()
-	   			{
-	   			  //alert("La asignación ha sido eliminada de forma satisfactoria.");
-	   			}
-	   		});
-	   	}*/
-         
+	    {  
         //Move event from calendar to external list
 	   	if(isElemOverDiv(jsEvent,'#external-events'))
 	   	{

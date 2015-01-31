@@ -5182,12 +5182,19 @@ $.extend(Grid.prototype, {
 		var newStart;
 		var newEnd;
 		var newAllDay;
+		var hour, minutes;
 		var visibleEnd;
 
 		if (dropDate.hasTime() === dragStartDate.hasTime()) {
-		    dragStartDate.set('day',dropDate.get('day'));
+		  /*  dragStartDate.set('day',dropDate.get('day'));
 			dragStartDate.set('month',dropDate.get('month'));
-			dragStartDate.set('year',dropDate.get('year'));
+			dragStartDate.set('year',dropDate.get('year'));*/
+			hour=dragStartDate.get('hour');
+			minutes=dragStartDate.get('minute');
+			dragStartDate=dropDate.clone();
+			dragStartDate.set('hour',hour);
+			dragStartDate.set('minute',minutes);
+			
 			delta = dayishDiff(dropDate, dragStartDate);
 			newStart = start.clone().add(delta);
 			if (event.end === null) { // do we need to compute an end?
@@ -5258,8 +5265,13 @@ $.extend(Grid.prototype, {
 						destroy();
 					}
 					else {
-				    	newEnd.set('day',start.get('day'));
-					    newEnd.set('month',start.get('month'));
+				    	/*newEnd.set('day',start.get('day'));
+					    newEnd.set('month',start.get('month'));*/
+					    hour=newEnd.get('hour');
+					    minutes=newEnd.get('minute');
+					    newEnd=start.clone();
+					    newEnd.set('hour',hour);
+					    newEnd.set('minute',minutes);
 						_this.renderResize(start, newEnd, seg,selectedRoom);
 						view.hideEvent(event);
 					}

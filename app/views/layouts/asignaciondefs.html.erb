@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
+  <title>Asignaciones: <%= controller.action_name %></title>
+  <link rel="shortcut icon" href="/images/favicon.ico">
+  <%= javascript_include_tag "jquery","jquery_ujs", "jquery-color","jquery-ui.min" %>
+   <%= javascript_include_tag "moment.min","fullcalendar" %>
+  <%= javascript_include_tag "datepickercontrol","mios" %>
+  <%= stylesheet_link_tag 'scaffold','dptolcc2','datepickercontrol_bluegray',"jquery-ui.min","fullcalendar.min"%>
+  <%= stylesheet_link_tag 'imprimir',:media=>"print" %>
+  <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
+  <%= csrf_meta_tag %>
+</head>
+
+<body>
+<div id="wrapper">
+  <div id="conta_header">
+    <div id="header">
+      <h1>Departamento de Lenguajes y Ciencias de la Computaci&oacute;n</h1>
+      <h2>Universidad de M&aacute;laga</h2>
+      <%= link_to image_tag("logo_lcc.png", :border=>0,:width=>"195", :height=>"100", :id=>"logotipo"), "http://www.lcc.uma.es" %>
+    </div>
+  </div>
+
+<div  id="conta-main">
+ <div id="main">
+
+  <div id="nav">
+    <!-- reconocimiento de usuario -->
+    <div id="saludo">
+     <%= render :partial => 'inicios/saludo' %>
+    </div>  
+     <!-- barra de navegación de admin -->
+     <%= render :partial =>'inicios/navbar' %>
+    <div id="cubos">
+     <%= image_tag ("seis-cubos.gif") %>
+    </div>
+  </div>
+  
+        <%= yield %>
+
+ </div>
+</div>
+</div>
+</body>
+</html>
+
+
+
