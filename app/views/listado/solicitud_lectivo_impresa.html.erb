@@ -1,17 +1,32 @@
 
-
 <style>
 @media print 
 {
-  @page {size: landscape} 
+   @page {size: landscape} 
+  
+   /*table.print-friendly tr td, table.print-friendly tr th 
+   {
+      -webkit-column-break-inside: avoid; /*Chrome, Safari, Opera
+      page-break-inside: avoid;           /*Firefox
+      break-inside: avoid;                /*IE 10+
+   }*/
 
+table 
+{
+    border-collapse: collapse;
+}
+
+td, th 
+{
+    border: 1px solid black;
+}
 
 }
 </style>
 
 <table>
  <tr>
-   <td>
+   <td style="border:none">
      <p style="font-size:1em;margin-left:50px;">SOLICITUDES DE LABORATORIOS: LECTIVO</p>
      <% activo=Periodo.where("activo = ? AND tipo= ?","t","Lectivo").first %>
      <% if activo.nil? %>
@@ -25,16 +40,18 @@
        <%= activo.nombre %>
      <% end %>
      </div></td>
-   <td class="cientocincuenta"></td>
-   <td>
+   <td class="cientocincuenta" style="border:none"></td>
+   <td style="border:none">
      <%= image_tag("logo_lcc.png", :border=>0,:width=>"195", :height=>"100", :id=>"logotipo") %> </td>
   </tr>
 </table>
- <p style="margin-left:50px;"><%= image_tag ("bg_separ.gif") %></p>
-<div id="recuadro">
- <div id="lista-gestion">
 
-  <table style="margin-left:50px;margin-top:50px;" border="1">
+ <p style="margin-left:50px;"><%= image_tag ("bg_separ.gif") %></p>
+ <div>
+ <div>
+
+  <table style="margin-left:50px;margin-top:50px;">
+   <thead>
    <tr>
      <th class="cien">Fecha sol.</th>  
      <th class="doscientos">Usuario</th>
@@ -46,38 +63,42 @@
      <th>Soft.</th>
      <th class="cien">Elecci&oacute;n equipos</th>  
   </tr>
-
+  </thead>
    <% @solicitudlabs.each do |a| %>
-   <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
-         <td style="text-align:center;vertical-align:middle" width="80px"><%= fecha_europea(a.fechasol) %></td> 
-         <td style="vertical-align:middle">
+   <tbody>
+      <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
+         <td style="text-align:center;vertical-align:middle" width="80px"><div style="page-break-inside: avoid"><%= fecha_europea(a.fechasol) %></div></td> 
+         <td style="vertical-align:middle"><div style="page-break-inside: avoid">
               <%if a.usuario_id == 135%>
                  <%= a.usuario.nombre%>
                <%else%>
                  <%= a.usuario.nombre+" "+a.usuario.apellidos %>
                <%end%>
-         </td>
-         <td style="text-align:center;vertical-align:middle"><%= a.asignatura.abrevia_asig %></td>
-         <td style="text-align:center;vertical-align:middle">
+         </div></td>
+         <td style="text-align:center;vertical-align:middle"><div style="page-break-inside: avoid"><%= a.asignatura.abrevia_asig %></div></td>
+         <td style="text-align:center;vertical-align:middle"><div style="page-break-inside: avoid">
                 <% if a.asignatura.curso.to_s=="sin curso" %>
                     <%= "-" %>
                 <% else %>
                     <%= a.curso %>
                 <% end %>
-         </td>
-         <td style="text-align:center;vertical-align:middle"><%= a.npuestos %></td>
-         <td style="text-align:center;vertical-align:middle"><%= fecha_europea(a.fechaini) %>/<br/><%= fecha_europea(a.fechafin) %></td>
-         <td><% @tramos=a.peticionlab %>
+         </div></td>
+         <td style="text-align:center;vertical-align:middle"><div style="page-break-inside: avoid"><%= a.npuestos %></div></td>
+         <td style="text-align:center;vertical-align:middle"><div style="page-break-inside: avoid"><%= fecha_europea(a.fechaini) %>/<%= fecha_europea(a.fechafin) %></div></td>
+         <td><div style="page-break-inside: avoid"><% @tramos=a.peticionlab %>
              <table class="tramosTable">
                 <%=render(:partial => "/solicitudrecursos/tramo_peticion", :collection=> @tramos ) %>
-             </table></td>
-         <td style="text-align:center;vertical-align:middle"><%="SI" unless a.comentarios=="" %></td>
-         <td><% @preferencias=a.preferencias.split(";") unless a.preferencias.nil? %>  
+             </table>
+         </div></td>
+         <td style="text-align:center;vertical-align:middle"><div style="page-break-inside: avoid"><%="SI" unless a.comentarios=="" %>
+         </div></td>
+         <td><div style="page-break-inside: avoid"><% @preferencias=a.preferencias.split(";") unless a.preferencias.nil? %>  
             <table class="prefTable" >
               <%=render(:partial => "/solicitudlabs/tramo_preferencia", :collection=> @preferencias ) %>
             </table>
-         </td>    
+         </div></td>    
    </tr>
+   </tbody>
    <% end %><!-- de @solicitudlabs -->
 
   </table>
