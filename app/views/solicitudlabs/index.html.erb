@@ -106,7 +106,8 @@ $("#printLink").click(function()
        var tiempoSol=$("#tiempoSolicitud_tiempo").val();
 
        var params = "?query=" + jqueryVal + "&tiempoSol=" + tiempoSol;
-       $(this).attr('href',url + params);
+       var viewFormat = ".pdf";
+       $(this).attr('href',url + viewFormat + params);
      
    });
 

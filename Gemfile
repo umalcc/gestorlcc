@@ -44,7 +44,10 @@ end
 	gem 'sass-rails'#, '~> 3.2.6'
 	gem 'coffee-rails'#, '~> 3.2.2'
 	gem 'uglifier'#,'>= 1.0.3'
-	gem 'tilt' 
+	gem 'tilt'
+  gem 'prawn'
+  gem "prawnto_2", :require => "prawnto"	
+  gem 'prawn-table'
 
 
   # Specify gems that this application depends on and have them installed with rake gems:install

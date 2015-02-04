@@ -1,5 +1,10 @@
 class ListadoController < ApplicationController
 
+
+#Se definen las propiedades del documento pdf a generar para las solicitudes
+prawnto :prawn => { :top_margin => 35, :page_layout => :landscape} 
+
+
 include SolicitudesHelper
 
 before_action :login_requerido
@@ -80,6 +85,7 @@ before_action :login_requerido
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @solicitudlabs }
+      format.pdf { render :layout => false }
     end
   end
 
@@ -119,6 +125,7 @@ before_action :login_requerido
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @solicitudlabexas }
+      format.pdf { render :layout => false }
     end
   end
 
@@ -158,6 +165,7 @@ before_action :login_requerido
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @solicitudrecursos }
+      format.pdf { render :layout => false }
     end
 
   end
