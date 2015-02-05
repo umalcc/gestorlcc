@@ -24,6 +24,7 @@ class SessionsController < ApplicationController
     @usuario_actual=Usuario.find_by_identificador_and_password(
                         params[:login],Digest::MD5.hexdigest(params[:password]))
    if @usuario_actual
+   	flash[:notice]=nil
     #if !@usuario_actual.sesion
      session[:user_id]=@usuario_actual.id
 
