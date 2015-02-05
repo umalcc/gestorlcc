@@ -143,7 +143,7 @@ post 'asignacions/destroy', :to => 'asignacions#destroy'
 post 'asignaciondefs/destroy', :to => 'asignaciondefs#destroy'
 post 'asignaciondefs/pegar', :to => 'asignaciondefs#pegar'
 post 'asignacions/pegar', :to => 'asignacions#pegar'
-delete 'sessions/destroy', :to => 'sessions#destroy'
+get 'sessions/destroy', :to => 'sessions#destroy'
 
 
   # See how all your routes lay out with "rake routes"

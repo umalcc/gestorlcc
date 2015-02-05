@@ -41,7 +41,7 @@
             <dd onclick='mostrardiv("solicitudlab_submit")'>
               <%= f.text_field :fechafin, :size=>12, :name=>"fechafin", 
                   :id=>"DPC_fechafin_DD-MM-YYYY",:value=>@solicitudlab.fechafin.strftime('%d-%m-%Y') %>  </dd>
-            <dt>Soft. requerido</dt>
+            <dt>Soft. requerido/<br/>Comentarios</dt>
             <dd onkeydown='mostrardiv("solicitudlab_submit")'>
               <%= f.text_area :comentarios, :rows =>4, :cols=>40, :name=>"comentarios" %></dd>           
               <% if @especiales.size>0 %>

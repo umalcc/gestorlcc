@@ -5,7 +5,7 @@ class TitulacionsController < ApplicationController
 before_action :login_requerido, :admin?
 
   def index
-    @titulacions = Titulacion.order("id").to_a
+    @titulacions = Titulacion.order("abrevia").to_a
 
     respond_to do |format|
       format.html # index.html.erb
