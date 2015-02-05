@@ -6,7 +6,7 @@
      <div id="recuadro">
        <p><%= image_tag ("bg_separ.gif") %></p>
         <div id="recuadro-azul" style="height:600px">
-          <%= form_for @asignacion,:url => '/asignacions/graba', :action=>"graba",  :html=> {:name => "formulario"} do |f| %>
+          <%= form_for @asignacion,:url => '/asignaciondefs/graba', :action=>"graba",  :html=> {:name => "formulario"} do |f| %>
           <dl>
             
             <table id="tipo_reserva">

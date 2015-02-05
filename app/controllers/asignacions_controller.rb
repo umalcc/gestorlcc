@@ -413,7 +413,6 @@ def getAsignacionInfo(asignacion)
 
 
   def getLabInfo(lab)
-    logger.debug "AAAAAAAAAAAAAA"+lab.especial.to_s
    labEspecial = (lab.especial) == true  ? 'Sí' : 'No'
     labInfo = "Denominación: " + lab.ssoo + "%Num. puestos: " + lab.puestos.to_s + "%Lab especial?: " + labEspecial
     return labInfo
@@ -432,109 +431,7 @@ def getAsignacionInfo(asignacion)
     end
   end
 
-  def asigna_directa
-    @asignacion = Asignacion.new
-    @asignacion.generica = false
-    @asignacion.solicitudlab=Solicitudlab.new
-    @asignacion.solicitudlab.asignatura=Asignatura.new(:curso =>0)
-    @asignacion.solicitudlab.fechasol= Date.today
-    @asignacion.solicitudlab.fechaini= Date.today
-    @asignacion.solicitudlab.fechafin= Date.today
-   
-    getViewModel
-    session[:tramos_horarios]=Solicitudhoraria.new
-    session[:codigo_tramo]=0
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @asignacion.solicitudlab }
-    end
-  end
-#aqui debe ir otra funcion tras captar el formulario anterior
-
-  def graba
-    @asignacion = Asignacion.new
-    @asignacion.solicitudlab=Solicitudlab.new
-    @asignacion.solicitudlab.asignatura=Asignatura.new
-    @asignacion.solicitudlab.usuario_id = params[:usuario][:identificador].to_i
-
-    if params[:asignacion][:generica] == "ReservaGenerica"
-      @asignacion.generica = true
-      titulacionId=Titulacion.where('abrevia = ?',"SD").first.id
-      asignaturaId = Asignatura.where('abrevia_asig = ?', "Var. Sit.").first.id
-      @asignacion.solicitudlab.asignatura.id = asignaturaId
-      @asignacion.solicitudlab.asignatura_id = asignaturaId
-      @asignacion.solicitudlab.asignatura.titulacion_id= titulacionId
-      @asignacion.solicitudlab.asignatura.curso="optativa"
-      @asignacion.solicitudlab.curso ="optativa"
-    else
-      @asignacion.generica = false
-      asignaturaId = params[:asignatura][:id].to_i unless params[:asignatura].nil?
-      @asignacion.solicitudlab.asignatura.id = asignaturaId
-      @asignacion.solicitudlab.asignatura_id = asignaturaId
-      @asignacion.solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
-      @asignacion.solicitudlab.asignatura.curso=params[:nivel].to_s 
-      @asignacion.solicitudlab.curso =params[:nivel].to_s
-    end
-    @asignacion.solicitudlab.fechasol=Date.today
-    @asignacion.solicitudlab.npuestos=Laboratorio.where("id= ?",params[:laboratorio][:laboratorio_id]).first.puestos
-    @asignacion.solicitudlab.comentarios=params[:comentarios].to_s
-    @asignacion.solicitudlab.asignado="D"
-    @asignacion.solicitudlab.tipo="X"
-    @asignacion.laboratorio_id=params[:laboratorio][:laboratorio_id].to_i
-    
-    @asignacion.solicitudlab.fechaini=params[:fechaini].to_date
-    @asignacion.solicitudlab.fechafin=params[:fechafin].to_date
-    getViewModel
-    #@asignaturas=Asignatura.where('titulacion_id = ? and curso = ?',params[:titulacion][:titulacion_id],params[:nivel])
-    respond_to do |format|
-    if session[:tramos_horarios].solicitudes.empty? 
-      flash[:notice]="No hay tramos horarios en su peticion"
-      format.html { render :action => 'asigna_directa' }
-    else
-      if @asignacion.solicitudlab.save
-        nuevo_id=@asignacion.solicitudlab.id                       
-        @tramos=session[:tramos_horarios].solicitudes
-        @tramos.each {|tramo| p=Peticionlab.new
-                              p.solicitudlab_id=nuevo_id
-                              p.diasemana=tramo.diasemana
-                              p.horaini=tramo.horaini
-                              p.horafin=tramo.horafin
-                              p.save }
-      # esto es lo quedebe cambiar, hay que ir a generar la asignacion nueva y hay que grabarla
-      # y redirigir a la consulta de asignaciones  
-      l=params[:laboratorio][:laboratorio_id].to_i
-      peticiones=Peticionlab.where('solicitudlab_id = ?',@asignacion.solicitudlab.id).to_a
-      peticiones.each {|p|  
-                           hi=Horario.find_by_comienzo(p.horaini).id.to_i
-                           hf=Horario.find_by_fin(p.horafin).id.to_i
-                           dia_id=Dia.find_by_nombre(p.diasemana).id
-                           for hora in hi..hf 
-                               @asignacion=Asignacion.new(:solicitudlab_id=>@asignacion.solicitudlab.id,
-                                                                 :laboratorio_id=>l,
-                                                                 :peticionlab_id=>p.id,
-                                                                 :dia_id=>dia_id,                      #aqui hay cambio
-                                                                 :horaini=>Horario.find(hora).comienzo,
-                                                                 :horafin=>Horario.find(hora).fin,
-                                                                 :generica=>@asignacion.generica)
-                               @asignacion.save
-                           end
-                       }
-    # hasta aqui --------                   
-        @asignacions = Asignacion.all
-        format.html { redirect_to('/asignaciondefs/consulta') }
-        format.xml  { render :xml => @solicitudlabs, :status => :created, :location => @solicitudlabs }
-      else
-        logger.debug @asignacion.solicitudlab.errors.full_messages
-
-        format.html { render :action => "asigna_directa" }
-        format.xml  { render :xml => @solicitudlabs.errors, :status => :unprocessable_entity }
-      end
-     end
-    end
-    
-  end
-
+  
 
 
   def borranormal
