@@ -26,7 +26,7 @@ pdf.text "\n"
 
 ##################################### Tabla con las solicitudes ############################################
 
-header = [["Fecha sol.", "Usuario","Asignatura","Curso","Eq.","F.inicio/F.fin","Petición","Soft.","Elección equipos"]]
+header = [["Fecha sol.", "Usuario","Asignatura","Curso","Eq.","F.inicio/F.fin","Petición","Soft./\ncomentarios","Elección equipos"]]
 
 items = @solicitudlabs.map do |item|
  
@@ -54,11 +54,13 @@ end
 
 table = header + items
 
-t = make_table(table, :header => true, :row_colors => ["F0F0F0", "FFFFCC"], :column_widths => [75, 125, 90,60,30,75,120,35,70], :cell_style => {:align => :center})
+t = make_table(table, :header => true, :row_colors => ["F0F0F0", "FFFFCC"], :column_widths => [75, 125, 90,55,30,75,110,70,60], :cell_style => {:align => :center, :size => 10})
 
-#elimina los bordes de las subtablas de la columna 6: "Petición"
+#elimina los bordes de las subtablas de la columna 6: "Petición" y cambiar tamaño de la fuente
 for i in 1..(t.row_length - 1)
    t.cells[i,6].content.cells.borders = [] 
+   t.cells[i,6].content.cells.size = 10 
 end
 
+t.row(0).font_style = :bold
 t.draw
