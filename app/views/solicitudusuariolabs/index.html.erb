@@ -11,7 +11,11 @@
                 <tr>
                   <td><%= image_tag("search.png") %></td>
                   <td>Buscar  : 
-                  <td><%= text_field_tag "query" %></td>    
+                  <td><%= text_field_tag "query" %></td> 
+                  <td>
+                   <div id="cargando" style="text-align:center">
+                        <%=image_tag("ajax-loader.gif",:border=>0) %>
+                     </div></td>   
                 </tr>
                </table>
              </div>
@@ -52,14 +56,14 @@
           data:{query:query}
          });
       });
-   
+   eventosCopiar();
   });
 
-
-$(function()
-{
-     $('input[name=copyBtn]').click(function () { 
-  
+function eventosCopiar()
+{ 
+	$("#cargando").hide();
+	 $('input[name=copyBtn]').click(function () { 
+   $("#cargando").show();
        $.ajax({
                  dataType:"json",
                  type: "POST",
@@ -68,19 +72,21 @@ $(function()
                  success: function(data)
                  {
                   //errors=xhr.responseJSON.error
+                   $("#cargando").hide();
                   alert("La copia se ha realizado con éxito.");
-                    window.location="/solicitudusuariolabs"; 
+                    location.reload();
+
                  },
                  error: function(evt, xhr, status, error)
                  {
                   var errors=xhr.responseJSON.error
+                   $("#cargando").hide();
                    $("#errores").append("<div id='errorExplanation'><p>Imposible copiar las solicitudes:</p><ul>"+errors+"</ul></div>");
                   //for message of errors
 
                  }
               });
-       
-    });
-});
+               });
+}
 
 </script>
