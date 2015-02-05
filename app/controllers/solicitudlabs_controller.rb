@@ -118,7 +118,7 @@ class SolicitudlabsController < ApplicationController
     getViewModel
     respond_to do |format|
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
-      flash[:notice]="No hay tramos horarios en su peticion"
+      flash.now[:notice]="No hay tramos horarios en su peticion"
       format.js
       format.html {render :action=>"new"}
 
@@ -163,7 +163,7 @@ class SolicitudlabsController < ApplicationController
     respond_to do |format|
       getViewModel
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
-      flash[:notice]="No hay tramos horarios en su peticion"
+      flash.now[:notice]="No hay tramos horarios en su peticion"
       @borrados=session[:borrar]
       format.html { render :action=> "edit"}
 

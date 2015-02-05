@@ -16,7 +16,7 @@ GESTI&Oacute;N DE RECURSOS<br><br>
   </p>
   <p><%= submit_tag 'Aceptar', :class => "boton" %></p>
   <h2 id="errorlogin">
-    <%=flash[:notice]  %><%flash[:notice]=''%>
+    <%=flash.now[:notice]  %><%flash.now[:notice]=''%>
   </h2>
 <% end %>
 

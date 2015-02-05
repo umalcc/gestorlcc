@@ -24,7 +24,6 @@ class SessionsController < ApplicationController
     @usuario_actual=Usuario.find_by_identificador_and_password(
                         params[:login],Digest::MD5.hexdigest(params[:password]))
    if @usuario_actual
-   	flash[:notice]=nil
     #if !@usuario_actual.sesion
      session[:user_id]=@usuario_actual.id
 
@@ -43,12 +42,12 @@ class SessionsController < ApplicationController
         end
      end
     #else # ya existe una sesion para ese usuario
-    # flash[:notice]='El usuario tiene <br> otra sesion abierta'
+    # flash.now[:notice]='El usuario tiene <br> otra sesion abierta'
     # redirect_to new_session_path
     #end
    else
  #    # si el usuario no es conocido
-     flash[:notice]='Identificador o <br> password erroneo'.html_safe
+     flash.now[:notice]='Identificador o <br> password erroneo'.html_safe
       render :action => 'new'
     end
   end

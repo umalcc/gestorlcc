@@ -195,7 +195,7 @@ def asigna_directa
     #@asignaturas=Asignatura.where('titulacion_id = ? and curso = ?',params[:titulacion][:titulacion_id],params[:nivel])
     respond_to do |format|
     if session[:tramos_horarios].solicitudes.empty? 
-      flash[:notice]="No hay tramos horarios en su peticion"
+      flash.now[:notice]="No hay tramos horarios en su peticion"
       format.html { render :action => 'asigna_directa' }
     else
       if @asignacion.solicitudlab.save
@@ -353,7 +353,7 @@ def consulta
     #@asignaturas=Asignatura.where('titulacion_id = ? and curso = ?',params[:titulacion][:titulacion_id],params[:nivel])
     respond_to do |format|
     if session[:tramos_horarios].solicitudes.empty? 
-      flash[:notice]="No hay tramos horarios en su peticion"
+      flash.now[:notice]="No hay tramos horarios en su peticion"
       format.html { render :action => 'asigna_directa' }
     else
       if @asignacion.solicitudlab.save

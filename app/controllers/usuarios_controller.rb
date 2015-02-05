@@ -72,7 +72,7 @@ before_action :login_requerido, :admin?
       #params[:usuario][:password_confirmation]=Digest::MD5.hexdigest(params[:usuario][:password_confirmation])
   
       if @usuario.update(usuario_params) 
-     #   flash[:notice] = 'El usuario fue actualizado con &eacute;xito.'
+     #   flash.now[:notice] = 'El usuario fue actualizado con &eacute;xito.'
         @usuarios = Usuario.order("apellidos").to_a
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }
@@ -115,7 +115,7 @@ before_action :login_requerido, :admin?
      #params[:usuario][:password_confirmation]=Digest::MD5.hexdigest(params[:usuario][:password_confirmation])
       
      if @usuario.update_attribute("password", params[:usuario][:password])
-     #   flash[:notice] = 'La password ha sido correctamente actualizada.'
+     #   flash.now[:notice] = 'La password ha sido correctamente actualizada.'
         @usuarios=Usuario.all
         format.html { render :action => "index" }
         format.xml  { head :ok }

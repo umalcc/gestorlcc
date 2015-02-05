@@ -122,7 +122,7 @@ def new
     getViewModel
     respond_to do |format|
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
-      flash[:notice]="No hay tramos horarios en su peticion"
+      flash.now[:notice]="No hay tramos horarios en su peticion"
       format.html { render :action => "new" }
     else
       if @solicitudlab.save
@@ -212,7 +212,7 @@ def update
     getViewModel
 # UN DRYYY!!!!!
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
-      flash[:notice]="No hay tramos horarios en su peticion"
+      flash.now[:notice]="No hay tramos horarios en su peticion"
       format.html { render :action => "edit" }
     else     
       if @solicitudlab.save
@@ -231,7 +231,7 @@ def update
                                   reg=Peticionlab.find(tramo)
                                   reg.destroy
                                 end } unless @borrados.empty?
-        # flash[:notice] = 'Solicitudrecurso was successfully updated.'
+        # flash.now[:notice] = 'Solicitudrecurso was successfully updated.'
         CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Cambios en ").deliver_later       
         @solicitudlabs = Solicitudlab.where("usuario_id = ?", @usuario_actual.id).to_a
         format.html { render :action => "index" }

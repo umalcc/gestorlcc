@@ -47,7 +47,7 @@ class PeticionlabsController < ApplicationController
 
     respond_to do |format|
       if @peticionlab.save
-        #flash[:notice] = 'Peticionlab was successfully created.'
+        #flash.now[:notice] = 'Peticionlab was successfully created.'
         format.html { redirect_to(@peticionlab) }
         format.xml  { render :xml => @peticionlab, :status => :created, :location => @peticionlab }
       else
@@ -64,7 +64,7 @@ class PeticionlabsController < ApplicationController
 
     respond_to do |format|
       if @peticionlab.update_attributes(params[:peticionlab])
-        #flash[:notice] = 'Peticionlab was successfully updated.'
+        #flash.now[:notice] = 'Peticionlab was successfully updated.'
         format.html { redirect_to(@peticionlab) }
         format.xml  { head :ok }
       else

@@ -12,7 +12,7 @@ class Solicitudhoraria
                               s.horafin == solicitud.horafin
                           
                             insercionCorrecta=false
-                           #flash[:notice]="Ese tramo ya ha sido elegido con anterioridad"  # esto no va, da error
+                           #flash.now[:notice]="Ese tramo ya ha sido elegido con anterioridad"  # esto no va, da error
                            return insercionCorrecta
                            end}
      @solicitudes << solicitud

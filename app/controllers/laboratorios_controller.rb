@@ -47,7 +47,7 @@ before_action :login_requerido, :admin?
 
     respond_to do |format|
       if @laboratorio.save
-        #flash[:notice] = 'Laboratorio fue creado con &eacute;xito.'
+        #flash.now[:notice] = 'Laboratorio fue creado con &eacute;xito.'
         @laboratorios = Laboratorio.order("nombre_lab").to_a
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @laboratorio, :status => :created, :location => @laboratorio }
@@ -76,7 +76,7 @@ before_action :login_requerido, :admin?
       end
       if @laboratorio.update(laboratorio_params)
        
-       # flash[:notice] = 'Laboratorio fue actualizado con &eacute;xito.'
+       # flash.now[:notice] = 'Laboratorio fue actualizado con &eacute;xito.'
         @laboratorios = Laboratorio.order("nombre_lab").to_a
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }

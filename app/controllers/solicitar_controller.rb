@@ -8,19 +8,19 @@ before_action :login_requerido
     session[:codigo_tramo]-=1
     @peticion.id=session[:codigo_tramo]
     @peticion.diasemana=params[:diasemana_nombre].to_s
-    flash[:notice]=nil
+    flash.now[:notice]=nil
   
     if Horario.find_by_fin(params[:horafin_fin].to_s).id>=Horario.find_by_comienzo(params[:horaini_comienzo].to_s).id
        @peticion.horaini=params[:horaini_comienzo].to_s
        @peticion.horafin=params[:horafin_fin].to_s
       
        if (session[:tramos_horarios].anadir_solicitud(@peticion)==false)
-          flash[:notice]="Ese tramo ya ha sido elegido con anterioridad"
+          flash.now[:notice]="Ese tramo ya ha sido elegido con anterioridad"
        end
        @actual=@peticion.id
       
     else
-       flash[:notice]="Hora de fin anterior a la de inicio"
+       flash.now[:notice]="Hora de fin anterior a la de inicio"
       
        
        respond_to {|format| format.js }

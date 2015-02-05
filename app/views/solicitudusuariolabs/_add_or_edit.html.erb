@@ -130,10 +130,10 @@
        <div id="errores">
             <%= f.error_messages :header_message => 'Se produjeron errores en la captura de datos', 
                         :message => 'Imposible guardar una solicitud de laboratorio:'%>
-            <% if flash[:notice] %>
+            <% if flash.now[:notice] %>
                 <div id="errorExplanation">
                      <p>Imposible guardar la solicitud de laboratorio:</p>
-                     <ul><li><%=flash[:notice]%></li></ul>
+                     <ul><li><%=flash.now[:notice]%></li></ul>
                 </div>
             <% end %>
        </div>

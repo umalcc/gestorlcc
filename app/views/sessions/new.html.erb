@@ -26,8 +26,8 @@
           <p><%= submit_tag 'Aceptar' %></p>   
          
           <div id="flasherror-portada" >
-            <% if flash[:notice] %>
-             <p><%= flash[:notice] %></p>
+            <% if flash.now[:notice] %>
+             <p><%= flash.now[:notice] %></p>
             <% end %>
           </div> 
        <% end %><!-- del form_tag -->

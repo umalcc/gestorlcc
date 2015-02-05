@@ -37,7 +37,7 @@ before_action :login_requerido, :admin?
 
     respond_to do |format|
       if @recurso.save
-      #  flash[:notice] = 'El recurso fue creado con &eacute;xito.'
+      #  flash.now[:notice] = 'El recurso fue creado con &eacute;xito.'
         @recursos = Recurso.order("descripcion").to_a 
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @recurso, :status => :created, :location => @recurso }
@@ -55,7 +55,7 @@ before_action :login_requerido, :admin?
 
     respond_to do |format|
       if @recurso.update(recurso_params)
-        #flash[:notice] = 'El recurso fue actualizado con &eacute;xito.'
+        #flash.now[:notice] = 'El recurso fue actualizado con &eacute;xito.'
         @recursos = Recurso.order("descripcion").to_a 
         format.html { redirect_to :action => "index" }
         format.xml  { head :ok }

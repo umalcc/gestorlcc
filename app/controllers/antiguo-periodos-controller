@@ -134,7 +134,7 @@ class PeriodosController < ApplicationController
     respond_to do |format|
 
     #if session[:tramos_horarios].solicitudes.empty?           # no permitiremos dos periodos de admision del mismo tipo
-    #  flash[:notice]="No hay tramos horarios en su peticion"  # o de activacion
+    #  flash.now[:notice]="No hay tramos horarios en su peticion"  # o de activacion
     #  format.html { redirect_to(new_solicitudlab_path) }
     #else
     

@@ -47,7 +47,7 @@ before_action :login_requerido, :admin?
 
     respond_to do |format|
       if @titulacion.save
-       # flash[:notice] = 'Titulacion was successfully created.'
+       # flash.now[:notice] = 'Titulacion was successfully created.'
         @titulacions = Titulacion.all.order("abrevia")
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @titulacion, :status => :created, :location => @titulacion }
@@ -65,7 +65,7 @@ before_action :login_requerido, :admin?
 
     respond_to do |format|
       if @titulacion.update(titulacion_params)
-     #   flash[:notice] = 'Titulacion was successfully updated.'
+     #   flash.now[:notice] = 'Titulacion was successfully updated.'
         @titulacions = Titulacion.order("abrevia").to_a
         format.html { redirect_to :action => "index"  }
         format.xml  { head :ok }

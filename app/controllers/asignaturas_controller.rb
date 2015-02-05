@@ -58,7 +58,7 @@ class AsignaturasController < ApplicationController
  
     respond_to do |format|
       if @asignatura.save
-       # flash[:notice] = 'Asignatura fue creada con &eacute;xito.'
+       # flash.now[:notice] = 'Asignatura fue creada con &eacute;xito.'
         @asignaturas = Asignatura.order("titulacion_id,curso,cuatrimestre").to_a
         @cuenta = @asignaturas.size 
         format.html { redirect_to :action => "index" }
@@ -82,7 +82,7 @@ class AsignaturasController < ApplicationController
     saveModel(params)
     respond_to do |format|
       if @asignatura.save
-      #  flash[:notice] = 'Asignatura fue actualizada con &eacute;xito.'
+      #  flash.now[:notice] = 'Asignatura fue actualizada con &eacute;xito.'
         @asignaturas = Asignatura.order("titulacion_id,curso,cuatrimestre").to_a
         @cuenta = @asignaturas.size
         format.html { redirect_to :action => "index" }

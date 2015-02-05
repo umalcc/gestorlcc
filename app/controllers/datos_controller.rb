@@ -14,7 +14,7 @@ class DatosController < ApplicationController
   #end
 
   def edit
-   # flash[:notice] = 'voy a editar'
+   # flash.now[:notice] = 'voy a editar'
     @usuario = @usuario_actual
   end
 

@@ -47,7 +47,7 @@ before_action :login_requerido, :admin?
 
     respond_to do |format|
       if @dia.save
-        #flash[:notice] = 'Dia was successfully created.'
+        #flash.now[:notice] = 'Dia was successfully created.'
         @dias = Dia.order( "num").to_a
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @dia, :status => :created, :location => @dia }
@@ -65,7 +65,7 @@ before_action :login_requerido, :admin?
 
     respond_to do |format|
       if @dia.update(dia_params)
-        #flash[:notice] = 'Dia was successfully updated.'
+        #flash.now[:notice] = 'Dia was successfully updated.'
         @dias = Dia.order( "num").to_a
         format.html { redirect_to :action => "index"  }
         format.xml  { head :ok }

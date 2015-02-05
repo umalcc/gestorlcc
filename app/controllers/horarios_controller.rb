@@ -47,7 +47,7 @@ before_action :login_requerido, :admin?
 
     respond_to do |format|
       if @horario.save
-        #flash[:notice] = 'Horario was successfully created.'
+        #flash.now[:notice] = 'Horario was successfully created.'
         @horarios = Horario.order( "num").to_a
         format.html { redirect_to :action => "index" }
         format.xml  { render :xml => @horario, :status => :created, :location => @horario }
@@ -65,7 +65,7 @@ before_action :login_requerido, :admin?
 
     respond_to do |format|
       if @horario.update(horario_params)
-        #flash[:notice] = 'Horario was successfully updated.'
+        #flash.now[:notice] = 'Horario was successfully updated.'
         @horarios = Horario.order("num").to_a
         format.html { redirect_to :action => "index"  }
         format.xml  { head :ok }
