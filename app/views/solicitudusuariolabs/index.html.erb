@@ -11,14 +11,11 @@
                 <tr>
                   <td><%= image_tag("search.png") %></td>
                   <td>Buscar  : 
-                  <td><%= text_field_tag "query" %></td> 
-                  <td>
-                   <div id="cargando" style="text-align:center">
-                        <%=image_tag("ajax-loader.gif",:border=>0) %>
-                     </div></td>   
+                  <td><%= text_field_tag "query" %></td>   
                 </tr>
                </table>
              </div>
+
              <!--Si no hay solicitudes actuales, se debe mostrar la opción copiar las solicitudes del año pasado si las hubiese , { :multiple => true, :size =>3 }-->
              <%if @labRequestsAllowed and @numSolLabAñoPasado != 0%>
              <div style="float:left;">
@@ -35,10 +32,15 @@
             </div>
             <div id="errores">
        </div>
-             <div id="tabla" style="float:left;">
+
+        <div id="cargando" style="text-align:center">
+                  <%=image_tag("ajax-loader.gif",:border=>0) %>
+        </div>
+
+        <div id="tabla" style="float:left;">
               <%= render :partial => "items_lista" %>  
-             </div> 
-         </div><!-- de lista-gestion -->
+        </div> 
+      </div><!-- de lista-gestion -->
      </div><!-- de recuadro -->
 </div><!-- de central -->
 
@@ -62,31 +64,28 @@
 function eventosCopiar()
 { 
 	$("#cargando").hide();
-	 $('input[name=copyBtn]').click(function () { 
-   $("#cargando").show();
+	 $('input[name=copyBtn]').click(function () 
+   { 
+       $("#cargando").show();
        $.ajax({
                  dataType:"json",
                  type: "POST",
                  url: "/solicitudusuariolabs/copy",
                  data: {asignatura:$("#asignatura").val()},
-                 success: function(data)
+                 success: function(data, textStatus)
                  {
-                  //errors=xhr.responseJSON.error
-                   $("#cargando").hide();
-                  alert("La copia se ha realizado con éxito.");
+                    $("#cargando").hide();
+                    alert(data.msg);
                     location.reload();
-
                  },
-                 error: function(evt, xhr, status, error)
+                 error: function(data, textStatus)
                  {
-                  var errors=xhr.responseJSON.error
-                   $("#cargando").hide();
-                   $("#errores").append("<div id='errorExplanation'><p>Imposible copiar las solicitudes:</p><ul>"+errors+"</ul></div>");
-                  //for message of errors
-
+                     $("#cargando").hide();
+                     var error = data.responseJSON.msg
+                     alert(error);
                  }
-              });
-               });
+            });
+    });
 }
 
 </script>

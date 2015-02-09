@@ -1,7 +1,7 @@
 class SolicitudusuariolabsController < ApplicationController
 
    before_action :login_requerido,:usuario?
-   before_action :getIndexView, :only=> [:index,:copy]
+   #before_action :getIndexView, :only=> [:index,:copy]
 
   def index
      
@@ -26,6 +26,7 @@ class SolicitudusuariolabsController < ApplicationController
     solicitudlabsAñoPasado.each do |s| 
        
       nuevaSolicitud = createNewRequest(s,periodo) 
+
       if (nuevaSolicitud.save)
 
          #crear peticiones de laboratorios para la nueva solicitud
@@ -36,24 +37,30 @@ class SolicitudusuariolabsController < ApplicationController
                 @correotramos+=' - '+nuevaPeticionLab.diasemana+' de '+nuevaPeticionLab.horaini+' a '+nuevaPeticionLab.horafin
                 CorreoTecnicos::emitesolicitudlectivo(nuevaSolicitud,nuevaSolicitud.fechaini.to_s,nuevaSolicitud.fechafin.to_s,@correotramos,"","Nueva ").deliver_later                        
             else
-              statusCode=422
-              statusMessage +=nuevaPeticionLab.errors.full_messages
+              statusCode=500
+              statusMessage="Error en la copia de solicitudes"
             end
          end
       else 
-        statusCode=422
-        statusMessage +=nuevaSolicitud.errors.full_messages
+        statusCode=500
+        
+        #no hace falta dar tantos detalles al usuario, basta con un mensaje indicando que hubo un error
+        #nuevaSolicitud.errors.each do |attribute, error|
+            #statusMessage += attribute.to_s + " " + error.to_s + "\n"
+        #end
+        statusMessage="Error en la copia de solicitudes"
+
       end 
       
     end
 
     if statusCode == 200
-      statusMessage="<li>La copia se ha realizado con éxito</li>"
+      statusMessage="La copia se ha realizado con éxito"
     end
 
     getIndexView
 
-    respond_to do |format| format.json {render :json => {:error => statusMessage},:status => statusCode}  end
+    respond_to do |format| format.json {render :json => {:msg => statusMessage},:status => statusCode}  end
 
   end
 
@@ -376,13 +383,13 @@ def update
 
     def calculateDatesForNewRequest(oldRequest, periodo)
   
-      if oldRequest.fechaini.month < periodo.inicio.month and oldRequest.fechaini.day < periodo.inicio.day
+      if oldRequest.fechaini.month <= periodo.inicio.month and oldRequest.fechaini.day <= periodo.inicio.day
         fechaini = periodo.inicio
       else
         fechaini = Date.new(oldRequest.fechaini.next_year.year,oldRequest.fechaini.month, oldRequest.fechaini.day)
       end
       
-      if oldRequest.fechafin.month > periodo.fin.month and oldRequest.fechafin.day > periodo.fin.day
+      if oldRequest.fechafin.month >= periodo.fin.month and oldRequest.fechafin.day >= periodo.fin.day
         fechafin = periodo.fin
       else
         fechafin = Date.new(oldRequest.fechafin.next_year.year, oldRequest.fechafin.month, oldRequest.fechafin.day)
