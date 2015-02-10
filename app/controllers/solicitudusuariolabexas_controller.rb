@@ -61,7 +61,7 @@ class SolicitudusuariolabexasController < ApplicationController
     
     @solicitudlabexa.fechasol=Date.today
     @solicitudlabexa.npuestos=params[:npuestos].to_s
-    @solicitudlabexa.curso=params[:nivel].to_s
+    @solicitudlabexa.curso=params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
     @solicitudlabexa.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
     @solicitudlabexa.horaini=params[:horaini][:comienzo]
     @solicitudlabexa.horafin=params[:horafin][:fin]
