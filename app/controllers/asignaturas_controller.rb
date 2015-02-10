@@ -22,7 +22,7 @@ class AsignaturasController < ApplicationController
 
   def new
     @asignatura = Asignatura.new
-    session[:titulacion]=Titulacion.order("id").first.id
+    session[:titulacion]=Titulacion.order("nombre").first.id
     session[:nivel]=Asignatura::CURSO.first
     getViewModel
 

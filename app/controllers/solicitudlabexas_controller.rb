@@ -115,7 +115,7 @@ class SolicitudlabexasController < ApplicationController
   def getViewModel
     @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"} 
     @especiales=Laboratorio.where('especial=?',"t").to_a 
-    @titulaciones=Titulacion.order("id").to_a
+    @titulaciones=Titulacion.order("nombre").to_a
     @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"}  
    if (@solicitudlabexa.asignatura_id == nil)
       #@solicitudlabexa.asignatura_id=0

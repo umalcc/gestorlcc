@@ -1561,3 +1561,21 @@ table#tipo_reserva, td:not(.fc-view *)
 {
 	width:450px;
 }
+.ui-icon-triangle-n-s{
+	background-image: url("/assets/ui-icons_888888_256x240.png");
+}
+.custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 5px 10px;
+  }

@@ -172,7 +172,7 @@ def new
   end
 
 def getViewModel
-@titulaciones=Titulacion.order("id").to_a
+@titulaciones=Titulacion.order("nombre").to_a
 @puestos=Laboratorio.find_by_sql(["select distinct(puestos) from laboratorios order by puestos"]).map{|l| l.puestos}
 if(@solicitudlab.asignatura == nil)
   @solicitudlab.asignatura=Asignatura.new

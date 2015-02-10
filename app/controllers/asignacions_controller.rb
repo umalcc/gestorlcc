@@ -495,7 +495,7 @@ def getAsignacionInfo(asignacion)
     @dia= Date.today
     @tramos= []
     @usuarios=Usuario.order("apellidos").to_a
-    @titulaciones=Titulacion.order("id").where.not(abrevia: "SD").to_a
+    @titulaciones=Titulacion.order("nombre").where.not(abrevia: "SD").to_a
     @laboratorios=Laboratorio.order("nombre_lab").to_a 
     asignatura = @asignacion.solicitudlab.asignatura
     @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?',asignatura.titulacion_id,asignatura.curso)
