@@ -22,10 +22,10 @@
               <table>
                 <tr>
                   <td>    
-                  <%= select_tag 'asignatura', options_for_select(@asignaturas.map {|s| [ s.abrevia_asig, s.id ]}.uniq) %>
+                  <%= select_tag 'asignatura', options_for_select(@asignaturas.map {|s| [ s.nombre_asig, s.id, {:title =>("Titulacion:"+s.titulacion.nombre)} ]}) %>
                   </td> 
                 </tr>
-                <tr> <td><input name="copyBtn" type="button" value="Copiar solicitudes" style="width:130px;height:30px;" /></td>  </tr>
+                <tr> <td><input name="copyBtn" type="button" value="Recuperar anteriores solicitudes" style="width:210px;height:30px;" /></td>  </tr>
                </table>
              </div>
              <%end%>

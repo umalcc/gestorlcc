@@ -332,11 +332,21 @@ def update
       @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
       #mostrar sólo las solicitudes del curso académico actual
       solicitudlabsTmp=@solicitudlabs.select{|s| isLabRequestLastYear?(s)}
-      @asignaturas=solicitudlabsTmp.map {|s|  s.asignatura }.uniq
+      @asignaturas=solicitudlabsTmp.map {|s|s.asignatura}.uniq
+     
       @solicitudlabs = @solicitudlabs.select{|s| isLabRequestCurrent?(s)}
       @cuenta=@solicitudlabs.size
       logger.debug "hay nuevas solicitudes-----" + @cuenta.to_s
       @labRequestsAllowed = labRequestsAllowed?
+    end
+    def getValueAsignatura(asignatura)
+      result=asignatura.abrevia_asig.to_s+"("+asignatura.titulacion.abrevia.to_s+")"
+      return result 
+    end
+
+    def getTitleAsignatura(asignatura)
+      result=asignatura.nombre_asig.to_s+"("+asignatura.titulacion.nombre.to_s+")"
+      return result
     end
 
     def getLabRequestsLastYear(asignatura)
