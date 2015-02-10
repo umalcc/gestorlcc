@@ -3,6 +3,9 @@ class SolicitudusuariolabsController < ApplicationController
    before_action :login_requerido,:usuario?
    #before_action :getIndexView, :only=> [:index,:copy]
 
+   include SolicitudesHelper
+
+
   def index
      
     getIndexView
@@ -20,42 +23,52 @@ class SolicitudusuariolabsController < ApplicationController
     statusCode=200
 
     periodo = getPeriodWithAdmission
-    solicitudlabsAñoPasado = getLabRequestsLastYear(params[:asignatura])
+    #coger las solicitudes anteriores de la asignatura seleccionada
+    solicitudlabsAñoPasado = getLabRequestsLastYearForSubject(params[:asignatura])
     #coger sólo las solicitudes correspondientes al período lectivo actual con admision = true
     solicitudlabsAñoPasado = filterLabRequestsLastYearForPeriod(solicitudlabsAñoPasado, periodo)
-    solicitudlabsAñoPasado.each do |s| 
-       
-      nuevaSolicitud = createNewRequest(s,periodo) 
 
-      if (nuevaSolicitud.save)
+    if(solicitudlabsAñoPasado.size == 0)
+        statusCode = 500
+        statusMessage = "No hay solicitudes anteriores de la asignatura seleccionada en el " + periodo.nombre
+    else
 
-         #crear peticiones de laboratorios para la nueva solicitud
-         labPetitions = getLabPetitionsForRequest(s.id)
-         labPetitions.each do |p|
-            nuevaPeticionLab = createNewLabPetition(p, nuevaSolicitud.id)
-            if(nuevaPeticionLab.save)
-                @correotramos+=' - '+nuevaPeticionLab.diasemana+' de '+nuevaPeticionLab.horaini+' a '+nuevaPeticionLab.horafin
-                CorreoTecnicos::emitesolicitudlectivo(nuevaSolicitud,nuevaSolicitud.fechaini.to_s,nuevaSolicitud.fechafin.to_s,@correotramos,"","Nueva ").deliver_later                        
-            else
-              statusCode=500
-              statusMessage="Error en la copia de solicitudes"
-            end
-         end
-      else 
-        statusCode=500
-        
-        #no hace falta dar tantos detalles al usuario, basta con un mensaje indicando que hubo un error
-        #nuevaSolicitud.errors.each do |attribute, error|
-            #statusMessage += attribute.to_s + " " + error.to_s + "\n"
-        #end
-        statusMessage="Error en la copia de solicitudes"
+        solicitudlabsAñoPasado.each do |s| 
+           
+          nuevaSolicitud = createNewRequest(s,periodo) 
 
-      end 
-      
+          if (nuevaSolicitud.save)
+
+             #crear peticiones de laboratorios para la nueva solicitud
+             labPetitions = getLabPetitionsForRequest(s.id)
+             labPetitions.each do |p|
+                nuevaPeticionLab = createNewLabPetition(p, nuevaSolicitud.id)
+                if(nuevaPeticionLab.save)
+                    @correotramos+=' - '+nuevaPeticionLab.diasemana+' de '+nuevaPeticionLab.horaini+' a '+nuevaPeticionLab.horafin
+                    CorreoTecnicos::emitesolicitudlectivo(nuevaSolicitud,nuevaSolicitud.fechaini.to_s,nuevaSolicitud.fechafin.to_s,@correotramos,"","Nueva ").deliver_later                        
+                else
+                  statusCode=500
+                  statusMessage="Error en la copia de solicitudes"
+                end
+             end
+          else 
+            statusCode=500
+            
+            #no hace falta dar tantos detalles al usuario, basta con un mensaje indicando que hubo un error
+            #nuevaSolicitud.errors.each do |attribute, error|
+                #statusMessage += attribute.to_s + " " + error.to_s + "\n"
+            #end
+            statusMessage="Error en la copia de solicitudes"
+
+            logger.debug nuevaSolicitud.errors.full_messages
+
+          end 
+          
+        end
     end
 
     if statusCode == 200
-      statusMessage="La copia se ha realizado con éxito"
+       statusMessage="La copia se ha realizado con éxito"
     end
 
     getIndexView
@@ -176,6 +189,7 @@ def saveModel(params)
   @solicitudlab.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
   @solicitudlab.asignatura.titulacion_id = params[:titulacion][:titulacion_id].to_i
   @solicitudlab.asignatura.curso = params[:nivel].to_s
+  @solicitudlab.curso = params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
   @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
   @solicitudlab.fechaini=params[:fechaini].to_date
   @solicitudlab.fechafin = params[:fechafin].to_date
@@ -240,7 +254,9 @@ def update
                                 end } unless @borrados.empty?
         # flash.now[:notice] = 'Solicitudrecurso was successfully updated.'
         CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"","Cambios en ").deliver_later       
-        @solicitudlabs = Solicitudlab.where("usuario_id = ?", @usuario_actual.id).to_a
+        
+        getIndexView
+
         format.html { render :action => "index" }
         format.xml  { head :ok }
       else
@@ -315,15 +331,6 @@ def update
       (labRequest.fechaini >= primerCuatrimestre.inicio and labRequest.fechafin <= segundoCuatrimestre.fin)
     end
 
-     def isLabRequestLastYear?(labRequest)
-      primerCuatrimestre=Periodo.where("id =?",1).first
-      segundoCuatrimestre=Periodo.where("id =?",2).first
-      
-      return true if (labRequest.fechaini >= primerCuatrimestre.inicio.prev_year and labRequest.fechafin.prev_year <= primerCuatrimestre.fin) or
-      (labRequest.fechaini >= segundoCuatrimestre.inicio.prev_year and labRequest.fechafin.prev_year <= segundoCuatrimestre.fin) or
-      (labRequest.fechaini >= primerCuatrimestre.inicio.prev_year and labRequest.fechafin.prev_year <= segundoCuatrimestre.fin)
-    end
-
     def labRequestsAllowed?     
        return (getPeriodWithAdmission.nil? == false) 
     end
@@ -331,14 +338,14 @@ def update
     def getIndexView
       @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
       #mostrar sólo las solicitudes del curso académico actual
-      solicitudlabsTmp=@solicitudlabs.select{|s| isLabRequestLastYear?(s)}
+      solicitudlabsTmp=@solicitudlabs.select{|s| isLabRequestFromLastYear?(s)}
       @asignaturas=solicitudlabsTmp.map {|s|s.asignatura}.uniq
      
       @solicitudlabs = @solicitudlabs.select{|s| isLabRequestCurrent?(s)}
       @cuenta=@solicitudlabs.size
-      logger.debug "hay nuevas solicitudes-----" + @cuenta.to_s
       @labRequestsAllowed = labRequestsAllowed?
     end
+
     def getValueAsignatura(asignatura)
       result=asignatura.abrevia_asig.to_s+"("+asignatura.titulacion.abrevia.to_s+")"
       return result 
@@ -349,15 +356,10 @@ def update
       return result
     end
 
-    def getLabRequestsLastYear(asignatura)
-      primerCuatrimestre=Periodo.where("id =?",1).first
-      segundoCuatrimestre=Periodo.where("id =?",2).first
-
-      iniCursoAcademicoPasado = Date.new(primerCuatrimestre.inicio.prev_year.year,9,1)
-      finCursoAcademicoPasado = Date.new(segundoCuatrimestre.inicio.prev_year.year,9,1)
-
+    def getLabRequestsLastYearForSubject(asignatura)
+      
       @solicitudlabs= Solicitudlab.where("usuario_id = ? and asignatura_id = ?",@usuario_actual.id,asignatura).to_a
-      return @solicitudlabs.select {|s| s.fechaini >= iniCursoAcademicoPasado and s.fechaini< finCursoAcademicoPasado}
+      return @solicitudlabs.select {|s| isLabRequestFromLastYear?(s)}
 
     end
 

@@ -31,7 +31,7 @@ class SolicitudlabsController < ApplicationController
     getViewModel
     session[:titulacion]=Titulacion.first
     session[:nivel]=Asignatura::CURSO.first
- 
+
     # esto es para crear un carro no persistente  
     session[:tramos_horarios]=Solicitudhoraria.new
     # y una identificacion de tramos horarios para poder borrarlos individualmente. Se ira decrementando

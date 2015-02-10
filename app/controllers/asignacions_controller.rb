@@ -402,8 +402,15 @@ def getAsignacionInfo(asignacion)
     #Si la reserva no es genérica, necesitamos añadir la información de la asignatura
     #|| asignacion.generica.to_s == 'false'
     if asignacion.generica.nil? || asignacion.generica == false
-      curso=asignacion.solicitudlab.curso== "0" ? "optativa" : asignacion.solicitudlab.curso
-       asigInfo="Asig: " +asignacion.solicitudlab.asignatura.titulacion.abrevia+"(" +asignacion.solicitudlab.asignatura.abrevia_asig.to_s + ") %Curso: " + curso + "%"
+       curso=asignacion.solicitudlab.curso== "0" ? "optativa" : asignacion.solicitudlab.curso
+
+       logger.debug asignacion.id
+       logger.debug asignacion.solicitudlab.asignatura.titulacion.abrevia
+       logger.debug asignacion.solicitudlab.asignatura.abrevia_asig
+       logger.debug curso
+       logger.debug asignacion.solicitudlab.curso
+
+       asigInfo="Asig: " +asignacion.solicitudlab.asignatura.titulacion.abrevia+"(" +asignacion.solicitudlab.asignatura.abrevia_asig + ") %Curso: " + curso + "%"
        info = asigInfo + info
     else
        info = "Reserva genérica%"+info
