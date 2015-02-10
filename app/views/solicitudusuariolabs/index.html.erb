@@ -22,7 +22,7 @@
               <table>
                 <tr>
                   <td>    
-                  <%= select_tag 'asignatura', options_for_select(@asignaturas.map {|s| [ s.nombre_asig, s.id, {:title =>("Titulacion:"+s.titulacion.nombre)} ]}) %>
+                  <%= select_tag 'asignatura', options_for_select(@asignaturas.map {|s| [ s.asig_with_tit, s.id, {:title =>("Asignatura: " + s.nombre_asig + "\n" + "Titulación:"+s.titulacion.nombre)} ]}.uniq) %>
                   </td> 
                 </tr>
                 <tr> <td><input name="copyBtn" type="button" value="Recuperar anteriores solicitudes" style="width:210px;height:30px;" /></td>  </tr>

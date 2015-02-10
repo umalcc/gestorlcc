@@ -22,4 +22,9 @@ has_many :solicitudlab
   validates_numericality_of :codigo_asig, 
                             :only_integer => true,
                             :message => ': Debe ser un entero'
+
+
+def asig_with_tit
+  "#{abrevia_asig} - #{titulacion.abrevia}"
+end
 end
