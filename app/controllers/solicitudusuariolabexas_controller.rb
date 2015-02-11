@@ -174,7 +174,19 @@ def listar  #está incompleto.....
            end
         end
     end
+    
+    cadena=(cadena.nil?)? "%" : "%#{cadena}%"
+    
+    @asignaturas=Asignatura.where("nombre_asig || abrevia_asig || curso LIKE ?",cadena).to_a
+    codigos_a=@asignaturas.map { |t| t.id}
+    @labs_especiales=Laboratorio.where("ssoo || nombre_lab like ? and especial=?",cadena,"t").to_a
+    nombre_l=@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'si'+';'}
+    nombre_l=nombre_l+@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'no'+';'}
+    @solicitudlabexas=Solicitudlabexa.where("usuario_id == ? and (npuestos || curso || fecha || fechasol LIKE ?  or asignatura_id in (?) or preferencias in (?))", session[:user_id], cadena, codigos_a, nombre_l).to_a
+    @solicitudlabexas=@solicitudlabexas.select{|s| isLabRequestCurrent?(s)}
+    @cuenta=@solicitudlabexas.size
 
+    respond_to {|format| format.js }
 
 end
 
