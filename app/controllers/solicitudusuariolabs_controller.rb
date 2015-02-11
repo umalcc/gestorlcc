@@ -305,7 +305,7 @@ def update
     nombre_l=@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'si'+';'}
     nombre_l=nombre_l+@labs_especiales.map {|l| l.nombre_lab+'-'+l.ssoo+'-'+'no'+';'}
     @solicitudlabs=Solicitudlab.where("usuario_id == ? and (npuestos || curso || fechaini || fechafin || fechasol LIKE ? or asignatura_id in (?) or id in (?) or preferencias in (?))", session[:user_id],cadena, codigos_a, codigos_t,nombre_l).to_a
-   @solicitudlabs=@solicitudlabs.select{|s| isLabRequestCurrent?(s)}
+    @solicitudlabs=@solicitudlabs.select{|s| isLabRequestCurrent?(s)}
     @cuenta=@solicitudlabs.size
     respond_to {|format| format.js }
   end

@@ -4,9 +4,12 @@ class SolicitudusuariolabexasController < ApplicationController
 
   before_action :login_requerido,:usuario?
 
+  include SolicitudesHelper
+
+
   def index
-    @solicitudlabexas = Solicitudlabexa.order("fecha").to_a
-    @cuenta = @solicitudlabexas.size
+    
+    getIndexView
     
     respond_to do |format|
       format.html # index.html.erb
@@ -106,7 +109,7 @@ class SolicitudusuariolabexasController < ApplicationController
 
   def getViewModel
     @especiales=Laboratorio.where('especial=?',"t").to_a 
-    @titulaciones=Titulacion.order("nombre").to_a
+    @titulaciones=Titulacion.order("id").to_a
      if (@solicitudlabexa.asignatura_id == nil)
       #@solicitudlabexa.asignatura_id=0
       if (Asignatura::CURSO).first=="optativa"
@@ -133,8 +136,8 @@ class SolicitudusuariolabexasController < ApplicationController
     respond_to do |format|
 
         if @solicitudlabexa.save
-        CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Cambios en ").deliver_later   
-        @solicitudlabexas = Solicitudlabexa.where("usuario_id = ? ",@usuario_actual.id).to_a
+          CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Cambios en ").deliver_later   
+          getIndexView
           format.html { redirect_to :action => "index" }
           format.xml  { head :ok }
       else
@@ -158,7 +161,7 @@ class SolicitudusuariolabexasController < ApplicationController
   end
 
  
-def listar
+def listar  #está incompleto.....
     cadena=params[:query]
     if cadena=~/\d{2}\-\d{2}\-(\d{4})/
         cadena=cadena.split('-')[2]+'-'+cadena.split('-')[1]+'-'+cadena.split('-')[0]
@@ -171,7 +174,16 @@ def listar
            end
         end
     end
-  end
+
+
+end
+
+def getIndexView
+
+      @solicitudlabexas= Solicitudlabexa.where("usuario_id = ?",@usuario_actual.id).order("fecha").to_a
+      @solicitudlabexas = @solicitudlabexas.select{|s| isLabRequestCurrent?(s)}
+      @cuenta=@solicitudlabexas.size
+end
 
 private
 def solicitudlabexas_params
