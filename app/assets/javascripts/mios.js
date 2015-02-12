@@ -110,7 +110,7 @@ else { dd.style.display = "none"; }
         $( "<a>" )
           .attr( "tabIndex", -1 )
           .attr( "title", "Mostrar todos los elementos" )
-          .css("height","18px")
+          .css("height","28px")
           .css("vertical-align","bottom")
           .tooltip()
           .appendTo( this.wrapper )

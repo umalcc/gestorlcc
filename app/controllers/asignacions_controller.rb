@@ -41,8 +41,12 @@ class AsignacionsController < ApplicationController
                                                                      :asignatura => r.solicitudlab.asignatura.abrevia_asig.to_s,
                                                                      :title => ((r.generica.to_s == 'null' || r.generica.to_s == 'false')? r.solicitudlab.asignatura.abrevia_asig.to_s : "RG"),
                                                                      :info =>getAsignacionInfo(r) }}
-      #@asignacionsListaExterna = @asignacionsListaExterna.as_json                                                        
-     #@asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
+      #@asignacionsListaExterna = @asignacionsListaExterna.as_json  
+    @asignacionsListaExterna = @asignacionsListaExterna.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
+                                                      
+    @asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
+
+    logger.debug("Asignacioneeees"+(@asignacions.map { |f| f.id.to_s }.join ','))
      # ToDo:asignatura puede ser null en la base de datos, controlarlo...
     @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => getAsignacionTitulo(r), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s, :color => '#66FF33'} }    
     @asignacions = @asignacions.as_json 
@@ -56,7 +60,6 @@ class AsignacionsController < ApplicationController
     @horafin = @horas.last.fin
 
     respond_to do |format|
-      format.js
       format.html # index.html.erb
       format.xml { render :xml => @asignacions }
     end
@@ -394,22 +397,19 @@ def getAsignacionInfo(asignacion)
       else
           ocupacion = "Puntual-" + asignacion.solicitudlab.fechaini.strftime("%d-%m-%Y")
     end
+    #
+    comentarios=asignacion.solicitudlab.comentarios
+    comentarios=comentarios.blank? ?  " ": comentarios.gsub(/[\r\n]+/, "%")
+    
     info = "Puestos: " + asignacion.solicitudlab.npuestos.to_s 
     info= info + "%Profesor: " + asignacion.solicitudlab.usuario.nombre.to_s
     info= info +" "+  asignacion.solicitudlab.usuario.apellidos.to_s
-    info= info + "%Soft: " + asignacion.solicitudlab.comentarios 
+    info= info + "%Soft: " + comentarios
     info= info + "%Ocupación: " + ocupacion
     #Si la reserva no es genérica, necesitamos añadir la información de la asignatura
     #|| asignacion.generica.to_s == 'false'
     if asignacion.generica.nil? || asignacion.generica == false
        curso=asignacion.solicitudlab.curso== "0" ? "optativa" : asignacion.solicitudlab.curso
-
-       logger.debug asignacion.id
-       logger.debug asignacion.solicitudlab.asignatura.titulacion.abrevia
-       logger.debug asignacion.solicitudlab.asignatura.abrevia_asig
-       logger.debug curso
-       logger.debug asignacion.solicitudlab.curso
-
        asigInfo="Asig: " +asignacion.solicitudlab.asignatura.titulacion.abrevia+"(" +asignacion.solicitudlab.asignatura.abrevia_asig + ") %Curso: " + curso + "%"
        info = asigInfo + info
     else

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150124183043) do
+ActiveRecord::Schema.define(version: 20150212184904) do
 
   create_table "asignaciondefs", force: :cascade do |t|
     t.integer  "solicitudlab_id"
@@ -165,6 +165,7 @@ ActiveRecord::Schema.define(version: 20150124183043) do
     t.datetime "updated_at"
     t.text     "aviso"
     t.boolean  "especial"
+    t.string   "grupo"
   end
 
   create_table "periodos", force: :cascade do |t|

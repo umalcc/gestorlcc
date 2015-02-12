@@ -121,10 +121,13 @@ def getAsignacionInfo(asignacion)
       else
           ocupacion = "Puntual-" + asignacion.solicitudlab.fechaini.strftime("%d-%m-%Y")
     end
+    
+    comentarios=asignacion.solicitudlab.comentarios
+    comentarios=comentarios.blank? ?  " ": comentarios.gsub(/[\r\n]+/, "%")
     info = "Puestos: " + asignacion.solicitudlab.npuestos.to_s 
     info= info + "%Profesor: " + asignacion.solicitudlab.usuario.nombre.to_s
     info= info +" "+  asignacion.solicitudlab.usuario.apellidos.to_s
-    info= info + "%Soft: " + asignacion.solicitudlab.comentarios 
+    info= info + "%Soft: " + comentarios
     info= info + "%Ocupación: " + ocupacion
     #Si la reserva no es genérica, necesitamos añadir la información de la asignatura
     #|| asignacion.generica.to_s == 'false'
