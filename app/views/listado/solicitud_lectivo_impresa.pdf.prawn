@@ -26,14 +26,14 @@ pdf.text "\n"
 
 ##################################### Tabla con las solicitudes ############################################
 
-header = [["Fecha sol.", "Usuario","Asignatura","Curso","Eq.","F.inicio/F.fin","Petición","Soft./\ncomentarios","Elección equipos"]]
+header = [["Fecha sol.", "Usuario","Asignatura - Tit.","Curso", "Eq.","F.inicio/F.fin","Petición","Soft./\ncomentarios","Elección equipos"]]
 
 items = @solicitudlabs.map do |item|
  
  [
     item.fechasol.strftime("%d-%m-%Y"),
     item.usuario.nombre + " " + item.usuario.apellidos,
-    item.asignatura.abrevia_asig,
+    item.asignatura.abrevia_asig + "-" + item.asignatura.titulacion.abrevia,
     if item.curso.to_s == "sin curso"
        "-"
     else

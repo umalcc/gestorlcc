@@ -149,7 +149,7 @@ end
      cuadrante=Array3d.new
      @asignacions=[]
    
-    
+    dias=Dia.to_a
      @solicitudlabs.each { |sol|     #por cada una de las @solicitudlabs, buscamos los lab que tienen ese n. de puestos
        sol.peticionlab.each { |pet|     #por cada peticion de tramo de cada solicitud
         
