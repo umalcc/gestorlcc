@@ -80,8 +80,11 @@ else { dd.style.display = "none"; }
           .val( value )
           .attr( "title", "" )
           .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
-          .css("background-color","white")
+          .css("background","white")
           .css("border","1px solid rgb(189, 186, 186)")
+          .css("color","black")
+          .css("font-size","12px")
+          .css("padding","2px 5px")
           .autocomplete({
             delay: 0,
             minLength: 0,
@@ -109,10 +112,10 @@ else { dd.style.display = "none"; }
  
         $( "<a>" )
           .attr( "tabIndex", -1 )
-          .attr( "title", "Mostrar todos los elementos" )
-          .css("height","28px")
+          .css("height","19px")
+          .css("width","24px")
           .css("vertical-align","bottom")
-          .tooltip()
+          .css("background","white")
           .appendTo( this.wrapper )
           .button({
             icons: {
@@ -120,6 +123,7 @@ else { dd.style.display = "none"; }
             },
             text: false
           })
+          .tooltip()
           .removeClass( "ui-corner-all" )
           .addClass( "custom-combobox-toggle ui-corner-right" )
           .mousedown(function() {
@@ -135,7 +139,9 @@ else { dd.style.display = "none"; }
  
             // Pass empty string as value to search for, displaying all results
             input.autocomplete( "search", "" );
-          });
+          })
+          .first()
+          .css("background-image","url('ui-icons_222222_256x240.png')")
       },
  
       _source: function( request, response ) {

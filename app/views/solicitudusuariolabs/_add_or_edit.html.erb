@@ -14,7 +14,7 @@
             <div class="ui-widget">
               <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]},
           html_options={:selected=>@solicitudlab.asignatura.titulacion_id} %>
-</div>
+            </div>
           </dd>
           <dt>Curso *</dt>
           <dd id="combo_nivel"><%= select_tag "nivel", options_for_select(Asignatura::CURSO.each_with_index.map{|x,i|[x,i]},@solicitudlab.asignatura.curso)%></dd>
