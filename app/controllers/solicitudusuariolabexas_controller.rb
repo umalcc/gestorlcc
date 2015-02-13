@@ -109,7 +109,7 @@ class SolicitudusuariolabexasController < ApplicationController
 
   def getViewModel
     @especiales=Laboratorio.where('especial=?',"t").to_a 
-    @titulaciones=Titulacion.order("id").to_a
+    @titulaciones=Titulacion.order("nombre").to_a
      if (@solicitudlabexa.asignatura_id == nil)
       #@solicitudlabexa.asignatura_id=0
       if (Asignatura::CURSO).first=="optativa"
