@@ -31,7 +31,7 @@
 
 	    <dt>Puestos *</dt>
             <dd onchange='mostrardiv("solicitudlab_submit")'>
-                <%= select_tag "npuestos", options_for_select(@puestos<<Laboratorio::DOS_LAB,@solicitudlab.npuestos) %>
+                <%= select_tag "npuestos", options_for_select(@puestos,@solicitudlab.npuestos) %>
             </dd>
             <dt>Fecha inicio *</dt>
             <dd onclick='mostrardiv("solicitudlab_submit")'>
@@ -145,8 +145,7 @@
 
 <script type="text/javascript">
 $(function(){
-
-
+$("#titulacion_titulacion_id").combobox();
   $("#linkSubFormulario").click(function()
 {
   var url="/solicitar/anadir";

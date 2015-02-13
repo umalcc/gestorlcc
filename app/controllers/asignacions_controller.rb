@@ -37,16 +37,16 @@ class AsignacionsController < ApplicationController
     #end
 
     if @asignacions.size!=0
+      @asignacionsListaExterna = @asignacionsListaExterna.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
       @asignacionsListaExterna = @asignacionsListaExterna.map { |r| {:id => r.id,
                                                                      :asignatura => r.solicitudlab.asignatura.abrevia_asig.to_s,
                                                                      :title => ((r.generica.to_s == 'null' || r.generica.to_s == 'false')? r.solicitudlab.asignatura.abrevia_asig.to_s : "RG"),
                                                                      :info =>getAsignacionInfo(r) }}
-      #@asignacionsListaExterna = @asignacionsListaExterna.as_json  
-    @asignacionsListaExterna = @asignacionsListaExterna.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
+    #  @asignacionsListaExterna = @asignacionsListaExterna.as_json  
+    #@asignacionsListaExterna = @asignacionsListaExterna.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
                                                       
     @asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
 
-    logger.debug("Asignacioneeees"+(@asignacions.map { |f| f.id.to_s }.join ','))
      # ToDo:asignatura puede ser null en la base de datos, controlarlo...
     @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => getAsignacionTitulo(r), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s, :color => '#66FF33'} }    
     @asignacions = @asignacions.as_json 
@@ -152,7 +152,7 @@ end
      cuadrante=Array3d.new
      @asignacions=[]
    
-    dias=Dia.to_a
+    
      @solicitudlabs.each { |sol|     #por cada una de las @solicitudlabs, buscamos los lab que tienen ese n. de puestos
        sol.peticionlab.each { |pet|     #por cada peticion de tramo de cada solicitud
         

@@ -28,7 +28,7 @@
 
 	    <dt>Puestos *</dt>
             <dd onchange='mostrardiv("solicitudlabexa_submit")'>
-                <%= select_tag "npuestos", options_for_select((@puestos<<Laboratorio::DOS_LAB)+Laboratorio::PUESTOS_EXAMEN,@solicitudlabexa.npuestos) %>
+                <%= select_tag "npuestos", options_for_select((@puestos)+Laboratorio::PUESTOS_EXAMEN,@solicitudlabexa.npuestos) %>
             </dd>
             <dt>Fecha *</dt>
             <dd onclick='mostrardiv("solicitudlabexa_submit")'><%= f.text_field :fecha, :size=>12, :name=>"fecha",  :id=>"DPC_fecha_DD-MM-YYYY",:value=>@solicitudlabexa.fecha.strftime("%d-%m-%Y") %></dd>
@@ -106,6 +106,8 @@
 <script type="text/javascript">
   $(function()
     {
+      $("#titulacion_titulacion_id").combobox();
+     
   $("#titulacion_titulacion_id").change(function()
         {
           var url="/asignaturas/combo_por_titulacion";

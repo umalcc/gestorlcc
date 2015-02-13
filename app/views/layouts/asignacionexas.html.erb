@@ -5,11 +5,11 @@
   <meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
   <title>Asignaciones de ex&aacute;menes: <%= controller.action_name %></title>
   <link rel="shortcut icon" href="/images/favicon.ico">
- <%= javascript_include_tag "jquery","jquery_ujs" %>
+ <%= javascript_include_tag "jquery","jquery_ujs","jquery-ui.min" %>
  
   <%= javascript_include_tag "application" %>
   <%= javascript_include_tag "datepickercontrol","mios" %>
-  <%= stylesheet_link_tag 'scaffold','dptolcc2','datepickercontrol_bluegray' %>
+  <%= stylesheet_link_tag 'scaffold','dptolcc2','datepickercontrol_bluegray',"jquery-ui.min" %>
   <%= stylesheet_link_tag 'imprimir',:media=>"print" %>
   <%= csrf_meta_tag %>
 </head>

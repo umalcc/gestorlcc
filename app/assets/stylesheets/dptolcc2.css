@@ -1579,3 +1579,7 @@ table#tipo_reserva, td:not(.fc-view *)
     margin: 0;
     padding: 5px 10px;
   }
+.ui-autocomplete-input 
+{
+	width:350px;
+}
