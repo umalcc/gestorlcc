@@ -21,8 +21,8 @@ class SessionsController < ApplicationController
 # else
 #      session[:mensaje]='MAL'
 # end
-    @usuario_actual=Usuario.find_by_identificador_and_password(
-                        params[:login],Digest::MD5.hexdigest(params[:password]))
+    @usuario_actual=Usuario.find_by_identificador(
+                        params[:login])#,Digest::MD5.hexdigest(params[:password])
    if @usuario_actual
     #if !@usuario_actual.sesion
      session[:user_id]=@usuario_actual.id
