@@ -309,7 +309,6 @@ def consulta
     Asignaciondef.update(params[:asigna], :horaini => params[:horaini], :horafin => params[:horafin], :dia_id => params[:dia_id],
                          :laboratorio_id => params[:lab_id], :temporal => params[:temporal])
     #session[:lista_externa].delete(params[:asigna])
-    logger.debug session[:lista_externa]
 
     respond_to do |format|
       format.json {render json:@asignacionAntigua}
