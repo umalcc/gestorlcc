@@ -248,7 +248,7 @@ def asigna_directa
 def consulta
     ActiveRecord::Base.include_root_in_json = false
 
-    @laboratorios=Laboratorio.all.select("id,nombre_lab, ssoo, puestos, especial")
+    @laboratorios=Laboratorio.all.select("id,nombre_lab, ssoo, puestos, especial").order("nombre_lab")
     @laboratorios=@laboratorios.map{|lab| {:id => lab.id,
                                           :nombre_lab => lab.nombre_lab,
                                           :ssoo => lab.ssoo,
@@ -280,7 +280,7 @@ def consulta
       #@asignacionsListaExterna = @asignacionsListaExterna.as_json                                                        
      @asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today }
      # ToDo:asignatura puede ser null en la base de datos, controlarlo...
-    @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => getAsignacionTitulo(r), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s, :color => '#66FF33'} }    
+    @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => getAsignacionTitulo(r), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s} }    
     @asignacions = @asignacions.as_json 
     end
 
