@@ -374,6 +374,8 @@ $(function()
 		},
         eventLimit: true, //allow "more" link when too many events
         events: filterEventsByDay(asignacions,divId), //load events
+        axisFormat: 'H(:mm)', 
+        timeFormat: 'H(:mm)',
         rooms:$.parseJSON(laboratorios),
         eventMouseover: function(event,jsEvent)
         {
