@@ -385,27 +385,34 @@ return result
 end
 
 def getAsignacionInfo(asignacion)
+   
+   info=" "
+   
    #Obtener la ocupación del laboratorio para dicho evento
-      ocupacion = " "                           
-      info=" "
-     if (asignacion.solicitudlab.tipo.to_s == "T")
+    ocupacion = " "                           
+    if (asignacion.solicitudlab.tipo.to_s == "T")
           ocupacion = "Todo el período"
-      elsif (asignacion.solicitudlab.tipo.to_s == "I")
-       ocupacion = "Del " + asignacion.solicitudlab.fechaini.strftime("%d-%m-%Y") + " al " + asignacion.solicitudlab.fechafin.strftime("%d-%m-%Y")
-      elsif (asignacion.solicitudlab.tipo.to_s == "X")
+    elsif (asignacion.solicitudlab.tipo.to_s == "I")
+          ocupacion = "Del " + asignacion.solicitudlab.fechaini.strftime("%d-%m-%Y") + " al " + asignacion.solicitudlab.fechafin.strftime("%d-%m-%Y")
+    elsif (asignacion.solicitudlab.tipo.to_s == "X")
           ocupacion = "Asignación directa - Del " + asignacion.solicitudlab.fechaini.strftime("%d-%m-%Y") + " al " + asignacion.solicitudlab.fechafin.strftime("%d-%m-%Y")
-      else
+    else
           ocupacion = "Puntual-" + asignacion.solicitudlab.fechaini.strftime("%d-%m-%Y")
     end
-    #
+    
     comentarios=asignacion.solicitudlab.comentarios
     comentarios=comentarios.blank? ?  " ": comentarios.gsub(/[\r\n]+/, "%")
-    
+
     info = "Puestos: " + asignacion.solicitudlab.npuestos.to_s 
+    #Añadir fecha de la solicitud, horaini y horafin pero sólo si la asignacion es temporal
+    if asignacion.temporal == true
+       info = info + "%Horario: " + asignacion.dia.nombre + " " + asignacion.horaini + " - " + asignacion.horafin
+    end
     info= info + "%Profesor: " + asignacion.solicitudlab.usuario.nombre.to_s
     info= info +" "+  asignacion.solicitudlab.usuario.apellidos.to_s
     info= info + "%Soft: " + comentarios
     info= info + "%Ocupación: " + ocupacion
+
     #Si la reserva no es genérica, necesitamos añadir la información de la asignatura
     #|| asignacion.generica.to_s == 'false'
     if asignacion.generica.nil? || asignacion.generica == false
@@ -415,6 +422,10 @@ def getAsignacionInfo(asignacion)
     else
        info = "Reserva genérica%"+info
     end
+
+    fechasol = "Fecha sol.: " + asignacion.solicitudlab.fechasol.strftime("%d-%m-%Y")
+    info = fechasol + "%" + info
+
     return info   
   end
 

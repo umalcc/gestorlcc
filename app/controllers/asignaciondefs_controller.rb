@@ -124,7 +124,12 @@ def getAsignacionInfo(asignacion)
     
     comentarios=asignacion.solicitudlab.comentarios
     comentarios=comentarios.blank? ?  " ": comentarios.gsub(/[\r\n]+/, "%")
+
     info = "Puestos: " + asignacion.solicitudlab.npuestos.to_s 
+    #Añadir fecha de la solicitud, horaini y horafin pero sólo si la asignacion es temporal
+    if asignacion.temporal == true
+       info = info + "%Horario: " + asignacion.dia.nombre + " " + asignacion.horaini + " - " + asignacion.horafin
+    end
     info= info + "%Profesor: " + asignacion.solicitudlab.usuario.nombre.to_s
     info= info +" "+  asignacion.solicitudlab.usuario.apellidos.to_s
     info= info + "%Soft: " + comentarios
@@ -138,6 +143,10 @@ def getAsignacionInfo(asignacion)
     else
        info = "Reserva genérica%"+info
     end
+
+    fechasol = "Fecha sol.: " + asignacion.solicitudlab.fechasol.strftime("%d-%m-%Y")
+    info = fechasol + "%" + info
+
     return info   
   end
 
