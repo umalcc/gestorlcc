@@ -129,6 +129,11 @@ def getAsignacionInfo(asignacion)
     #Añadir fecha de la solicitud, horaini y horafin pero sólo si la asignacion es temporal
     if asignacion.temporal == true
        info = info + "%Horario: " + asignacion.dia.nombre + " " + asignacion.horaini + " - " + asignacion.horafin
+    else
+       horaini = Time.parse(asignacion.peticionlab.horaini)
+       horafin = Time.parse(asignacion.peticionlab.horafin)
+       totalHoras = ((horafin - horaini)/1.hour).round
+       info = info + "%Total horas sol.: " + totalHoras.to_s
     end
     info= info + "%Profesor: " + asignacion.solicitudlab.usuario.nombre.to_s
     info= info +" "+  asignacion.solicitudlab.usuario.apellidos.to_s
