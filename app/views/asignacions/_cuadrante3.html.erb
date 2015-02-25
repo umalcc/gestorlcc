@@ -8,7 +8,6 @@ function makeDroppable()
 		$(this).data('event', {
 			info: info,
 			id: $.trim($(this).attr("id")),
-			color: '#66FF33',
 			title: $.trim($(this).text()), // use the element's text as the event title
 			stick: true //maintain when user navigates(see docs on the renderEvent method)
 		});
@@ -70,7 +69,7 @@ function registrarEvento(evento)
 	//evento.end=moment("2014-09-14 "+evento.horafin,"YYYY-MM-DD HH-mm");
 	evento.start=evento.horaini;
 	evento.end=evento.horafin;
-	evento.color= '#66FF33';
+	//evento.color= '#66FF33';
 	evento.info=evento.info.replace(/%/g, "\r\n");
 	evento.title=evento.title.replace(/%/g, "\r\n");
 	$.evento=evento;
@@ -153,8 +152,8 @@ function elimEventListaExt(id,confirmacionReq)
 }
 function documentClick(ev)
 {
-	$(".seleccionado").css("border-style", "none");
-	$(".seleccionado").css("background-color", "#6F3");
+	$(".seleccionado").css("border", "1px solid #3a87ad");
+	$(".seleccionado").css("background-color", "#3a87ad");
 	$(".fc-event").removeClass("seleccionado");
 }
 
@@ -228,7 +227,7 @@ function moverACalendario(id,actualTab)
 				eliminarListaExterna(id);
 				$.evento={id:response.id,
 			 	operacion:"pegar",
-			 	color: '#66FF33',
+			 	//color: '#66FF33',
 		 		title:response.titulo.replace(/%/g, "\r\n"),
 		 		info:response.info.replace(/%/g, "\r\n"),
 		 		allDay:false,
@@ -305,6 +304,7 @@ function funcionesEspeciales(ev)
   	}
   }
 }
+
 $(function() 
 {	$.evento={};
 	$(document).on("click",documentClick);
@@ -335,7 +335,7 @@ $(function()
     laboratorios=laboratorios.replace(/nombre_lab/g,"name");
     laboratorios=laboratorios.replace(/=>/g, ":");
     asignacions=asignacions.replace(/=>/g, ":");
-	 console.log("Asignacions:"+asignacions);
+	console.log("Asignacions:"+asignacions);
     /* initialize the calendar */
     $("div.calendario").each(function(index, element)
     {
@@ -421,8 +421,8 @@ $(function()
 	   	}
 	   },
        eventClick: function(event){
-       	     $(".seleccionado").css("border-style", "none");
-       	     $(".seleccionado").css("background-color", "#6F3");
+       	     $(".seleccionado").css("border", "1px solid #3a87ad");
+	         $(".seleccionado").css("background-color", "#3a87ad");
        	     $(".fc-event").removeClass("seleccionado");
        	     $(this).addClass("seleccionado");
        	     $(".seleccionado").css("border-style", "dashed");
@@ -432,6 +432,31 @@ $(function()
 
         });
     });
+
+
+
+ $("#cargando").hide(); 
+ $('#grabarBtn').click(function () 
+ { 
+       $("#cargando").show();
+       $.ajax({
+                 dataType:"json",
+                 type: "POST",
+                 url: '/asignacions/grabar_asignacion',
+                 success: function(data, textStatus)
+                 {
+                    $("#cargando").hide();
+                    alert(data.msg);
+                    location.reload();
+                 },
+                 error: function(data, textStatus)
+                 {
+                     $("#cargando").hide();
+                     var error = data.responseJSON.msg
+                     alert(error);
+                 }
+            });
+  });
 
  });
 
@@ -493,8 +518,14 @@ $(function()
 <tr>
 	<td valign="top">
       <table>
+        <tr><td align="center" valign="middle"><button id="grabarBtn">Grabar asignaciones</button></td>
+        </tr>
+        <tr><div id="cargando" style="text-align:center">
+                 <%=image_tag("ajax-loader.gif",:border=>0) %>
+            </div>
+        </tr>
         <tr><td><br/></td></tr>
-        <tr ><td align="center" valign="middle"><h4>Lista de asignaciones</h4></td></tr>
+        <tr ><td align="center" valign="middle"><h4>Asignaciones temporales</h4></td></tr>
         <tr>
           <td align="center" valign="middle">
             <div id='external-events' style="height:<%= 35+35*@asignacionsListaExterna.size %>px;">

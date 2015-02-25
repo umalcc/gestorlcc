@@ -8,7 +8,6 @@ function makeDroppable()
 		$(this).data('event', {
 			info: info,
 			id: $.trim($(this).attr("id")),
-			color: '#66FF33',
 			title: $.trim($(this).text()), // use the element's text as the event title
 			stick: true //maintain when user navigates(see docs on the renderEvent method)
 		});
@@ -71,7 +70,7 @@ function registrarEvento(evento)
 	//evento.end=moment("2014-09-14 "+evento.horafin,"YYYY-MM-DD HH-mm");
 	evento.start=evento.horaini;
 	evento.end=evento.horafin;
-	evento.color= '#66FF33';
+	//evento.color= '#66FF33';
 	evento.info=evento.info.replace(/%/g, "\r\n");
 	evento.title=evento.title.replace(/%/g, "\r\n");
 	$.evento=evento;
@@ -154,8 +153,8 @@ function elimEventListaExt(id,confirmacionReq)
 }
 function documentClick(ev)
 {
-	$(".seleccionado").css("border-style", "none");
-	$(".seleccionado").css("background-color", "#6F3");
+	$(".seleccionado").css("border", "1px solid #3a87ad");
+	$(".seleccionado").css("background-color", "#3a87ad");
 	$(".fc-event").removeClass("seleccionado");
 }
 
@@ -229,7 +228,6 @@ function moverACalendario(id,actualTab)
 				eliminarListaExterna(id);
 				$.evento={id:response.id,
 			 	operacion:"pegar",
-			 	color: '#66FF33',
 		 		title:response.titulo.replace(/%/g, "\r\n"),
 		 		info:response.info.replace(/%/g, "\r\n"),
 		 		allDay:false,
@@ -408,8 +406,8 @@ $(function()
 	   	}
 	   },
        eventClick: function(event){
-       	     $(".seleccionado").css("border-style", "none");
-       	     $(".seleccionado").css("background-color", "#6F3");
+       	     $(".seleccionado").css("border", "1px solid #3a87ad");
+	         $(".seleccionado").css("background-color", "#3a87ad");
        	     $(".fc-event").removeClass("seleccionado");
        	     $(this).addClass("seleccionado");
        	     $(".seleccionado").css("border-style", "dashed");
@@ -447,7 +445,7 @@ $(function()
 		text-align: left;
 	}
 		
-	#external-events h4 {
+	#external-events {
 		font-size: 16px;
 		margin-top: 0;
 		padding-top: 1em;
@@ -482,7 +480,7 @@ $(function()
       <table>
         <tr><td align="center" valign="middle"> <%= button_to 'Asignación directa','/asignaciondefs/asigna_directa', :method => 'get' %></td></tr>
         <tr><td><br/></td></tr>
-        <tr ><td align="center" valign="middle"><h4>Lista de asignaciones</h4></td></tr>
+        <tr ><td align="center" valign="middle"><h4>Asignaciones temporales</h4></td></tr>
         <tr>
           <td align="center" valign="middle">
             <div id='external-events' style="height:<%= 35+35*@asignacionsListaExterna.size %>px;">

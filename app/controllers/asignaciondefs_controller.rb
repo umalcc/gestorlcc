@@ -29,41 +29,6 @@ class AsignaciondefsController < ApplicationController
    return @asignacion
   end
 
-  def grabar_asignacion
-    # borrar las antiguas asignaciones definitivas, y sus solicitudes asociadas
-    # leer asignaciones provisionales
-    # grabarlas en definitivas
-    # eliminar las provisionales
-
-  
-    @asignaciondefs=Asignaciondef.all
-    if @asignaciondefs.size!=0
-      solicitudes=@asignaciondefs.map{|a| a.solicitudlab_id}.uniq
-      solicitudes.each{|s|  sol=Solicitudlab.find(s)
-                            sol.destroy}
-      @asignaciondefs.each{|a| a.peticionlab.destroy
-                             a.destroy}
-    end
-    @asignacions=Asignacion.all
-    @asignacions.each { |a| asig_def=Asignaciondef.new( :solicitudlab_id=>a.solicitudlab_id,
-                                                        :peticionlab_id=>a.peticionlab_id,
-                                                        :laboratorio_id=>a.laboratorio_id,
-                                                        :horaini=>a.horaini,
-                                                        :horafin=>a.horafin,
-                                                        :dia_id=>a.dia_id,
-                                                        :mov_dia=>a.mov_dia,
-                                                        :mov_hora=>a.mov_hora)
-                            
-                            asig_def.save
-                            sol=Solicitudlab.find(a.solicitudlab.id)
-                            sol.asignado="D"
-                            sol.save
-                            a.destroy
-                      }
-    respond_to do |format|
-      format.js
-    end
-  end
   
 def anadirListaExterna
   #(session[:lista_externa] ||= []) << params[:id]

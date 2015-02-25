@@ -36,25 +36,21 @@ class AsignacionsController < ApplicationController
       @asignacionsListaExterna=Asignacion.where("temporal= ?", 't').all
     #end
 
-    if @asignacions.size!=0
+    if @asignacionsListaExterna.size !=0
       @asignacionsListaExterna = @asignacionsListaExterna.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
       @asignacionsListaExterna = @asignacionsListaExterna.map { |r| {:id => r.id,
                                                                      :asignatura => r.solicitudlab.asignatura.abrevia_asig.to_s,
                                                                      :title => ((r.generica.to_s == 'null' || r.generica.to_s == 'false')? r.solicitudlab.asignatura.abrevia_asig.to_s : "RG"),
                                                                      :info =>getAsignacionInfo(r) }}
-    #  @asignacionsListaExterna = @asignacionsListaExterna.as_json  
-    #@asignacionsListaExterna = @asignacionsListaExterna.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
-                                                      
-    @asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
-
-     # ToDo:asignatura puede ser null en la base de datos, controlarlo...
-    @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => getAsignacionTitulo(r), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s} }    
-    @asignacions = @asignacions.as_json 
     end
 
+    if @asignacions.size!=0                                                     
+       @asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today}
+       @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => getAsignacionTitulo(r), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s} }    
+    end
+
+    @asignacions = @asignacions.as_json 
     @dias = Dia.where('en_uso = ?','t')
-    #qué pasa si hay huecos? si hay horas intermedias que no se usan?
-    #cómo ordenar las horas?qué es num?
     @horas = Horario.where('en_uso = ?','t').order("num")
     @horainicio = @horas.first.comienzo
     @horafin = @horas.last.fin
@@ -262,6 +258,68 @@ end
         format.js
     end
     
+  end
+
+
+  # borrar las antiguas asignaciones definitivas, y sus solicitudes asociadas
+  # leer asignaciones provisionales
+  # grabarlas en definitivas
+  # eliminar las provisionales
+  def grabar_asignacion 
+      
+    statusMessage=""
+    statusCode=200
+
+    @asignacions=Asignacion.select{|a| a.temporal == false} # sólo deben grabarse aquellas con temporal = false
+    if @asignacions.size == 0
+       statusMessage = "No hay asignaciones para grabar"
+       statusCode = 500
+    else
+
+        success = true
+        Asignaciondef.transaction do
+            @asignaciondefs=Asignaciondef.all
+            if @asignaciondefs.size!=0
+              solicitudes=@asignaciondefs.map{|a| a.solicitudlab}.uniq{|s| s.id}
+              solicitudes.each{|s|  peticiones=Peticionlab.where("solicitudlab_id = ?",s.id).to_a # busco todos las peticiones que tiene la solicitud
+                                    peticiones.each {|petición| success = petición.destroy && success}
+                                    success = s.destroy && success}
+
+              @asignaciondefs.each{|a| success = a.destroy && success}
+            end
+
+            @asignacions.each { |a| asig_def=Asignaciondef.new( :solicitudlab_id=>a.solicitudlab_id,
+                                                                :peticionlab_id=>a.peticionlab_id,
+                                                                :laboratorio_id=>a.laboratorio_id,
+                                                                :horaini=>a.horaini,
+                                                                :horafin=>a.horafin,
+                                                                :dia_id=>a.dia_id,
+                                                                :mov_dia=>a.mov_dia,
+                                                                :mov_hora=>a.mov_hora)
+                                    
+                                    success = asig_def.save && success
+                                    logger.debug asig_def.save
+                                    sol=a.solicitudlab
+                                    sol.asignado="D"
+                                    success = sol.save && success
+                                    succes = a.destroy && success
+                              }
+      end
+
+      if success
+          statusMessage = "Se han grabado las asignaciones.\nA partir de ahora se podrá activar el período correspondiente"
+          statusCode = 200
+      else
+          statusMessage = "La grabación de asignaciones ha fallado"
+          statusCode = 500
+      end
+
+    end
+
+    respond_to do |format| 
+      format.json {render :json => {:msg => statusMessage},:status => statusCode}  
+    end
+
   end
  
   def mover
