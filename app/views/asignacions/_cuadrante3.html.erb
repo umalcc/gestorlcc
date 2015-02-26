@@ -227,7 +227,6 @@ function moverACalendario(id,actualTab)
 				eliminarListaExterna(id);
 				$.evento={id:response.id,
 			 	operacion:"pegar",
-			 	//color: '#66FF33',
 		 		title:response.titulo.replace(/%/g, "\r\n"),
 		 		info:response.info.replace(/%/g, "\r\n"),
 		 		allDay:false,
@@ -377,11 +376,15 @@ $(function()
         axisFormat: 'H(:mm)', 
         timeFormat: 'H(:mm)',
         rooms:$.parseJSON(laboratorios),
-        eventMouseover: function(event,jsEvent)
+        /*eventMouseover: function(event,jsEvent)
         {
             info = event.info;
             $(jsEvent.target).attr('title',info);
-	    },
+	    },*/
+        eventRender: function(event, element) {
+            
+            element.attr('title', event.info);
+        },
 	    eventResize: function(event, delta, revertFunc)
 	    {
 	    	event.operacion="redimensionar";
