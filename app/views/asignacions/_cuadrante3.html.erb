@@ -353,16 +353,20 @@ $(function()
         editable: true,
         droppable: true,
         drop: function(date, jsEvent, ui, selectedRoom) 
-        { 
+        {  
         	tmpDate= new Date(date);
         	//tmpDate.setHours(tmpDate.getHours()+2);
         	horafin = moment(tmpDate);
         	//horafin = horafin.getHours()+":"+horafin.getMinutes();
-        	event={id: $(this).attr("id"),
-        		   start:date,
-        		   end:horafin,
-        		   room_id:selectedRoom
-        		  };
+        	event.id= $(this).attr("id");
+        	event.start= date;
+        	event.end=horafin;
+        	event.room_id=selectedRoom;
+        	// event={id: $(this).attr("id"),
+        	// 	   start:date,
+        	// 	   end:horafin,
+        	// 	   room_id:selectedRoom
+        	// 	  };
         	 event.operacion="pegar";
              updateEventCalendar(event);
         	 $(this).remove(); //elimina el evento de la lista externa visualmente
