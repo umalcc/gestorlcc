@@ -1,12 +1,9 @@
 class AsignaturasController < ApplicationController
-  # GET /asignaturas
-  # GET /asignaturas.xml
-
-#  @@asignaturas=[]
+  
 
   before_action :login_requerido 
-
   before_action :admin?, :except=> [:combo_por_titulacion, :combo_por_nivel]
+
 
   def index
     @asignaturas = Asignatura.order("titulacion_id,curso,cuatrimestre").to_a
@@ -55,6 +52,7 @@ class AsignaturasController < ApplicationController
 
     @asignatura = Asignatura.new
     saveModel(params)
+    getViewModel
  
     respond_to do |format|
       if @asignatura.save
@@ -80,6 +78,8 @@ class AsignaturasController < ApplicationController
   def update
     @asignatura = Asignatura.find(params[:id])
     saveModel(params)
+    getViewModel
+
     respond_to do |format|
       if @asignatura.save
       #  flash.now[:notice] = 'Asignatura fue actualizada con &eacute;xito.'
@@ -109,7 +109,7 @@ class AsignaturasController < ApplicationController
 
   def combo_por_titulacion
 
-    session[:titulacion]=params[:combo_titulacion]
+    session[:titulacion]=params[:titulacion]
     logger.debug "nivel" + params[:combo_nivel].to_s
     if(params[:combo_nivel]!=nil)
       session[:combo_nivel]=params[:combo_nivel]
