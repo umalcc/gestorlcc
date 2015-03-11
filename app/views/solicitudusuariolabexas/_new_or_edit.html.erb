@@ -1,6 +1,6 @@
 <div id="central" >
     <p>GESTOR DE RECURSOS<br/>
-       <%= image_tag ("pointer.gif") %>Editando solicitud de laboratorio para ex&aacute;menes
+       <%= image_tag ("pointer.gif") %><%=titulo%>
     </p>
     <div id="recuadro">
       <p><%= image_tag ("bg_separ.gif") %></p>
@@ -15,7 +15,7 @@
             <dt>Titulaci&oacute;n *</dt>
             <dd id="combo_titulacion">
                <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]},
-					html_options={:selected=>@solicitudlabexa.asignatura.titulacion_id } %></dd>
+					html_options={:selected=>(@solicitudlabexa.asignatura.titulacion_id unless @solicitudlabexa.asignatura.nil?) } %></dd>
 
             <dt>Curso *</dt>
             <dd id="combo_nivel">
@@ -86,15 +86,15 @@
                        </tr>
               </table><!-- muestra los tramos ya seleccionados e incluye el subformulario -->
               </dd>
-              <p><%= f.submit 'Guardar cambios' %></p>          
+              <p><%= f.submit submit_name %></p>          
             </dl> 
           </div><!-- de recuadro-azul -->
           <div id="errores">
                 <%= f.error_messages :header_message => 'Se produjeron errores en la captura de datos', 
-                    :message => 'Imposible modificar la  solicitud de laboratorio:'%>
+                    :message => error_message%>
                 <% if flash.now[:notice] %>
                    <div id="errorExplanation">
-                      <p>Imposible modificar la  solicitud de laboratorio: </p>
+                      <p><%=error_message%></p>
                       <ul>
                        <li><%=flash.now[:notice] %></li>
                       </ul>
@@ -114,11 +114,11 @@
         {
           var url="/asignaturas/combo_por_titulacion";
           var nivel=$("#nivel").val();
-          var query=$("#titulacion_titulacion_id").val();
+          var titulacion=$("#titulacion_titulacion_id").val();
           $.ajax({
             type:"POST",
             url:url,
-            data:{combo_titulacion:query,combo_nivel:nivel}
+            data:{titulacion:titulacion,combo_nivel:nivel}
           });
         });
 

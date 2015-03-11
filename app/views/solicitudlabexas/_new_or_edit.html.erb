@@ -1,6 +1,6 @@
 <div id="central" >
     <p>GESTOR DE RECURSOS<br/>
-       <%= image_tag ("pointer.gif") %>Gesti&oacute;n de archivos: Editando solicitud de laboratorio para ex&aacute;menes
+       <%= image_tag ("pointer.gif") %>Gesti&oacute;n de archivos: <%=titulo%>
     </p>
     <div id="recuadro">
       <p><%= image_tag ("bg_separ.gif") %></p>
@@ -15,16 +15,18 @@
              
                <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]},
                               html_options={:selected=>@solicitudlabexa.usuario_id } %></dd>
+            
             <dt>Titulaci&oacute;n *</dt>
-            <dd id="combo_titulacion" onchange='mostrardiv("solicitudlabexa_submit")'>
-             
+            <dd id="combo_titulacion"> 
                <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]},
-					html_options={:selected=>@solicitudlabexa.asignatura.titulacion_id } %></dd>
+					         html_options={:selected=>(@solicitudlabexa.asignatura.titulacion_id unless @solicitudlabexa.asignatura.nil?) } %></dd>
+
             <dt>Curso *</dt>
-            <dd id="combo_nivel" onchange='mostrardiv("solicitudlabexa_submit")'>
-               <%= select_tag "nivel", options_for_select(Asignatura::CURSO.each_with_index.map{|x,i|[x,i]},@solicitudlabexa.curso)%></dd>
+            <dd id="combo_nivel">
+               <%= select_tag "nivel", options_for_select(Asignatura::CURSO.each_with_index.map{|x,i|[x,i]},(@solicitudlabexa.curso unless @solicitudlabexa.asignatura.nil?))%></dd>
+
             <dt>Asignatura *</dt>
-            <dd onchange='mostrardiv("solicitudlabexa_submit")'>
+            <dd>
                <SPAN id="combo_asignatura">                
                 <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]}, 
                     html_options={:selected=>@solicitudlabexa.asignatura_id } %>
@@ -88,12 +90,12 @@
                        </tr>
               </table><!-- muestra los tramos ya seleccionados e incluye el subformulario -->
               </dd>
-              <p><%= f.submit 'Guardar cambios' %></p>          
+              <p><%= f.submit submit_name %></p>          
             </dl> 
           </div><!-- de recuadro-azul -->
           <div id="errores">
                 <%= f.error_messages :header_message => 'Se produjeron errores en la captura de datos', 
-                    :message => 'Imposible modificar la  solicitud de laboratorio:'%>
+                    :message => error_message %>
                 <% if flash.now[:notice] %>
                    <div id="errorExplanation">
                       <p>Imposible modificar la  solicitud de laboratorio: </p>
@@ -109,23 +111,23 @@
 
 
 <script type="text/javascript">
-  $(function()
-    {
-      $("#titulacion_titulacion_id").combobox();
-       $("#titulacion_titulacion_id").change(function()
-        {
-          var url="/asignaturas/combo_por_titulacion";
-          var nivel=$("#nivel").val();
-          var query=$("#titulacion_titulacion_id").val();
-          $.ajax({
-            type:"POST",
-            url:url,
-            data:{combo_titulacion:query,combo_nivel:nivel}
-          });
+$(function()
+{
+     $("#titulacion_titulacion_id").combobox();
+     $("#titulacion_titulacion_id").change(function()
+      {
+        var url="/asignaturas/combo_por_titulacion";
+        var nivel=$("#nivel").val();
+        var titulacion=$("#titulacion_titulacion_id").val();
+        $.ajax({
+          type:"POST",
+          url:url,
+          data:{titulacion:titulacion,combo_nivel:nivel}
         });
+      });
 
-       $("#nivel").change(function()
-        {
+      $("#nivel").change(function()
+      {
           var url="/asignaturas/combo_por_nivel";
           var query=$("#nivel").val();
           var titulacion=$("#titulacion_titulacion_id").val();
@@ -135,5 +137,5 @@
             data:{combo_nivel:query,titulacion:titulacion}
           });
         });
-    });
+});
 </script>

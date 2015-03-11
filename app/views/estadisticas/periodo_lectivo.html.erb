@@ -7,24 +7,28 @@
       <% nregistros=Historicoasig.all.size %>
       <% if nregistros!=0 %>
         <% @periodos=Historicoasig.order("periodo").to_a %>
-        <%= form_tag(url_for(:controller=>'estadisticas',:action=>'estadisticas_lectivo'),id:"form", method:"post",before: 'mostrardiv("imagen-progreso")', remote:true) do %>
-        <table id="busqueda" style="width:300px">
-          <tr>
-            <td style="text-align:left;width:100px">Periodo : </td>
-            <td style="text-align:left;width:100px"><%= select "periodo", "nombre_per", ['todos']+@periodos.map {|r| [r.periodo]}.uniq %> </td>
-            <td style="width:100px">
-              <%= submit_tag("Buscar", :type=>:image, :src=>"/assets/boton2.png")%>
-            </td>
-          </tr>
-        </table>
-        <table id="eliminahistorico" style="margin-left:900px;margin-top:-50px">
-          <tr>
-            
-            <td><%= link_to(image_tag("limpiar.jpeg",:border=>0,:width=>32,:height=>32),
-{ :method => 'POST', :controller=>'estadisticas',:action => 'borrar_historico_lectivo' }, data: {confirm: "Ésto eliminará todo el registro histórico de asignaciones en períodos lectivos. ¿Está seguro?"}, :remote => true)%></td>
-            <td style="color:#010080;font-size:0.9em">Limpiar<br/> hist&oacute;rico</td>
-          </tr>
-        </table>
+        <%= form_tag(url_for(:controller=>'estadisticas',:action=>'estadisticas_lectivo'),id:"form", method:"post", remote:true) do %>
+
+      <table>
+        <tr>
+          <td>
+              <table id="busqueda" style="width:300px">
+                <tr>
+                  <td style="text-align:left;width:100px">Periodo : </td>
+                  <td style="text-align:left;width:100px"><%= select "periodo", "nombre_per", ['todos']+@periodos.map {|r| [r.periodo]}.uniq %> </td>
+                  <td style="width:100px">
+                    <%= submit_tag("Buscar", :type=>:image, :src=>"/assets/boton2.png", :onclick => 'mostrardiv("imagen-progreso")')%>
+                  </td>
+                </tr>
+              </table>
+          </td>
+          <td>&nbsp;</td>
+          <td>
+            <input id="borrarHistoricoLectivo" type="button" onclick="borrarHistorico()" title="Limpiar histórico de asignaciones lectivas" />
+          </td>
+        </tr>
+      </table>
+
         <div id="registros">
           <div id="imagen-progreso" style="position:relative;top:-35px;right:200px;visibility:hidden">
                      <%=image_tag("ajax-loader.gif",:border=>0) %>
@@ -39,3 +43,23 @@
      </div><!-- de recuadro -->
 
 </div>
+
+<script type="text/javascript">
+
+   function borrarHistorico()
+   {  
+      var confirmMessage = "Ésto eliminará todo el registro histórico de asignaciones en períodos lectivos.\n¿Está seguro?";
+
+      if(confirm(confirmMessage))
+      {
+          mostrardiv("imagen-progreso");
+          $.ajax(
+          {
+             type:"POST",
+             url:"/estadisticas/borrar_historico_lectivo",
+             complete:function(){ ocultardiv("imagen-progreso");}
+          }); 
+      }
+   }
+
+</script>

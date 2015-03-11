@@ -552,9 +552,10 @@ def getAsignacionInfo(asignacion)
       @solicitudlab.asignatura=Asignatura.new
     end
     @solicitudlab.asignatura.id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
-    @solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
+    @solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id] unless params[:titulacion].nil?
     @solicitudlab.fechasol=Date.today
-    @solicitudlab.asignatura.curso=params[:nivel].to_s
+    @solicitudlab.asignatura.curso=params[:nivel]
+    @solicitudlab.curso = params[:nivel] == 0 ? "optativa" : params[:nivel].to_s
     @solicitudlab.fechaini=params[:fechaini].to_date
     @solicitudlab.fechafin=params[:fechafin].to_date
     @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])

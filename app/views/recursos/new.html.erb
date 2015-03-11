@@ -1,1 +1,2 @@
-    <%=render(:partial => "recursos/add_or_edit") %> 
+<%= render :partial => "add_or_edit", :locals => { :titulo => "Creando nuevo recurso", :submit_name => "Crear",
+	:error_message => "Imposible crear nuevo recurso debido a:" } %>

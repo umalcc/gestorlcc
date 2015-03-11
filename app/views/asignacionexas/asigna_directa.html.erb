@@ -2,45 +2,43 @@
      <p>GESTOR DE RECURSOS<br/>
         <%= image_tag ("pointer.gif") %>Asignaci&oacute;n de laboratorios: Asignaci&oacute;n directa
      </p>
+
      <div id="recuadro">
        <p><%= image_tag ("bg_separ.gif") %></p>
-       <% activo=Periodo.where("activo = ?","t").to_a %>
         <div id="recuadro-azul" style="height:400px">
-          <%= form_for @solicitudlab,:url => '/asignacionexas/graba', :action=>"graba",  :html=> {:name => "formulario"} do |f| %>
+          <%= form_for @asignacionexa,:url => '/asignacionexas/graba', :action=>"graba",  :html=> {:name => "formulario"} do |f| %>
           <dl>
+
             <dt>Fecha solicitud</dt>
-            <dd><%= @solicitudlab.fechasol.strftime("%d-%m-%Y")%></dd>
+            <dd><%= @asignacionexa.solicitudlabexa.fechasol.strftime("%d-%m-%Y")%></dd>
+
             <dt>Usuario *</dt>
-            <dd><% @usuarios=Usuario.order("apellidos").to_a %>
-                  <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]},
-                              html_options={:selected=>@solicitudlab.usuario_id } %>
+            <dd><%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]},
+                              html_options={:selected=>@asignacionexa.solicitudlabexa.usuario_id } %>
             </dd>
+
             <dt>Titulaci&oacute;n *</dt>
-            <dd id="combo_titulacion"><%@titulaciones=Titulacion.order("nombre").to_a%>
-               <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]}, html_options={:selected=>@solicitudlab.asignatura.titulacion_id } %></dd>
+            <dd id="combo_titulacion">
+               <%= select "titulacion", "titulacion_id", @titulaciones.map {|t| [t.nombre,t.id]}, html_options={:selected=>(@asignacionexa.solicitudlabexa.asignatura.titulacion_id unless @asignacionexa.solicitudlabexa.asignatura.nil?) } %></dd>
+
             <dt>Curso *</dt>
-            <dd id="combo_nivel"><%= select_tag "nivel", options_for_select(Asignatura::CURSO.each_with_index.map{|x,i|[x,i]},@solicitudlab.asignatura.curso)%></dd>
-	    <dt>Asignatura *</dt>    
+            <dd id="combo_nivel"><%= select_tag "nivel", options_for_select(Asignatura::CURSO.each_with_index.map{|x,i|[x,i]},(@asignacionexa.solicitudlabexa.asignatura.curso unless @asignacionexa.solicitudlabexa.asignatura.nil?))%></dd>
+
+	          <dt>Asignatura *</dt>    
             <dd><SPAN id="combo_asignatura">
-                <% if (Asignatura::CURSO).first=="sin curso" %>
-                   <% as='0' %>
-                <% else %>
-                   <% as=Asignatura::CURSO.first %>
-                <% end %>
-                <% @asignaturas=Asignatura.where("titulacion_id = ? AND curso = ?",@titulaciones.first.id,as).to_a %>
-                <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]}, html_options={:selected=>@solicitudlab.asignatura.id } %>
+                <%= select "asignatura", "id", @asignaturas.map {|t| [t.nombre_asig,t.id]}, html_options={:selected=>@asignacionexa.solicitudlabexa.asignatura_id } %>
                 </span><dd>
                
             </dd>
             <dt>Laboratorio *</dt>
-            <dd><% @laboratorios=Laboratorio.order("nombre_lab").to_a %>            
+            <dd>            
                 <%= select "laboratorio_id", "nombre_lab", @laboratorios.map {|l| [l.nombre_lab, l.id]},html_options={:selected=>@labId } %>
             </dd>            
             <dt>Fecha *</dt>
             <dd>
-              <%= f.text_field :fecha, :size=>12, :name=>"fecha",  :id=>"DPC_fecha_DD-MM-YYYY",:value=>@solicitudlab.fecha.strftime('%d-%m-%Y')%></dd>
+              <%= f.text_field :fecha, :size=>12, :name=>"fecha",  :id=>"DPC_fecha_DD-MM-YYYY",:value=>@asignacionexa.solicitudlabexa.fecha.strftime('%d-%m-%Y')%></dd>
             <dt>Soft. requerido</dt>
-            <dd><%= f.text_area :comentarios, :rows =>4, :cols=>40, :name=>"comentarios", :value =>@solicitudlab.comentarios  %></dd>
+            <dd><%= f.text_area :comentarios, :rows =>4, :cols=>40, :name=>"comentarios", :value =>@asignacionexa.solicitudlabexa.comentarios  %></dd>
             
            <dt>Tramo horario *</dt>
            <dd><table>
@@ -49,9 +47,9 @@
                           <td class="cien">Hora fin </th>
                        </tr>
                        <tr valign="top" style="text-align:center"> 
-                          <td class="cien"><% @horas=Horasexa.where("en_uso=?","t").order("id").to_a %>
-                                       <%= select "horaini", "comienzo", @horas.map {|h| [h.comienzo]}, html_options={:selected=>@solicitudlab.horaini } %></td>
-                          <td class="cien"><%= select "horafin", "fin", @horas.map {|h| [h.fin]}, html_options={:selected=>@solicitudlab.horafin } %></td>
+                          <td class="cien">
+                                       <%= select "horaini", "comienzo", @horas.map {|h| [h.comienzo]}, html_options={:selected=>@asignacionexa.solicitudlabexa.horaini } %></td>
+                          <td class="cien"><%= select "horafin", "fin", @horas.map {|h| [h.fin]}, html_options={:selected=>@asignacionexa.solicitudlabexa.horafin } %></td>
                        </tr>
                 </table><!-- de subformulario --></td>
             </dd><!-- de tramos horarios -->
@@ -77,10 +75,14 @@
 
 <script type="text/javascript" charset="utf-8">
 
-$(function(){
-  $("#titulacion_titulacion_id").combobox();
-  $("#titulacion_titulacion_id").change(function()
+$(function()
 {
+  $("#titulacion_titulacion_id").combobox();
+
+  $("#titulacion_titulacion_id").change(function()
+  {
+  var nivel=$("#nivel").val();
+  var titulacion=$("#titulacion_titulacion_id").val();
   $.ajax({
            beforeSend:function(xhr)
            {
@@ -88,12 +90,13 @@ $(function(){
            },
            type:"POST",
            url:"/asignaturas/combo_por_titulacion",
-           data:{combo_titulacion:$("#titulacion_titulacion_id").val()}
+           data:{combo_nivel:nivel,titulacion:titulacion}
         });
 });
 
 $("#nivel").change(function()
 {
+  var titulacion=$("#titulacion_titulacion_id").val();
   $.ajax({
            beforeSend:function(xhr)
            {
@@ -101,7 +104,7 @@ $("#nivel").change(function()
            },
            type:"POST",
            url:"/asignaturas/combo_por_nivel",
-           data:{combo_nivel:$("#nivel").val()}
+           data:{combo_nivel:$("#nivel").val(),titulacion:titulacion}
         });
 });
 

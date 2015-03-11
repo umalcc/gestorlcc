@@ -1,8 +1,8 @@
 <div id="central" >
    <p>GESTOR DE RECURSOS<br/>
-      <%= image_tag ("pointer.gif") %>Creando solicitud de laboratorio para periodo lectivo
+      <%= image_tag ("pointer.gif") %>Creando solicitud de laboratorio para per&iacute;odo lectivo
    </p>
-        <%= render :partial=> "add_or_edit" %>
+        <%= render :partial=> "add_or_edit", :locals => { :submit_name => "Crear", :error_message => "Imposible crear la solicitud debido a:" }%>
 </div><!-- de central -->
 
 <script type="text/javascript">

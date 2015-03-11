@@ -53,7 +53,7 @@ class SolicitudusuariolabexasController < ApplicationController
     @solicitudlabexa.usuario_id = @usuario_actual.id
     if params[:asignatura].nil?
       @solicitudlabexa.asignatura=Asignatura.new
-      @solicitudlabexa.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
+      @solicitudlabexa.asignatura.titulacion_id=params[:titulacion][:titulacion_id] unless params[:titulacion].nil?
       @solicitudlabexa.asignatura.curso=params[:nivel]
       @solicitudlabexa.asignatura.id=0
     else
@@ -63,7 +63,7 @@ class SolicitudusuariolabexasController < ApplicationController
     logger.debug "Asignaturaaass"+@solicitudlabexa.asignatura.titulacion_id.to_s
     
     @solicitudlabexa.fechasol=Date.today
-    @solicitudlabexa.npuestos=params[:npuestos].to_s
+    @solicitudlabexa.npuestos=params[:npuestos]
     @solicitudlabexa.curso=params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
     @solicitudlabexa.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
     @solicitudlabexa.horaini=params[:horaini][:comienzo]

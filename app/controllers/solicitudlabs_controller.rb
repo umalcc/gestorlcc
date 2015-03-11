@@ -4,6 +4,8 @@ class SolicitudlabsController < ApplicationController
 
   before_action :login_requerido, :admin?
   before_action :initializeIndex, :only=> [:index,:listar]
+  before_action :getViewModel, only: [:new, :edit]
+
 
 
   def initializeIndex
@@ -23,12 +25,14 @@ class SolicitudlabsController < ApplicationController
   end
 
   def new
-    
+
     @solicitudlab = Solicitudlab.new
     @solicitudlab.fechaini=Date.today
     @solicitudlab.fechafin=Date.today
     @solicitudlab.preferencias=""
-    getViewModel
+    @asignaturas = Asignatura.where('titulacion_id = ? and curso = ?',@titulaciones.first,0).to_a
+    @solicitudlab.asignatura=@asignaturas.first
+
     session[:titulacion]=Titulacion.first
     session[:nivel]=Asignatura::CURSO.first
 
@@ -43,71 +47,6 @@ class SolicitudlabsController < ApplicationController
     end
   end
 
-  # GET /solicitudlabs/1/edit
-  def edit
-    
-    @solicitudlab = Solicitudlab.find(params[:id])
-   
-    session[:tramos_horarios]=Solicitudhoraria.new
-    session[:tramos_horarios].solicitudes=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).to_a 
-    session[:codigo_tramo]=0
-    session[:borrar]=[]
-    getViewModel
-    #fecha=@solicitudlab.fechaini.to_s.split('-')
-    #nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-    #@solicitudlab.fechaini=nfechaini
-    #fecha=@solicitudlab.fechafin.to_s.split('-')
-    #nfechaini=fecha[2]+"-"+fecha[1]+"-"+fecha[0]
-  end
-
-
-  def saveModel(params)
-    @solicitudlab.usuario_id = params[:usuario][:identificador].to_i
-    if @solicitudlab.asignatura==nil
-      @solicitudlab.asignatura=Asignatura.new
-    end
-    @solicitudlab.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
-    @solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
-    @solicitudlab.fechasol=Date.today
-    @solicitudlab.npuestos=params[:npuestos].to_s
-    @solicitudlab.asignatura.curso=params[:nivel].to_s
-    @solicitudlab.curso = params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
-    @solicitudlab.comentarios= params[:comentarios]
-    @solicitudlab.asignado="N"
-    @solicitudlab.fechaini=params[:fechaini].to_date
-
-    @solicitudlab.fechafin=params[:fechafin].to_date
-
-    pref=""
-    @especiales=Laboratorio.where('especial=?',"t").to_a
-    for especial in @especiales do
-      nombre=especial.ssoo.to_s
-      if params[:"#{nombre}"].to_s!='in'
-        pref+=especial.nombre_lab.to_s+'-'+nombre+'-'+params[:"#{nombre}"]+";"
-      end
-    end
-
-    @solicitudlab.preferencias=pref
-    
-    periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
-    if periodoact.nil?
-       iniperiodoact=finperiodoact=Date.today 
-    else 
-       iniperiodoact=periodoact.inicio
-       finperiodoact=periodoact.fin
-    end
-
-    if params[:fechaini]==params[:fechafin]
-       @solicitudlab.tipo="S"
-    else
-       if params[:fechaini]==iniperiodoact and params[:fechafin]==finperiodoact
-         @solicitudlab.tipo="T"
-       else
-         @solicitudlab.tipo="P"
-       end
-    end
-
-  end
   # POST /solicitudlabs
   # POST /solicitudlabs.xml
   def create 
@@ -116,6 +55,8 @@ class SolicitudlabsController < ApplicationController
     saveModel(params)
 
     getViewModel
+    getSubjects(@solicitudlab)
+
     respond_to do |format|
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
       flash.now[:notice]="No hay tramos horarios en su peticion"
@@ -145,7 +86,7 @@ class SolicitudlabsController < ApplicationController
       else
         
         format.js
-	      format.html { render :action => "new" }
+        format.html { render :action => "new" }
         format.xml  { render :xml => @solicitudlabs.errors, :status => :unprocessable_entity }
       end
      
@@ -154,14 +95,28 @@ class SolicitudlabsController < ApplicationController
     
   end
 
-  # PUT /solicitudlabs/1
-  # PUT /solicitudlabs/1.xml
 
- def update
+  def edit
+    
     @solicitudlab = Solicitudlab.find(params[:id])
+    getSubjects(@solicitudlab)
+
+    session[:tramos_horarios]=Solicitudhoraria.new
+    session[:tramos_horarios].solicitudes=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).to_a 
+    session[:codigo_tramo]=0
+    session[:borrar]=[]
+
+  end
+
+  def update
+    @solicitudlab = Solicitudlab.find(params[:id])
+
     saveModel(params)
-    respond_to do |format|
-      getViewModel
+
+    getViewModel
+    getSubjects(@solicitudlab)
+
+    respond_to do |format|    
     if session[:tramos_horarios].solicitudes.empty?           # no permitiremos una peticion sin tramos
       flash.now[:notice]="No hay tramos horarios en su peticion"
       @borrados=session[:borrar]
@@ -169,7 +124,6 @@ class SolicitudlabsController < ApplicationController
 
     else # VEREMOS SI LAS FECHAS SON CORRECTAS SEGUN EL PERIODO
       if @solicitudlab.save
-
         @tramos=session[:tramos_horarios].solicitudes
         @correotramos=''
         @tramos.each {|tramo| if tramo.id.to_i<0
@@ -198,18 +152,71 @@ class SolicitudlabsController < ApplicationController
   end
 end
 
-  def getViewModel
+
+def saveModel(params)
+    @solicitudlab.usuario_id = params[:usuario][:identificador].to_i
+    
+    if params[:asignatura].nil?
+      @solicitudlab.asignatura=Asignatura.new
+    else
+      @solicitudlab.asignatura_id = params[:asignatura][:id].to_i
+    end
+
+    @solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id] unless params[:titulacion].nil? 
+    @solicitudlab.asignatura.curso=params[:nivel]
+    @solicitudlab.curso = params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
+    @solicitudlab.npuestos=params[:npuestos].to_i
+    @solicitudlab.comentarios= params[:comentarios]
+    @solicitudlab.asignado="N"
+    @solicitudlab.fechasol=Date.today
+    @solicitudlab.fechaini=params[:fechaini].to_date
+    @solicitudlab.fechafin=params[:fechafin].to_date
+
+    pref=""
+    @especiales=Laboratorio.where('especial=?',"t").to_a
+    for especial in @especiales do
+      nombre=especial.ssoo.to_s
+      if !params[:"#{nombre}"].nil? && params[:"#{nombre}"].to_s!='in'
+        pref+=especial.nombre_lab.to_s+'-'+nombre+'-'+params[:"#{nombre}"]+";"
+      end
+    end
+
+    @solicitudlab.preferencias=pref
+    
+    periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
+    if periodoact.nil?
+       iniperiodoact=finperiodoact=Date.today 
+    else 
+       iniperiodoact=periodoact.inicio
+       finperiodoact=periodoact.fin
+    end
+
+    if params[:fechaini]==params[:fechafin]
+       @solicitudlab.tipo="S"
+    else
+       if params[:fechaini]==iniperiodoact and params[:fechafin]==finperiodoact
+         @solicitudlab.tipo="T"
+       else
+         @solicitudlab.tipo="P"
+       end
+    end
+
+end
+  
+
+def getViewModel
      @especiales=Laboratorio.where('especial=?',"t").to_a 
      @puestos=Laboratorio.find_by_sql(["select distinct(puestos) from laboratorios order by puestos"]).map{|l| l.puestos}
      @titulaciones=Titulacion.order("nombre").to_a
      @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"}
-     if(@solicitudlab.asignatura == nil)
-      @solicitudlab.asignatura=Asignatura.new
-     end
-     @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @solicitudlab.asignatura.titulacion_id, @solicitudlab.asignatura.curso).order("nombre_asig").to_a
      @dias=Dia.where('en_uso=?',"t").to_a
      @horas=Horario.where('en_uso=?',"t").to_a
-  end
+end
+
+def getSubjects(solicitudlab)
+    curso = solicitudlab.curso == "optativa" ? 0 : solicitudlab.curso.to_i
+    @asignaturas = Asignatura.where('titulacion_id = ? and curso = ?',solicitudlab.asignatura.titulacion_id,curso).to_a
+end
 
   # DELETE /solicitudlabs/1
   # DELETE /solicitudlabs/1.xml

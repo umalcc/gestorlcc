@@ -1583,3 +1583,15 @@ table#tipo_reserva, td:not(.fc-view *)
 {
 	width:350px;
 }
+
+input#borrarHistoricoExams {
+	background: url(/assets/limpiar.jpeg) no-repeat 0 0;
+	background-size: 32px 32px;
+	border: 0;
+	cursor: pointer;
+	display: block;
+	height: 32px;
+	line-height: 0;
+	text-indent: -9999px;
+	width: 32px;
+}

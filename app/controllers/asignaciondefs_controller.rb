@@ -262,13 +262,13 @@ def graba
       asignaturaId = params[:asignatura][:id].to_i unless params[:asignatura].nil?
       @asignacion.solicitudlab.asignatura.id = asignaturaId
       @asignacion.solicitudlab.asignatura_id = asignaturaId
-      @asignacion.solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
+      @asignacion.solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id] unless params[:titulacion].nil?
       @asignacion.solicitudlab.asignatura.curso=params[:nivel] 
       @asignacion.solicitudlab.curso = params[:nivel] == 0 ? "optativa" : params[:nivel].to_s
 
     end
 
-    @asignaturas = Asignatura.where('titulacion_id = ? and curso = ?',params[:titulacion][:titulacion_id],params[:nivel]).to_a
+    @asignaturas = Asignatura.where('titulacion_id = ? and curso = ?',@asignacion.solicitudlab.asignatura.titulacion_id,params[:nivel]).to_a
 
     @asignacion.solicitudlab.fechasol=Date.today
     @asignacion.solicitudlab.npuestos=Laboratorio.where("id= ?",params[:laboratorio][:laboratorio_id]).first.puestos

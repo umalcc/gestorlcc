@@ -5,6 +5,7 @@ NUMHORAS=6
 
   validates_uniqueness_of :identificador,
                           :message => ': Ya se encuentra registrado ese valor'
-  validates_presence_of :identificador,  :caracteristicas,
-                        :message => ': No puede estar en blanco'
+
+  validates_presence_of :identificador,  :descripcion, :caracteristicas,
+                        :message => 'no puede estar en blanco'
 end

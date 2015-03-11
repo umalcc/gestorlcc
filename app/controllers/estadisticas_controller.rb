@@ -6,6 +6,7 @@ before_action :admin?
 def periodo_lectivo
 
 end
+
 def estadisticas_lectivo
   if params[:periodo][:nombre_per]=="todos"
     periodo="%"

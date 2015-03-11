@@ -4,6 +4,7 @@ class AsignacionexasController < ApplicationController
 
  before_action :login_requerido
  before_action :admin?
+ before_action :getViewModel, only: [:asigna_directa, :graba]
 
 
 
@@ -27,7 +28,7 @@ class AsignacionexasController < ApplicationController
   end
 
   def asignar_continuar
-       @asignacionexas=Asignacionlabexa.all
+      @asignacionexas=Asignacionlabexa.all
     
       respond_to do |format|
         format.js
@@ -214,11 +215,8 @@ class AsignacionexasController < ApplicationController
     respond_to do |format|
         format.js
       end
-
   end
 
-
- 
   def mover
     @asignacionexa=Asignacionlabexa.find(params[:id]) #coger todas las que tengan la misma solicitudlabexa_id
     inicial_dia=@asignacionexa.dia                    #mover una por una con los cambios de día u hora o lab
@@ -267,9 +265,7 @@ class AsignacionexasController < ApplicationController
         @asignacionexas=Asignacionlabexa.all
         respond_to do |format|
           format.js
-        end
-     
-    
+        end  
   end  
 
 
@@ -319,9 +315,12 @@ class AsignacionexasController < ApplicationController
   end
 
   def asigna_directa
-    @solicitudlab = Solicitudlabexa.new
-    @solicitudlab.asignatura=Asignatura.new(:curso =>0)
-    @solicitudlab.fechasol= Date.today
+
+    @asignacionexa = Asignacionlabexadef.new
+    @asignacionexa.solicitudlabexa = Solicitudlabexa.new
+    @asignacionexa.solicitudlabexa.fechasol= Date.today
+    @asignaturas = Asignatura.where('titulacion_id = ? and curso = ?',@titulaciones.first,0).to_a
+    @asignacionexa.solicitudlabexa.asignatura = @asignaturas.first
     
     periodoact=Periodo.where("activo = ? AND tipo = ?","t","Examenes").first
     if (periodoact.nil?)
@@ -330,66 +329,73 @@ class AsignacionexasController < ApplicationController
         iniperiodoact=periodoact.inicio
         inicio=iniperiodoact
     end
-    @solicitudlab.fecha = inicio
+    @asignacionexa.solicitudlabexa.fecha = inicio
     
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @solicitudlab }
+      format.xml  { render :xml => @asignacionexa.solicitudlabexa }
     end
   end
-#aqui debe ir otra funcion tras captar el formulario anterior
+  
+  def getViewModel
+    @usuarios=Usuario.order("apellidos").to_a
+    @titulaciones=Titulacion.order("nombre").to_a
+    @laboratorios=Laboratorio.order("nombre_lab").to_a
+    @horas=Horasexa.where("en_uso=?","t").order("id").to_a
+  end
 
   def graba
-    @solicitudlab = Solicitudlabexa.new(params[:solicitudlab])
-    @solicitudlab.asignatura=Asignatura.new
-    @solicitudlab.usuario_id = params[:usuario][:identificador].to_i
+
+    @asignacionexa = Asignacionlabexadef.new
+    @asignacionexa.solicitudlabexa = Solicitudlabexa.new
+    @asignacionexa.solicitudlabexa.asignatura=Asignatura.new
+    @asignacionexa.solicitudlabexa.usuario_id = params[:usuario][:identificador].to_i
     asignaturaId = params[:asignatura][:id].to_i unless params[:asignatura].nil?
-    @solicitudlab.asignatura_id = asignaturaId
-    @solicitudlab.asignatura.id = asignaturaId
-    @solicitudlab.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
-    @solicitudlab.fechasol=Date.today
-    @solicitudlab.fecha=params[:fecha].to_date
-    @solicitudlab.npuestos=Laboratorio.where("id= ?",params[:laboratorio_id][:nombre_lab]).first.puestos
-    @solicitudlab.asignatura.curso=params[:nivel].to_s 
-    @solicitudlab.curso =params[:nivel].to_s
-    @solicitudlab.comentarios=params[:comentarios].to_s
-    @solicitudlab.horaini=params[:horaini][:comienzo]
-    @solicitudlab.horafin=params[:horafin][:fin]
-    @solicitudlab.tipo="X"
-    @solicitudlab.asignado="D"
+    @asignacionexa.solicitudlabexa.asignatura_id = asignaturaId
+    @asignacionexa.solicitudlabexa.asignatura.id = asignaturaId
+    @asignacionexa.solicitudlabexa.asignatura.titulacion_id=params[:titulacion][:titulacion_id] unless params[:titulacion].nil?
+    @asignacionexa.solicitudlabexa.asignatura.curso=params[:nivel] 
+    @asignacionexa.solicitudlabexa.curso =params[:nivel] == 0 ? "optativa" : params[:nivel].to_s
+    @asignacionexa.solicitudlabexa.npuestos=Laboratorio.where("id= ?",params[:laboratorio_id][:nombre_lab]).first.puestos
+    @asignacionexa.solicitudlabexa.fechasol=Date.today
+    @asignacionexa.solicitudlabexa.fecha=params[:fecha].to_date
+    @asignacionexa.solicitudlabexa.comentarios=params[:comentarios].to_s
+    @asignacionexa.solicitudlabexa.horaini=params[:horaini][:comienzo]
+    @asignacionexa.solicitudlabexa.horafin=params[:horafin][:fin]
+    @asignacionexa.solicitudlabexa.tipo="X"
+    @asignacionexa.solicitudlabexa.asignado="D"
     @labId=params[:laboratorio_id][:nombre_lab].to_i
     
+    @asignaturas = Asignatura.where('titulacion_id = ? and curso = ?',@asignacionexa.solicitudlabexa.asignatura.titulacion_id,params[:nivel]).to_a
 
     respond_to do |format|
-      if @solicitudlab.save
-        
-    # esto es lo quedebe cambiar, hay que ir a generar la asignacionexa nueva y hay que grabarla
-    # y redirigir a la consulta de asignacionexas  
+      if @asignacionexa.solicitudlabexa.save
+          
         hi=Horasexa.find_by_comienzo(params[:horaini][:comienzo]).id.to_i
         hf=Horasexa.find_by_fin(params[:horafin][:fin]).id.to_i
         for hora in hi..hf 
-           asignacionexa=Asignacionlabexadef.new(:solicitudlabexa_id=>@solicitudlab.id,
+           @asignacionexa=Asignacionlabexadef.new(:solicitudlabexa_id=>@asignacionexa.solicitudlabexa.id,
                                               :laboratorio_id=>@labId,
-                                              :dia=>@solicitudlab.fecha,                      #aqui hay cambio
+                                              :dia=>@asignacionexa.solicitudlabexa.fecha,                      #aqui hay cambio
                                               :horaini=>Horasexa.find(hora).comienzo,
                                               :horafin=>Horasexa.find(hora).fin)
-                               asignacionexa.save
+                               @asignacionexa.save
         end
-                       
-    # hasta aqui --------                   
+                                          
         @asignacionexas = Asignacionlabexadef.all
         format.html { redirect_to('/asignacionexas/consulta') }
         format.xml  { render :xml => @solicitudlabs, :status => :created, :location => @solicitudlabs }
       else
+         
+        @asignacionexa.solicitudlabexa.errors.full_messages.each do |message|
+             flash.now[:notice]=message   
+        end
+
         format.html { render :action => "asigna_directa" }
         format.xml  { render :xml => @solicitudlabs.errors, :status => :unprocessable_entity }
       end
      end
-    
-    
   end
-
-
 
   def borranormal
     asignacionexa=Asignacionlabexa.find(params[:asigna])
@@ -440,7 +446,6 @@ class AsignacionexasController < ApplicationController
       format.js
     end
   end
-
 
   def listar
     cadena=params[:query]

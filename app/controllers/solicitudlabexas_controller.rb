@@ -1,11 +1,10 @@
 class SolicitudlabexasController < ApplicationController
-  # GET /solicitudlabexas
-  # GET /solicitudlabexas.xml
 
   include SolicitudesHelper
 
   before_action :login_requerido, :admin?
   before_action :initializeIndex, :only=> [:index,:listar]
+  before_action :getViewModel, only: [:new]
 
 
   def initializeIndex
@@ -30,26 +29,70 @@ class SolicitudlabexasController < ApplicationController
     @solicitudlabexa = Solicitudlabexa.new
     @solicitudlabexa.asignatura=Asignatura.new
     @solicitudlabexa.fecha=Date.today
-     @solicitudlabexa.preferencias=""
+    @solicitudlabexa.preferencias=""
+    @asignaturas = Asignatura.where('titulacion_id = ? and curso = ?',@titulaciones.first,0).to_a
+    @solicitudlabexa.asignatura=@asignaturas.first
+
     session[:titulacion]=Titulacion.first
     session[:nivel]=Asignatura::CURSO.first
-    getViewModel
+ 
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @solicitudlabexa }
     end
   end
 
+  def create
+    @solicitudlabexa = Solicitudlabexa.new(params[:solicitudlabexa])
+    saveObject(params)
+    @solicitudlabexa.tipo="P"
+    getViewModel
+    getSubjects(@solicitudlabexa)
+
+    respond_to do |format|
+      if @solicitudlabexa.save      
+       CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Nueva ").deliver_later        
+              
+        @solicitudlabexas = Solicitudlabexa.all
+        
+        format.html { redirect_to :action => "index" }
+        format.xml  { render :xml => @solicitudlabexas, :status => :created, :location => @solicitudlabexas }
+      else
+     
+        format.html { render :action => "new" }
+        format.xml  { render :xml => @solicitudlabexas.errors, :status => :unprocessable_entity }
+      end
+    end  
+  end
+
   # GET /solicitudlabs/1/edit
   def edit
     @solicitudlabexa = Solicitudlabexa.find(params[:id]) 
     getViewModel
-       
-    #@asignatura=Asignatura.find(@solicitudlabexa.asignatura_id)
-    #@solicitudlabexa.fecha=fecha_europea(@solicitudlabexa.fecha)
-   # @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlabexa.asignatura.curso).order("nombre_asig").to_a
-    #@usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"}
+    getSubjects(@solicitudlabexa)    
   end
+
+
+# PUT /solicitudlabexas/1
+# PUT /solicitudlabexas/1.xml
+def update
+    @solicitudlabexa = Solicitudlabexa.find(params[:id])
+    saveObject(params)
+    getViewModel
+
+    respond_to do |format|
+        if @solicitudlabexa.save
+          CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Cambios en ").deliver_later       
+          @solicitudlabexas = Solicitudlabexa.all
+          format.html { redirect_to :action => "index" }
+          format.xml  { head :ok }
+      else
+        format.html { render :action => "edit"}
+        format.xml  { render :xml => @solicitudlabexa.errors, :status => :unprocessable_entity }
+   end
+ end
+end
+
 
   # POST /solicitudlabs
   # POST /solicitudlabs.xml
@@ -58,14 +101,14 @@ class SolicitudlabexasController < ApplicationController
     @solicitudlabexa.usuario_id = params[:usuario][:identificador].to_i
     if params[:asignatura].nil?
       @solicitudlabexa.asignatura=Asignatura.new
-      @solicitudlabexa.asignatura.titulacion_id=params[:titulacion][:titulacion_id]
+      @solicitudlabexa.asignatura.titulacion_id=params[:titulacion][:titulacion_id] unless params[:titulacion].nil? 
       @solicitudlabexa.asignatura.curso=params[:nivel]
       @solicitudlabexa.asignatura.id=0
     else
       @solicitudlabexa.asignatura_id = params[:asignatura][:id].to_i
     end
     @solicitudlabexa.fechasol=Date.today
-    @solicitudlabexa.npuestos=params[:npuestos].to_s
+    @solicitudlabexa.npuestos=params[:npuestos]
     @solicitudlabexa.curso=params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
     @solicitudlabexa.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
     @solicitudlabexa.horaini=params[:horaini][:comienzo]
@@ -89,72 +132,24 @@ class SolicitudlabexasController < ApplicationController
     end
   end
 
-  def create
-    @solicitudlabexa = Solicitudlabexa.new(params[:solicitudlabexa])
-    saveObject(params)
-    @solicitudlabexa.tipo="P"
-    getViewModel
-    respond_to do |format|
-      if @solicitudlabexa.save      
-       CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Nueva ").deliver_later        
-              
-        @solicitudlabexas = Solicitudlabexa.all
-        
-        format.html { redirect_to :action => "index" }
-        format.xml  { render :xml => @solicitudlabexas, :status => :created, :location => @solicitudlabexas }
-      else
-     
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @solicitudlabexas.errors, :status => :unprocessable_entity }
-      end
-     
-    end
-    
-  end
 
   def getViewModel
     @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"} 
     @especiales=Laboratorio.where('especial=?',"t").to_a 
     @titulaciones=Titulacion.order("nombre").to_a
     @usuarios=Usuario.order("apellidos").to_a.reject{|u| u.identificador=="anonimo"}  
-   if (@solicitudlabexa.asignatura_id == nil)
-      #@solicitudlabexa.asignatura_id=0
-      if (Asignatura::CURSO).first=="optativa"
-         as='0'
-      else 
-         as=Asignatura::CURSO.first
-      end
-       @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?',@titulaciones.first.id,as).to_a
-   else
-       @asignatura=Asignatura.find(@solicitudlabexa.asignatura_id)
-       @asignaturas=Asignatura.where('titulacion_id = ? and curso = ?', @asignatura.titulacion_id, @solicitudlabexa.asignatura.curso).order("nombre_asig").to_a
-   end
-    
     @puestos=Laboratorio.find_by_sql(["select distinct(puestos) from laboratorios order by puestos"]).map{|l| l.puestos}
     @horas=Horasexa.where('en_uso=?',"t").order("id").to_a
   end
-  # PUT /solicitudlabexas/1
-  # PUT /solicitudlabexas/1.xml
 
- def update
-    @solicitudlabexa = Solicitudlabexa.find(params[:id])
-    saveObject(params)
-    getViewModel
-    respond_to do |format|
-        if @solicitudlabexa.save
-          CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Cambios en ").deliver_later       
-          @solicitudlabexas = Solicitudlabexa.all
-          format.html { redirect_to :action => "index" }
-          format.xml  { head :ok }
-      else
-        format.html { render :action => "edit"}
-        format.xml  { render :xml => @solicitudlabexa.errors, :status => :unprocessable_entity }
-   end
- end
-end
+  def getSubjects(solicitudlabexa)
 
+    logger.debug "Ahora se cargan las asignaturas"
+    curso = solicitudlabexa.curso == "optativa" ? 0 : solicitudlabexa.curso.to_i
+    @asignaturas = Asignatura.where('titulacion_id = ? and curso = ?',solicitudlabexa.asignatura.titulacion_id,curso).to_a
+  end
   
-
+ 
   # DELETE /solicitudlabexas/1
   # DELETE /solicitudlabexas/1.xml
  def destroy

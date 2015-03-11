@@ -7,28 +7,29 @@
 
       <% if nregistros!=0 %>
           <% @periodos=Historicoasigexa.order("periodo").to_a %>
-          <%= form_tag(url_for(:controller=>'estadisticas',:action=>'estadisticas_examenes'),id:"form", method:"post",before: 'mostrardiv("imagen-progreso")', remote:true) do %>
-          
-          <table id="busqueda" style="width:400px">
-          <tr>
-            <td style="text-align:left;width:100px">Periodo : </td>
-            <td style="text-align:left;width:100px">
-<%= select "periodo", "nombre_per", @periodos.map {|r| [r.periodo]}.uniq %>           </td>
-            <td style="width:100px">
-            <%= submit_tag("Buscar", :type=>:image, :src=>"/assets/boton2.png")%>
-            </td>
-          </tr>
-        </table>
-
-        <table id="eliminahistorico" style="margin-left:900px;margin-top:-50px">
-          <tr>
-            <td><%= link_to(image_tag("limpiar.jpeg",:border=>0,:width=>32,:height=>32),
-                        {:method => 'POST',:controller=>'estadisticas',:action => 'borrar_historico_examenes' },
-                         :before   => 'mostrardiv("imagen-progreso")',
-                         data:{ confirm: "Esto eliminará todo el registro histórico de asignaciones en período de exámenes. ¿Está seguro?"}, :remote => true)%></td>
-           <td style="color:#010080;font-size:0.9em">Limpiar<br/> hist&oacute;rico</td>
-          </tr>
-        </table>
+          <%= form_tag(url_for(:controller=>'estadisticas',:action=>'estadisticas_examenes'),id:"form", method:"post",remote:true) do %>
+         
+      <table> 
+        <tr>
+          <td>
+             <table id="busqueda" style="width:400px">
+                <tr>
+                  <td style="text-align:left;width:100px">Periodo : </td>
+                  <td style="text-align:left;width:100px">
+                     <%= select "periodo", "nombre_per", @periodos.map {|r| [r.periodo]}.uniq %>           
+                  </td>
+                  <td style="width:100px">
+                  <%= submit_tag("Buscar", :type=>:image, :src=>"/assets/boton2.png", :onclick => 'mostrardiv("imagen-progreso")')%>
+                  </td>
+                </tr>
+             </table>
+          </td>
+          <td>&nbsp;</td>
+          <td>
+            <input id="borrarHistoricoExams" type="button" onclick="borrarHistorico()" title="Limpiar histórico de éxamenes" />
+          </td>
+        </tr>
+      </table>
 
         <div id="registros">
            <div id="imagen-progreso" 
@@ -37,6 +38,7 @@
            </div>
         </div> <!-- de reservas -->
        <% end %> <!-- de form_tag -->
+
        <% else %>
           <div class="aviso" style="text-align:left;font-size:160%">
              No hay registros para analizar en el archivo hist&oacute;rico
@@ -45,10 +47,22 @@
      </div><!-- de recuadro -->
 </div>
 
-<!--<script type="text/javascript" charset="utf-8"> asociado al link_to borrar_historico_exámenes
-$(function(){
-   $(".borrarHistorico").bind("ajax:complete",function(){
-      location.reload();	
-	});
- });
-</script>-->
+<script type="text/javascript">
+
+   function borrarHistorico()
+   {     
+      var confirmMessage = "Ésto eliminará todo el registro histórico de asignaciones en período de exámenes.\n¿Está seguro?";
+
+      if(confirm(confirmMessage))
+      {
+          mostrardiv("imagen-progreso");
+          $.ajax(
+          {
+             type:"POST",
+             url:"/estadisticas/borrar_historico_examenes",
+             complete:function(){ ocultardiv("imagen-progreso");}
+          }); 
+      }
+   }
+
+</script>

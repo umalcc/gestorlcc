@@ -4,6 +4,7 @@ class SolicitudusuariolabexasController < ApplicationController
 
   before_action :login_requerido,:usuario?
 
+
   def index
     @solicitudlabexas = Solicitudlabexa.where("usuario_id = ? ",@usuario_actual.id).to_a
     @cuenta = @solicitudlabexas.size
@@ -18,7 +19,6 @@ class SolicitudusuariolabexasController < ApplicationController
   # GET /solicitudlabexas/new.xml
   def new
     @solicitudlabexa = Solicitudlabexa.new
-
 
     session[:titulacion]=Titulacion.first
     session[:nivel]=Asignatura::CURSO.first
@@ -45,8 +45,8 @@ class SolicitudusuariolabexasController < ApplicationController
     @solicitudlabexa.usuario_id = @usuario_actual.id
     @solicitudlabexa.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
     @solicitudlabexa.fechasol=Date.today
-    @solicitudlabexa.npuestos=params[:npuestos].to_s
-    @solicitudlabexa.curso=params[:nivel].to_s
+    @solicitudlabexa.npuestos=params[:npuestos]
+    @solicitudlabexa.curso=params[:nivel].to_s == "0" ? "optativa" : params[:nivel].to_s
     @solicitudlabexa.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
     @solicitudlabexa.horaini=params[:horaini][:comienzo]
     @solicitudlabexa.horafin=params[:horafin][:fin]
@@ -122,7 +122,7 @@ class SolicitudusuariolabexasController < ApplicationController
                                              :horafin => params[:horafin][:fin],
 					     :curso => params[:nivel].to_s,
                                              :asignatura_id => params[:asignatura][:id].to_i,
-					     :npuestos => params[:npuestos].to_s,
+					     :npuestos => params[:npuestos],
                                              :comentarios => Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios]))
 
         CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"","Cambios en ").deliver_later   

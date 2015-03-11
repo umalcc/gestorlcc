@@ -1,0 +1,26 @@
+es:
+  hello: "Hola mundo"
+  activerecord:
+    attributes:
+      recurso:
+        descripcion: "Tipo"
+        caracteristicas: "Características"
+      titulacion:
+         codigo: "Código"
+         abrevia: "Abreviatura"
+      dia:
+          num: "Número"
+      horario:
+          num: "Número"
+      horasexa:
+          num: "Número"
+      usuario:
+          password: "Contraseña"
+      laboratorio:
+          nombre_lab: "Número"
+          ssoo: "Denominación/SSOO"
+      asignatura:
+           nombre_asig: "Nombre"
+           codigo_asig: "Código"
+           abrevia_asig: "Acrónimo"
+

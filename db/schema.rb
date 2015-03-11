@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150212184904) do
+ActiveRecord::Schema.define(version: 20150311220253) do
 
   create_table "asignaciondefs", force: :cascade do |t|
     t.integer  "solicitudlab_id"
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 20150212184904) do
     t.string   "mov_hora",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "generica"
+    t.boolean  "generica",                    default: false
     t.boolean  "temporal",                    default: false
   end
 
@@ -76,7 +76,7 @@ ActiveRecord::Schema.define(version: 20150212184904) do
     t.integer  "dia_id"
     t.string   "mov_dia",         limit: 255
     t.string   "mov_hora",        limit: 255
-    t.boolean  "generica"
+    t.boolean  "generica",                    default: false
     t.boolean  "temporal",                    default: false
   end
 
@@ -227,7 +227,7 @@ ActiveRecord::Schema.define(version: 20150212184904) do
     t.text     "curso"
     t.integer  "npuestos"
     t.text     "comentarios"
-    t.text     "preferencias"
+    t.text     "preferencias",              default: ""
     t.text     "horaini"
     t.text     "horafin"
     t.datetime "created_at"
@@ -247,7 +247,7 @@ ActiveRecord::Schema.define(version: 20150212184904) do
     t.text     "comentarios"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "preferencias"
+    t.text     "preferencias",              default: ""
     t.string   "tipo",          limit: 255
     t.string   "asignado",      limit: 255
   end

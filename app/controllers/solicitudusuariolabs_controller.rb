@@ -187,15 +187,15 @@ def saveModel(params)
       @solicitudlab.asignatura=Asignatura.new
   end
   @solicitudlab.asignatura_id = params[:asignatura][:id].to_i unless params[:asignatura].nil?
-  @solicitudlab.asignatura.titulacion_id = params[:titulacion][:titulacion_id].to_i
-  @solicitudlab.asignatura.curso = params[:nivel].to_s
+  @solicitudlab.asignatura.titulacion_id = params[:titulacion][:titulacion_id] unless params[:titulacion].nil?
+  @solicitudlab.asignatura.curso = params[:nivel]
   @solicitudlab.curso = params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
   @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
   @solicitudlab.fechaini=params[:fechaini].to_date
   @solicitudlab.fechafin = params[:fechafin].to_date
   @solicitudlab.usuario_id = @usuario_actual.id
 
-  @solicitudlab.npuestos = params[:npuestos].to_s
+  @solicitudlab.npuestos = params[:npuestos]
   @solicitudlab.fechasol = Date.today
   periodoact=Periodo.where("admision = ? and tipo = ? ","t","Lectivo").first
   if periodoact.nil? # si es un user no puede cursar en periodo sin activaRRRRRRRR!!!!!!!!!
