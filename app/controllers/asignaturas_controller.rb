@@ -70,7 +70,7 @@ class AsignaturasController < ApplicationController
   end
 
   def getViewModel
-    @titulaciones=Titulacion.order("codigo").to_a
+    @titulaciones=Titulacion.order("nombre").to_a
   end
 
   # PUT /asignaturas/1
