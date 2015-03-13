@@ -42,16 +42,16 @@
        <td><%= fecha_europea(i.fechasol) %></td>  
        <td><% usuario=Usuario.find(i.usuario_id) %><%= usuario.nombre+" "+usuario.apellidos %></td>
        <td><% asig=Asignatura.find(i.asignatura_id) %>
-           <a onmouseover=ShowContent('asignatura"+i.id.to_s+"'); return true;
- 			   onmouseout=HideContent('asignatura"+i.id.to_s+"'); return true;>
-                         <div id="asignatura<%=i.id.to_s %>" 
-			style='display:none;position:absolute;
-    					border-style: solid;
-    					background-color: white;width:300px;
-    					padding: 5px;';>
-                                      <%= asig.nombre_asig %><br/><!-- nombre completo de la asignatura -->
-                                      <%="Titulacion :"+asig.titulacion.abrevia %>
-		    </div>
+           <a onmouseover=ShowContent('asignatura<%=i.id.to_s%>'); return true;
+                onmouseout=HideContent('asignatura<%= i.id.to_s %>'); return true;>
+                <div id="asignatura<%= i.id.to_s %>" 
+                     style='display:none;position:absolute;
+                            border-style: solid;
+                            background-color: white;width:300px;
+                            padding: 5px;';>
+                      <%= asig.nombre_asig %><br/><!-- nombre completo de la asignatura -->
+                      <%="Titulacion :"+asig.titulacion.abrevia %>
+                </div>
            <%= asig.abrevia_asig %></td><!-- nombre abreviado de la asignatura -->
        <td style="text-align:center"><% if i.curso.to_s=="sin curso" %>
                                         <%= "-" %>
