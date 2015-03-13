@@ -33,7 +33,7 @@ items = @solicitudlabexas.map do |item|
  [
     item.fechasol.strftime("%d-%m-%Y"),
     item.usuario.nombre + " " + item.usuario.apellidos,
-    item.asignatura.abrevia_asig,
+    item.asignatura.abrevia_asig + " (" + item.asignatura.titulacion.abrevia + ")",
     if item.curso.to_s == "sin curso"
        "-"
     else
