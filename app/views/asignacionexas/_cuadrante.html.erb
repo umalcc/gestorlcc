@@ -179,7 +179,7 @@
                                               <td>Laboratorio </td>
                                               <td> <% @laboratorios=Laboratorio.order("nombre_lab").to_a %>
                                                    <% labora=Laboratorio.find(a.laboratorio_id).nombre_lab %>
-                				   <%= select "laboratorio_id", "nombre_lab", 
+                				   <%= select "laboratorio_id", "nombre", 
 								@laboratorios.map {|l| [l.nombre_lab]},
                                                                 html_options={:selected=>labora } %></td>
 			                    </tr>                                               
@@ -266,13 +266,17 @@ $(function()
 $(function()
 {
      $('input[name=moverBtn]').click(function () { 
-  
+      var divDialog=$(this).parent().parent().parent();
+      var dia=divDialog.find("select[name='dia[dia]']").val();
+      var lab=divDialog.find("select[name='laboratorio_id[nombre]']").val();
+      var hora=divDialog.find("select[name='horario_id[comienzo]']").val();
+      var id=divDialog.find("input[name='id']").val();
        $.ajax({
                  type: "POST",
                  url: "mover",
-                 data: { id:$("#id").val(),nombre_lab:$("#laboratorio_id_nombre_lab").val(), 
-                 dia:$("#dia_dia").val(), 
-                 comienzo:$("#horario_id_comienzo").val() },
+                 data: { id:id,nombre_lab:lab, 
+                 dia:dia, 
+                 comienzo:hora },
                  success: function()
                  {
                     $("div[id^='flotanteform']").hide();
