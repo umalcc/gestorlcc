@@ -253,13 +253,18 @@ $(function()
 
 $(function()
 {
-     $("input[name=moverBtn]").click(function (e) {    
+     $("input[name=moverBtn]").click(function (e) {  
+     var divDialog=$(this).parent().parent().parent();
+      var dia=divDialog.find("select[name='dia_id[nombre]']").val();
+      var lab=divDialog.find("select[name='laboratorio_id[nombre_lab]']").val();
+      var hora=divDialog.find("select[name='horario_id[comienzo]']").val();
+      var id=divDialog.find("input[name='id']").val();  
        $.ajax({
                  type: "POST",
                  url: "mover",
-                 data: { id:$("#id").val(),nombre_lab:$("#laboratorio_id_nombre_lab").val(), 
-                 nombre:$("#dia_id_nombre").val(), 
-                 comienzo:$("#horario_id_comienzo").val() },
+                 data: { id:id,nombre_lab:lab, 
+                 nombre:dia, 
+                 comienzo:hora},
                  success: function()
                  {
                     $("div[id^='flotanteform']").hide();

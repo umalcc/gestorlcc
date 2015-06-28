@@ -254,14 +254,6 @@ class AsignacionexasController < ApplicationController
                                        :mov_hora=> mov_hora )
       end  
     end
-   # for asignacionexa in asignaciones # todas las que haya que modificar
-    #  asignacionexa.update_attributes(:laboratorio_id=>laboratorio_id,
-     #                                 :dia=> params[:dia], 
-      #                                :horaini=> params[:comienzo],
-       #                               :horafin=> horafin,
-        #                              :mov_dia=> mov_dia,
-         #                             :mov_hora=> mov_hora ) 
-    #end    
         @asignacionexas=Asignacionlabexa.all
         respond_to do |format|
           format.js
