@@ -1,7 +1,8 @@
 class Solicitudlabexa < ActiveRecord::Base
   belongs_to :asignatura
   belongs_to :usuario
-
+  has_many :asignacionlabexa, :dependent => :destroy
+  has_many :asignacionlabexadef, :dependent => :destroy
 validates_presence_of :fecha, :asignatura_id,
                        :message => ': No puede estar en blanco'
 

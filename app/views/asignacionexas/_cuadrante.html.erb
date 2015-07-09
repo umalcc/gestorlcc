@@ -1,8 +1,11 @@
 
-
-<% if @asignacionexas.size!=0  %>
-
  <% periodo=Periodo.where("tipo = ? and inicio > ?",'Examenes',Date.today).order('inicio').first %>
+<%if periodo.nil? %>
+
+  <div class="aviso" style="text-align:left;font-size:160%">
+     No hay periodos de tipo ex&aacute;menes pr&oacute;ximos
+  </div>
+<% elsif @asignacionexas.size!=0 && !periodo.nil? %>
 
  <% fechas=[] %>
  <% for dia in periodo.inicio..periodo.fin %>
