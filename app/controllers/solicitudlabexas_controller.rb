@@ -28,7 +28,14 @@ class SolicitudlabexasController < ApplicationController
   def new
     @solicitudlabexa = Solicitudlabexa.new
     @solicitudlabexa.asignatura=Asignatura.new
-    @solicitudlabexa.fecha=Date.today
+    @periodo=Periodo.where("tipo= ? AND inicio >= ?","Examenes",Date.today).order("inicio").first
+   
+    if(@periodo.nil?)
+      @solicitudlabexa.fecha=Date.today
+    else
+       @solicitudlabexa.fecha=@periodo.inicio
+     end
+    
     @solicitudlabexa.preferencias=""
     @asignaturas = Asignatura.where('titulacion_id = ? and curso = ?',@titulaciones.first,0).to_a
     @solicitudlabexa.asignatura=@asignaturas.first
@@ -155,7 +162,10 @@ end
  def destroy
     @solicitudlabexa = Solicitudlabexa.find(params[:id])
     CorreoTecnicos::emitesolicitudexamen(@solicitudlabexa,params[:fecha],"Solicitud cursada por admin","Borrado de ").deliver_later       
+
     @solicitudlabexa.destroy
+
+
     respond_to do |format|
       format.html { redirect_to(solicitudlabexas_url) }
       format.xml  { head :ok }
