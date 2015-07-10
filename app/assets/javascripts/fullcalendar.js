@@ -12,8 +12,25 @@
 		factory(jQuery, moment);
 	}
 })(function($, moment) {
-
+	//document.oncontextmenu = function() {return false;};
 ;;
+
+ $.contextMenu({
+        selector: '.context-menu-one', 
+        callback: function(key, options) {
+            var m = "clicked: " + key;
+            window.console && console.log(m) || alert(m); 
+        },
+        items: {
+            "Enviar email para resolver": {name: "Edit", icon: "edit"},
+            "cut": {name: "Cut", icon: "cut"},
+            "copy": {name: "Copy", icon: "copy"},
+            "paste": {name: "Paste", icon: "paste"},
+            "delete": {name: "Delete", icon: "delete"},
+            "sep1": "---------",
+            "quit": {name: "Quit", icon: "quit"}
+        }
+    });
 
 var defaults = {
 
@@ -2528,6 +2545,9 @@ function isPrimaryMouseButton(ev) {
 	return ev.which == 1 && !ev.ctrlKey;
 }
 
+function isSecundaryMouseButton(ev) {
+	return ev.button == 2 && !ev.ctrlKey;
+}
 
 /* FullCalendar-specific Misc Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -3738,6 +3758,12 @@ DragListener.prototype = {
 				this.startDrag(ev);
 			}
 		}
+		/*else if(isSecundaryMouseButton(ev))
+		{	
+			ev.preventDefault();
+			this.startListening(ev);
+			//alert("Secoundary");
+		}*/
 	},
 
 
