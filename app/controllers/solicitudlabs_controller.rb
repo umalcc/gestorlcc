@@ -135,7 +135,8 @@ class SolicitudlabsController < ApplicationController
                                 p.save
                                 @correotramos+=' - '+p.diasemana+' de '+p.horaini+' a '+p.horafin
                               end  }
-        @borrados=session[:borrar]
+
+        @borrados=session[:borrar].uniq
         @borrados.each {|tramo| if tramo.to_i > 0
                                   reg=Peticionlab.find(tramo)
                                   reg.destroy
