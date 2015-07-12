@@ -1,21 +1,29 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  fecha_ini: 
-  fecha_fin: 
-  fecha_sol: 
+  fechaini: 
+  fechafin: 
+  fechasol: 
   usuario_id: 
   asignatura_id: 
   curso: 
   npuestos: 
   comentarios: MyText
+  preferencias:
+  tipo:
+  asignado:
+  grupo:
 
 two:
-  fecha_ini: 
-  fecha_fin: 
-  fecha_sol: 
+  fechaini: 
+  fechafin: 
+  fechasol: 
   usuario_id: 
   asignatura_id: 
   curso: 
   npuestos: 
   comentarios: MyText
+  preferencias:
+  tipo:
+  asignado:
+  grupo:

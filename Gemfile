@@ -15,6 +15,10 @@ gem 'jquery-color'
 gem 'dalli' 
 # Deploy with Capistrano
 # gem 'capistrano'
+gem "minitest-rails"
+gem 'rails-perftest'
+gem 'ruby-prof'
+gem 'test-unit'
 gem 'therubyracer'
 # To use debugger
 # gem 'ruby-debug'
