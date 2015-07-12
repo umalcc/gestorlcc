@@ -15,7 +15,7 @@
 	//document.oncontextmenu = function() {return false;};
 ;;
 
- $.contextMenu({
+ /*$.contextMenu({
         selector: '.context-menu-one', 
         callback: function(key, options) {
             var m = "clicked: " + key;
@@ -30,7 +30,7 @@
             "sep1": "---------",
             "quit": {name: "Quit", icon: "quit"}
         }
-    });
+    });*/
 
 var defaults = {
 

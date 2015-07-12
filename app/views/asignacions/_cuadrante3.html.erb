@@ -304,8 +304,58 @@ function funcionesEspeciales(ev)
   }
 }
 
+function AreEventsOverlapped(event1, event2)
+{	
+	return event1.start < event2.end &&
+	       event1.end > event2.start &&
+           event1.room_id == event2.room_id;
+}
+
+function GetConflictsForEventInCalendar(event,calendarId)
+{
+	var events = $("#"+calendarId).fullCalendar('clientEvents', function(evt) {
+					    return AreEventsOverlapped(event, evt);
+				});
+
+	return events;
+}
+
+function OpenDialogToSendEmailForConflicts(event,calendarId)
+{
+	var events = GetConflictsForEventInCalendar(event,calendarId);
+
+	//Check if there are overlapped events to display dialog
+	if(events.length > 1)
+	{
+		var emails = '';
+		var solicitudes = '';
+		var laboratorio = '';
+		events.forEach(function(item, index) {
+			    if(index > 0)
+			    {
+			        emails += ";" + item.emailProfesor; 
+			    }
+			    else
+			    {
+                     emails += item.emailProfesor; 
+			    }
+
+			    laboratorio = item.lab_nombre;
+		});
+
+        var subject = 'Conflicto%20en%20solicitudes%20de%20laboratorio%20' + laboratorio;
+        var body = '';
+		$("#eventContent, a").attr('href','mailto:' + emails + '?Subject=' + subject + '&body=' + body);
+		$("#eventContent").dialog({ modal: true, title: 'Conflictos', width:200, height:75});
+	}
+}
+
+
 $(function() 
-{	$.evento={};
+{	
+    $('body').on('contextmenu', function(e){ e.preventDefault(); });
+
+	$.evento={};
 	$(document).on("click",documentClick);
 	document.onkeydown=funcionesEspeciales;
 	$(".elEvento").click(function()
@@ -380,14 +430,18 @@ $(function()
         axisFormat: 'H(:mm)', 
         timeFormat: 'H(:mm)',
         rooms:$.parseJSON(laboratorios),
-        /*eventMouseover: function(event,jsEvent)
-        {
-            info = event.info;
-            $(jsEvent.target).attr('title',info);
-	    },*/
         eventRender: function(event, element) {
             
             element.attr('title', event.info);
+
+            element.bind('mousedown', function (e) {
+
+                //detects right click
+	            if (e.which == 3) 
+	            {
+					OpenDialogToSendEmailForConflicts(event,divId);
+	            }
+            });
         },
 	    eventResize: function(event, delta, revertFunc)
 	    {
@@ -399,35 +453,20 @@ $(function()
 	    {
 	    	event.operacion="";
 	    	updateEventCalendar(event);
-             //ToDo: actualizar tabla peticionlabs tb
 	    },
 	    eventDragStop: function(event, jsEvent, ui, view) 
 	    {
-	   	   //var active = $('#tabs .ui-state-active').children("a");
-	   	   /*if (isElemOverDiv(jsEvent, '#borrarAsig')) {
-	   	   	$(active.attr("href")).fullCalendar('removeEvents', event.id);
-	   		$.ajax({
-	   			type:"POST",
-	   			url:"/asignacions/borranormalasignada",
-	   			data:{asigna:event.id},
-	   			success:function()
-	   			{
-	   			  //alert("La asignación ha sido eliminada de forma satisfactoria.");
-	   			}
-	   		});
-	   	}*/
-         
-        //Move event from calendar to external list
-	   	if(isElemOverDiv(jsEvent,'#external-events'))
-	   	{
-	   		//alert(eve nt.info);
-	   		event.operacion="cortar";
-	   		var diaId = obtenerCalendarioActual();
-	   		moverEventoTmp(event,false,diaId,false);
-	   		$("#"+divId).fullCalendar('removeEvents',event.id);
-	   	}
+	        //Move event from calendar to external list
+		   	if(isElemOverDiv(jsEvent,'#external-events'))
+		   	{
+		   		event.operacion="cortar";
+		   		var diaId = obtenerCalendarioActual();
+		   		moverEventoTmp(event,false,diaId,false);
+		   		$("#"+divId).fullCalendar('removeEvents',event.id);
+		   	}
 	   },
-       eventClick: function(event){
+       eventClick: function(event)
+       {
        	     $(".seleccionado").css("border", "1px solid #3a87ad");
 	         $(".seleccionado").css("background-color", "#3a87ad");
        	     $(".fc-event").removeClass("seleccionado");
@@ -437,9 +476,8 @@ $(function()
        	     return false;
         },
 
-        });
-    });
-
+     });
+ });
 
 
  $("#cargando").hide(); 
@@ -521,10 +559,14 @@ $(function()
 	}
 </style>
 
+<div id="eventContent" title="Event Details" style="display:none;">
+    <a href='#' style="text-decoration:underline;color:blue;" target="_blank">Enviar email</a>
+</div>
+
 <table>
 <tr>
 	<td valign="top">
-      <table>
+      <table id="asignacionsTable">
         <tr><td align="center" valign="middle"><button id="grabarBtn">Grabar asignaciones</button></td>
         </tr>
         <tr><div id="cargando" style="text-align:center">

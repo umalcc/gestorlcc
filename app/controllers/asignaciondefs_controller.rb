@@ -43,7 +43,7 @@ def consulta
       #@asignacionsListaExterna = @asignacionsListaExterna.as_json                                                        
      @asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today }
      # ToDo:asignatura puede ser null en la base de datos, controlarlo...
-    @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :room_id => r.laboratorio_id, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :title => getAsignacionTitulo(r), :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s} }    
+    @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :room_id => r.laboratorio_id, :lab_nombre => r.laboratorio.nombre_lab, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :dia_nombre => r.dia.nombre, :title => getAsignacionTitulo(r), :emailProfesor => r.solicitudlab.usuario.email, :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s} }    
     @asignacions = @asignacions.as_json 
     end
 
