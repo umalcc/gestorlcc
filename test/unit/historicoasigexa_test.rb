@@ -1,8 +1,8 @@
 require 'test_helper'
 
 class HistoricoasigexaTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
+   test "Crear un nuevo historico para asignaturas, exámenes'" do
+    @historico=Historicoasigexa.new
+    assert  @historico.save
   end
 end

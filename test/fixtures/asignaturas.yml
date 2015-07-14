@@ -4,7 +4,7 @@ one:
   codigo_asig: MyString
   nombre_asig: MyString
   area_depto: MyString
-  codigo_tit: MyString
+  titulacion_id: MyString
   caracter: MyString
   coeficiente_exp: 1.5
   curso: 1
@@ -14,7 +14,7 @@ two:
   codigo_asig: MyString
   nombre_asig: MyString
   area_depto: MyString
-  codigo_tit: MyString
+  titulacion_id: MyString
   caracter: MyString
   coeficiente_exp: 1.5
   curso: 1

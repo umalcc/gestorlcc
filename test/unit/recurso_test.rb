@@ -1,8 +1,8 @@
 require 'test_helper'
 
 class RecursoTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
+  test "Crear un nuevo recurso" do
+    @recurso=Recurso.new
+    assert  @recurso.save
   end
 end

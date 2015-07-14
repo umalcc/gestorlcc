@@ -1,8 +1,8 @@
 require 'test_helper'
 
 class TitulacionTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
+  test "Crear una nueva titulacion" do
+    @titulacion=Titulacion.new
+    assert  @titulacion.save
   end
 end

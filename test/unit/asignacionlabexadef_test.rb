@@ -1,8 +1,9 @@
 require 'test_helper'
 
 class AsignacionlabexadefTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
+ test "Crear una nueva asignacion de laboratorio para exámenes definitivo'" do
+    @asignacion=Asignacionlabexadef.new
+   
+    assert  @asignacion.save
   end
 end

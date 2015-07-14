@@ -1,8 +1,8 @@
 require 'test_helper'
 
 class PeticionlabTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
+  test "Crear un nueva peticion de laboratorio" do
+    @peticionlab=Peticionlab.new
+    assert  @peticionlab.save
   end
 end

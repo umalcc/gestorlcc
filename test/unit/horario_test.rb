@@ -1,8 +1,8 @@
 require 'test_helper'
 
 class HorarioTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
+  test "Crear un nuevo horario'" do
+    @horario=Horario.new
+    assert  @horario.save
   end
 end

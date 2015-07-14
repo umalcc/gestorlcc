@@ -2,10 +2,19 @@
 
 one:
   solicitudlab_id: 1
-  peticion_id: 1
+  peticionlab_id: 1
   laboratorio_id: 1
-
+  horaini: '11:45'
+  horafin: 10:45
+  dia_id: 4
+  mov_dia: 2
+  mov_hora: 6:30
 two:
   solicitudlab_id: 1
-  peticion_id: 1
+  peticionlab_id: 1
   laboratorio_id: 1
+  horaini: 8:45
+  horafin: 10:45
+  dia_id: 2
+  mov_dia: 4
+  mov_hora: 5:30

@@ -7,7 +7,8 @@ one:
   apellidos: MyString
   email: MyString
   admin: false
-
+  despacho: MyString
+  telefono: MyString
 two:
   identificador: MyString
   password: MyString
@@ -15,3 +16,5 @@ two:
   apellidos: MyString
   email: MyString
   admin: false
+  despacho: MyString
+  telefono: MyString

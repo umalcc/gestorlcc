@@ -1,8 +1,8 @@
 require 'test_helper'
 
 class DiaTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
+   test "Crear un nuevo dia'" do
+    @dia=Dia.new
+    assert  @dia.save
   end
 end
