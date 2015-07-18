@@ -26,7 +26,7 @@ class DiasControllerTest < ActionController::TestCase
   end
 
   test "should get edit" do
-    get :edit, :id => dias(:one).to_param
+    get :edit, :id => dias(:two).to_param
     assert_response :success
   end
 

@@ -20,6 +20,9 @@ gem 'rails-perftest'
 gem 'ruby-prof'
 gem 'test-unit'
 gem 'therubyracer'
+gem 'railroady'
+
+
 # To use debugger
 # gem 'ruby-debug'
 #gem 'railties', ">= 3.1.0"
