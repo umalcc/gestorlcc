@@ -331,6 +331,8 @@ function OpenDialogToSendEmailForConflicts(event,calendarId)
 		var solicitudes = '';
 		var laboratorio = '';
 		events.forEach(function(item, index) {
+			if(emails.indexOf(item.emailProfesor) >= 0)
+			{
 			    if(index > 0)
 			    {
 			        emails += ";" + item.emailProfesor; 
@@ -339,8 +341,8 @@ function OpenDialogToSendEmailForConflicts(event,calendarId)
 			    {
                      emails += item.emailProfesor; 
 			    }
-
-			    laboratorio = item.lab_nombre;
+			}
+			laboratorio = item.lab_nombre;
 		});
 
         var subject = 'Conflicto%20en%20solicitudes%20de%20laboratorio%20' + laboratorio;

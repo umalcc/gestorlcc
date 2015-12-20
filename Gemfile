@@ -59,7 +59,7 @@ end
 
   # Specify gems that this application depends on and have them installed with rake gems:install
   # config.gem "hpricot", "0.6", :source => "http://code.whytheluckystiff.net"
-
+gem "puma"
 gem "iconv"
 gem 'jquery-rails'
 # Bundle gems for the local environment. Make sure to
