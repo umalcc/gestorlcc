@@ -45,9 +45,9 @@ gem 'ruby-prof'
  
    #gem "factory_girl_rails"
  end
- gem 'rails_12factor', group: :production
+ gem 'rails_12factor'
  
-   gem 'pg', group :production
+   gem 'pg'
    gem 'web-console', '~> 2.0'
    gem "mocha"
    gem "rspec-rails", ">= 2.0.0.beta.19"
