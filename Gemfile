@@ -45,9 +45,9 @@ group :development, :test do
 
   #gem "factory_girl_rails"
 end
-group :production do
-  gem 'pg'
-end
+gem 'rails_12factor', group: :production
+
+  gem 'pg', group :production
   gem 'web-console', '~> 2.0'
   gem "mocha"
   gem "rspec-rails", ">= 2.0.0.beta.19"
