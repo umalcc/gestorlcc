@@ -76,4 +76,4 @@ gem 'ruby-prof'
  group :assets do
    #gem 'jquery-ui-rails' "= 3.0.10" # jquery ui
  end
- ruby '2.2.1'
+ ruby '2.2.3'
