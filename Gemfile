@@ -11,7 +11,7 @@ source 'http://rubygems.org'
  #gem 'actioncontroller', :require => 'action_controller'
  # Use unicorn as the web server
  # gem 'unicorn'
- gem 'jquerycolor'
+ gem 'jquery-color'
  gem 'dalli' 
  # Deploy with Capistrano
  # gem 'capistrano'
