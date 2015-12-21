@@ -1,5 +1,5 @@
 source 'http://rubygems.org'
-
+ 
  gem 'rails', '4.2.5'
  
  gem 'limited_sessions'
@@ -15,16 +15,16 @@ source 'http://rubygems.org'
  gem 'dalli' 
  # Deploy with Capistrano
  # gem 'capistrano'
- gem "minitestrails"
- gem 'railsperftest'
- gem 'rubyprof'
- gem 'testunit'
+ gem "minitest-rails"
+ gem 'rails-perftest'
+gem 'ruby-prof'
+ gem 'test-unit'
  gem 'therubyracer'
  gem 'railroady'
  
  
  # To use debugger
- # gem 'rubydebug'
+ # gem 'ruby-debug'
  #gem 'railties', ">= 3.1.0"
  # Bundle the extra gems:
  #gem 'nokogiri'
@@ -33,13 +33,13 @@ source 'http://rubygems.org'
  #gem "will_paginate" , ">= 3.0.pre2"
  # gem 'bj'
  # gem 'nokogiri'
- # gem 'sqlite3ruby', :require => 'sqlite3'
- # gem 'awss3', :require => 'aws/s3'
- #gem 'jqueryrails'
- gem 'activerecordsession_store'
+ # gem 'sqlite3-ruby', :require => 'sqlite3'
+ # gem 'aws-s3', :require => 'aws/s3'
+ #gem 'jquery-rails'
+ gem 'activerecord-session_store'
  gem 'sprockets'#,'~> 2.0.4'
  gem 'responders', '~> 2.0'
- gem 'sprocketsrails', :require => 'sprockets/railtie'
+ gem 'sprockets-rails', :require => 'sprockets/railtie'
  group :development, :test do
    gem 'sqlite3', :require => 'sqlite3'
  
@@ -47,33 +47,33 @@ source 'http://rubygems.org'
  end
  gem 'rails_12factor', group: :production
  
-   gem 'pg'
-   gem 'webconsole', '~> 2.0'
+   gem 'pg', group :production
+   gem 'web-console', '~> 2.0'
    gem "mocha"
-   gem "rspecrails", ">= 2.0.0.beta.19"
-   #>>>>>>>>>>>>config.gem :netldap 
+   gem "rspec-rails", ">= 2.0.0.beta.19"
+   #>>>>>>>>>>>>config.gem :net-ldap 
    gem 'railties'#, ">= 3.1.0"
- 	gem 'sassrails'#, '~> 3.2.6'
- 	gem 'coffeerails'#, '~> 3.2.2'
+  	gem 'sass-rails'#, '~> 3.2.6'
+ gem 'coffee-rails'#, '~> 3.2.2'
  	gem 'uglifier'#,'>= 1.0.3'
  	gem 'tilt'
    gem 'prawn'
    gem "prawnto_2", :require => "prawnto"	
-   gem 'prawntable'
+   gem 'prawn-table'
  
  
    # Specify gems that this application depends on and have them installed with rake gems:install
    # config.gem "hpricot", "0.6", :source => "http://code.whytheluckystiff.net"
  gem "puma"
  gem "iconv"
- gem 'jqueryrails'
+ gem 'jquery-rails'
  # Bundle gems for the local environment. Make sure to
- # put testonly gems in this group so their generators
+ # put test-only gems in this group so their generators
  # and rake tasks are available in development mode:
  # group :development, :test do
  #   gem 'webrat'
  # end
  group :assets do
-   #gem 'jqueryuirails' "= 3.0.10" # jquery ui
+   #gem 'jquery-ui-rails' "= 3.0.10" # jquery ui
  end
  ruby '2.2.1'
