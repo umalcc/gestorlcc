@@ -17,10 +17,9 @@ config.log_level = :info
   config.action_dispatch.x_sendfile_header = "X-Sendfile"
   # Compress JavaScripts and CSS
   config.assets.compress = true
- 
  # Don't fallback to assets pipeline if a precompiled asset is missed
  config.assets.compile = false
- # Generate digests for assets URLs
+# Generate digests for assets URLs
 config.assets.digest = true
 
   # For nginx:
@@ -58,4 +57,6 @@ config.assets.digest = true
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
   config.eager_load=true
+  config.assets.compile = true
+
 end
