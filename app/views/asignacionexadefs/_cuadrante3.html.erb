@@ -1,0 +1,502 @@
+<script type="text/javascript">
+function makeDroppable()
+{	
+	$('#external-events .fc-event').each(function() 
+	{
+        // store data so the calendar knows to render an event upon drop
+		var info= $.trim($(this).attr("title")).replace(/%/g, "\\n");
+		$(this).data('event', {
+			info: info,
+			id: $.trim($(this).attr("id")),
+			title: $.trim($(this).text()), // use the element's text as the event title
+			stick: true //maintain when user navigates(see docs on the renderEvent method)
+		});
+
+		// make the event draggable using jQuery UI
+		$(this).draggable({
+			zIndex: 999,
+			revert: true,      // will cause the event to go back to its
+			revertDuration: 0  //  original position after the drag
+		});
+	});
+}
+
+function deshacer()
+{
+	if($.isEmptyObject($.evento)==false)
+	{
+		$.evento.source=null;
+		switch($.evento.operacion)
+		{
+			case 'copiar':
+			elimEventListaExt($.evento.id,false);
+			break;
+
+			case 'cortar':
+			moverACalendario($.evento.id,$.evento.dia_id);
+			makeDroppable();
+			break;
+
+			case 'pegar':
+			moverEventoTmp($.evento,false,$.evento.dia_id,true);
+			$("#"+$.evento.dia_id).fullCalendar('removeEvents',$.evento.id);
+			makeDroppable();
+			break;
+
+			default:
+			updateEvent($.evento,false);
+			$("#"+$.evento.dia_id).fullCalendar('removeEvents', $.evento.id);
+			$("#"+$.evento.dia_id).fullCalendar("renderEvent",$.evento);
+		}
+	}
+	$.evento={};
+}
+
+function filterEventsByDay(eventsList,day)
+{
+     var data = $.parseJSON(eventsList);
+     var returnedData = $.grep(data, function(dt) 
+     {
+         return dt.dia_id == day;
+     });
+
+     return returnedData;
+};
+
+function registrarEvento(evento)
+{
+	evento.room_id=evento.laboratorio_id;
+	//evento.start=moment("2014-09-07 "+evento.horaini,"YYYY-MM-DD HH-mm");
+	//evento.end=moment("2014-09-14 "+evento.horafin,"YYYY-MM-DD HH-mm");
+	evento.start=evento.horaini;
+	evento.end=evento.horafin;
+	//evento.color= '#66FF33';
+	evento.info=evento.info.replace(/%/g, "\r\n");
+	evento.title=evento.title.replace(/%/g, "\r\n");
+	$.evento=evento;
+//$.data(actual,"current",$(this));
+}
+
+function updateEventCalendar(event)
+{
+   event.temporal=false;
+   var dia_id = obtenerCalendarioActual();
+   event.dia_id=dia_id;
+   event.horaini = event.start.hours()+":"+event.start.minutes();
+
+   if(event.end == null)
+   {
+   	  horafin=new Date(event.start.toDate());
+   	  event.horafin = horafin.getHours()+":"+horafin.getMinutes();
+   }
+   else
+   {
+   	  event.horafin = event.end.hours()+":"+event.end.minutes();
+   }
+   //registrarEvento(event);
+   updateEvent(event,true);
+}
+function updateEvent(event, registrarAntiguo)
+{
+   console.log("Laboratorio_id"+event.room_id);
+   $.ajax({
+	    type:"POST",
+	    dataType:"json",
+	   	url:"/asignaciondefs/actualizar",
+	   	data:{asigna:event.id, peticionlabId: event.peticionlab_id, dia_id:event.dia_id ,   horaini:event.horaini, horafin:event.horafin, lab_id:event.room_id, temporal:event.temporal},
+	   	success:function(response)
+	   	{
+	   		if(registrarAntiguo)
+	   		{
+	   			response.operacion=event.operacion;
+	   			registrarEvento(response);
+	   		}
+	   	}
+	});	
+}
+
+function isElemOverDiv(draggedItem, dropArea) 
+{
+	 // Prep coords for our two elements
+	 var b = $(dropArea).offset();
+	 b.right = $(dropArea).outerWidth() + b.left;
+	 b.bottom = $(dropArea).outerHeight() + b.top;
+	 // Compare
+	 if (draggedItem.pageX >= b.left && draggedItem.pageX<= b.right &&
+	     draggedItem.pageY>= b.top && draggedItem.pageY <= b.bottom){return true;}
+	 return false;
+}
+
+function obtenerCalendarioActual()
+{
+	var dia = $("#datepicker").text(); //controlar que día no sea nulo o cadena vacía
+	return dia;
+}
+
+function elimEventListaExt(id,confirmacionReq)
+{
+	if((confirmacionReq==false)||(confirm("¿Desea realmente eliminar la asignación?")))
+	{
+	//var id=el.attr("id");
+	$("#external-events #"+id).remove();
+	//el.parent().remove(); 
+			//elimina el evento de la lista externa visualmente
+	var height=$("#external-events").height();
+	$("#external-events").height(height-35);
+	$.ajax({
+	type:"POST",
+	url:"/asignaciondefs/destroy",
+	data:{id:id}
+    });
+	}
+}
+function documentClick(ev)
+{
+	$(".seleccionado").css("border", "1px solid #3a87ad");
+	$(".seleccionado").css("background-color", "#3a87ad");
+	$(".fc-event").removeClass("seleccionado");
+}
+
+function moverEventoTmp(evento,copiar,diaId,funcionEspecial)
+{
+	   		//Eliminar evento del calendario, visualmente
+	$.ajax({
+		type:"POST",
+	   	dataType:"json",
+	   	url:"/asignaciondefs/anadirListaExterna",
+	   	data:{id:evento.id, copiar:copiar},
+	   	success:function(response)
+	   	{
+	   		if(copiar==true)
+	   		{
+	   			evento.id=response.id;
+	   			evento.operacion="copiar";
+	   		}
+	   		else
+	   		{
+	   			evento.operacion="cortar";
+	   		}
+	   		evento.dia_id=diaId;
+	   		$.evento=evento;
+	   		generarAnadirListaExterna(evento,funcionEspecial);
+	   		makeDroppable();
+	   	}
+	   });
+	   		
+}
+
+function generarAnadirListaExterna(evento,funcionEspecial)
+{
+	var copiado="";
+	$("#external-events .fc-event").removeClass("clipBoard");
+	if(funcionEspecial==true)
+	{
+		copiado="clipBoard";
+	}
+	var elemento=$("<div class='fc-event ui-draggable ui-draggable-handle'></div>");
+	elemento.addClass(copiado);
+	var imagen=$("<input onClick=\"elimEventListaExt($(this).attr('id'),true);\" class='elEvento' type='image' style='position:absolute;right:0px;' src='/assets/borrar.png'/>");
+	imagen.attr("id",evento.id);
+	elemento.append(imagen);
+	elemento.attr("title",evento.info);
+	elemento.attr("id",evento.id);
+	elemento.append(evento.title);
+	var height=$("#external-events").height();
+	$("#external-events").height(35+height);
+	$("#external-events").append(elemento);
+}
+
+function eliminarListaExterna(id)
+{
+	var height=$("#external-events").height();
+	$("#external-events").height(height-35);
+	$("#external-events #"+id).remove();
+}
+
+function moverACalendario(id,actualTab)
+{
+	var evento;
+	if(id!= undefined){
+		$.ajax({
+			type:"POST",
+			dataType:"json",
+			url:"/asignaciondefs/pegar",
+			data:{id:id,dia_id:actualTab},
+			success:function(response)
+			{
+				eliminarListaExterna(id);
+				$.evento={id:response.id,
+			 	operacion:"pegar",
+		 		title:response.titulo.replace(/%/g, "\r\n"),
+		 		info:response.info.replace(/%/g, "\r\n"),
+		 		allDay:false,
+		 		room_id:response.laboratorio_id,
+		 		start:response.horaini,
+		 		end:response.horafin,
+		 		dia_id:response.dia_id
+		 	};
+		 	console.log("Pegando "+evento);
+		 	$("#"+actualTab).fullCalendar("renderEvent",$.evento);
+		}
+	});
+	}
+}
+
+function cortar(divId,evento)
+{
+	if(evento.id != undefined)
+	{
+		$("#external-events .fc-event").removeClass("clipBoard");
+		var diaId = obtenerCalendarioActual();
+		moverEventoTmp(evento,false,diaId,true);
+		//$("#external-events #"+evento.id).addClass("clipBoard");
+		$("#"+divId).fullCalendar('removeEvents',evento.id);
+		makeDroppable();
+  }
+}
+
+function copiar(divId,evento)
+{
+	if(evento.id != undefined)
+	{
+		$("#external-events .fc-event").removeClass("clipBoard");
+		var diaId = obtenerCalendarioActual();
+		moverEventoTmp(evento,true,diaId,true);
+		$("#external-events #"+evento.id).addClass("clipBoard");
+		makeDroppable();
+  }
+}
+
+function funcionesEspeciales(ev)
+{
+  var teclaZ=90, teclaX=88, teclaC=67,teclaV=86;
+ 
+  var diaId = obtenerCalendarioActual(); //Sirve para distinguir entre el calendario de un dia o de otro
+  var calendarioActivo= $("#tabs #"+diaId);	
+  var eventObj=window.event? event: ev;
+  if(eventObj.ctrlKey)
+  {
+  	var info=$(".seleccionado .fc-bg").attr("title");
+  	var titulo=$(".seleccionado .fc-title").text();
+  	var id=$(".seleccionado .fc-id").attr("data-id");
+  	var evento={id:id,title:titulo,info:info};
+  	switch(eventObj.keyCode)
+  	{
+  		case teclaZ:
+  		deshacer();
+  		break;
+  		
+  		case teclaX://id, info, title
+  		cortar(diaId,evento);
+  		break;
+
+  		case teclaC:
+  		copiar(diaId,evento);
+  		break;
+
+  		case teclaV:
+  		var eventId= $("#external-events .clipBoard").attr("id");
+  		moverACalendario(eventId,diaId);
+  		$("#"+evento.dia_id).fullCalendar('removeEvents',evento.id);
+		makeDroppable();
+  		break;
+
+  	}
+  }
+}
+$(function() 
+{	
+
+	$.evento={};
+	$(document).on("click",documentClick);
+	document.onkeydown=funcionesEspeciales;
+	$(".elEvento").click(function()
+		{
+			elimEventListaExt($(this).attr("id"),true);
+		});
+
+	$( "#external-events" ).droppable();
+
+
+   /* initialize the events -------------*/
+	makeDroppable();
+
+	var asignacions= '<%= raw @asignacions %>';
+    var laboratorios= '<%= raw @laboratorios %>';
+    asignacions=asignacions.replace(/%/g, "\\n");
+    laboratorios=laboratorios.replace(/%/g, "\\n");
+    laboratorios=laboratorios.replace(/nombre_lab/g,"name");
+    laboratorios=laboratorios.replace(/=>/g, ":");
+    asignacions=asignacions.replace(/=>/g, ":");
+	 console.log("Asignacions:"+asignacions);
+    /* initialize the calendar */
+    $("div.calendario").each(function(index, element)
+    {
+      var divId =  $(element).attr("id");
+
+      $("#"+divId).fullCalendar
+      ({
+        header: { left: '', center: 'title', right: '' },
+        slotDuration: '00:15:00',
+        minTime: '<%=@horainicio%>',
+        maxTime: '<%=@horafin%>',
+        allDaySlot:false,
+        defaultDate: '2014-09-12',
+        defaultView:'agendaWeek',
+        editable: true,
+        droppable: true,
+        drop: function(date, jsEvent, ui, selectedRoom) 
+        {  
+        	tmpDate= new Date(date);
+        	//tmpDate.setHours(tmpDate.getHours()+2);
+        	horafin = moment(tmpDate);
+        	//horafin = horafin.getHours()+":"+horafin.getMinutes();
+        	event.id= $(this).attr("id");
+        	event.start= date;
+        	event.end=horafin;
+        	event.room_id=selectedRoom;
+        	 event.operacion="pegar";
+             updateEventCalendar(event);
+        	 $(this).remove(); //elimina el evento de la lista externa visualmente
+        	 var height=$("#external-events").height();
+	   		 $("#external-events").height(height-35);
+
+		},
+        eventLimit: true, //allow "more" link when too many events
+        events: filterEventsByDay(asignacions,divId), //load events
+        axisFormat: 'H(:mm)', 
+        timeFormat: 'H(:mm)',
+        rooms:$.parseJSON(laboratorios),
+
+	    eventRender: function(event, element) {
+            
+            element.attr('title', event.info);
+        },
+	    eventResize: function(event, delta, revertFunc)
+	    {
+	    	event.operacion="redimensionar";
+	    	updateEventCalendar(event);	
+	    },
+	    eventDrop: function(event, delta, revertFunc)
+	    {
+	    	event.operacion="cambiarLaboratorio";
+	    	updateEventCalendar(event);
+	    },
+	    eventDragStop: function(event, jsEvent, ui, view) 
+	    {  
+        //Move event from calendar to external list
+	   	if(isElemOverDiv(jsEvent,'#external-events'))
+	   	{
+	   		event.operacion="cortar";
+	   		var diaId = obtenerCalendarioActual();
+	   		moverEventoTmp(event,false,diaId,false);
+	   		$("#"+divId).fullCalendar('removeEvents',event.id);
+	   	}
+	   },
+       eventClick: function(event){
+       	     $(".seleccionado").css("border", "1px solid #3a87ad");
+	         $(".seleccionado").css("background-color", "#3a87ad");
+       	     $(".fc-event").removeClass("seleccionado");
+       	     $(this).addClass("seleccionado");
+       	     $(".seleccionado").css("border-style", "dashed");
+       	     $(".seleccionado").css("background-color", "#6F8");
+       	     return false;
+        },
+
+        });
+    });
+
+ });
+
+</script>
+
+<style>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 14px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+	}
+		
+	#wrap {
+		margin: 0 auto;
+	}
+		
+	#external-events {
+		float: center;
+		width: 30px;
+		width: 150px;
+		padding: 0 10px;
+		border: 1px solid #ccc;
+		background: #eee;
+		text-align: left;
+	}
+		
+	#external-events {
+		font-size: 16px;
+		margin-top: 0;
+		padding-top: 1em;
+	}
+		
+	#external-events .fc-event {
+		margin: 10px 0;
+		cursor: pointer;
+		line-height: 2;
+	}
+
+	#dropMenu p {
+		margin: 1.5em 0;
+		font-size: 11px;
+		color: #666;
+	}
+		
+	#external-events p input {
+		margin: 0;
+		vertical-align: middle;
+	}
+
+	#tabs { /*debe sustituirse por otro tabs que hay en otra hoja css*/
+		float: right;
+		width: 900px;
+	}
+</style>
+
+<table>
+<tr>
+	<td valign="top">
+      <table>
+        <tr><td align="center" valign="middle"> <%= button_to 'Asignación directa','/asignacionexadefs/asigna_directa', :method => 'get' %></td></tr>
+        <tr><td><br/></td></tr>
+        <tr ><td align="center" valign="middle"><h4>Asignaciones temporales</h4></td></tr>
+        <tr>
+          <td align="center" valign="middle">
+           <%if !@asignacionexasListaExterna.nil?%>
+            <div id='external-events' style="height:<%= 35+35*@asignacionexasListaExterna.size %>px;">
+		    <% for asignacion in @asignacionexasListaExterna %>
+		    <%  info=asignacion[:info].to_s
+			    info.gsub!('%',"&#13;&#10")%>
+			    <div class="fc-event ui-draggable ui-draggable-handle" title="<%= asignacion[:info].to_s.html_safe %>"  id="<%= asignacion [:id] %>">
+			    	<input class="elEvento" type="image" style='position:absolute;right:0px;' id="<%= asignacion [:id] %>" src='/assets/borrar.png'/>
+			    	<%=asignacion[:asignatura].to_s %></div>
+		    <% end %> 
+			<!--Meter las asignaciones que están en la lista externa, pero cómo saber cuáles son?-->
+            </div>
+            <%end%>
+         </td>
+      </tr>
+      <tr><td><br/></td></tr>
+    </table>
+
+    <td>
+      <%= text_field_tag :fecha, :size=>12, :name=>"fecha",  :id=>"DPC_fecha_DD-MM-YYYY"%>
+    </td>
+
+    </td>
+      <td><div id="wrap">
+           <% @inicioPeriodo.upto(@finPeriodo) do |dia|%>
+               <div class="calendario" id="<%=dia%>"></div>
+           <%end%>
+    </div></td>
+</tr>
+</table>
