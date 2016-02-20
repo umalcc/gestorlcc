@@ -7,8 +7,7 @@
     <td style="padding-right:150px"><%= link_to image_tag("boton2.png", :border=>0), 
                                 { :controller=>'asignacions',:action => 'revisar' }, :remote => true %></td>
     <td>Grabar asignaci&oacute;n definitiva</td>
-    <td><%= link_to image_tag("boton2.png", :border=>0), 
-                                { :controller=>'asignacions',:action => 'grabar_asignacion' }, :remote => true %></td>
+    <td><a href="#" id="saveBtn"><img src="/assets/boton2.png" border="0"/></a></td>
    </tr>
   </table>
  </div> 
@@ -17,11 +16,16 @@
    <p>Grabe la asignaci&oacute;n definitiva cuando todo sea correcto<br/><br/>y active el periodo correspondiente</p>
  </div>
 
+<div style="display:none" id="colisionOk" class="aviso">
+<p>Se han grabado las asignaciones<br><br>
+A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
+</div>
+
  <p>
   
  <% @dias=Dia.where('en_uso=?',"t").order("num").to_a %>
  <a name="up"></a>
- <div id="rotulodias">
+ <div class="rotulodias">
   <% for dia in @dias %>
     <a href="#<%=dia.nombre%>"><%=dia.nombre%>&nbsp;&nbsp;&nbsp;&nbsp;</a>
   <% end %>
@@ -29,13 +33,13 @@
  </p>
  <% for dia in @dias %><!-- por cada dia habil de la semana, una tabla -->
    
-   <div id="rotulodia">
+   <div class="rotulodia">
         <a  name="<%=dia.nombre%>"><%=dia.nombre%></a>&nbsp;&nbsp;<br/>
         <%= image_tag ("bg_separ.gif") %>&nbsp;&nbsp
         <a href="#up"><%= image_tag ("up.png") %></a>
    </div>
 
-   <table id="asignacion">
+   <table id="asignacion" class="asignacionsDay">
      <% @labs=Laboratorio.order("nombre_lab").to_a %>
      <tr>
       <th></th>
@@ -225,6 +229,35 @@
 <script type="text/javascript">
 $(function()
 {
+  $("#saveBtn").click(function(){
+     $("#colision").hide();
+      $("#colisionOk").hide();
+            $.ajax({
+                     type: "GET",
+                     url: "grabar_asignacion",
+                     data: { },
+                     success:function(data){
+                        $("#colision").hide();
+                        $('.rotulodias').hide();
+                        $('.rotulodia').hide();
+                        $('#revisa').hide();
+                        $('.asignacionsDay').hide();
+                        $("#colisionOk").show();
+                     },
+                     error:function(data){
+
+                         $("#colision").hide();
+                         $('.rotulodias').hide();
+                         $('.rotulodia').hide();
+                         $('#revisa').hide();
+                         $('.asignacionsDay').hide();
+                         $("#colisionOk").show();
+                         $("#colisionOk").html("<p>"+data.responseJSON.msg+"</p>");
+                    }
+        });
+
+
+  });
    $('a[name=borraNorm]').click(function () {    
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
@@ -232,9 +265,9 @@ $(function()
                      type: "POST",
                      url: "borranormal",
                      data: { asigna:$("#asigna").val() }
-                   })
+                   });
          }  
-    }) 
+    }); 
 });
 
 $(function()
@@ -246,7 +279,7 @@ $(function()
                      type: "POST",
                      url: "borradir",
                      data: { asigna:$("#asigna").val() }
-                   })
+                   });
          }  
     }) 
 });
