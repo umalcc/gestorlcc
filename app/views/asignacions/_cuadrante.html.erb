@@ -25,7 +25,7 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
   
  <% @dias=Dia.where('en_uso=?',"t").order("num").to_a %>
  <a name="up"></a>
- <div class="rotulodias">
+ <div id="rotulodias" class="rotulodias">
   <% for dia in @dias %>
     <a href="#<%=dia.nombre%>"><%=dia.nombre%>&nbsp;&nbsp;&nbsp;&nbsp;</a>
   <% end %>
@@ -33,7 +33,7 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
  </p>
  <% for dia in @dias %><!-- por cada dia habil de la semana, una tabla -->
    
-   <div class="rotulodia">
+   <div id="rotulodia" class="rotulodia">
         <a  name="<%=dia.nombre%>"><%=dia.nombre%></a>&nbsp;&nbsp;<br/>
         <%= image_tag ("bg_separ.gif") %>&nbsp;&nbsp
         <a href="#up"><%= image_tag ("up.png") %></a>
