@@ -343,7 +343,7 @@ end
     end
 
     #buscar todas las asignaciones de una solicitud de laboratorio concreta
-    asignaciones=Asignacion.where('solicitudlab_id = ?',@asignacion.solicitudlab).to_a
+    #asignaciones=Asignacion.where('solicitudlab_id = ? and laboratorio_id = ?',@asignacion.solicitudlab,inicial_laboratorio).to_a
 
     #cambio de día de la semana
     mov_dia=""

@@ -258,13 +258,16 @@ $(function()
 
 
   });
-   $('a[name=borraNorm]').click(function () {    
+   $('a[name=borraNorm]').click(function (even) {   
+             var asigna_id_eliminar =$(this).closest("tr").find("input[name='asigna']").val();
+
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
+
             $.ajax({
                      type: "POST",
                      url: "borranormal",
-                     data: { asigna:$("#asigna").val() }
+                     data: { asigna:asigna_id_eliminar}
                    });
          }  
     }); 
@@ -272,13 +275,14 @@ $(function()
 
 $(function()
 {
-   $('a[name=borraDir]').click(function () {    
+   $('a[name=borraDir]').click(function (even) {    
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
+             var asigna_id_eliminar =$(this).closest("tr").find("input[name='asigna']").val();
             $.ajax({
                      type: "POST",
                      url: "borradir",
-                     data: { asigna:$("#asigna").val() }
+                     data: { asigna:asigna_id_eliminar }
                    });
          }  
     }) 
