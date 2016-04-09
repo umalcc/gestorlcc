@@ -14,7 +14,23 @@ module SolicitudesHelper
 	    return {:iniciocurso => inicioCurso, :fincurso => finCurso}
 	end
 
-	def isValidRequest?(solicitud, inicio, fin)
+  def getCurrentCuatrimester
+      mesActual = Date.today.month
+      currentDate = Date.today
+      if(mesActual >= 1 and mesActual <= 7)
+        #segundo cuatrimestre
+        inicioCurso = Date.new(currentDate.year,1,22)
+        finCurso = Date.new(currentDate.year,7,31)
+      else
+        #primer cuatrimestre
+        inicioCurso = Date.new(currentDate.year,8,1)
+        finCurso = Date.new(currentDate.next_year.year,1,21)
+      end
+
+      return {:iniciocurso => inicioCurso, :fincurso => finCurso}
+  end
+	
+  def isValidRequest?(solicitud, inicio, fin)
 
         return true if (solicitud.fechasol.year == inicio and 
       	                solicitud.fechasol.month >= 9 and 
@@ -24,7 +40,18 @@ module SolicitudesHelper
                         solicitud.fechasol.month <= 7)
 	end
 
-    def isLabRequestCurrent?(solicitud)
+  def isLabRequestCurrentCuatrimester?(solicitud)
+    periodoAcademico = getCurrentCuatrimester
+    inicioCurso = periodoAcademico[:iniciocurso]
+    fincurso = periodoAcademico[:fincurso]
+
+    return true if(solicitud.fechasol.year >= inicioCurso.year and 
+                        solicitud.fechasol.month >= inicioCurso.month and 
+                        solicitud.fechasol.month <= fincurso.month and
+                       solicitud.fechasol.year <= fincurso.year)
+  end
+
+  def isLabRequestCurrent?(solicitud)
 
       periodoAcademico = getCurrentTeachingPeriod
 
@@ -49,6 +76,11 @@ module SolicitudesHelper
       return true if isValidRequest?(solicitud, inicioCursoPasado2, finCursoPasado2)    
     end
 
+    def getCurrentCuatrimesterRequests(solicitudlabs)
+      solicitudlabs = solicitudlabs.select{|s| isLabRequestCurrentCuatrimester?(s)} 
+      return solicitudlabs
+    end
+    
     def getCurrentRequests(solicitudlabs)
       solicitudlabs = solicitudlabs.select{|s| isLabRequestCurrent?(s)} 
       return solicitudlabs

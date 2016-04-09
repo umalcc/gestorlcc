@@ -8,7 +8,7 @@ class SolicitudlabexasController < ApplicationController
 
 
   def initializeIndex
-      @tiempoSolicitudes = ["Actuales", "Desde hace un año", "Desde hace dos años"]
+      @tiempoSolicitudes = ["Cuatrimestre actual", "Curso académico actual", "Desde hace un año", "Desde hace dos años"]
   end
 
   def index
@@ -200,9 +200,11 @@ end
     
     tiempoSolicitud = params[:tiempoSolicitud]
     case tiempoSolicitud
-      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas)
-      when '1' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas)
-      when '2' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas)
+      when '0' then @solicitudlabexas = getCurrentCuatrimesterRequests(@solicitudlabexas)
+      when '1' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas)
+      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas)
+      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas)
+
     end
 
     @cuenta = @solicitudlabexas.size
