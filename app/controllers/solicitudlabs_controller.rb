@@ -9,7 +9,7 @@ class SolicitudlabsController < ApplicationController
 
 
   def initializeIndex
-      @tiempoSolicitudes = ["Cuatrimestre actual", "Curso académico actual", "Desde hace un año", "Desde hace dos años"]
+      @tiempoSolicitudes = ["Curso académico actual", "Cuatrimestre actual", "Desde hace un año", "Desde hace dos años"]
   end
 
   def index
@@ -266,8 +266,8 @@ end
     
     tiempoSolicitud = params[:tiempoSolicitud]
     case tiempoSolicitud
-      when '0' then @solicitudlabs = getCurrentCuatrimesterRequests(@solicitudlabs)
-      when '1' then @solicitudlabs = getCurrentRequests(@solicitudlabs)
+      when '0' then @solicitudlabs = getCurrentRequests(@solicitudlabs)
+      when '1' then @solicitudlabs = getCurrentCuatrimesterRequests(@solicitudlabs)
       when '2' then @solicitudlabs = getFromLastYearRequests(@solicitudlabs)
       when '3' then @solicitudlabs = getFromLast2YearsRequests(@solicitudlabs)
     end

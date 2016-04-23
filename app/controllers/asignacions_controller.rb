@@ -79,7 +79,7 @@ end
   def asignar_iniciar
     solicitudes=Solicitudlab.where("fechafin >= ? and asignado <> ?",Date.today,"D").to_a
     @adjudicado=Periodo.where("activo = ? and tipo= ?","t","Lectivo").to_a
-
+@todoslaboratorios = Laboratorio.order("nombre_lab desc").to_a
     if solicitudes.size!=0 
      
      @solicitudlabs=solicitudes
@@ -144,11 +144,8 @@ end
 
      # los componentes ordenados secuencialmente, se cargan en un array 3d de horas x labs x diasemana
 
-
      cuadrante=Array3d.new
      @asignacions=[]
-   
-    
      @solicitudlabs.each { |sol|     #por cada una de las @solicitudlabs, buscamos los lab que tienen ese n. de puestos
        sol.peticionlab.each { |pet|     #por cada peticion de tramo de cada solicitud
         
@@ -190,29 +187,29 @@ end
              lab=[@todoslab.first.id]
            end
            
-          else 
-           uno=Laboratorio.find_by_nombre_lab("3.1.1").id
-           dos=Laboratorio.find_by_nombre_lab("3.1.2").id
-           tres=Laboratorio.find_by_nombre_lab("3.1.3").id
-           cinco=Laboratorio.find_by_nombre_lab("3.1.5").id
-           ocho=Laboratorio.find_by_nombre_lab("3.1.8").id 
-           nueve=Laboratorio.find_by_nombre_lab("3.1.9").id
-           if sol.npuestos==Laboratorio::DOS_LAB
+         # else
+           #uno=Laboratorio.find_by_nombre_lab("3.1.1").id
+           #dos=Laboratorio.find_by_nombre_lab("3.1.2").id
+           #tres=Laboratorio.find_by_nombre_lab("3.1.3").id
+           #cinco=Laboratorio.find_by_nombre_lab("3.1.5").id
+           #ocho=Laboratorio.find_by_nombre_lab("3.1.8").id 
+           #nueve=Laboratorio.find_by_nombre_lab("3.1.9").id
+           #if sol.npuestos==Laboratorio::DOS_LAB
                # se asignan "a mano los lab 1 y 2 o bien el 8 y el 9 que son contiguos
                 
-               if cuadrante[hora,uno,dia]==nil and cuadrante[hora,dos,dia]==nil
-                lab=[uno,dos]
-               else 
-                lab=[ocho,nueve]
+              # if cuadrante[hora,uno,dia]==nil and cuadrante[hora,dos,dia]==nil
+             #   lab=[uno,dos]
+           #    else 
+          #      lab=[ocho,nueve]
                 
-               end #if 
-           else
-             lab=[uno,dos,ocho,nueve]
-             if sol.npuestos==150
-                 lab+=[tres,cinco]
+          #     end #if 
+         #  else
+         #    lab=[uno,dos,ocho,nueve]
+         #    if sol.npuestos==150
+         #        lab+=[tres,cinco]
                
-             end # if == 150
-           end # if ==59 DOSLAB
+         #    end # if == 150
+         #  end # if ==59 DOSLAB
           end # if <59 DOSLAB
            # siempre habra al menos una asignacion para todos
            # CONSTRUIR UNA LISTA Y UNA ITERACION  SOBRE ELLA DE ASIGNACIONES

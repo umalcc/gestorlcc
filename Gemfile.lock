@@ -87,7 +87,6 @@ GEM
     nokogiri (1.6.7.1)
       mini_portile2 (~> 2.0.0.rc2)
     pdf-core (0.6.0)
-    pg (0.18.4)
     power_assert (0.2.6)
     prawn (2.0.2)
       pdf-core (~> 0.6.0)
@@ -203,7 +202,6 @@ DEPENDENCIES
   limited_sessions
   minitest-rails
   mocha
-  pg
   prawn
   prawn-table
   prawnto_2
