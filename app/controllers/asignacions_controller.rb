@@ -79,7 +79,7 @@ end
   def asignar_iniciar
     solicitudes=Solicitudlab.where("fechafin >= ? and asignado <> ?",Date.today,"D").to_a
     @adjudicado=Periodo.where("activo = ? and tipo= ?","t","Lectivo").to_a
-@todoslaboratorios = Laboratorio.order("nombre_lab desc").to_a
+    @todoslaboratorios = Laboratorio.order("nombre_lab desc").to_a
     if solicitudes.size!=0 
      
      @solicitudlabs=solicitudes
@@ -323,17 +323,20 @@ end
 
     @asignacion=Asignacion.find(params[:id])
     inicial_dia=@asignacion.peticionlab.diasemana
+    inicial_dia_id=@asignacion.dia_id
+
     inicial_hora_ini=@asignacion.peticionlab.horaini
     inicial_hora_fin=@asignacion.peticionlab.horafin
+    peticion_id = @asignacion.peticionlab.id
     inicial_laboratorio=@asignacion.laboratorio
     laboratorio_id=Laboratorio.find_by_nombre_lab(params[:nombre_lab]).id
     dia_id=Dia.find_by_nombre(params[:nombre]).id
     horafin=Horario.find_by_comienzo(params[:comienzo]).fin
-
+    asignaciones=Asignacion.where('solicitudlab_id = ? and peticionlab_id = ?',@asignacion.solicitudlab,peticion_id).to_a
 
     #cambio de laboratorio
-    if inicial_laboratorio!=laboratorio_id
-      asignaciones=Asignacion.where('solicitudlab_id = ? and laboratorio_id = ?',@asignacion.solicitudlab,inicial_laboratorio).to_a
+    if inicial_laboratorio.id!=laboratorio_id
+      logger.debug("LABORATOROOO distinto"+inicial_laboratorio.id.to_s+laboratorio_id.to_s)
       for asignacion in asignaciones # todas las que haya que modificar
         asignacion.update_attributes(:laboratorio_id=>laboratorio_id) 
       end 
@@ -344,7 +347,8 @@ end
 
     #cambio de día de la semana
     mov_dia=""
-    if inicial_dia != params[:nombre]
+    if inicial_dia != dia_id
+            logger.debug("Dia distinto"+ inicial_dia.to_s+ params[:nombre])
          mov_dia=" cambio de "+inicial_dia+" a "+params[:nombre]+"; "
       for asignacion in asignaciones # todas las que haya que modificar
         asignacion.update_attributes(:dia_id=> dia_id, :mov_dia=> mov_dia) 
@@ -353,7 +357,8 @@ end
 
     #cambio de hora inicial
     mov_hora="" 
-    if inicial_hora_ini != params[:comienzo]
+    logger.debug("Hora distinto"+ inicial_hora_ini.to_s+ params[:comienzo])
+
       mov_hora=" cambio de "+inicial_hora_ini+"-"+inicial_hora_fin+" a "+params[:comienzo]+"-"+horafin+"; "
       diferencia=Horario.find_by_comienzo(inicial_hora_ini).num-Horario.find_by_comienzo(params[:comienzo]).num
       count =0
@@ -361,9 +366,9 @@ end
         asignacion.update_attributes(:horaini=> Horario.find_by_num(Horario.find_by_comienzo(asignacion.peticionlab.horaini).num+count-diferencia).comienzo,
                                      :horafin=> Horario.find_by_num(Horario.find_by_comienzo(asignacion.peticionlab.horaini).num+count-diferencia).fin,
                                      :mov_hora=> mov_hora)
-        count = count +1
+        logger.debug "Diferencia " + diferencia.to_s
+          count = count +1
       end
-    end
       
     @asignacions=Asignacion.all
         respond_to do |format|
