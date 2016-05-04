@@ -44,6 +44,7 @@ def consulta
      @asignacions = @asignacions.reject{|a| !a.solicitudlab.nil? and a.solicitudlab.fechafin<Date.today }
      # ToDo:asignatura puede ser null en la base de datos, controlarlo...
     @asignacions = @asignacions.map { |r| {:id => r.id , :solicitudlab_id => r.solicitudlab_id, :room_id => r.laboratorio_id, :lab_nombre => r.laboratorio.nombre_lab, :start => r.horaini, :end => r.horafin, :dia_id => r.dia_id, :dia_nombre => r.dia.nombre, :title => getAsignacionTitulo(r), :emailProfesor => r.solicitudlab.usuario.email, :info => getAsignacionInfo(r), :fechaIniSol => r.solicitudlab.fechaini.to_s, :fechaFinSol => r.solicitudlab.fechafin.to_s} }    
+    
     @asignacions = @asignacions.as_json 
     end
 
@@ -96,9 +97,9 @@ def getAsignacionInfo(asignacion)
     end
     
     comentarios=asignacion.solicitudlab.comentarios
-    comentarios=comentarios.blank? ?  " ": comentarios.gsub(/[\r\n]+/, "%")
+    comentarios=comentarios.blank? ?  " ": comentarios.gsub(/[\r\n]+/, "%").gsub(/\"/,'\\"')
 
-    info = "Puestos: " + asignacion.solicitudlab.npuestos.to_s 
+    info = "Puestos:" + asignacion.solicitudlab.npuestos.to_s 
     #Añadir fecha de la solicitud, horaini y horafin pero sólo si la asignacion es temporal
     if asignacion.temporal == true
        info = info + "%Horario: " + asignacion.dia.nombre + " " + asignacion.horaini + " - " + asignacion.horafin

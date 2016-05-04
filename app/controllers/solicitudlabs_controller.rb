@@ -167,7 +167,7 @@ def saveModel(params)
     @solicitudlab.asignatura.curso=params[:nivel]
     @solicitudlab.curso = params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
     @solicitudlab.npuestos=params[:npuestos].to_i
-    @solicitudlab.comentarios= params[:comentarios]
+    @solicitudlab.comentarios= params[:comentarios].force_encoding("utf-8")
     @solicitudlab.asignado="N"
     @solicitudlab.fechasol=Date.today
     @solicitudlab.fechaini=params[:fechaini].to_date

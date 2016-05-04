@@ -54,7 +54,9 @@ function deshacer()
 
 function filterEventsByDay(eventsList,day)
 {
+	 console.log("Start parsing");
      var data = $.parseJSON(eventsList);
+     console.log("Stop parsing");
      var returnedData = $.grep(data, function(dt) 
      {
          return dt.dia_id == day;
