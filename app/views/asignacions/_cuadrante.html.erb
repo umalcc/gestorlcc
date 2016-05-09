@@ -259,31 +259,63 @@ $(function()
 
   });
    $('a[name=borraNorm]').click(function (even) {   
-             var asigna_id_eliminar =$(this).closest("tr").find("input[name='asigna']").val();
+      
+      if(confirm('Seguro que desea eliminar la asignacion?'))
+      {
+          //$("#cuadrante").LoadingOverlay("show");
 
-         if(confirm('Seguro que desea eliminar la asignacion?'))
-         {
+          var asigna_id_eliminar = $(this).closest("tr").find("input[name='asigna']").val();
+          $.ajax({
+                    type: "POST",
+                    url: "borranormal",
+                    data: { asigna:asigna_id_eliminar},
+                    success:  function(data)
+                    {
+                      //Remove td content
+                      $(this).closest("td").empty();
+                    },
+                    error: function(xhr, status)
+                    {
 
-            $.ajax({
-                     type: "POST",
-                     url: "borranormal",
-                     data: { asigna:asigna_id_eliminar}
-                   });
-         }  
-    }); 
+                    },
+                    complete: function(xhr, status)
+                    {
+                        //Hide ajax loader
+                        //$("#cuadrante").LoadingOverlay("hide", true);
+                    }
+                });
+      }  
+  }); 
 });
 
 $(function()
 {
-   $('a[name=borraDir]').click(function (even) {    
+   $('a[name=borraDir]').click(function (even) { 
+
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
-             var asigna_id_eliminar =$(this).closest("tr").find("input[name='asigna']").val();
+             //$("#cuadrante").LoadingOverlay("show");
+
+            var asigna_id_eliminar =$(this).closest("tr").find("input[name='asigna']").val();
             $.ajax({
                      type: "POST",
                      url: "borradir",
-                     data: { asigna:asigna_id_eliminar }
-                   });
+                     data: { asigna:asigna_id_eliminar },
+                     success:  function(data)
+                     {
+                      //Remove td content
+                      $(this).closest("td").empty();
+                     },
+                     error: function(xhr, status)
+                     {
+
+                     },
+                     complete: function(xhr, status)
+                     {
+                        //Hide ajax loader
+                        //$("#cuadrante").LoadingOverlay("hide", true);
+                     }
+                  });
          }  
     }) 
 });

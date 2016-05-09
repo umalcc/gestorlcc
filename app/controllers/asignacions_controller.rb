@@ -482,7 +482,7 @@ def getAsignacionInfo(asignacion)
     end
     
     comentarios=asignacion.solicitudlab.comentarios
-    comentarios=comentarios.blank? ?  " ": comentarios.gsub(/[\r\n]+/, "%")
+    comentarios=comentarios.blank? ?  " ": comentarios.gsub(/[\r\n]+/, "%").gsub(/\"/,'\\"')
 
     info = "Puestos: " + asignacion.solicitudlab.npuestos.to_s 
     #Añadir fecha de la solicitud, horaini y horafin pero sólo si la asignacion es temporal
@@ -546,12 +546,16 @@ def getAsignacionInfo(asignacion)
 
   def borranormal
     asignacion=Asignacion.find(params[:asigna])
+
     asignacion.delete
     # otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).to_a
     # otrasasignaciones.each {|o| o.delete }
     @asignacions=Asignacion.all
+
+    #actualizar número de horas de las asignaciones relacionadas
+
     respond_to do |format|
-      format.js
+      format.json {render json: {"asignacion" => params[:asigna]}}
     end
   end
 
@@ -563,9 +567,13 @@ def getAsignacionInfo(asignacion)
     asignacion.delete
     #otrasasignaciones.each {|o| o.delete }
     #solicitudlab.delete
+    
+    #actualizar número de horas de las asignaciones relacionadas
+
     @asignacions=Asignacion.all
+    
     respond_to do |format|
-      format.js
+      format.json {render json: {"asignacion" => params[:asigna]}}
     end
   end
 
