@@ -147,6 +147,7 @@ end
      cuadrante=Array3d.new
      @asignacions=[]
      @solicitudlabs.each { |sol|     #por cada una de las @solicitudlabs, buscamos los lab que tienen ese n. de puestos
+       laboratorio_pet_id = nil
        sol.peticionlab.each { |pet|     #por cada peticion de tramo de cada solicitud
         
          # tomamos el dia, la hora de inicio y la de fin
@@ -155,31 +156,45 @@ end
          hf=Horario.find_by_fin(pet.horafin).id.to_i
          for hora in hi..hf     #   for cada hora del tramo, una asignacion
           if sol.npuestos<Laboratorio::DOS_LAB 
+                @todoslab=Laboratorio.order("nombre_lab desc").where("puestos = ?",sol.npuestos).to_a
            
-            @todoslab=Laboratorio.order("nombre_lab desc").where("puestos = ?",sol.npuestos).to_a
             # en principio el laboratorio asignado es ninguno y buscamos uno libre de ese tamaño
             lab=nil
           if sol.preferencias=="" or sol.preferencias==nil
-            @todoslab.each {|laboratorio|  
+              if laboratorio_pet_id == nil
+
+                @todoslab.each {|laboratorio|  
                                 if sol.npuestos<=laboratorio.puestos and cuadrante[hora, laboratorio.id,dia].nil?           
-                                  lab=[laboratorio.id]  # si el laboratorio está libre y cabe el num de puestos 
+                                  lab=[laboratorio.id]  # si el laboratorio está libre y cabe el num de puesto                   
                                 end       
-                          }
+                                } 
+                 laboratorio_pet_id = lab
+              else 
+                 lab = laboratorio_pet_id
+              end       
+           
                # si no habia ninguno libre, colisionamos en el primero de los lab de esa capacidad  
-          else # el usuario manifesto una preferencia favorable o desfavorable
-             preferencias=sol.preferencias.split(";")        # troceo la cadena de preferencias por el ;  
-             preferencias.each { |p| trestramos=p.split("-") # e itero sobre cada trozo y vuelvo a trocear
-                                 l=Laboratorio.find_by_nombre_lab(trestramos[0]).id    #  en 3.1.4-Apple-no por el guion
-                                 if trestramos[2]=="si"      # si ha dicho que si, ahí lo coloco
-                                   lab=[l]
-                                 else
-                                   @todoslab=@todoslab.reject{|n| n.id==l }
-                                   @todoslab.each {|laboratorio|  
-                                   if sol.npuestos<=laboratorio.puestos and cuadrante[hora, laboratorio.id,dia].nil?           
-                                       lab=[laboratorio.id]  # si el laboratorio está libre y cabe el num de puestos 
-                                   end       
-                                }
-                                 end 
+          else # el usuario manifesto una preferencia favorable o desfavorable             preferencias=sol.preferencias.split(";")        # troceo la cadena de preferencias por el ;  
+             preferencias = sol.preferencias.split(";")
+             preferencias.each { |p| trestramos=p.split("-") # e itero sobre cada trozo y vuelvo a trocear                                 
+
+                                 if laboratorio_pet_id == nil
+                                    l=Laboratorio.find_by_nombre_lab(trestramos[0]).id    #  en 3.1.4-Apple-no por el guion
+                                    if trestramos[2]=="si"      # si ha dicho que si, ahí lo coloco
+                                      lab=[l]
+                                    else
+                                      @todoslab=@todoslab.reject{|n| n.id==l }
+                                      @todoslab.each {|laboratorio|  
+                                                      if sol.npuestos<=laboratorio.puestos and cuadrante[hora, laboratorio.id,dia].nil?           
+                                                        lab=[laboratorio.id]  # si el laboratorio está libre y cabe el num de puestos 
+                                                      end    
+                                                    }
+                                    end 
+                                   
+                                     laboratorio_pet_id = lab
+                                  else 
+                                     lab = laboratorio_pet_id
+                                  end
                                }
              # si ha dicho que no, elimino de la lista de laboratorios ese laboratorio
            end
@@ -546,12 +561,14 @@ def getAsignacionInfo(asignacion)
 
   def borranormal
     asignacion=Asignacion.find(params[:asigna])
-
+    solicitudlab=Solicitudlab.find(asignacion.solicitudlab_id)
+    otrasasignaciones=Asignacion.where('solicitudlab_id = ?',asignacion.solicitudlab_id).to_a
+    peticiones = Peticionlab.where('solicitudlab_id = ?',asignacion.solicitudlab_id).to_a
     asignacion.delete
-    # otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).to_a
-    # otrasasignaciones.each {|o| o.delete }
-    @asignacions=Asignacion.all
+    otrasasignaciones.each {|o| o.delete }
+    peticiones.each {|p| p.delete }
 
+    solicitudlab.delete
     #actualizar número de horas de las asignaciones relacionadas
 
     respond_to do |format|

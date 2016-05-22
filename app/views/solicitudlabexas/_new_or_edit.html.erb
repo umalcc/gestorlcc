@@ -56,13 +56,14 @@
                   <% for especial in @especiales do %>
                   <tr style="font-size: 10px;font-weight: normal;text-align:center" >
                    <td width=100><% nombre=especial.ssoo %><%= especial.ssoo %>
+                           <% if !@solicitudlabexa.preferencias.nil? %>
                            <% n=@solicitudlabexa.preferencias.index(especial.ssoo)  %>  
                            <% if !n.nil? %>   
                               <% parte=@solicitudlabexa.preferencias[n..-1].split("-") %>
                               <%  valor=parte[1].slice(0,2).to_s %>
                            <% else %>
                               <% valor="in" %>
-                           <% end %></td>
+                           <% end end %></td>
                   <td style="text-align:center" class="cincuenta"><%= radio_button_tag nombre, 'si' ,valor == 'si',
                       :onclick=>'mostrardiv("solicitudlabexa_submit")' %>   </td>
                   <td style="text-align:center" class="cincuenta"><%= radio_button_tag nombre, 'no' ,valor == 'no',

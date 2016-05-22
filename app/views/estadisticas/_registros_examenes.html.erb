@@ -1,4 +1,3 @@
-<h1>HOLAAAAA</h1>  
  <% if @todos %>
     <% periodos=["Todos los periodos lectivos"] %>
   <%else %>
@@ -8,7 +7,10 @@
    <div class="periodos">
     <%= p %> : Horas x D&iacute;as
    </div>
-   <p style="margin: 30px 0px"><%= image_tag ("bg_separ.gif") %></p>
+   <p style="margin: 30px 0px"><%= image_tag ("bg_separ.gif") %>
+                     <span style="color:blue;font-weight:normal;font-size:0.7em"> 
+         <%= link_to image_tag("print.png",:alt=>"Para imprimir"), '',{:id => 'printLink',:target => "_blank" } %></span>
+              </p>
 
     <% @labs=Laboratorio.order("nombre_lab").to_a %>
     <% @titulaciones=Titulacion.order("nombre").to_a %>
@@ -206,3 +208,16 @@
 
  <% end %><!-- del for periodo -->
  
+<script type="text/javascript">
+$("#printLink").click(function()
+   {
+       var url="listado/estadisticas_examenes_impresa"; 
+       var jqueryVal=$("#query").val();
+       var tiempoSol=$("#periodo_nombre_per").val();
+
+       var params = "?query=" + jqueryVal + "&tiempoSol=" + tiempoSol;
+       var viewFormat = ".pdf";
+       $(this).attr('href',url + viewFormat + params);
+     
+   });
+</script>

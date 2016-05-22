@@ -119,6 +119,8 @@ get 'listado/asignacion_examenes_usuario_impresa', :to => 'listado#asignacion_ex
 get 'listado/solicitud_lectivo_impresa', :to => 'listado#solicitud_lectivo_impresa'
 get 'listado/solicitud_examen_impresa', :to => 'listado#solicitud_examen_impresa'
 get 'listado/solicitud_recurso_impresa', :to => 'listado#solicitud_recurso_impresa'
+get 'listado/estadistica_lectivo_impresa', :to => 'listado#estadistica_lectivo_impresa'
+get 'listado/estadistica_examenes_impresa', :to => 'listado#estadistica_examenes_impresa'
 
 get 'consultasasig/porusuario', :to => 'consultasasig#porusuario'
 get 'consultasasig/general', :to => 'consultasasig#general'

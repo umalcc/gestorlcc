@@ -39,6 +39,31 @@ before_action :login_requerido
     end
   end
 
+  def estadisticas_examenes_impresa
+    @estadisticas =Historicoasigexa.where(:periodo =>params[:tiempoSol])
+
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @estadisticas }
+      format.pdf { render :layout => false }
+    end
+  end
+
+  def estadistica_lectivo_impresa
+    periodo="%"
+    @todos=true
+
+     @estadisticas =Historicoasig.find_by_sql("select historicoasigs.* from historicoasigs where periodo like '#{periodo}'  order by periodo,nombre_tit,nombre_asig")
+
+    
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @estadisticas }
+      format.pdf { render :layout => false }
+    end
+  end
+
   def asignacion_examenes_usuario_impresa
 
     @solicitudeslab = Solicitudlabexa.where("usuario_id = #{session[:user_id]}").to_a
