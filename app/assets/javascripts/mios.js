@@ -54,6 +54,59 @@ else { dd.style.display = "none"; }
 }
 //-->
 
+
+/////// Funciones para borrar asignaciones
+
+function borraNorm(element)
+{
+          var asigna_id_eliminar = element.attr('id');
+          $.ajax({
+                    type: "POST",
+                    url: "borranormal",
+                    data: { asigna:asigna_id_eliminar},
+                    success:  function(data)
+                    {
+                      //Delete assigment from UI
+                      borraNormAsigUI(element, asigna_id_eliminar);
+                      
+                      //Update related assigments in UI
+                      actualizaAsigsUI(data);
+                    },
+                    error: function(xhr, status)
+                    {
+                       
+                    },
+                    complete: function(xhr, status)
+                    {
+                        //Hide ajax loader
+                        //$("#cuadrante").LoadingOverlay("hide", true);
+                    }
+                });
+}
+
+function borraNormAsigUI(element,asigId)
+{
+    if (element.closest('td').children('div[name="conflict"]').length)
+    {
+        element.closest('td').children('div[name="conflict"]').removeAttr('style');
+        element.closest('td').children('div[name="conflict"]').children('div[id="' + asigId+'"]').remove();
+    }
+    else
+    {
+        element.closest("td").children('div[id="' + asigId+'"]').remove();
+    }   
+}
+
+function actualizaAsigsUI(data)
+{
+    replaceContent =  data.abrevia_asig + '<br/>' + '('+ data.totalHorasAsigs +'h)';
+    $.each(data.asignacionesActualizar, function( index, value ) 
+    {
+        $('div[id="' + value.asignacion.id + '"]').find('div[name="displayInfoAsig"]').html(replaceContent);
+    });
+}
+
+
 //////// para el formulario flotante
 
 (function( $ ) {

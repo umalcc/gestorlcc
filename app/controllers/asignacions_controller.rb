@@ -357,9 +357,6 @@ end
       end 
     end
 
-    #buscar todas las asignaciones de una solicitud de laboratorio concreta
-    #asignaciones=Asignacion.where('solicitudlab_id = ? and laboratorio_id = ?',@asignacion.solicitudlab,inicial_laboratorio).to_a
-
     #cambio de día de la semana
     mov_dia=""
     if inicial_dia != dia_id
@@ -400,9 +397,7 @@ end
 
     @asignacion[:title]=titulo
     @asignacion[:info]=info
-    #respond_to do |format|
-    #  format.json {render json:@asignacion}
-    #end
+ 
     return @asignacion
   end
 
@@ -557,45 +552,19 @@ def getAsignacionInfo(asignacion)
   end
 
   
-
-
   def borranormal
     asignacion=Asignacion.find(params[:asigna])
-    solicitudlab=Solicitudlab.find(asignacion.solicitudlab_id)
-    otrasasignaciones=Asignacion.where('solicitudlab_id = ?',asignacion.solicitudlab_id).to_a
-    peticiones = Peticionlab.where('solicitudlab_id = ?',asignacion.solicitudlab_id).to_a
+    otrasasignaciones=Asignacion.where('solicitudlab_id = ? and peticionlab_id = ? and id != ?',asignacion.solicitudlab_id, asignacion.peticionlab_id, asignacion.id).to_a
+    abrevia_asignatura = asignacion.solicitudlab.asignatura.abrevia_asig
     asignacion.delete
-    otrasasignaciones.each {|o| o.delete }
-    peticiones.each {|p| p.delete }
-
-    solicitudlab.delete
-    #actualizar número de horas de las asignaciones relacionadas
 
     respond_to do |format|
-      format.json {render json: {"asignacion" => params[:asigna]}}
+      format.json {render json: {"totalHorasAsigs" => otrasasignaciones.length, "abrevia_asig" => abrevia_asignatura,"asignacionesActualizar" => otrasasignaciones}}
     end
   end
 
-
-  def borradir
-    asignacion=Asignacion.find(params[:asigna])
-    #solicitudlab=Solicitudlab.find(asignacion.solicitudlab_id)
-    #otrasasignaciones=Asignacion.where(:conditions=>['solicitudlab_id = ?',asignacion.solicitudlab_id]).to_a
-    asignacion.delete
-    #otrasasignaciones.each {|o| o.delete }
-    #solicitudlab.delete
-    
-    #actualizar número de horas de las asignaciones relacionadas
-
-    @asignacions=Asignacion.all
-    
-    respond_to do |format|
-      format.json {render json: {"asignacion" => params[:asigna]}}
-    end
-  end
 
   def saveSolicitudLabModel(params)
-    ##@solicitudlab.usuario_id = params[:usuario][:identificador].to_i
     if @solicitudlab.asignatura==nil
       @solicitudlab.asignatura=Asignatura.new
     end

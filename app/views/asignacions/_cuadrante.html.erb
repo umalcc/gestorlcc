@@ -77,11 +77,12 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
              <% end %>
          <% end %>
          <td >  
-                <% if solapa>0 %><!-- si hay colision, remarco en rojo -->
-                  <div style="border-style:solid;border-color:#ff0000">
-                <% end %>
+              <% if solapa>0 %><!-- si hay colision, remarco en rojo -->
+                <div name="conflict" style="border-style:solid;border-color:#ff0000">
+              <% end %>
 
-                <% for a in as %><!-- por cada asignacion hallada -->   
+              <% for a in as %><!-- por cada asignacion hallada --> 
+              <div id="<%=a.id.to_s%>">  
               <a onmouseover="ShowContent('flotante<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>'); return true;"
    		           onmouseout="HideContent('flotante<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>'); return true;">
                     <div id="flotante<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>" 
@@ -95,7 +96,7 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
                                    <% end %><br/>
                                    <%= "Asig: "+a.solicitudlab.asignatura.abrevia_asig %>
                                    <%= " ( "+a.solicitudlab.asignatura.titulacion.abrevia+" )" %><br/>
-				   <%= "Curso: "+a.solicitudlab.curso %><%=" Puestos: "+a.solicitudlab.npuestos.to_s %><br/>
+				                           <%= "Curso: "+a.solicitudlab.curso %><%=" Puestos: "+a.solicitudlab.npuestos.to_s %><br/>
                                    <%= "Profesor: "+a.solicitudlab.usuario.nombre+" "+a.solicitudlab.usuario.apellidos %><br/>                                  <%= "Soft: "+a.solicitudlab.comentarios %><br>
                                    <%= "Ocupacion: "%>
                                    <% if a.solicitudlab.tipo=="T" %>
@@ -113,14 +114,14 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
                                    <%= "Mov. hora: "+a.mov_hora.to_s unless a.mov_hora.to_s=="" %>
 			    </div>
                             <% if a.solicitudlab.tipo=="T" %><!-- todo el periodo -->
-                              <div style="color:#ff8727">
+                              <div name="displayInfoAsig" style="color:#ff8727">
                             <% else %>
                              <% if a.solicitudlab.tipo=="I" %><!-- intervalo dentro del periodo -->
-                              <div style="color:#070d5b">          
+                              <div name="displayInfoAsig" style="color:#070d5b">          
                              <% else if a.solicitudlab.tipo=="X" %><!-- asignacion directa -->
-                              <div style="color:#9961c1">
+                              <div name="displayInfoAsig" style="color:#9961c1">
                              <% else %>                      <!-- puntual -->
-			      <div style="color:#15611c">
+			                        <div name="displayInfoAsig" style="color:#15611c">
                              <% end %>
                             <% end %><% end %>
                             <%= a.solicitudlab.asignatura.abrevia_asig %><br/>
@@ -129,25 +130,11 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
                             <%= '('+(hf-hi+1).to_s+'h)' %><!-- muestro abrevia_asig e info flotante -->
                         </div><!-- info flotante -->
                       </a>
+      
+			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"), "#", :id => a.id ,:name => "borraNorm"%>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                            <% if a.solicitudlab.tipo=="X" %><!-- si la asignacion es directa, se podra eliminar -->
-                              <% formid2="formborra"+hora.id.to_s+dia.id.to_s+a.id.to_s %>
-			                        <div id="formid2">
-                               <%= hidden_field_tag "asigna", value=a.id %>
-                              </div>        
-			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"),"#", :name => "borraDir"%>
-                            <% else %>
-                              <% formid3="formborra"+hora.id.to_s+dia.id.to_s+a.id.to_s %>
-			                        <div id="formid3" >
-                               <%= hidden_field_tag "asigna", value=a.id %>
-                              </div>        
-			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"), "#", :name => "borraNorm"%>
-                            <% end %>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-                      <!-- NO PUEDE BORRAR AQUI TAMBIEN LAS ASIGNACIONES **** VER CONTROLLER -->
-
- 
+              <!-- NO PUEDE BORRAR AQUI TAMBIEN LAS ASIGNACIONES **** VER CONTROLLER -->
 
              <a onclick="ShowContent('flotanteform<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>');return true;">
                            <%=image_tag("Ambox_move.png",:border=>0,:width=>16,:height=>16,:style=>"cursor:pointer;float:right")%>
@@ -209,6 +196,7 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
                                        </div>
                                   </div><!-- formulario flotante para mover asignacion -->                   
 
+                </div>
                 <% end %><!-- del for a in as-->
                 <% if as.size>1 %>
                   </div>
@@ -264,61 +252,13 @@ $(function()
       {
           //$("#cuadrante").LoadingOverlay("show");
 
-          var asigna_id_eliminar = $(this).closest("tr").find("input[name='asigna']").val();
-          $.ajax({
-                    type: "POST",
-                    url: "borranormal",
-                    data: { asigna:asigna_id_eliminar},
-                    success:  function(data)
-                    {
-                      //Remove td content
-                      $(this).closest("td").empty();
-                    },
-                    error: function(xhr, status)
-                    {
+          borraNorm($(this));
+      } 
 
-                    },
-                    complete: function(xhr, status)
-                    {
-                        //Hide ajax loader
-                        //$("#cuadrante").LoadingOverlay("hide", true);
-                    }
-                });
-      }  
+      return false; 
   }); 
 });
 
-$(function()
-{
-   $('a[name=borraDir]').click(function (even) { 
-
-         if(confirm('Seguro que desea eliminar la asignacion?'))
-         {
-             //$("#cuadrante").LoadingOverlay("show");
-
-            var asigna_id_eliminar =$(this).closest("tr").find("input[name='asigna']").val();
-            $.ajax({
-                     type: "POST",
-                     url: "borradir",
-                     data: { asigna:asigna_id_eliminar },
-                     success:  function(data)
-                     {
-                      //Remove td content
-                      $(this).closest("td").empty();
-                     },
-                     error: function(xhr, status)
-                     {
-
-                     },
-                     complete: function(xhr, status)
-                     {
-                        //Hide ajax loader
-                        //$("#cuadrante").LoadingOverlay("hide", true);
-                     }
-                  });
-         }  
-    }) 
-});
 
 $(function()
 {
