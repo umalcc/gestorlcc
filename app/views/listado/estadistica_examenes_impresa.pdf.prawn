@@ -1,5 +1,5 @@
 ###################################### Funciones auxiliares ##############################################
-def calculateItemsLabs(titulaciones, labs, estadisticas, horas, dias)
+def calculateItemsLabs(titulaciones, labs, estadisticas, horas, dias,p)
 rows =[]
 	for tit in titulaciones do # las titulaciones son las filas
 		row = [tit.abrevia]
@@ -15,7 +15,7 @@ rows =[]
 
 			tot_as+= as
 			if as != 0
-				row << as.to_s.concat("hs /").concat((horas.size*@dias.size).to_s).concat("hs\n").concat(number_with_precision(Float(as*100)/(horas.size*dias.size),:precision => 2)).concat("%")
+				row << as.to_s.concat("hs /").concat((horas.size*dias.size).to_s).concat("hs\n").concat(number_with_precision(Float(as*100)/(horas.size*dias.size),:precision => 2)).concat("%")
 
 			else
 				row << '-'
@@ -44,7 +44,7 @@ rows =[]
 	return rows
 end
 
-def calculateItems(dias)
+def calculateItems(dias,p)
 rows =[]
 for hora in @horas do #<!-- las horas son las filas -->
 	row = []
@@ -68,16 +68,16 @@ for hora in @horas do #<!-- las horas son las filas -->
            end
       end
           if tot_as!=0 #<!-- esto es lo que se ve -->
-			row << tot_as.to_s.concat("asig /").concat((@labs.size*@dias.size).to_s).concat("asig\n").concat(number_with_precision((Float(100*tot_as)/(@labs.size*@dias.size)),:precision=>2)).concat("%")
+			row << tot_as.to_s.concat("asig /").concat((@labs.size*dias.size).to_s).concat("asig\n").concat(number_with_precision((Float(100*tot_as)/(@labs.size*dias.size)),:precision=>2)).concat("%")
           else
             row <<'-'
           end  
 	rows << row
 	end
-	rows << calculateTotalDias(dias)
+	rows << calculateTotalDias(dias,p)
 	return rows
 end
-def calculateTotalDias(dias)
+def calculateTotalDias(dias,p)
    row=["Total dias"]
       for dia in dias do
        #<!-- busco las asignaciones a ese lab de las asignaturas de esa tit -->
@@ -93,7 +93,7 @@ def calculateTotalDias(dias)
       return row
 end
 
-def crearTablasAsignaturas(labs, titulaciones, estadisticas, horas, dias)
+def crearTablasAsignaturas(labs, titulaciones, estadisticas, horas, dias,p)
 	headerTag= labs.dup
 	tmpTag = Laboratorio.new
 	tmpTag.nombre_lab = "Asig\ \nLab"
@@ -103,10 +103,10 @@ def crearTablasAsignaturas(labs, titulaciones, estadisticas, horas, dias)
 	headerTag <<tmpTag 
 	headers = [headerTag.map{|d| d.nombre_lab}.to_a]
 
-	crearTabla(headers, calculateItemsLabs(titulaciones, labs, estadisticas, horas, dias))
+	crearTabla(headers, calculateItemsLabs(titulaciones, labs, estadisticas, horas, dias,p))
 end
 
-def crearTablaDiasHoras(fechas)
+def crearTablasExamenes
 	cols =[]
 	if @todos
     	periodosEstadisticas=["Todos los periodos lectivos"]
@@ -123,23 +123,24 @@ def crearTablaDiasHoras(fechas)
 	  		for dia in per[0].inicio..per[0].fin #<!-- Los dias son las columnas
 	      		if dia.wday!=0
 	         		dias<<dia
+	         		cols << Dia::DIASEM[dia.wday].to_s+("\n")+fecha_europea(dia)
 	      		end
-	      		cols << (Dia::DIASEM[dia.wday].to_s).concat("\n").concat(fecha_europea(dia).to_s)
 	    	end
-	    	headerTag= cols
+	    	crearTablaHorasDias(dias,p, cols)
+			crearTablasAsignaturas(@labs, @titulaciones, @estadisticas, @horas, dias,p)
+		end
+  	end
+end
+def crearTablaHorasDias(dias,p,cols)
+			headerTag= cols
 			tmpTag = "Hora\Dia"
 			headerTag.unshift(tmpTag)
 			tmpTag = "Total"
 			headerTag <<tmpTag 
 			headers = [headerTag.map{|d| d}.to_a]
 
-			crearTabla(headers, calculateItems(dias))
-		end
-  	end
-  	
-	
+			crearTabla(headers, calculateItems(dias,p))
 end
-
 def crearTabla(header, items)
     sizeColumn = header[0].size*75/9
 	table = header + items
@@ -174,6 +175,5 @@ pdf.image "app/assets/images/bg_separ.png"
 pdf.text "\n"
 
 ##################################### Tabla con las solicitudes ############################################
+crearTablasExamenes
 
-crearTablaDiasHoras(@fechas)
-#crearTablasAsignaturas(@labs, @titulaciones, @estadisticas, @horas, @fechas)
