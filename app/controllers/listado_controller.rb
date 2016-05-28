@@ -39,9 +39,15 @@ before_action :login_requerido
     end
   end
 
-  def estadisticas_examenes_impresa
+  def estadistica_examenes_impresa
     @estadisticas =Historicoasigexa.where(:periodo =>params[:tiempoSol])
+ @todos=false
+    @labs=Laboratorio.order("nombre_lab").to_a
+    @titulaciones=Titulacion.order("nombre").to_a
+    @dias=Dia.order("num").to_a
+    @horas=Horasexa.order("num").select("comienzo,fin").to_a
 
+    @periodos=Periodo.order("nombre").to_a
 
     respond_to do |format|
       format.html # index.html.erb
@@ -53,6 +59,10 @@ before_action :login_requerido
   def estadistica_lectivo_impresa
     periodo="%"
     @todos=true
+    @labs=Laboratorio.order("nombre_lab").to_a
+    @titulaciones=Titulacion.order("nombre").to_a
+    @dias=Dia.order("num").to_a
+    @horas=Horario.order("num").select("comienzo,fin").to_a
 
      @estadisticas =Historicoasig.find_by_sql("select historicoasigs.* from historicoasigs where periodo like '#{periodo}'  order by periodo,nombre_tit,nombre_asig")
 

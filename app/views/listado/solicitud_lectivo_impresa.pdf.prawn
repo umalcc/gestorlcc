@@ -18,7 +18,7 @@ end
 ################################### Cabecera del documento ################################################
 
 pdf.formatted_text([
-          { :text => "Solicitudes de laboratorio para período PPPlectivo", :size => 14, :styles => [:bold] },
+          { :text => "Solicitudes de laboratorio para período lectivo", :size => 14, :styles => [:bold] },
           { :text => "                                                                       "},
           { :text => Date.today.strftime("%d-%m-%Y")}])
 pdf.image "app/assets/images/bg_separ.png"

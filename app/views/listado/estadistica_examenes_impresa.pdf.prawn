@@ -44,19 +44,19 @@ rows =[]
 	return rows
 end
 
-def calculateItems
+def calculateItems(dias)
 rows =[]
 for hora in @horas do #<!-- las horas son las filas -->
 	row = []
 	row << (hora.comienzo+'-'+hora.fin)
      
       tot_as=0 
-      for dia in @dias do
+      for dia in dias do
        #<!-- busco las asignaciones ese dia y hora -->
          if @todos
-              @asigna=@estadisticas.select {|r| r.diasem==dia.nombre and r.horaini==hora.comienzo}
+              @asigna=@estadisticas.select {|r| r.dia==dia and r.horaini==hora.comienzo}
          else
-              @asigna=@estadisticas.select {|r| r.diasem==dia.nombre and r.horaini==hora.comienzo and r.periodo==p}
+              @asigna=@estadisticas.select {|r| r.dia==dia and r.horaini==hora.comienzo and r.periodo==p}
          end
          as=@asigna.size
          tot_as+=as
@@ -74,18 +74,17 @@ for hora in @horas do #<!-- las horas son las filas -->
           end  
 	rows << row
 	end
-	rows << calculateTotalDias
+	rows << calculateTotalDias(dias)
 	return rows
 end
-def calculateTotalDias
+def calculateTotalDias(dias)
    row=["Total dias"]
-   diasTmp =@dias
-      for dia in diasTmp do
+      for dia in dias do
        #<!-- busco las asignaciones a ese lab de las asignaturas de esa tit -->
          if @todos
-             as_pordia=@estadisticas.select {|r| r.diasem==dia.nombre }.size   
+             as_pordia=@estadisticas.select {|r| r.dia==dia }.size   
          else
-             as_pordia=@estadisticas.select {|r| r.diasem==dia.nombre and r.periodo==p}.size    
+             as_pordia=@estadisticas.select {|r| r.dia==dia and r.periodo==p}.size    
          end
           
          #<!-- esto es lo que se ve -->         
@@ -107,18 +106,38 @@ def crearTablasAsignaturas(labs, titulaciones, estadisticas, horas, dias)
 	crearTabla(headers, calculateItemsLabs(titulaciones, labs, estadisticas, horas, dias))
 end
 
-def crearTablaDiasHoras(dias)
+def crearTablaDiasHoras(fechas)
+	cols =[]
+	if @todos
+    	periodosEstadisticas=["Todos los periodos lectivos"]
+  	else
+	 	periodosEstadisticas=@estadisticas.map{|r| r.periodo}.uniq
+	 	  	logger.debug "Estadisticas "+ periodosEstadisticas[0]
 
-	headerTag= dias.dup
-	tmpTag = Dia.new
-	tmpTag.nombre = "Hora\Dia"
-	headerTag.unshift(tmpTag)
-	tmpTag = Dia.new
-	tmpTag.nombre = "Total"
-	headerTag <<tmpTag 
-	headers = [headerTag.map{|d| d.nombre}.to_a]
+  	end
+  	for p in periodosEstadisticas# Una tabla por periodo
+  		dias =[]
+  		cols =[]
+		per=@periodos.select{|itemP| itemP.nombre == p}
+		if per
+	  		for dia in per[0].inicio..per[0].fin #<!-- Los dias son las columnas
+	      		if dia.wday!=0
+	         		dias<<dia
+	      		end
+	      		cols << (Dia::DIASEM[dia.wday].to_s).concat("\n").concat(fecha_europea(dia).to_s)
+	    	end
+	    	headerTag= cols
+			tmpTag = "Hora\Dia"
+			headerTag.unshift(tmpTag)
+			tmpTag = "Total"
+			headerTag <<tmpTag 
+			headers = [headerTag.map{|d| d}.to_a]
 
-	crearTabla(headers, calculateItems)
+			crearTabla(headers, calculateItems(dias))
+		end
+  	end
+  	
+	
 end
 
 def crearTabla(header, items)
@@ -156,5 +175,5 @@ pdf.text "\n"
 
 ##################################### Tabla con las solicitudes ############################################
 
-crearTablaDiasHoras(@dias)
-crearTablasAsignaturas(@labs, @titulaciones, @estadisticas, @horas, @dias)
+crearTablaDiasHoras(@fechas)
+#crearTablasAsignaturas(@labs, @titulaciones, @estadisticas, @horas, @fechas)
