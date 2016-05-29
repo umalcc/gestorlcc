@@ -93,7 +93,6 @@ function updateEventCalendar(event)
 }
 function updateEvent(event, registrarAntiguo)
 {
-   console.log("Laboratorio_id"+event.room_id);
    $.ajax({
 	    type:"POST",
 	    dataType:"json",
@@ -356,7 +355,8 @@ function OpenDialogToSendEmailForConflicts(event,calendarId)
 $(function() 
 {	
     $('body').on('contextmenu', function(e){ e.preventDefault(); });
-
+	var minTime = '<%=@horainicio%>';
+    var maxTime = '<%=@horafin%>';
 	$.evento={};
 	$(document).on("click",documentClick);
 	document.onkeydown=funcionesEspeciales;
@@ -403,32 +403,24 @@ $(function()
         defaultView:'agendaWeek',
         editable: true,
         droppable: true,
+        //contentHeight: 'auto',
         eventDurationEditable: false,
         eventStartEditable: true,
         disableResizing: true,
         defaultTimedEventDuration: '01:00:00',
         drop: function(date, jsEvent, ui, selectedRoom) 
         {  
-        	tmpDate= new Date(date);
-        	//tmpDate.setHours(tmpDate.getHours()+2);
-        	horafin = moment(tmpDate);
-        	//horafin = horafin.getHours()+":"+horafin.getMinutes();
         	event.id= $(this).attr("id");
         	event.start= date;
-        	event.end=horafin;
+        	event.end= date.add(1,'hours');
+        	event.start.add(-1,'hours');
         	event.room_id=selectedRoom;
-        	// event={id: $(this).attr("id"),
-        	// 	   start:date,
-        	// 	   end:horafin,
-        	// 	   room_id:selectedRoom
-        	// 	  };
+       
         	 event.operacion="pegar";
              updateEventCalendar(event);
         	 $(this).remove(); //elimina el evento de la lista externa visualmente
         	 var height=$("#external-events").height();
 	   		 $("#external-events").height(height-35);
-			/* var active = $('#tabs .ui-state-active').children("a");
-             var dia_id = active.attr("href").substring(1);	*/
 		},
         eventLimit: true, //allow "more" link when too many events
         events: filterEventsByDay(asignacions,divId), //load events
@@ -448,15 +440,40 @@ $(function()
 	            }
             });
         },
-	    /*eventResize: function(event, delta, revertFunc)
-	    {
-	    	event.operacion="redimensionar";
-	    	updateEventCalendar(event);	
-	    },*/
 	    eventDrop: function(event, delta, revertFunc)
 	    {
-	    	event.operacion="";
-	    	updateEventCalendar(event);
+	    	var dateMaxTime;
+	    	var dateMinTime =  new Date(event.start.toDate().getTime());
+	    	if(event.end === null){
+	    		event.end = moment(event.start.toDate());
+	    		event.end.set('hour', event.end.get('hour')+1);
+	    	}
+
+	    	dateMaxTime = new Date(event.end.toDate().getTime());
+
+	    	dateMaxTime.setHours(maxTime.split(':')[0]);
+	    	dateMaxTime.setMinutes(maxTime.split(':')[1]);
+	    	dateMaxTime = new Date(dateMaxTime.getTime() + (-dateMaxTime.getTimezoneOffset() * 60000));
+
+	    	dateMinTime.setHours(minTime.split(':')[0]);
+	   		dateMinTime.setMinutes(minTime.split(':')[1]);
+	   		dateMinTime = new Date(dateMinTime.getTime() + (-dateMinTime.getTimezoneOffset() * 60000));
+
+            
+   	    	if (event.start.toDate() < dateMinTime){
+				event.start.set('hour',dateMinTime.getHours()+(dateMaxTime.getTimezoneOffset()/60));
+				event.start.set('minute',dateMinTime.getMinutes());
+				event.end.set('hour',dateMinTime.getHours()+1+(dateMaxTime.getTimezoneOffset()/60));
+				event.end.set('minute',dateMinTime.getMinutes());
+	    	}
+	    	if ((event.end.toDate() > dateMaxTime)||(event.end.get('hour')===22)){
+				event.start.set('hour',dateMaxTime.getHours()-1+(dateMaxTime.getTimezoneOffset()/60));
+				event.start.set('minute',dateMaxTime.getMinutes());
+				event.end.set('hour',dateMaxTime.getHours()+(dateMaxTime.getTimezoneOffset()/60));
+				event.end.set('minute',dateMaxTime.getMinutes());
+	    	}
+		    	event.operacion="";
+		    	updateEventCalendar(event);
 	    },
 	    eventDragStop: function(event, jsEvent, ui, view) 
 	    {
