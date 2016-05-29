@@ -65,15 +65,11 @@ function filterEventsByDay(eventsList,day)
 function registrarEvento(evento)
 {
 	evento.room_id=evento.laboratorio_id;
-	//evento.start=moment("2014-09-07 "+evento.horaini,"YYYY-MM-DD HH-mm");
-	//evento.end=moment("2014-09-14 "+evento.horafin,"YYYY-MM-DD HH-mm");
 	evento.start=evento.horaini;
 	evento.end=evento.horafin;
-	//evento.color= '#66FF33';
 	evento.info=evento.info.replace(/%/g, "\r\n");
 	evento.title=evento.title.replace(/%/g, "\r\n");
 	$.evento=evento;
-//$.data(actual,"current",$(this));
 }
 
 function updateEventCalendar(event)
@@ -92,7 +88,7 @@ function updateEventCalendar(event)
    {
    	  event.horafin = event.end.hours()+":"+event.end.minutes();
    }
-   //registrarEvento(event);
+
    updateEvent(event,true);
 }
 function updateEvent(event, registrarAntiguo)
@@ -137,19 +133,19 @@ function elimEventListaExt(id,confirmacionReq)
 {
 	if((confirmacionReq==false)||(confirm("¿Desea realmente eliminar la asignación?")))
 	{
-	//var id=el.attr("id");
-	$("#external-events #"+id).remove();
-	//el.parent().remove(); 
-			//elimina el evento de la lista externa visualmente
-	var height=$("#external-events").height();
-	$("#external-events").height(height-35);
-	$.ajax({
-	type:"POST",
-	url:"/asignacions/destroy",
-	data:{id:id}
-    });
+		$("#external-events #"+id).remove();
+
+		//elimina el evento de la lista externa visualmente
+		var height=$("#external-events").height();
+		$("#external-events").height(height-35);
+		$.ajax({
+			type:"POST",
+			url:"/asignacions/destroy",
+			data:{id:id}
+	    });
 	}
 }
+
 function documentClick(ev)
 {
 	$(".seleccionado").css("border", "1px solid #3a87ad");
@@ -159,7 +155,7 @@ function documentClick(ev)
 
 function moverEventoTmp(evento,copiar,diaId, funcionesEspeciales)
 {
-	   		//Eliminar evento del calendario, visualmente
+	//Eliminar evento del calendario, visualmente
 	$.ajax({
 		type:"POST",
 	   	dataType:"json",
@@ -181,8 +177,7 @@ function moverEventoTmp(evento,copiar,diaId, funcionesEspeciales)
 	   		generarAnadirListaExterna(evento,copiar,funcionesEspeciales);
 	   		makeDroppable();
 	   	}
-	   });
-	   		
+	   });	   		
 }
 
 function generarAnadirListaExterna(evento,copiar,funcionesEspeciales)
@@ -320,6 +315,15 @@ function GetConflictsForEventInCalendar(event,calendarId)
 	return events;
 }
 
+function CreateEmailForConflicts(emails, laboratorio)
+{
+    var subject = 'Conflicto%20en%20solicitudes%20de%20laboratorio%20' + laboratorio;
+    var body = '';
+    $("#eventContent, a").attr('href','mailto:' + emails + '?Subject=' + subject + '&body=' + body);
+	$("#eventContent").dialog({ modal: true, title: 'Conflictos', width:200, height:75});
+}
+
+
 function OpenDialogToSendEmailForConflicts(event,calendarId)
 {
 	var events = GetConflictsForEventInCalendar(event,calendarId);
@@ -345,13 +349,9 @@ function OpenDialogToSendEmailForConflicts(event,calendarId)
 			laboratorio = item.lab_nombre;
 		});
 
-        var subject = 'Conflicto%20en%20solicitudes%20de%20laboratorio%20' + laboratorio;
-        var body = '';
-		$("#eventContent, a").attr('href','mailto:' + emails + '?Subject=' + subject + '&body=' + body);
-		$("#eventContent").dialog({ modal: true, title: 'Conflictos', width:200, height:75});
+        CreateEmailForConflicts(emails, laboratorio);
 	}
 }
-
 
 $(function() 
 {	
@@ -394,7 +394,6 @@ $(function()
 
       $("#"+divId).fullCalendar
       ({
-        //theme: true,
         header: { left: '', center: 'title', right: '' },
         slotDuration: '00:15:00',
         minTime: '<%=@horainicio%>',
@@ -404,6 +403,10 @@ $(function()
         defaultView:'agendaWeek',
         editable: true,
         droppable: true,
+        eventDurationEditable: false,
+        eventStartEditable: true,
+        disableResizing: true,
+        defaultTimedEventDuration: '01:00:00',
         drop: function(date, jsEvent, ui, selectedRoom) 
         {  
         	tmpDate= new Date(date);
@@ -445,12 +448,11 @@ $(function()
 	            }
             });
         },
-	    eventResize: function(event, delta, revertFunc)
+	    /*eventResize: function(event, delta, revertFunc)
 	    {
 	    	event.operacion="redimensionar";
 	    	updateEventCalendar(event);	
-            //ToDo: actualizar tabla peticionlabs tb
-	    },
+	    },*/
 	    eventDrop: function(event, delta, revertFunc)
 	    {
 	    	event.operacion="";
