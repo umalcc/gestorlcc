@@ -84,7 +84,7 @@ function updateEventCalendar(event)
    event.dia_id=dia_id;
    event.horaini = event.start.hours()+":"+event.start.minutes();
 
-   if(event.end == null)
+   if ((event.end === null) ||(typeof event.end ==='undefined'))
    {
    	  horafin=new Date(event.start.toDate());
    	  event.horafin = horafin.getHours()+":"+horafin.getMinutes();
