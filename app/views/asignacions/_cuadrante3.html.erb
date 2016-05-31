@@ -445,7 +445,7 @@ $(function()
 	    	var dateMaxTime;
 	    	var dateMinTime =  new Date(event.start.toDate().getTime());
 	    	if(event.end === null){
-	    		event.end = moment(event.start.toDate());
+	    		event.end = event.start.clone();
 	    		event.end.set('hour', event.end.get('hour')+1);
 	    	}
 
