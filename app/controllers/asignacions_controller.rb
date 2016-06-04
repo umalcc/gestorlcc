@@ -346,8 +346,9 @@ end
     inicial_laboratorio=@asignacion.laboratorio
     laboratorio_id=Laboratorio.find_by_nombre_lab(params[:nombre_lab]).id
     dia_id=Dia.find_by_nombre(params[:nombre]).id
-    horafin=Horario.find_by_comienzo(params[:comienzo]).fin
     asignaciones=Asignacion.where('solicitudlab_id = ? and peticionlab_id = ?',@asignacion.solicitudlab,peticion_id).to_a
+    tmpHoraFin = Horario.find_by_comienzo(params[:comienzo]).num - 1 + asignaciones.length
+    horafin = Horario.find_by_num(tmpHoraFin).fin
 
     #cambio de laboratorio
     if inicial_laboratorio.id!=laboratorio_id
