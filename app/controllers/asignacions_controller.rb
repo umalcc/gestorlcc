@@ -201,31 +201,11 @@ end
            if lab.nil?
              lab=[@todoslab.first.id]
            end
-           
-         # else
-           #uno=Laboratorio.find_by_nombre_lab("3.1.1").id
-           #dos=Laboratorio.find_by_nombre_lab("3.1.2").id
-           #tres=Laboratorio.find_by_nombre_lab("3.1.3").id
-           #cinco=Laboratorio.find_by_nombre_lab("3.1.5").id
-           #ocho=Laboratorio.find_by_nombre_lab("3.1.8").id 
-           #nueve=Laboratorio.find_by_nombre_lab("3.1.9").id
-           #if sol.npuestos==Laboratorio::DOS_LAB
-               # se asignan "a mano los lab 1 y 2 o bien el 8 y el 9 que son contiguos
-                
-              # if cuadrante[hora,uno,dia]==nil and cuadrante[hora,dos,dia]==nil
-             #   lab=[uno,dos]
-           #    else 
-          #      lab=[ocho,nueve]
-                
-          #     end #if 
-         #  else
-         #    lab=[uno,dos,ocho,nueve]
-         #    if sol.npuestos==150
-         #        lab+=[tres,cinco]
-               
-         #    end # if == 150
-         #  end # if ==59 DOSLAB
-          end # if <59 DOSLAB
+          end 
+
+          if lab.nil?
+             lab=[@todoslab.first.id]
+           end# if <59 DOSLAB
            # siempre habra al menos una asignacion para todos
            # CONSTRUIR UNA LISTA Y UNA ITERACION  SOBRE ELLA DE ASIGNACIONES
            lab.each {|l| @asignacions<<asignacion=Asignacion.new(:solicitudlab_id=>sol.id,
@@ -310,7 +290,8 @@ end
                                                                 :mov_hora=>a.mov_hora)
                                     
                                     success = asig_def.save && success
-                                    logger.debug asig_def.save
+                                   logger.info(asig_def.errors.inspect)
+                                    logger.debug a.solicitudlab_id
                                     sol=a.solicitudlab
                                     sol.asignado="D"
                                     success = sol.save && success
