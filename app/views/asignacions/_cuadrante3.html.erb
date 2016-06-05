@@ -102,8 +102,13 @@ function updateEvent(event, registrarAntiguo)
 	   	{
 	   		if(registrarAntiguo)
 	   		{
-	   			response.operacion=event.operacion;
+				response.operacion=event.operacion;
 	   			registrarEvento(response);
+
+	   			var conflicts = GetConflictsForEventInCalendar(event,event.dia_id);
+				if(conflicts.length > 1){
+					$('*[data-id='+event.id+']').parent().parent().css({"border-color":"red","border-width":"2px", "border-style":"solid"});
+				}
 	   		}
 	   	}
 	});	
@@ -229,7 +234,6 @@ function moverACalendario(id,actualTab)
 		 		end:response.horafin,
 		 		dia_id:response.dia_id
 		 	};
-		 	console.log("Pegando "+evento);
 		 	$("#"+actualTab).fullCalendar("renderEvent",$.evento);
 		}
 	});
@@ -300,9 +304,22 @@ function funcionesEspeciales(ev)
 
 function AreEventsOverlapped(event1, event2)
 {	
-	return event1.start < event2.end &&
-	       event1.end > event2.start &&
-           event1.room_id == event2.room_id;
+	 event1.end = event1.start.clone();
+	 event1.end.set('hour', event1.end.get('hour')+1);
+	   
+	 event2.end = event2.start.clone();
+	 event2.end.set('hour', event2.end.get('hour')+1);
+	 if((event1.room_id === event2.room_id) &&(event1.id !== event2.id)){
+	 }
+	var e1Start = event1.start.toDate().toTimeString().split(' ')[0];
+	var e1End = event1.end.toDate().toTimeString().split(' ')[0];
+
+	var e2Start = event2.start.toDate().toTimeString().split(' ')[0];
+	var e2End = event2.end.toDate().toTimeString().split(' ')[0];
+
+	return e1Start < e2End &&
+	       e1End > e2Start &&
+           event1.room_id === event2.room_id;
 }
 
 function GetConflictsForEventInCalendar(event,calendarId)
@@ -386,7 +403,6 @@ $(function()
     laboratorios=laboratorios.replace(/nombre_lab/g,"name");
     laboratorios=laboratorios.replace(/=>/g, ":");
     asignacions=asignacions.replace(/=>/g, ":");
-	console.log("Asignacions:"+asignacions);
     /* initialize the calendar */
     $("div.calendario").each(function(index, element)
     {
@@ -409,8 +425,8 @@ $(function()
         disableResizing: true,
         defaultTimedEventDuration: '01:00:00',
         drop: function(date, jsEvent, ui, selectedRoom) 
-        {  
-        	event.id= $(this).attr("id");
+        {
+            event.id= $(this).attr("id");
         	event.start= date;
         	event.end= date.add(1,'hours');
         	event.start.add(-1,'hours');
@@ -428,7 +444,10 @@ $(function()
         timeFormat: 'H(:mm)',
         rooms:$.parseJSON(laboratorios),
         eventRender: function(event, element) {
-            
+            var conflicts = GetConflictsForEventInCalendar(event,divId);
+			if(conflicts.length > 1){
+				element.css({"border-color":"red","border-width":"2px", "border-style":"solid"});
+			}
             element.attr('title', event.info);
 
             element.bind('mousedown', function (e) {

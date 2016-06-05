@@ -54,9 +54,7 @@ function deshacer()
 
 function filterEventsByDay(eventsList,day)
 {
-	 console.log("Start parsing");
      var data = $.parseJSON(eventsList);
-     console.log("Stop parsing");
      var returnedData = $.grep(data, function(dt) 
      {
          return dt.dia_id == day;
@@ -68,19 +66,42 @@ function filterEventsByDay(eventsList,day)
 function registrarEvento(evento)
 {
 	evento.room_id=evento.laboratorio_id;
-	//evento.start=moment("2014-09-07 "+evento.horaini,"YYYY-MM-DD HH-mm");
-	//evento.end=moment("2014-09-14 "+evento.horafin,"YYYY-MM-DD HH-mm");
+	
 	evento.start=evento.horaini;
 	evento.end=evento.horafin;
 	//evento.color= '#66FF33';
 	evento.info=evento.info.replace(/%/g, "\r\n");
 	evento.title=evento.title.replace(/%/g, "\r\n");
 	$.evento=evento;
-//$.data(actual,"current",$(this));
 }
 
-function updateEventCalendar(event)
-{
+function AreEventsOverlapped(event1, event2){	
+	 event1.end = event1.start.clone();
+	 event1.end.set('hour', event1.end.get('hour')+1);
+	   
+	 event2.end = event2.start.clone();
+	 event2.end.set('hour', event2.end.get('hour')+1);
+
+	var e1Start = event1.start.toDate().toTimeString().split(' ')[0];
+	var e1End = event1.end.toDate().toTimeString().split(' ')[0];
+
+	var e2Start = event2.start.toDate().toTimeString().split(' ')[0];
+	var e2End = event2.end.toDate().toTimeString().split(' ')[0];
+
+	return e1Start < e2End &&
+	       e1End > e2Start &&
+           event1.room_id === event2.room_id;
+}
+
+function GetConflictsForEventInCalendar(event,calendarId){
+	var events = $("#"+calendarId).fullCalendar('clientEvents', function(evt) {
+					    return AreEventsOverlapped(event, evt);
+				});
+
+	return events;
+}
+
+function updateEventCalendar(event){
    event.temporal=false;
    var dia_id = obtenerCalendarioActual();
    event.dia_id=dia_id;
@@ -95,12 +116,9 @@ function updateEventCalendar(event)
    {
    	  event.horafin = event.end.hours()+":"+event.end.minutes();
    }
-   //registrarEvento(event);
    updateEvent(event,true);
 }
-function updateEvent(event, registrarAntiguo)
-{
-   console.log("Laboratorio_id"+event.room_id);
+function updateEvent(event, registrarAntiguo){
    $.ajax({
 	    type:"POST",
 	    dataType:"json",
@@ -112,6 +130,10 @@ function updateEvent(event, registrarAntiguo)
 	   		{
 	   			response.operacion=event.operacion;
 	   			registrarEvento(response);
+	   			var conflicts = GetConflictsForEventInCalendar(event,event.dia_id);
+				if(conflicts.length > 1){
+					$('*[data-id='+event.id+']').parent().parent().css({"border-color":"red","border-width":"2px", "border-style":"solid"});
+				}
 	   		}
 	   	}
 	});	
@@ -238,7 +260,6 @@ function moverACalendario(id,actualTab)
 		 		end:response.horafin,
 		 		dia_id:response.dia_id
 		 	};
-		 	console.log("Pegando "+evento);
 		 	$("#"+actualTab).fullCalendar("renderEvent",$.evento);
 		}
 	});
@@ -340,7 +361,6 @@ $(function()
     laboratorios=laboratorios.replace(/nombre_lab/g,"name");
     laboratorios=laboratorios.replace(/=>/g, ":");
     asignacions=asignacions.replace(/=>/g, ":");
-	 console.log("Asignacions:"+asignacions);
     /* initialize the calendar */
     $("div.calendario").each(function(index, element)
     {
@@ -386,7 +406,10 @@ $(function()
             $(jsEvent.target).attr('title',info);
 	    },*/
 	    eventRender: function(event, element) {
-            
+            var conflicts = GetConflictsForEventInCalendar(event,divId);
+			if(conflicts.length > 1){
+				element.css({"border-color":"red","border-width":"2px", "border-style":"solid"});
+			}
             element.attr('title', event.info);
         },
 	    eventDrop: function(event, delta, revertFunc)
