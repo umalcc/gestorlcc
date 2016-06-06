@@ -77,6 +77,8 @@ end
 
 # SI HIDDEN FIEL ES PRINCIPIO, SE LEEN SOLICITUDLAB, SINO DE ASIGNACIONPROV
   def asignar_iniciar
+    horas = Horario.order("comienzo").to_a
+    todosdias = Dia.order("nombre").to_a
     solicitudes=Solicitudlab.where("fechafin >= ? and asignado <> ?",Date.today,"D").to_a
     @adjudicado=Periodo.where("activo = ? and tipo= ?","t","Lectivo").to_a
     @todoslaboratorios = Laboratorio.order("nombre_lab desc").to_a
@@ -151,9 +153,9 @@ end
        sol.peticionlab.each { |pet|     #por cada peticion de tramo de cada solicitud
         
          # tomamos el dia, la hora de inicio y la de fin
-         dia=Dia.find_by_nombre(pet.diasemana).id
-         hi=Horario.find_by_comienzo(pet.horaini).id.to_i
-         hf=Horario.find_by_fin(pet.horafin).id.to_i
+         dia=todosdias.find{|dia|dia.nombre ==pet.diasemana}.id
+         hi=horas.find{|hora| hora.comienzo ==pet.horaini}.id.to_i
+         hf=horas.find{|hora| hora.fin ==pet.horafin}.id.to_i
          for hora in hi..hf     #   for cada hora del tramo, una asignacion
           if sol.npuestos<Laboratorio::DOS_LAB 
                 @todoslab=Laboratorio.order("nombre_lab desc").where("puestos = ?",sol.npuestos).to_a
@@ -179,7 +181,7 @@ end
              preferencias.each { |p| trestramos=p.split("-") # e itero sobre cada trozo y vuelvo a trocear                                 
 
                                  if laboratorio_pet_id == nil
-                                    l=Laboratorio.find_by_nombre_lab(trestramos[0]).id    #  en 3.1.4-Apple-no por el guion
+                                    l=@todoslaboratorios.find{|lab| lab.nombre_lab ==trestramos[0]}.id    #  en 3.1.4-Apple-no por el guion
                                     if trestramos[2]=="si"      # si ha dicho que si, ahí lo coloco
                                       lab=[l]
                                     else
