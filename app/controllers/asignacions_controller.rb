@@ -61,6 +61,7 @@ class AsignacionsController < ApplicationController
     end
   end
 
+  
 def anadirListaExterna
   #(session[:lista_externa] ||= []) << params[:id]
   @asignacion = Asignacion.find(params[:id])
@@ -75,157 +76,85 @@ def anadirListaExterna
   end
 end
 
-# SI HIDDEN FIEL ES PRINCIPIO, SE LEEN SOLICITUDLAB, SINO DE ASIGNACIONPROV
+def horas(peticiones, horas)
+      total=0
+      peticiones.each {|t| p=horas.find{ |h| h[2] == t.horaini}[0].to_i
+                       f=horas.find{ |h| h[3] == t.horafin}[0].to_i
+                       total+=(f-p+1)
+                  }
+      return total
+end
+
+
+  # SI HIDDEN FIEL ES PRINCIPIO, SE LEEN SOLICITUDLAB, SINO DE ASIGNACIONPROV
   def asignar_iniciar
-    horas = Horario.order("comienzo").to_a
-    todosdias = Dia.order("nombre").to_a
-    solicitudes=Solicitudlab.where("fechafin >= ? and asignado <> ?",Date.today,"D").to_a
-    @adjudicado=Periodo.where("activo = ? and tipo= ?","t","Lectivo").to_a
-    @todoslaboratorios = Laboratorio.order("nombre_lab desc").to_a
+    @horas = Horario.where('en_uso = ?',"t").pluck(:id, :num, :comienzo, :fin, :en_uso)
+    @todosdias = Dia.where('en_uso = ?', "t").order('num').pluck(:id, :num, :nombre, :en_uso)
+    solicitudes=Solicitudlab.where("fechafin >= ? and asignado <> ?",Date.today,"D")#.pluck(:id, :fechaini, :fechafin, :fechasol, :usuario_id, "asignaturas.*", :curso, :npuestos, :comentarios, :preferencias, :tipo, :asignado)
+    #logger.debug solicitudes.inspect
+    @adjudicado=Periodo.where("activo = ? and tipo= ?","t","Lectivo").pluck(:id, :nombre, :inicio, :fin, :iniciosol, :finsol, :tipo, :activo, :admision)
+    @todoslaboratorios = Laboratorio.order("nombre_lab").pluck(:id, :nombre_lab, :puestos, :ssoo, :descr_HW, :descr_SW, :comentarios, :aviso, :especial, :grupo)
+
     if solicitudes.size!=0 
-     
-     @solicitudlabs=solicitudes
 
-  # ordenacion de solicitudes segun metodo de ascenso de burbujas por tres criterios:
-  # 1- por coeficiente de experimentabilidad, inicialmente el mismo en todas
-  # 2- por numero de horas totales
-  # 3- por tipo de solicitud (1- T:todo el periodo, 2- I:intervalo, 3- C:dias concretos)
-  # 4- por numero de puestos descendentemente
-  # 5- por numero de tramos horarios de la peticion   
-
-     for i in 0..@solicitudlabs.size-1
-       for j in 0..@solicitudlabs.size-2-i
-         if @solicitudlabs[j].asignatura.coeficiente_exp<@solicitudlabs[j+1].asignatura.coeficiente_exp
-           @solicitudlabs[j],@solicitudlabs[j+1]=@solicitudlabs[j+1],@solicitudlabs[j]
-         end
-       end
-     end
-
-     for i in 0..@solicitudlabs.size-1
-       for j in 0..@solicitudlabs.size-2-i
-         if @solicitudlabs[j].asignatura.coeficiente_exp==@solicitudlabs[j+1].asignatura.coeficiente_exp and
-           horas(@solicitudlabs[j])<horas(@solicitudlabs[j+1])
-             @solicitudlabs[j],@solicitudlabs[j+1]=@solicitudlabs[j+1],@solicitudlabs[j]
-         end
-       end
-     end
-
-
-      for i in 0..@solicitudlabs.size-1
-       for j in 0..@solicitudlabs.size-2-i
-         if @solicitudlabs[j].asignatura.coeficiente_exp==@solicitudlabs[j+1].asignatura.coeficiente_exp and
-            horas(@solicitudlabs[j])==horas(@solicitudlabs[j+1]) and
-            @solicitudlabs[j].tipo<@solicitudlabs[j+1].tipo
-           @solicitudlabs[j],@solicitudlabs[j+1]=@solicitudlabs[j+1],@solicitudlabs[j]
-         end
-       end
-     end
-
-      for i in 0..@solicitudlabs.size-1
-       for j in 0..@solicitudlabs.size-2-i
-         if @solicitudlabs[j].asignatura.coeficiente_exp==@solicitudlabs[j+1].asignatura.coeficiente_exp and
-            horas(@solicitudlabs[j])==horas(@solicitudlabs[j+1]) and
-            @solicitudlabs[j].tipo==@solicitudlabs[j+1].tipo and
-            @solicitudlabs[j].npuestos<@solicitudlabs[j+1].npuestos
-           @solicitudlabs[j],@solicitudlabs[j+1]=@solicitudlabs[j+1],@solicitudlabs[j]
-         end
-       end
-     end
-
-     for i in 0..@solicitudlabs.size-1
-       for j in 0..@solicitudlabs.size-2-i
-         if @solicitudlabs[j].asignatura.coeficiente_exp==@solicitudlabs[j+1].asignatura.coeficiente_exp and
-            horas(@solicitudlabs[j])==horas(@solicitudlabs[j+1]) and
-            @solicitudlabs[j].tipo==@solicitudlabs[j+1].tipo and
-            @solicitudlabs[j].npuestos==@solicitudlabs[j+1].npuestos and
-            @solicitudlabs[j].peticionlab.size<@solicitudlabs[j+1].peticionlab.size
-           @solicitudlabs[j],@solicitudlabs[j+1]=@solicitudlabs[j+1],@solicitudlabs[j]
-         end
-       end
-     end
-
-     # los componentes ordenados secuencialmente, se cargan en un array 3d de horas x labs x diasemana
-
+     @solicitudlabs =  ordenarSolicitudes(solicitudes, @horas)
+  
+    # los componentes ordenados secuencialmente, se cargan en un array 3d de horas x labs x diasemana
      cuadrante=Array3d.new
      @asignacions=[]
      @solicitudlabs.each { |sol|     #por cada una de las @solicitudlabs, buscamos los lab que tienen ese n. de puestos
-       laboratorio_pet_id = nil
        sol.peticionlab.each { |pet|     #por cada peticion de tramo de cada solicitud
         
+         @todoslab = @todoslaboratorios;
+
          # tomamos el dia, la hora de inicio y la de fin
-         dia=todosdias.find{|dia|dia.nombre ==pet.diasemana}.id
-         hi=horas.find{|hora| hora.comienzo ==pet.horaini}.id.to_i
-         hf=horas.find{|hora| hora.fin ==pet.horafin}.id.to_i
-         for hora in hi..hf     #   for cada hora del tramo, una asignacion
-          if sol.npuestos<Laboratorio::DOS_LAB 
-                @todoslab=Laboratorio.order("nombre_lab desc").where("puestos = ?",sol.npuestos).to_a
-           
-            # en principio el laboratorio asignado es ninguno y buscamos uno libre de ese tamaño
-            lab=nil
-          if sol.preferencias=="" or sol.preferencias==nil
-              if laboratorio_pet_id == nil
+         dia=@todosdias.find{|d| d[2] == pet.diasemana}[0].to_i
+         hi=@horas.find{|hora| hora[2] ==pet.horaini}[0].to_i
+         hf=@horas.find{|hora| hora[3] ==pet.horafin}[0].to_i
 
-                @todoslab.each {|laboratorio|  
-                                if sol.npuestos<=laboratorio.puestos and cuadrante[hora, laboratorio.id,dia].nil?           
-                                  lab=[laboratorio.id]  # si el laboratorio está libre y cabe el num de puesto                   
-                                end       
-                                } 
-                 laboratorio_pet_id = lab
-              else 
-                 lab = laboratorio_pet_id
-              end       
-           
-               # si no habia ninguno libre, colisionamos en el primero de los lab de esa capacidad  
-          else # el usuario manifesto una preferencia favorable o desfavorable             preferencias=sol.preferencias.split(";")        # troceo la cadena de preferencias por el ;  
-             preferencias = sol.preferencias.split(";")
-             preferencias.each { |p| trestramos=p.split("-") # e itero sobre cada trozo y vuelvo a trocear                                 
+         lab=nil
+         if sol.preferencias=="" or sol.preferencias==nil
+            
+              lab = buscarLablibre(hi,hf,dia, @todoslaboratorios, cuadrante)
+                                
+         else # usuario manifestó preferencias 
 
-                                 if laboratorio_pet_id == nil
-                                    l=@todoslaboratorios.find{|lab| lab.nombre_lab ==trestramos[0]}.id    #  en 3.1.4-Apple-no por el guion
-                                    if trestramos[2]=="si"      # si ha dicho que si, ahí lo coloco
+              preferencias = sol.preferencias.split(";")
+              preferencias.each { |p| trestramos=p.split("-") # e itero sobre cada trozo y vuelvo a trocear                                 
+
+                                
+                                    l=@todoslaboratorios.find{|lab| lab[1] ==trestramos[0]}[0]    #  en 3.1.4-Apple-no por el guion
+                                    if trestramos[2]=="si"  # si ha dicho que si, ahí lo coloco
                                       lab=[l]
                                     else
-                                      @todoslab=@todoslab.reject{|n| n.id==l }
-                                      @todoslab.each {|laboratorio|  
-                                                      if sol.npuestos<=laboratorio.puestos and cuadrante[hora, laboratorio.id,dia].nil?           
-                                                        lab=[laboratorio.id]  # si el laboratorio está libre y cabe el num de puestos 
-                                                      end    
-                                                    }
-                                    end 
-                                   
-                                     laboratorio_pet_id = lab
-                                  else 
-                                     lab = laboratorio_pet_id
-                                  end
+                                      @todoslab=@todoslab.reject{|n| n[0]==l }
+                                      lab = buscarLablibre(hi,hf,dia, @todoslab, cuadrante)
+                                    end    
                                }
-             # si ha dicho que no, elimino de la lista de laboratorios ese laboratorio
            end
-           if lab.nil?
-             lab=[@todoslab.first.id]
-           end
-          end 
 
-          if lab.nil?
-             lab=[@todoslab.first.id]
-           end# if <59 DOSLAB
-           # siempre habra al menos una asignacion para todos
-           # CONSTRUIR UNA LISTA Y UNA ITERACION  SOBRE ELLA DE ASIGNACIONES
-           lab.each {|l| @asignacions<<asignacion=Asignacion.new(:solicitudlab_id=>sol.id,
+           if lab.nil?
+             lab= [@todoslab.first[0]]
+           end
+
+           for hora in hi..hf  # por cada hora del tramo, una asignacion
+
+               lab.each {|l| @asignacions<<asignacion=Asignacion.new(:solicitudlab_id=>sol.id,
                                                                  :laboratorio_id=>l,
                                                                  :peticionlab_id=>pet.id,
-                                                                 :dia_id=>dia,                      #aqui hay cambio
-                                                                 :horaini=>Horario.find(hora).comienzo,
-                                                                 :horafin=>Horario.find(hora).fin,
+                                                                 :dia_id=>dia, 
+                                                                 :horaini=>@horas.find{|h| h[0] == hora}[2],
+                                                                 :horafin=>@horas.find{|h| h[0] == hora}[3],
                                                                  :mov_dia=>"",
                                                                  :mov_hora=>"")
                     
-                         if cuadrante[hora,l,dia].nil?
-                            cuadrante[hora,l,dia]=[asignacion]
-                         else
-                            cuadrante[hora,l,dia]<<[asignacion]
-                         end  
-                     }       
-          end # for horas
+                           if cuadrante[hora,l,dia].nil?
+                              cuadrante[hora,l,dia]=[asignacion]
+                           else
+                              cuadrante[hora,l,dia]<<[asignacion]
+                           end  
+                        }       
+           end # for horas
          
          
       } # for pet
@@ -252,6 +181,90 @@ end
         format.js
     end
     
+  end
+
+  # ordenacion de solicitudes segun metodo de ascenso de burbujas por tres criterios:
+  # 1- por coeficiente de experimentabilidad, inicialmente el mismo en todas
+  # 2- por numero de horas totales
+  # 3- por tipo de solicitud (1- T:todo el periodo, 2- I:intervalo, 3- C:dias concretos)
+  # 4- por numero de tramos horarios de la peticion 
+  def ordenarSolicitudes(solicitudes, hrs)
+
+     @solicitudlabs=solicitudes
+     @peticiones = {}
+     @solicitudlabs.each { |sol| @peticiones[sol.id] = sol.peticionlab}
+
+     for i in 0..@solicitudlabs.size-1
+       for j in 0..@solicitudlabs.size-2-i
+         if @solicitudlabs[j].asignatura.coeficiente_exp<@solicitudlabs[j+1].asignatura.coeficiente_exp
+           @solicitudlabs[j],@solicitudlabs[j+1]=@solicitudlabs[j+1],@solicitudlabs[j]
+         end
+       end
+     end
+
+     for i in 0..@solicitudlabs.size-1
+       for j in 0..@solicitudlabs.size-2-i
+         if @solicitudlabs[j].asignatura.coeficiente_exp==@solicitudlabs[j+1].asignatura.coeficiente_exp and
+           horas(@peticiones[@solicitudlabs[j].id],hrs)<horas(@peticiones[@solicitudlabs[j+1].id],hrs)
+             @solicitudlabs[j],@solicitudlabs[j+1]=@solicitudlabs[j+1],@solicitudlabs[j]
+         end
+       end
+     end
+
+
+      for i in 0..@solicitudlabs.size-1
+       for j in 0..@solicitudlabs.size-2-i
+         if @solicitudlabs[j].asignatura.coeficiente_exp==@solicitudlabs[j+1].asignatura.coeficiente_exp and
+            horas(@peticiones[@solicitudlabs[j].id],hrs)==horas(@peticiones[@solicitudlabs[j+1].id],hrs) and
+            @solicitudlabs[j].tipo<@solicitudlabs[j+1].tipo
+           @solicitudlabs[j],@solicitudlabs[j+1]=@solicitudlabs[j+1],@solicitudlabs[j]
+         end
+       end
+     end
+
+     for i in 0..@solicitudlabs.size-1
+       for j in 0..@solicitudlabs.size-2-i
+         if @solicitudlabs[j].asignatura.coeficiente_exp==@solicitudlabs[j+1].asignatura.coeficiente_exp and
+            horas(@peticiones[@solicitudlabs[j].id],hrs)==horas(@peticiones[@solicitudlabs[j+1].id],hrs) and
+            @solicitudlabs[j].tipo==@solicitudlabs[j+1].tipo and
+            @solicitudlabs[j].peticionlab.size<@solicitudlabs[j+1].peticionlab.size
+           @solicitudlabs[j],@solicitudlabs[j+1]=@solicitudlabs[j+1],@solicitudlabs[j]
+         end
+       end
+     end
+
+     return @solicitudlabs
+
+  end
+
+  def buscarLablibre(hi,hf,dia, todoslab, cuadrante)
+     
+     lab = nil
+    
+     labLibre = 0
+     i = 0
+     numLabs = todoslab.length
+     while (i < numLabs && labLibre == 0) 
+
+        laboratorioId = todoslab[i][0]
+        posLibre = 0
+        for hora in hi..hf 
+            if cuadrante[hora, laboratorioId,dia].nil?
+               posLibre = posLibre + 1 
+            end   
+        end
+
+        if (posLibre == (hf-hi) +1)
+           labLibre = 1
+           lab = [laboratorioId] 
+        else
+          i = i + 1
+        end   
+
+     end
+
+     return lab
+
   end
 
 
@@ -318,6 +331,10 @@ end
   end
  
   def mover
+
+    @horas = Horario.where('en_uso = ?',"t").pluck(:id, :num, :comienzo, :fin, :en_uso)
+    @todosdias = Dia.where('en_uso = ?', "t").order('num').pluck(:id, :num, :nombre, :en_uso)
+    @todoslaboratorios = Laboratorio.order("nombre_lab").pluck(:id, :nombre_lab, :puestos, :ssoo, :descr_HW, :descr_SW, :comentarios, :aviso, :especial, :grupo)
 
     @asignacion=Asignacion.find(params[:id])
     inicial_dia=@asignacion.peticionlab.diasemana

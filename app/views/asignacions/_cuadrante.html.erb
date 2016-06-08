@@ -23,51 +23,49 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
 
  <p>
   
- <% @dias=Dia.where('en_uso=?',"t").order("num").to_a %>
+ <%@dias=@todosdias%>
  <a name="up"></a>
  <div id="rotulodias" class="rotulodias">
   <% for dia in @dias %>
-    <a href="#<%=dia.nombre%>"><%=dia.nombre%>&nbsp;&nbsp;&nbsp;&nbsp;</a>
+    <a href="#<%=dia[2]%>"><%=dia[2]%>&nbsp;&nbsp;&nbsp;&nbsp;</a>
   <% end %>
  </div>
  </p>
  <% for dia in @dias %><!-- por cada dia habil de la semana, una tabla -->
    
    <div id="rotulodia" class="rotulodia">
-        <a  name="<%=dia.nombre%>"><%=dia.nombre%></a>&nbsp;&nbsp;<br/>
+        <a  name="<%=dia[2]%>"><%=dia[2]%></a>&nbsp;&nbsp;<br/>
         <%= image_tag ("bg_separ.gif") %>&nbsp;&nbsp
         <a href="#up"><%= image_tag ("up.png") %></a>
    </div>
 
    <table id="asignacion" class="asignacionsDay">
-     <% @labs=Laboratorio.order("nombre_lab").to_a %>
      <tr>
       <th></th>
-      <% for lab in @labs do %><!-- Los laboratorios son las columnas -->
+      <% for lab in @todoslaboratorios do %><!-- Los laboratorios son las columnas -->
       <th>
-          <a onmouseover="ShowContent('flotante<%=lab.id.to_s%>'); return true;"
-   		      onmouseout="HideContent('flotante<%=lab.id.to_s%>'); return true;">
-            <div id="flotante<%=lab.id.to_s%>" 
-				        style='display:none;position:absolute;
-      					       border-style: solid;
-      					       background-color: white;
-      					       padding: 5px;';>
-               <%= "Denominacion: "+lab.ssoo %><br>
-               <%= "Num. puestos: "+lab.puestos.to_s  %><br>
-                   Lab Especial?: <%=((lab.especial)? 'SI':'NO') %>
+          <a onmouseover="ShowContent('flotante<%=lab[0].to_s%>'); return true;"
+            onmouseout="HideContent('flotante<%=lab[0].to_s%>'); return true;">
+            <div id="flotante<%=lab[0].to_s%>" 
+                style='display:none;position:absolute;
+                       border-style: solid;
+                       background-color: white;
+                       padding: 5px;';>
+               <%= "Denominacion: "+lab[3] %><br>
+               <%= "Num. puestos: "+lab[2].to_s  %><br>
+                   Lab Especial?: <%=((lab[8])? 'SI':'NO') %>
          </div>
-         <%= lab.nombre_lab %></a><!-- nombre_lab e info flotante por laboratorio -->
+         <%= lab[1] %></a><!-- nombre_lab e info flotante por laboratorio -->
       </th>
       <% end %> 
      </tr>
 
-     <%@horas=Horario.order("num").to_a %>
      <% for hora in @horas do %><!-- las horas son las filas -->
      <tr>
-      <th><%=hora.comienzo+'-'+hora.fin %></th>
-      <% for lab in @labs do %>
+      <th><%=hora[2]+'-'+hora[3] %></th>
+      <% for lab in @todoslaboratorios do %>
        <!-- busco las asignaciones a ese lab ese dia a esa hora -->
-         <% as=@asignacions.select {|a| a.laboratorio_id==lab.id and a.horaini.to_s==hora.comienzo.to_s and dia.nombre==a.dia.nombre} %>
+         <% as=@asignacions.select {|a| a.laboratorio_id==lab[0] and a.horaini.to_s==hora[2].to_s and dia[2]==a.dia.nombre} %>
          <!-- ordenamos las asignaciones por fechaini -->
          <% as_ordenadas=as.sort_by{|a| a.solicitudlab.fechaini}.to_a %>
          <% solapa=0 %><!-- contamos los solapamientos -->
@@ -83,10 +81,10 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
 
               <% for a in as %><!-- por cada asignacion hallada --> 
               <div id="<%=a.id.to_s%>">  
-              <a onmouseover="ShowContent('flotante<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>'); return true;"
-   		           onmouseout="HideContent('flotante<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>'); return true;">
-                    <div id="flotante<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>" 
-				                 style='display:none;position:absolute;border-style: solid;background-color: white;width:250px;
+              <a onmouseover="ShowContent('flotante<%=dia[2].to_s%><%=hora[0].to_s%><%=lab[0].to_s%><%=a.id.to_s%>'); return true;"
+                 onmouseout="HideContent('flotante<%=dia[2].to_s%><%=hora[0].to_s%><%=lab[0].to_s%><%=a.id.to_s%>'); return true;">
+                    <div id="flotante<%=dia[2].to_s%><%=hora[0].to_s%><%=lab[0].to_s%><%=a.id.to_s%>" 
+                         style='display:none;position:absolute;border-style: solid;background-color: white;width:250px;
                                 font-weight:bold;padding: 5px;';>
                                    <%= "Preferencias:" %>
                                    <% if a.solicitudlab.preferencias=="" %>
@@ -96,7 +94,7 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
                                    <% end %><br/>
                                    <%= "Asig: "+a.solicitudlab.asignatura.abrevia_asig %>
                                    <%= " ( "+a.solicitudlab.asignatura.titulacion.abrevia+" )" %><br/>
-				                           <%= "Curso: "+a.solicitudlab.curso %><%=" Puestos: "+a.solicitudlab.npuestos.to_s %><br/>
+                                   <%= "Curso: "+a.solicitudlab.curso %><%=" Puestos: "+a.solicitudlab.npuestos.to_s %><br/>
                                    <%= "Profesor: "+a.solicitudlab.usuario.nombre+" "+a.solicitudlab.usuario.apellidos %><br/>                                  <%= "Soft: "+a.solicitudlab.comentarios %><br>
                                    <%= "Ocupacion: "%>
                                    <% if a.solicitudlab.tipo=="T" %>
@@ -112,7 +110,7 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
                                    <% end %><% end %><br/>
                                    <%= "Mov. dia: "+a.mov_dia.to_s unless a.mov_dia.to_s=="" %><br/>
                                    <%= "Mov. hora: "+a.mov_hora.to_s unless a.mov_hora.to_s=="" %>
-			    </div>
+          </div>
                             <% if a.solicitudlab.tipo=="T" %><!-- todo el periodo -->
                               <div name="displayInfoAsig" style="color:#ff8727">
                             <% else %>
@@ -121,37 +119,37 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
                              <% else if a.solicitudlab.tipo=="X" %><!-- asignacion directa -->
                               <div name="displayInfoAsig" style="color:#9961c1">
                              <% else %>                      <!-- puntual -->
-			                        <div name="displayInfoAsig" style="color:#15611c">
+                              <div name="displayInfoAsig" style="color:#15611c">
                              <% end %>
                             <% end %><% end %>
                             <%= a.solicitudlab.asignatura.abrevia_asig %><br/>
-                            <% hi=Horario.find_by_comienzo(a.peticionlab.horaini).num %>
-                            <% hf=Horario.find_by_fin(a.peticionlab.horafin).num %>
+                            <% hi=@horas.find{ |h| h[2] == a.peticionlab.horaini}[1] %>
+                            <% hf=@horas.find{ |h| h[3] == a.peticionlab.horafin}[1] %>
                             <%= '('+(hf-hi+1).to_s+'h)' %><!-- muestro abrevia_asig e info flotante -->
                         </div><!-- info flotante -->
                       </a>
       
-			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"), "#", :id => a.id ,:name => "borraNorm"%>
+            <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"), "#", :id => a.id ,:name => "borraNorm"%>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
               <!-- NO PUEDE BORRAR AQUI TAMBIEN LAS ASIGNACIONES **** VER CONTROLLER -->
 
-             <a onclick="ShowContent('flotanteform<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>');return true;">
+             <a onclick="ShowContent('flotanteform<%=dia[2].to_s%><%=hora[0].to_s%><%=lab[0].to_s%><%=a.id.to_s%>');return true;">
                            <%=image_tag("Ambox_move.png",:border=>0,:width=>16,:height=>16,:style=>"cursor:pointer;float:right")%>
              </a><br/>
-                           <% formid="form"+dia.nombre.to_s+hora.id.to_s+lab.id.to_s+a.id.to_s %>
-                          <div id="flotanteform<%=dia.nombre.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>"
-				                       style='display:none;position:absolute; border-style: solid; background-color: white; padding: 2px;';>
+                           <% formid="form"+dia[2].to_s+hora[0].to_s+lab[0].to_s+a.id.to_s %>
+                          <div id="flotanteform<%=dia[2].to_s%><%=hora[0].to_s%><%=lab[0].to_s%><%=a.id.to_s%>"
+                               style='display:none;position:absolute; border-style: solid; background-color: white; padding: 2px;';>
                                <div id="formid" >
                                         <table class=flotante2>
                                            <tr>
                                              <td></td>
                                              <td align=right valign=top>
                                                  <%=image_tag("icon_close.png",:border=>0,:style=>"float:right",
-                                                     :onclick=>"HideContent('"+"flotanteform"+dia.nombre.to_s+hora.id.to_s+lab.id.to_s+a.id.to_s+"')")%>
+                                                     :onclick=>"HideContent('"+"flotanteform"+dia[2].to_s+hora[0].to_s+lab[0].to_s+a.id.to_s+"')")%>
                                              </td>
                                            </tr>
-			                   <tr>
+                         <tr>
                                              <td>Preferencias:</td>
                                              <td><% if a.solicitudlab.preferencias!="" %>
                                                       <%= a.solicitudlab.preferencias %>
@@ -160,32 +158,35 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
                                                  <% end %>
                                              </td>
                                             </tr>
-				            <tr>
+                    <tr>
                                               <td>Laboratorio </td>
-                                              <td> <% @laboratorios=Laboratorio.order("nombre_lab").to_a %>
-                                                   <% labora=Laboratorio.find(a.laboratorio_id).nombre_lab %>
-                				   <%= select "laboratorio_id", "nombre_lab", 
-								@laboratorios.map {|l| [l.nombre_lab]},
+                                              <td>
+                                              <!--REVISAR ESTA PARTE-->
+                                                   <% labora=@todoslaboratorios.find{ |l| l[0] == a.laboratorio_id}[1] %>
+                           <%= select "laboratorio_id", "nombre_lab", 
+                @todoslaboratorios.map {|l| [l[1]]},
                                                                 html_options={:selected=>labora } %></td>
-			                    </tr>                                               
-					    <tr>
+                          </tr>                                               
+              <tr>
                                               <td>D&iacute;a </td>
-                                              <td> <% @dias=Dia.where('en_uso = ?',"t").to_a %>
-                                                   <% dia_selec=Dia.find(a.dia_id).nombre %>
-                				   <%= select "dia_id", "nombre", 
-								@dias.map {|d| [d.nombre]},
+                                              <td>
+                                              <!--REVISAR ESTA PARTE-->
+                                                   <% dia_selec=@todosdias.find{ |d| d[0] == a.dia_id}[2] %>
+                           <%= select "dia_id", "nombre", 
+                @dias.map {|d| [d[2]]},
                                                                 html_options={:selected=>dia_selec }  %></td>
-			                    </tr> 
+                          </tr> 
                                             <tr>
                                               <td>Hora </td>
-                                              <td> <% @horas=Horario.where('en_uso = ?',"t").to_a %>
+                                              <td> 
+                                              <!--REVISAR ESTA PARTE-->
                                                    <% a.horaini %>
-                				   <%= select "horario_id", "comienzo", 
-								@horas.map {|h| [h.comienzo]},
+                           <%= select "horario_id", "comienzo", 
+                @horas.map {|h| [h[2]]},
                                                                 html_options={:selected=>a.horaini } %></td>
-			                    </tr>
+                          </tr>
 
-				            <tr>
+                    <tr>
                                               <td><%= hidden_field_tag "id", a.id %>
                                               </td>
                                               <td>
@@ -206,6 +207,8 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
       </tr>
      <% end %><!-- del for hora in horas -->  
    </table>
+
+   
 <% end %><!-- del for dia in @dias -->
 </div>
 <% else %><!-- no hay asignaciones hechas -->
