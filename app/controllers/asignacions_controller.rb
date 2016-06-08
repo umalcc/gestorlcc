@@ -241,21 +241,19 @@ end
      
      lab = nil
     
-     labLibre = 0
+     labLibre = false
      i = 0
      numLabs = todoslab.length
-     while (i < numLabs && labLibre == 0) 
+     while (i < numLabs && !labLibre) 
 
         laboratorioId = todoslab[i][0]
-        posLibre = 0
+        posLibre = true
         for hora in hi..hf 
-            if cuadrante[hora, laboratorioId,dia].nil?
-               posLibre = posLibre + 1 
-            end   
+               posLibre = posLibre && cuadrante[hora, laboratorioId,dia].nil?  
         end
 
-        if (posLibre == (hf-hi) +1)
-           labLibre = 1
+        if posLibre
+           labLibre = true
            lab = [laboratorioId] 
         else
           i = i + 1
