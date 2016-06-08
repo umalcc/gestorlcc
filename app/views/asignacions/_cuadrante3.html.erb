@@ -527,7 +527,7 @@ $(function()
        $("#cargando").show();
        $.ajax({
                  dataType:"json",
-                 type: "POST",
+                 type: "GET",
                  url: '/asignacions/grabar_asignacion',
                  success: function(data, textStatus)
                  {
