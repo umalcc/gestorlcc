@@ -126,7 +126,7 @@ end
     @especiales=Laboratorio.where('especial=?',"t").to_a 
     for especial in @especiales do
       nombre=especial.ssoo.to_s
-      if params[:"#{nombre}"].to_s!='in'
+      if params[:"#{nombre}"] and params[:"#{nombre}"].to_s!='in'
         pref+=especial.nombre_lab.to_s+'-'+nombre+'-'+params[:"#{nombre}"]+";"
       end
     end

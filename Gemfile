@@ -42,7 +42,7 @@ gem 'ruby-prof'
  gem 'sprockets-rails', :require => 'sprockets/railtie'
  group :development, :test do
    gem 'sqlite3', :require => 'sqlite3'
- 
+gem 'byebug' 
    #gem "factory_girl_rails"
  end
  gem 'rails_12factor'
@@ -76,4 +76,4 @@ gem 'ruby-prof'
  group :assets do
    #gem 'jquery-ui-rails' "= 3.0.10" # jquery ui
  end
- ruby '2.2.3'
+ ruby '2.2.0'

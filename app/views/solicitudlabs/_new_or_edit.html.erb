@@ -11,7 +11,7 @@
             <dt>Fecha solicitud</dt>
             <dd><%= fecha_europea(Date.today) %></dd>
             <dt>Usuario *</dt>                    
-            <dd onchange=' mostrardiv("solicitudlab_submit")'>
+            <dd>
                <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]},
                               html_options={:selected=>@solicitudlab.usuario_id } %></dd>
 
@@ -152,7 +152,7 @@ $(function()
 {
 
   $("#titulacion_titulacion_id").combobox();
-
+  $("#usuario_identificador").combobox();
 
   $("#linkSubFormulario").click(function()
   {

@@ -11,7 +11,7 @@
             <dt>Fecha solicitud</dt>
             <dd><%= fecha_europea(Date.today) %></dd>
             <dt>Usuario *</dt>                    
-            <dd onchange=' mostrardiv("solicitudlabexa_submit")'>
+            <dd>
              
                <%= select "usuario", "identificador", @usuarios.map {|u| [u.apellidos+", "+u.nombre,u.id]},
                               html_options={:selected=>@solicitudlabexa.usuario_id } %></dd>
@@ -63,7 +63,7 @@
                               <%  valor=parte[1].slice(0,2).to_s %>
                            <% else %>
                               <% valor="in" %>
-                           <% end end %></td>
+                           <% end else valor="in" end %></td>
                   <td style="text-align:center" class="cincuenta"><%= radio_button_tag nombre, 'si' ,valor == 'si',
                       :onclick=>'mostrardiv("solicitudlabexa_submit")' %>   </td>
                   <td style="text-align:center" class="cincuenta"><%= radio_button_tag nombre, 'no' ,valor == 'no',
@@ -115,6 +115,8 @@
 $(function()
 {
      $("#titulacion_titulacion_id").combobox();
+       $("#usuario_identificador").combobox();
+
      $("#titulacion_titulacion_id").change(function()
       {
         var url="/asignaturas/combo_por_titulacion";
