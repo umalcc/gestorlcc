@@ -119,12 +119,12 @@ class AsignacionexasController < ApplicationController
            end
            
           else # de if sol.npuestos<...
-           uno=Laboratorio.find_by_nombre_lab("3.1.1").id
-           dos=Laboratorio.find_by_nombre_lab("3.1.2").id
-           tres=Laboratorio.find_by_nombre_lab("3.1.3").id
-           cinco=Laboratorio.find_by_nombre_lab("3.1.5").id
-           ocho=Laboratorio.find_by_nombre_lab("3.1.8").id 
-           nueve=Laboratorio.find_by_nombre_lab("3.1.9").id
+           uno=Laboratorio.find_by_nombre_lab("3.1.01").id
+           dos=Laboratorio.find_by_nombre_lab("3.1.02").id
+           tres=Laboratorio.find_by_nombre_lab("3.1.03").id
+           cinco=Laboratorio.find_by_nombre_lab("3.1.05").id
+           ocho=Laboratorio.find_by_nombre_lab("3.1.09").id 
+           nueve=Laboratorio.find_by_nombre_lab("3.1.10").id
            if sol.npuestos==Laboratorio::DOS_LAB
                # se asignan "a mano los lab 1 y 2 o bien el 8 y el 9 que son contiguos
                 

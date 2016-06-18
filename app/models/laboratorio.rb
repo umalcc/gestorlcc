@@ -5,7 +5,7 @@ class Laboratorio < ActiveRecord::Base
 # numero que suman los laboratorios contiguos 1 y 2, 8 y 9
   DOS_LAB=60
 # numero de puestos de laboratorio extras en situacion de examen
-  PUESTOS_EXAMEN=[100,150]
+  PUESTOS_EXAMEN=[64,100,150]
 
   validates_uniqueness_of :nombre_lab,
                           :message => ': Ya se encuentra registrado ese valor'

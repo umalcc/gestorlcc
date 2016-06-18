@@ -1,4 +1,5 @@
 <% p=tramo_preferencia.split("-") %>
+<% logger.debug  "TRAMOOOO"+p.inspect %>
 <tr valign="top">
 <% if p[2]!='in' and p[0]!=' '%>
   <td style="width:85px;border:none" ><%= Laboratorio.find_by_nombre_lab(p[0]).ssoo %></td>  
