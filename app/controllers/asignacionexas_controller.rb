@@ -80,14 +80,15 @@ class AsignacionexasController < ApplicationController
          hf=Horasexa.find_by_fin(sol.horafin).id.to_i 
          nhoras=hf-hi+1 #### las horas a partir de la inicial que ocupa el examen
          # for hora in hi..hf     #   for cada hora del tramo,una asignacionexa MIRAR SI LIBRE LA PRIMERA HORA Y LAS RESTANTES 
-         @nhoras<<nhoras
+          @nhoras<<nhoras
           
-          sol.npuestos
           numLabs = (sol.npuestos / 32.0).ceil
 
           numLab = 1
           lab=nil
-          while (numLab <= numLabs)
+          labApple = false
+
+          while (numLab <= numLabs && !labApple)
       
             @todoslab=Laboratorio.order("nombre_lab").to_a
             # en principio el laboratorio asignado es ninguno y buscamos uno libre de ese tamaño
@@ -104,8 +105,8 @@ class AsignacionexasController < ApplicationController
              preferencias.each { |p| trestramos=p.split("-") # e itero sobre cada trozo y vuelvo a trocear
                                  l=Laboratorio.find_by_nombre_lab(trestramos[0]).id    #  en 3.1.4-Apple-no por el guion
                                  if trestramos[2]=="si"      # si ha dicho que si, ahí lo coloco
+                                   labApple = true
                                    lab=[l]                   # si el laboratorio está libre y cabe el num de puestos
-                                   # si el lab está ocupado, no meter más asignaciones ahí?
                                  else              # si ha dicho que no, elimino de la lista de laboratorios ese laboratorio
                                    @todoslab=@todoslab.reject{|n| n.id==l }
                                    @todoslab.each {|laboratorio|  #### todas las horas ######## HACER UN BUCLE DE HI A HF
@@ -139,6 +140,7 @@ class AsignacionexasController < ApplicationController
                          else
                             cuadrante[hora,l,dia]<<[asignacionexa]
                          end  
+
                          end # del for
                      } # de lab.each 
           end
@@ -163,34 +165,6 @@ class AsignacionexasController < ApplicationController
         format.js
     end
 
-  end
-
-
-  def buscarLablibre(hi,hf,dia, todoslab, cuadrante)
-     
-     lab = nil
-    
-     labLibre = false
-     i = 0
-     numLabs = todoslab.length
-     while (i < numLabs && !labLibre) 
-
-        laboratorioId = todoslab[i][0]
-        posLibre = true
-        for hora in hi..hf 
-               posLibre = posLibre && cuadrante[hora, laboratorioId,dia].nil?  
-        end
-
-        if posLibre
-           labLibre = true
-           lab = [laboratorioId] 
-        else
-          i = i + 1
-        end   
-
-     end
-
-     return lab
   end
 
   def grabar_asignacion
