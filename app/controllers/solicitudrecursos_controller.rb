@@ -15,7 +15,7 @@ class SolicitudrecursosController < ApplicationController
 
 
   def index
-    @solicitudrecursos = getCurrentRequests(Solicitudrecurso.all)
+    @solicitudrecursos = getCurrentRequests(Solicitudrecurso.all, true)
     @cuenta = @solicitudrecursos.size
 
     respond_to do |format|
@@ -205,9 +205,9 @@ class SolicitudrecursosController < ApplicationController
     
     tiempoSolicitud = params[:tiempoSolicitud]
     case tiempoSolicitud
-      when '0' then @solicitudrecursos = getCurrentRequests(@solicitudrecursos)
-      when '1' then @solicitudrecursos = getFromLastYearRequests(@solicitudrecursos)
-      when '2' then @solicitudrecursos = getFromLast2YearsRequests(@solicitudrecursos)
+      when '0' then @solicitudrecursos = getCurrentRequests(@solicitudrecursos, true)
+      when '1' then @solicitudrecursos = getFromLastYearRequests(@solicitudrecursos, true)
+      when '2' then @solicitudrecursos = getFromLast2YearsRequests(@solicitudrecursos, true)
     end
 
     @cuenta = @solicitudrecursos.size
