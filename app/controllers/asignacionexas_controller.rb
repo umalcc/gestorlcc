@@ -73,9 +73,6 @@ class AsignacionexasController < ApplicationController
      ####### VER FECHA EN NUMERICO ENTERO Y COMO MANTENER LA CONTINUIDAD DE HORAS (LAS DE IGUAL SOLICITUDLABEXA_ID)
      @nhoras=[]
      @solicitudlabexas.each { |sol|     #por cada una de las @solicitudlabexas, buscamos los lab que tienen ese n. de puestos
-      
-       
-
                    
          # tomamos la fecha, la hora de inicio y la de fin ###### FECHA NO DIA DE LA SEMANA ##################
          dia=sol.fecha.yday  ####### poner fecha en formato enteroooooooo
@@ -84,17 +81,22 @@ class AsignacionexasController < ApplicationController
          nhoras=hf-hi+1 #### las horas a partir de la inicial que ocupa el examen
          # for hora in hi..hf     #   for cada hora del tramo,una asignacionexa MIRAR SI LIBRE LA PRIMERA HORA Y LAS RESTANTES 
          @nhoras<<nhoras
-         if sol.npuestos<Laboratorio::DOS_LAB 
-           
-            @todoslab=Laboratorio.order("nombre_lab desc").where("puestos = ?",sol.npuestos).to_a
+          
+          sol.npuestos
+          numLabs = (sol.npuestos / 32.0).ceil
+
+          numLab = 1
+          lab=nil
+          while (numLab <= numLabs)
+      
+            @todoslab=Laboratorio.order("nombre_lab").to_a
             # en principio el laboratorio asignado es ninguno y buscamos uno libre de ese tamaño
-            lab=nil
             if sol.preferencias=="" or sol.preferencias==nil
                @todoslab.each {|laboratorio|  
-                                 if sol.npuestos<=laboratorio.puestos and cuadrante[hi, laboratorio.id,dia].nil?           
+                                 if cuadrante[hi, laboratorio.id,dia].nil?           
                                     lab=[laboratorio.id]  # si el laboratorio está libre y cabe el num de puestos 
                                  end       
-                              }#todoslab.each
+                              }
 
              # si no habia ninguno libre, colisionamos en el primero de los lab de esa capacidad  
              else # el usuario manifesto una preferencia favorable o desfavorable
@@ -103,10 +105,11 @@ class AsignacionexasController < ApplicationController
                                  l=Laboratorio.find_by_nombre_lab(trestramos[0]).id    #  en 3.1.4-Apple-no por el guion
                                  if trestramos[2]=="si"      # si ha dicho que si, ahí lo coloco
                                    lab=[l]                   # si el laboratorio está libre y cabe el num de puestos
+                                   # si el lab está ocupado, no meter más asignaciones ahí?
                                  else              # si ha dicho que no, elimino de la lista de laboratorios ese laboratorio
                                    @todoslab=@todoslab.reject{|n| n.id==l }
                                    @todoslab.each {|laboratorio|  #### todas las horas ######## HACER UN BUCLE DE HI A HF
-                                   if sol.npuestos<=laboratorio.puestos and cuadrante[hi, laboratorio.id,dia].nil?           
+                                   if cuadrante[hi, laboratorio.id,dia].nil?           
                                        lab=[laboratorio.id]   
                                    end       
                                    } # todoslab.each
@@ -117,31 +120,9 @@ class AsignacionexasController < ApplicationController
            if lab.nil?
              lab=[@todoslab.first.id]
            end
-           
-          else # de if sol.npuestos<...
-           uno=Laboratorio.find_by_nombre_lab("3.1.01").id
-           dos=Laboratorio.find_by_nombre_lab("3.1.02").id
-           tres=Laboratorio.find_by_nombre_lab("3.1.03").id
-           cinco=Laboratorio.find_by_nombre_lab("3.1.05").id
-           ocho=Laboratorio.find_by_nombre_lab("3.1.09").id 
-           nueve=Laboratorio.find_by_nombre_lab("3.1.10").id
-           if sol.npuestos==Laboratorio::DOS_LAB
-               # se asignan "a mano los lab 1 y 2 o bien el 8 y el 9 que son contiguos
-                
-               if cuadrante[hi,uno,dia]==nil and cuadrante[hi,dos,dia]==nil
-                lab=[uno,dos]
-               else 
-                lab=[ocho,nueve]
-                
-               end #if 
-           else
-             lab=[uno,dos,ocho,nueve]
-             if sol.npuestos==150
-                 lab+=[tres,cinco]
-               
-             end # if == 150
-           end # if == DOSLAB
-          end # if < DOSLAB de if sol.npuestos<...
+
+           numLab = numLab +1
+
            # siempre habra al menos una asignacionexa para todos
            # CONSTRUIR UNA LISTA Y UNA ITERACION  SOBRE ELLA DE ASIGNACIONES
            lab.each {|l| for hora in hi..hf
@@ -160,6 +141,7 @@ class AsignacionexasController < ApplicationController
                          end  
                          end # del for
                      } # de lab.each 
+          end
 
      }  # for sol
 
@@ -177,12 +159,38 @@ class AsignacionexasController < ApplicationController
       @asignacionexas=[]
     end # de if 
 
-    
-    #call js
     respond_to do |format|
         format.js
     end
 
+  end
+
+
+  def buscarLablibre(hi,hf,dia, todoslab, cuadrante)
+     
+     lab = nil
+    
+     labLibre = false
+     i = 0
+     numLabs = todoslab.length
+     while (i < numLabs && !labLibre) 
+
+        laboratorioId = todoslab[i][0]
+        posLibre = true
+        for hora in hi..hf 
+               posLibre = posLibre && cuadrante[hora, laboratorioId,dia].nil?  
+        end
+
+        if posLibre
+           labLibre = true
+           lab = [laboratorioId] 
+        else
+          i = i + 1
+        end   
+
+     end
+
+     return lab
   end
 
   def grabar_asignacion
