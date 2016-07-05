@@ -2,7 +2,7 @@ class SolicitudrecursosController < ApplicationController
   # GET /solicitudrecursos
   # GET /solicitudrecursos.xml
 
-  include SolicitudesHelper
+  include SolicitudrecursosHelper
 
   protect_from_forgery :only=>[:create,:update,:destroy]
   before_action :login_requerido, :admin?
@@ -15,7 +15,7 @@ class SolicitudrecursosController < ApplicationController
 
 
   def index
-    @solicitudrecursos = getCurrentRequests(Solicitudrecurso.all, true)
+    @solicitudrecursos = getCurrentRequests(Solicitudrecurso.all)
     @cuenta = @solicitudrecursos.size
 
     respond_to do |format|
@@ -205,9 +205,9 @@ class SolicitudrecursosController < ApplicationController
     
     tiempoSolicitud = params[:tiempoSolicitud]
     case tiempoSolicitud
-      when '0' then @solicitudrecursos = getCurrentRequests(@solicitudrecursos, true)
-      when '1' then @solicitudrecursos = getFromLastYearRequests(@solicitudrecursos, true)
-      when '2' then @solicitudrecursos = getFromLast2YearsRequests(@solicitudrecursos, true)
+      when '0' then @solicitudrecursos = getCurrentRequests(@solicitudrecursos)
+      when '1' then @solicitudrecursos = getFromLastYearRequests(@solicitudrecursos)
+      when '2' then @solicitudrecursos = getFromLast2YearsRequests(@solicitudrecursos)
     end
 
     @cuenta = @solicitudrecursos.size
