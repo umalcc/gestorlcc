@@ -338,7 +338,7 @@ def update
     def getIndexView
       @solicitudlabs= Solicitudlab.where("usuario_id = ?",@usuario_actual.id).to_a
       #mostrar sólo las solicitudes del curso académico actual
-      solicitudlabsTmp=@solicitudlabs.select{|s| isLabRequestFromLastYear?(s)}
+      solicitudlabsTmp=@solicitudlabs.select{|s| isLabRequestFromLastYear?(s, true)}
       @asignaturas=solicitudlabsTmp.map {|s|s.asignatura}.uniq
      
       @solicitudlabs = @solicitudlabs.select{|s| isLabRequestCurrent?(s)}
@@ -359,7 +359,7 @@ def update
     def getLabRequestsLastYearForSubject(asignatura)
       
       @solicitudlabs= Solicitudlab.where("usuario_id = ? and asignatura_id = ?",@usuario_actual.id,asignatura).to_a
-      return @solicitudlabs.select {|s| isLabRequestFromLastYear?(s)}
+      return @solicitudlabs.select {|s| isLabRequestFromLastYear?(s, true)}
 
     end
 

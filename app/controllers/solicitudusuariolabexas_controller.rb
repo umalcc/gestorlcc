@@ -193,7 +193,7 @@ end
 def getIndexView
 
       @solicitudlabexas= Solicitudlabexa.where("usuario_id = ?",@usuario_actual.id).order("fecha").to_a
-      @solicitudlabexas = @solicitudlabexas.select{|s| isLabRequestCurrent?(s)}
+      #@solicitudlabexas = @solicitudlabexas.select{|s| isLabRequestCurrent?(s,false)}
       @cuenta=@solicitudlabexas.size
 end
 
