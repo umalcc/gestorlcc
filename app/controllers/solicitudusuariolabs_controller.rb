@@ -340,9 +340,12 @@ def update
       #mostrar sólo las solicitudes del curso académico actual
       solicitudlabsTmp=@solicitudlabs.select{|s| isLabRequestFromLastYear?(s, true)}
       @asignaturas=solicitudlabsTmp.map {|s|s.asignatura}.uniq
+
+      byebug
      
       @solicitudlabs = @solicitudlabs.select{|s| isLabRequestCurrent?(s)}
       @cuenta=@solicitudlabs.size
+      @numSolLabsLastYear = solicitudlabsTmp.size
       @labRequestsAllowed = labRequestsAllowed?
     end
 

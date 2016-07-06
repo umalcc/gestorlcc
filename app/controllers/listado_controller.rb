@@ -7,6 +7,7 @@ prawnto :prawn => { :top_margin => 35, :page_layout => :landscape}
 
 include SolicitudesHelper
 
+
 before_action :login_requerido
 
   def asignacion_lectivo_impresa
@@ -113,8 +114,9 @@ before_action :login_requerido
     tiempoSolicitud = params[:tiempoSol]
     case tiempoSolicitud
       when '0' then @solicitudlabs = getCurrentRequests(@solicitudlabs, true)
-      when '1' then @solicitudlabs = getFromLastYearRequests(@solicitudlabs, true)
-      when '2' then @solicitudlabs = getFromLast2YearsRequests(@solicitudlabs, true)
+      when '1' then @solicitudlabs = getCurrentCuatrimesterRequests(@solicitudlabs, true)
+      when '2' then @solicitudlabs = getFromLastYearRequests(@solicitudlabs, true)
+      when '3' then @solicitudlabs = getFromLast2YearsRequests(@solicitudlabs, true)
     end
 
     respond_to do |format|
@@ -153,8 +155,9 @@ before_action :login_requerido
     tiempoSolicitud = params[:tiempoSol]
     case tiempoSolicitud
       when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas, false)
-      when '1' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas, false)
-      when '2' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas, false)
+      when '1' then @solicitudlabexas = getCurrentCuatrimesterRequests(@solicitudlabexas, false)
+      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas, false)
+      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas, false)
     end
 
     respond_to do |format|
@@ -192,7 +195,7 @@ before_action :login_requerido
     case tiempoSolicitud
       when '0' then @solicitudrecursos = getCurrentRequests(@solicitudrecursos, true)
       when '1' then @solicitudrecursos = getFromLastYearRequests(@solicitudrecursos, true)
-      when '2' then @solicitudrecursos = getFromLast2YearsRequests(@solicitudrecursos, true)
+      when '3' then @solicitudrecursos = getFromLast2YearsRequests(@solicitudrecursos, true)
     end
 
     @cuenta = @solicitudrecursos.size

@@ -65,9 +65,9 @@ module SolicitudesHelper
   end
 	
   def isValidRequest?(solicitud, inicio, fin, lectivo)
-    result = true
-    if(lectivo)
-       result  = ((solicitud.fechasol.year == inicio and 
+
+    if lectivo
+       return ((solicitud.fechasol.year == inicio and 
                         solicitud.fechasol.month >= 9 and 
                         solicitud.fechasol.month <= 12) or
                        (solicitud.fechasol.year == fin and
@@ -76,14 +76,14 @@ module SolicitudesHelper
 
 
     else 
-      result =  (solicitud.fecha.year == inicio and 
+       return ((solicitud.fecha.year == inicio and 
                     solicitud.fecha.month >= 9 and 
                     solicitud.fecha.month <= 12) or
                    (solicitud.fecha.year == fin and
                     solicitud.fecha.month >= 1 and
-                    solicitud.fecha.month <= 7)   
-    end  
-    return result
+                    solicitud.fecha.month <= 7))   
+    end 
+
 	end
 
   def isLabRequestCurrentCuatrimester?(solicitud, lectivo)
@@ -103,12 +103,14 @@ module SolicitudesHelper
                         solicitud.fechasol.month >= inicioCurso.month and 
                         solicitud.fechasol.month <= fincurso.month and
                        solicitud.fechasol.year <= fincurso.year)
+    else
+
+         return (solicitud.fecha.year >= inicioCurso.year and 
+                 solicitud.fecha.month >= inicioCurso.month and 
+                 solicitud.fecha.month <= fincurso.month and
+                 solicitud.fecha.year <= fincurso.year)
     end
 
-    return (solicitud.fecha.year >= inicioCurso.year and 
-                        solicitud.fecha.month >= inicioCurso.month and 
-                        solicitud.fecha.month <= fincurso.month and
-                       solicitud.fecha.year <= fincurso.year)
   end
 
   def isLabRequestCurrent?(solicitud, lectivo)

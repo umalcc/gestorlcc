@@ -17,7 +17,7 @@
              </div>
 
              <!--Si no hay solicitudes actuales, se debe mostrar la opción copiar las solicitudes del año pasado si las hubiese , { :multiple => true, :size =>3 }-->
-             <%if @labRequestsAllowed and @numSolLabAñoPasado != 0%>
+             <%if @labRequestsAllowed and @cuenta == 0 and @numSolLabsLastYear > 0 %>
              <div style="float:left;">
               <table>
                 <tr>
