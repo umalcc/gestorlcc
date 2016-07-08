@@ -189,7 +189,7 @@ class SolicitudrecursousuariosController < ApplicationController
   def getIndexView
 
       @solicitudrecursos= Solicitudrecurso.where("usuario_id = ?",session[:user_id]).order("fechareserva").to_a
-      @solicitudrecursos = @solicitudrecursos.select{|s| isLabRequestCurrent?(s)}
+      @solicitudrecursos = @solicitudrecursos.select{|s| isLabRequestCurrent?(s, true)}
       @cuenta=@solicitudrecursos.size
   end
 
