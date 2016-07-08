@@ -6,7 +6,7 @@
   <div id="recuadro">  
     <p><%= image_tag ("bg_separ.gif") %></p>
        <% activo=Periodo.where("activo = ? and tipo= ?","t","Examenes").to_a %>
-       <% nasig=Solicitudlabexa.where("usuario_id = ?",@usuario_actual.id).to_a.size %>
+       <% nasig= @asignacionexas.size%>
        <% if activo.size>0 and nasig>0 %>
            <div id="cuadrante2"><%= render :partial => "cuadrante2" %></div> 
        <% else %>
