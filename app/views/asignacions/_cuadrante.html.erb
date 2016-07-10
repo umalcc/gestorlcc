@@ -87,15 +87,15 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
                          style='display:none;position:absolute;border-style: solid;background-color: white;width:250px;
                                 font-weight:bold;padding: 5px;';>
                                    <%= "Preferencias:" %>
-                                   <% if a.solicitudlab.preferencias=="" %>
+                                   <% if a.solicitudlab.preferencias.to_s=="" %>
                                        <%= "ninguna" %>
                                    <% else %>
-                                       <%= a.solicitudlab.preferencias %>
+                                       <%= a.solicitudlab.preferencias.to_s %>
                                    <% end %><br/>
                                    <%= "Asig: "+a.solicitudlab.asignatura.abrevia_asig %>
                                    <%= " ( "+a.solicitudlab.asignatura.titulacion.abrevia+" )" %><br/>
                                    <%= "Curso: "+a.solicitudlab.curso %><%=" Puestos: "+a.solicitudlab.npuestos.to_s %><br/>
-                                   <%= "Profesor: "+a.solicitudlab.usuario.nombre+" "+a.solicitudlab.usuario.apellidos %><br/>                                  <%= "Soft: "+a.solicitudlab.comentarios %><br>
+                                   <%= "Profesor: "+a.solicitudlab.usuario.nombre+" "+a.solicitudlab.usuario.apellidos %><br/>                                  <%= "Soft: "+a.solicitudlab.comentarios.to_s %><br>
                                    <%= "Ocupacion: "%>
                                    <% if a.solicitudlab.tipo=="T" %>
                                        <%= "Todo el periodo" %>
@@ -151,8 +151,8 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
                                            </tr>
                          <tr>
                                              <td>Preferencias:</td>
-                                             <td><% if a.solicitudlab.preferencias!="" %>
-                                                      <%= a.solicitudlab.preferencias %>
+                                             <td><% if a.solicitudlab.preferencias.to_s!="" %>
+                                                      <%= a.solicitudlab.preferencias.to_s %>
                                                  <% else %>
                                                       Ninguna
                                                  <% end %>

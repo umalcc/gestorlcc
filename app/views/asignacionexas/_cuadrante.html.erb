@@ -109,18 +109,18 @@
 				                   style='display:none;position:absolute; border-style: solid;
       					                  background-color: white;width:200px;font-weight: bold; padding: 5px;';>
                                    <%= "Preferencias:" %>
-                                   <% if a.solicitudlabexa.preferencias=="" %>
+                                   <% if a.solicitudlabexa.preferencias.to_s=="" %>
                                        <%= "ninguna" %>
                                    <% else %>
-                                       <%= a.solicitudlabexa.preferencias %>
+                                       <%= a.solicitudlabexa.preferencias.to_s %>
                                    <% end %><br/>
                                    <%= "Asig: "+a.solicitudlabexa.asignatura.abrevia_asig %>
                                    <%= "  ( "+a.solicitudlabexa.asignatura.titulacion.abrevia+" )" %><br/>
 				   <%= "Curso: "+a.solicitudlabexa.curso %><%="  Puestos: "+a.solicitudlabexa.npuestos.to_s %><br/>
                                    <%= "Profesor: "+a.solicitudlabexa.usuario.nombre+" "+a.solicitudlabexa.usuario.apellidos %><br/>            
-                                   <%= "Soft: "+a.solicitudlabexa.comentarios %><br>
-                                   <%= "Mov. dia: "+a.mov_dia unless a.mov_dia=="" %><br/>
-                                   <%= "Mov. hora: "+a.mov_hora unless a.mov_hora=="" %>
+                                   <%= "Soft: "+a.solicitudlabexa.comentarios.to_s %><br>
+                                   <%= "Mov. dia: "+a.mov_dia.to_s unless a.mov_dia.to_s=="" %><br/>
+                                   <%= "Mov. hora: "+a.mov_hora.to_s unless a.mov_hora.to_s=="" %>
 			    </div>
                             
 
@@ -171,8 +171,8 @@
                                            </tr>
 			                   <tr>
                                              <td>Preferencias:</td>
-                                             <td><% if a.solicitudlabexa.preferencias!="" %>
-                                                      <%= a.solicitudlabexa.preferencias %>
+                                             <td><% if a.solicitudlabexa.preferencias.to_s!="" %>
+                                                      <%= a.solicitudlabexa.preferencias.to_s %>
                                                  <% else %>
                                                       Ninguna
                                                  <% end %>

@@ -12,9 +12,9 @@ Fecha fin: <%= @fechafin %>
 Tramos:
 <%= @tramos %>
 
-Preferencias: <%= Iconv.conv('ascii//translit', 'utf-8',@preferencias) %>
+Preferencias: <%= Iconv.conv('ascii//translit', 'utf-8',@preferencias.to_s) %>
 
-Soft. requerido y comentarios: <%= Iconv.conv('ascii//translit', 'utf-8',@comentarios) %>
+Soft. requerido y comentarios: <%= Iconv.conv('ascii//translit', 'utf-8',@comentarios.to_s) %>
 
            <%= @emisor %>
 

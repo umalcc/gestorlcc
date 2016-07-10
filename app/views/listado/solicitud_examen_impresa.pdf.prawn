@@ -42,7 +42,7 @@ items = @solicitudlabexas.map do |item|
     item.npuestos,
     item.fecha.strftime("%d-%m-%Y"),
     item.horaini + "-" + item.horafin,
-    if item.comentarios != ""
+    if item.comentarios.to_s != ""
       "Sí"
     end,
     calculatePrefs(item)

@@ -117,7 +117,7 @@ end
     @solicitudlabexa.fechasol=Date.today
     @solicitudlabexa.npuestos=params[:npuestos]
     @solicitudlabexa.curso=params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
-    @solicitudlabexa.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
+    @solicitudlabexa.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios].to_s)
     @solicitudlabexa.horaini=params[:horaini][:comienzo]
     @solicitudlabexa.horafin=params[:horafin][:fin]
     @solicitudlabexa.asignado="N"

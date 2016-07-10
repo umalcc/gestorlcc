@@ -6,7 +6,7 @@ class ConsultasasigController < ApplicationController
     @solicitudes = Solicitudlab.where("usuario_id = ?",session[:user_id]).to_a
     ids=@solicitudes.map {|s| s.id } unless @solicitudes.size==0
     @asignacions = Asignaciondef.where("solicitudlab_id in (?)", ids).order("solicitudlab_id,peticionlab_id,dia_id,laboratorio_id").to_a
-
+    
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @asignacions }

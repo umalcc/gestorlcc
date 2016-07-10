@@ -87,7 +87,7 @@
                            <%end%>
                                    <%=" Puestos: "+a.solicitudlab.npuestos.to_s %><br>
                                    <%= "Profesor: "+a.solicitudlab.usuario.nombre+" "+a.solicitudlab.usuario.apellidos %><br>
-                                   <%= "Soft: "+a.solicitudlab.comentarios %><br>
+                                   <%= "Soft: "+a.solicitudlab.comentarios.to_s %><br>
                                    <%= "Ocupacion: "%>
                                    <% if a.solicitudlab.tipo=="T" %>
                                          <%= "Todo el periodo" %>

@@ -44,7 +44,7 @@ items = @solicitudlabs.map do |item|
     item.peticionlab.map do |p|
       [p.diasemana[0,2],p.horaini, p.horafin]
     end,
-    if item.comentarios != ""
+    if item.comentarios.to_s != ""
       "Sí"
     end,
     calculatePrefs(item)

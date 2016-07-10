@@ -190,7 +190,7 @@ def saveModel(params)
   @solicitudlab.asignatura.titulacion_id = params[:titulacion][:titulacion_id] unless params[:titulacion].nil?
   @solicitudlab.asignatura.curso = params[:nivel]
   @solicitudlab.curso = params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
-  @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
+  @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios].to_s)
   @solicitudlab.fechaini=params[:fechaini].to_date
   @solicitudlab.fechafin = params[:fechafin].to_date
   @solicitudlab.usuario_id = @usuario_actual.id

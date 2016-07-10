@@ -510,7 +510,7 @@ def getAsignacionInfo(asignacion)
     
     info= info + "%Profesor: " + asignacion.solicitudlab.usuario.nombre.to_s
     info= info +" "+  asignacion.solicitudlab.usuario.apellidos.to_s
-    info= info + "%Soft: " + comentarios
+    info= info + "%Soft: " + comentarios.to_s
     info= info + "%Ocupación: " + ocupacion
 
     #Si la reserva no es genérica, necesitamos añadir la información de la asignatura
@@ -574,7 +574,7 @@ def getAsignacionInfo(asignacion)
     @solicitudlab.curso = params[:nivel] == 0 ? "optativa" : params[:nivel].to_s
     @solicitudlab.fechaini=params[:fechaini].to_date
     @solicitudlab.fechafin=params[:fechafin].to_date
-    @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
+    @solicitudlab.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios].to_s)
     
     
     if params[:fechaini]==params[:fechafin]

@@ -65,7 +65,7 @@ class SolicitudusuariolabexasController < ApplicationController
     @solicitudlabexa.fechasol=Date.today
     @solicitudlabexa.npuestos=params[:npuestos]
     @solicitudlabexa.curso=params[:nivel].to_s == '0' ? 'optativa' : params[:nivel].to_s
-    @solicitudlabexa.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios])
+    @solicitudlabexa.comentarios=Iconv.conv('ascii//translit//ignore', 'utf-8', params[:comentarios].to_s)
     @solicitudlabexa.horaini=params[:horaini][:comienzo]
     @solicitudlabexa.horafin=params[:horafin][:fin]
     @solicitudlabexa.asignado="N"
@@ -193,7 +193,7 @@ end
 def getIndexView
 
       @solicitudlabexas= Solicitudlabexa.where("usuario_id = ?",@usuario_actual.id).order("fecha").to_a
-      #@solicitudlabexas = @solicitudlabexas.select{|s| isLabRequestCurrent?(s,false)}
+      @solicitudlabexas = @solicitudlabexas.select{|s| isLabRequestCurrent?(s,false)}
       @cuenta=@solicitudlabexas.size
 end
 

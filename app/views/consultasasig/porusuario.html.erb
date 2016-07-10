@@ -45,7 +45,7 @@
              <td><%= asignacion.horaini+'-'+asignacion.horafin %></td>
              <td style="text-align:center"><%= asignacion.laboratorio.nombre_lab %></td>
              <td><%= asignacion.laboratorio.aviso %></td>
-             <td><%= asignacion.mov_dia+asignacion.mov_hora %></td>
+             <td><%= asignacion.mov_dia.to_s+asignacion.mov_hora.to_s %></td>
             </tr>
      <% else %>
            <% if !(asignacion.peticionlab_id==asignacion_ant.peticionlab_id   and
@@ -58,7 +58,7 @@
              <td style="text-align:center">
                  <%= asignacion.laboratorio.nombre_lab %></td>
              <td><%= asignacion.laboratorio.aviso %></td>
-             <td><%= asignacion.mov_dia+asignacion.mov_hora %></td>
+             <td><%= asignacion.mov_dia.to_s+asignacion.mov_hora.to_s %></td>
             </tr>  
            <% else %>
             <tr valign="top" class="<%=clase %>">
@@ -70,7 +70,7 @@
                 <td style="text-align:center">
                     <%= asignacion.laboratorio.nombre_lab %></td>
                 <td><%= asignacion.laboratorio.aviso %></td>
-                <td><%= asignacion.mov_dia+asignacion.mov_hora %></td>
+                <td><%= asignacion.mov_dia.to_s+asignacion.mov_hora.to_s %></td>
              <% else %>
                <td></td>
                <td></td>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150311220253) do
+ActiveRecord::Schema.define(version: 20160710123453) do
 
   create_table "asignaciondefs", force: :cascade do |t|
     t.integer  "solicitudlab_id"
@@ -20,8 +20,8 @@ ActiveRecord::Schema.define(version: 20150311220253) do
     t.string   "horaini",         limit: 255
     t.string   "horafin",         limit: 255
     t.integer  "dia_id"
-    t.string   "mov_dia",         limit: 255
-    t.string   "mov_hora",        limit: 255
+    t.string   "mov_dia",         limit: 255, default: ""
+    t.string   "mov_hora",        limit: 255, default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "generica",                    default: false
@@ -35,8 +35,8 @@ ActiveRecord::Schema.define(version: 20150311220253) do
     t.string   "horaini",         limit: 255
     t.string   "horafin",         limit: 255
     t.integer  "dia_id"
-    t.string   "mov_dia",         limit: 255
-    t.string   "mov_hora",        limit: 255
+    t.string   "mov_dia",         limit: 255, default: ""
+    t.string   "mov_hora",        limit: 255, default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -47,10 +47,11 @@ ActiveRecord::Schema.define(version: 20150311220253) do
     t.date     "dia"
     t.string   "horaini",            limit: 255
     t.string   "horafin",            limit: 255
-    t.string   "mov_dia",            limit: 255
-    t.string   "mov_hora",           limit: 255
+    t.string   "mov_dia",            limit: 255, default: ""
+    t.string   "mov_hora",           limit: 255, default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "temporal",                       default: false
   end
 
   create_table "asignacionlabexas", force: :cascade do |t|
@@ -59,10 +60,11 @@ ActiveRecord::Schema.define(version: 20150311220253) do
     t.date     "dia"
     t.string   "horaini",            limit: 255
     t.string   "horafin",            limit: 255
-    t.string   "mov_dia",            limit: 255
-    t.string   "mov_hora",           limit: 255
+    t.string   "mov_dia",            limit: 255, default: ""
+    t.string   "mov_hora",           limit: 255, default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "temporal",                       default: false
   end
 
   create_table "asignacions", force: :cascade do |t|
@@ -74,8 +76,8 @@ ActiveRecord::Schema.define(version: 20150311220253) do
     t.string   "horaini",         limit: 255
     t.string   "horafin",         limit: 255
     t.integer  "dia_id"
-    t.string   "mov_dia",         limit: 255
-    t.string   "mov_hora",        limit: 255
+    t.string   "mov_dia",         limit: 255, default: ""
+    t.string   "mov_hora",        limit: 255, default: ""
     t.boolean  "generica",                    default: false
     t.boolean  "temporal",                    default: false
   end
@@ -210,7 +212,7 @@ ActiveRecord::Schema.define(version: 20150311220253) do
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.string   "session_id", limit: 255, null: false
+    t.string   "session_id", null: false
     t.text     "data"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -226,15 +228,18 @@ ActiveRecord::Schema.define(version: 20150311220253) do
     t.date     "fecha"
     t.text     "curso"
     t.integer  "npuestos"
-    t.text     "comentarios"
-    t.text     "preferencias",              default: ""
+    t.string   "comentarios",                default: ""
+    t.text     "preferencias",               default: ""
     t.text     "horaini"
     t.text     "horafin"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "tipo",          limit: 255
-    t.string   "asignado",      limit: 255
+    t.string   "tipo",           limit: 255
+    t.string   "asignado",       limit: 255
+    t.integer  "laboratorio_id"
   end
+
+  add_index "solicitudlabexas", ["laboratorio_id"], name: "index_solicitudlabexas_on_laboratorio_id"
 
   create_table "solicitudlabs", force: :cascade do |t|
     t.date     "fechaini"
@@ -244,7 +249,7 @@ ActiveRecord::Schema.define(version: 20150311220253) do
     t.integer  "asignatura_id"
     t.text     "curso"
     t.integer  "npuestos"
-    t.text     "comentarios"
+    t.string   "comentarios",               default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "preferencias",              default: ""

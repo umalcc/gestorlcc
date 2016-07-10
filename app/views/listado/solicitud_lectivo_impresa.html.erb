@@ -95,7 +95,7 @@
                 <%=render(:partial => "/solicitudrecursos/tramo_peticion", :collection=> @tramos ) %>
              </table>
          </td>
-         <td style="text-align:center;vertical-align:middle"><%="SI" unless a.comentarios=="" %>
+         <td style="text-align:center;vertical-align:middle"><%="SI" unless a.comentarios.to_s=="" %>
          </td>
          <td><% @preferencias=a.preferencias.split(";") unless a.preferencias.nil? %>  
             <table class="prefTable" >

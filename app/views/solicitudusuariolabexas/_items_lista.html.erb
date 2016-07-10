@@ -84,7 +84,7 @@
       					padding: 5px;';>
                                         <%=i.comentarios %><!-- se visualiza el comentario completo -->
 			    </div>
-			    <%="SI" unless i.comentarios=="" %></a><!-- si hay comentarios, se indica --></td>
+			    <%="SI" unless i.comentarios.to_s=="" %></a><!-- si hay comentarios, se indica --></td>
          <td><% @preferencias=i.preferencias.split(";") unless i.preferencias.nil? %>  
             <table>
               <%=render(:partial => "/solicitudlabs/tramo_preferencia", :collection=> @preferencias ) %>

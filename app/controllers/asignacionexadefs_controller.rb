@@ -88,7 +88,7 @@ def getAsignacionInfo(asignacion)
     
     info= info + "%Profesor: " + asignacion.solicitudlabexa.usuario.nombre.to_s
     info= info +" "+  asignacion.solicitudlabexa.usuario.apellidos.to_s
-    info= info + "%Soft: " + comentarios
+    info= info + "%Soft: " + comentarios.to_s
     curso=asignacion.solicitudlabexa.curso == "0" ? "optativa" : asignacion.solicitudlabexa.curso
     asigInfo="Asig: " +asignacion.solicitudlabexa.asignatura.titulacion.abrevia+"(" +asignacion.solicitudlabexa.asignatura.abrevia_asig.to_s + ") %Curso: " + curso + "%"
     info = asigInfo + info

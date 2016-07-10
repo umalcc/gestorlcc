@@ -102,13 +102,13 @@ def getAsignacionInfo(asignacion)
     info = "Puestos:" + asignacion.solicitudlab.npuestos.to_s 
     #Añadir fecha de la solicitud, horaini y horafin pero sólo si la asignacion es temporal
     if asignacion.temporal == true
-       info = info + "%Horario: " + asignacion.dia.nombre + " " + asignacion.horaini + " - " + asignacion.horafin
+       info = info + "%Horario: " + asignacion.dia.nombre + " " + asignacion.horaini.to_s + " - " + asignacion.horafin.to_s
     end
 
     #Añadir información sobre la solicitud que genera la asignación
-    horaini = asignacion.peticionlab.horaini
-    horafin = asignacion.peticionlab.horafin
-    diasemana = asignacion.peticionlab.diasemana
+    horaini = asignacion.peticionlab.horaini.to_s
+    horafin = asignacion.peticionlab.horafin.to_s
+    diasemana = asignacion.peticionlab.diasemana.to_s
     ini = Time.parse(asignacion.peticionlab.horaini)
     fin = Time.parse(asignacion.peticionlab.horafin)
     totalHoras = ((fin - ini)/1.hour).round
@@ -116,7 +116,7 @@ def getAsignacionInfo(asignacion)
     
     info= info + "%Profesor: " + asignacion.solicitudlab.usuario.nombre.to_s
     info= info +" "+  asignacion.solicitudlab.usuario.apellidos.to_s
-    info= info + "%Soft: " + comentarios
+    info= info + "%Soft: " + comentarios.to_s
     info= info + "%Ocupación: " + ocupacion
     #Si la reserva no es genérica, necesitamos añadir la información de la asignatura
     #|| asignacion.generica.to_s == 'false'
@@ -175,7 +175,7 @@ end
 def actualizar
     @asignacionAntigua=getAsignaciondef(params[:asigna])
     #actualizar día de la semana, horaini, horafin y laboratorio
-    Asignaciondef.update(params[:asigna], :horaini => params[:horaini], :horafin => params[:horafin], :dia_id => params[:dia_id],
+    Asignaciondef.update(params[:asigna], :horaini => params[:horaini].to_s, :horafin => params[:horafin].to_s, :dia_id => params[:dia_id],
                          :laboratorio_id => params[:lab_id], :temporal => params[:temporal])
     #session[:lista_externa].delete(params[:asigna])
 
@@ -292,8 +292,8 @@ def graba
         @tramos.each {|tramo| p=Peticionlab.new
                               p.solicitudlab_id=nuevo_id
                               p.diasemana=tramo.diasemana
-                              p.horaini=tramo.horaini
-                              p.horafin=tramo.horafin
+                              p.horaini=tramo.horaini.to_s
+                              p.horafin=tramo.horafin.to_s
                               p.save }
       # esto es lo quedebe cambiar, hay que ir a generar la asignacion nueva y hay que grabarla
       # y redirigir a la consulta de asignaciones  

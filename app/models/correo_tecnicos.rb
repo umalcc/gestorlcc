@@ -95,8 +95,8 @@ class CorreoTecnicos < ActionMailer::Base
     @fechaini=fechaini
     @fechafin=fechafin
     @tramos=tramos
-    @preferencias=solicitudlab.preferencias
-    @comentarios=solicitudlab.comentarios
+    @preferencias=solicitudlab.preferencias.to_s
+    @comentarios=solicitudlab.comentarios.to_s
     @emisor=emisor
     @tipo=tipo
     mail(:to=>@recipients, :subject=>@subject)
@@ -115,8 +115,8 @@ class CorreoTecnicos < ActionMailer::Base
     @fecha=fecha
     @horaini=solicitudlabexa.horaini
     @horafin=solicitudlabexa.horafin
-    @preferencias=solicitudlabexa.preferencias
-    @comentarios=solicitudlabexa.comentarios
+    @preferencias=solicitudlabexa.preferencias.to_s
+    @comentarios=solicitudlabexa.comentarios.to_s
     @emisor=emisor
     @tipo=tipo
 

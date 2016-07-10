@@ -92,7 +92,7 @@
          <td style="text-align:center;vertical-align:middle"><%= a.npuestos %></td>
          <td style="text-align:center;vertical-align:middle"><%= fecha_europea(a.fecha) %></td>
          <td style="text-align:center;vertical-align:middle"><%= a.horaini+" - "+a.horafin %></td>
-         <td style="text-align:center;vertical-align:middle"><%="SI" unless a.comentarios=="" %><!-- si hay comentarios, se indica --></td>
+         <td style="text-align:center;vertical-align:middle"><%="SI" unless a.comentarios.to_s=="" %><!-- si hay comentarios, se indica --></td>
          <td style="text-align:center;vertical-align:middle"><% @preferencias=a.preferencias.split(";") unless a.preferencias.nil? %>  
           <table>
             <%=render(:partial => "/solicitudlabs/tramo_preferencia", :collection=> @preferencias ) %>
