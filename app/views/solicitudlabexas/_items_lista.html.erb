@@ -2,10 +2,12 @@
 <% nasignacionexadef=Asignacionlabexadef.all.size %>
 <% total=nasignacionexa+nasignacionexadef %>
 
-<p style="position:absolute;left:180px;top:140px">Nº solicitudes: <%=@cuenta %></p>
+<p id="numSolicitudes" style="position:absolute;left:180px;top:140px">Nº solicitudes: <%=@cuenta %></p>
 <% if @cuenta!=0 %>
 
-     <table >
+     <br/>
+
+     <table id="solicitudlabexas" >
       <tr>
        <th> </th>
        <th class="cien">Fecha sol.</th>  
@@ -16,7 +18,8 @@
        <th class="cien">Fecha</th>
        <th>Tramo horario</th>
        <th class="cien">Soft.</th>
-       <th class="cientoveinticinco">Elecci&oacute;n equipos</th>       
+       <th class="cientoveinticinco">Elecci&oacute;n equipos</th>  
+       <th style="padding-right:10px"><%= link_to image_tag("limpiar.png",:border=>0,:width=>16,:height=>16),"#",id:"linkBorraExams", title:"Borrar todas"%></th>     
       </tr>
 
       <tr>
@@ -76,10 +79,38 @@
           <table>
             <%=render(:partial => "/solicitudlabs/tramo_preferencia", :collection=> @preferencias ) %>
           </table></td>    
-       <td class="icono"><%= link_to image_tag("borrar.png", :border=>0), i, 
+       <td class="icono"><%= link_to image_tag("borrar.png", :border=>0, :width=>16,:height=>16), i, 
                             data:{ confirm: '¿Seguro que desea eliminar la solicitud?'}, :method => :delete %>                    
        </td> 
       </tr>
       <% end %><!-- de @solicitudlabexas.each -->
      </table>
 <% end %><!-- de if @cuenta!=0 -->  
+
+<script type="text/javascript">
+
+$(function()
+{
+  $("#linkBorraExams").click(function()
+  {
+      var url="/solicitudlabexas/borrarSolicitudes";
+      var mensaje="Se eliminarán las solicitudes de exámenes. ¿Está seguro?";
+
+      var tiempoSolicitud = $('#tiempoSolicitud_tiempo option:selected').val();
+      if(confirm(mensaje))
+      {
+         $.ajax({
+            data: { tiempoSolicitud: tiempoSolicitud},
+            type:"POST",
+            url:url,
+            success: function()
+            {
+               $("#numSolicitudes").text("Nº solicitudes: 0");
+               $("#solicitudlabexas").empty();
+            }
+         });
+      }
+  });
+});
+
+</script>

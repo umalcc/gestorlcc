@@ -172,6 +172,26 @@ end
     end
   end
 
+  def borrarSolicitudes
+
+    @solicitudlabexas = Solicitudlabexa.order("fecha").to_a
+
+    tiempoSolicitud = params[:tiempoSolicitud]
+    case tiempoSolicitud
+      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas, false)
+      when '1' then @solicitudlabexas = getCurrentCuatrimesterRequests(@solicitudlabexas, false)
+      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas, false)
+      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas, false)
+    end
+    
+    @solicitudlabexas.each(&:destroy)
+
+    respond_to do |format|
+      format.json {render json:{}} 
+    end
+
+  end
+
  
   def listar
     cadena=params[:query]
@@ -199,6 +219,7 @@ end
     @solicitudlabexas=Solicitudlabexa.where("npuestos || curso || fecha || fechasol LIKE ? or usuario_id in (?) or asignatura_id in (?) or preferencias in (?)", cadena, codigos_u, codigos_a, nombre_l).to_a
     
     tiempoSolicitud = params[:tiempoSolicitud]
+
     case tiempoSolicitud
       when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas, false)
       when '1' then @solicitudlabexas = getCurrentCuatrimesterRequests(@solicitudlabexas, false)
