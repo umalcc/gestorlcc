@@ -10,7 +10,7 @@ class SolicitudrecursosController < ApplicationController
 
 
   def initializeIndex
-      @tiempoSolicitudes = ["Actuales", "Desde hace un año", "Desde hace dos años"]
+      @tiempoSolicitudes = ["Curso académico actual", "Desde hace un año", "Desde hace dos años"]
   end
 
 

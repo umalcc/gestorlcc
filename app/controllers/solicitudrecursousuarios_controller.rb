@@ -4,7 +4,7 @@ class SolicitudrecursousuariosController < ApplicationController
 
   before_action :login_requerido,:usuario?
 
-  include SolicitudesHelper
+  include SolicitudrecursosHelper
 
 
   def index
@@ -166,7 +166,6 @@ class SolicitudrecursousuariosController < ApplicationController
     @solicitudrecursos=Solicitudrecurso.where("usuario_id = ? and (fechareserva ||  fechasol || motivos LIKE ?  or  tipo in (?))",session[:user_id],cadena,recs).to_a
     @solicitudrecursos = @solicitudrecursos.select{|s| isLabRequestCurrent?(s)}
     @cuenta=@solicitudrecursos.size
-    #respond_to {|format| format.js }
   end
 
 
@@ -189,7 +188,7 @@ class SolicitudrecursousuariosController < ApplicationController
   def getIndexView
 
       @solicitudrecursos= Solicitudrecurso.where("usuario_id = ?",session[:user_id]).order("fechareserva").to_a
-      @solicitudrecursos = @solicitudrecursos.select{|s| isLabRequestCurrent?(s, true)}
+      @solicitudrecursos = @solicitudrecursos.select{|s| isLabRequestCurrent?(s)}
       @cuenta=@solicitudrecursos.size
   end
 

@@ -14,7 +14,7 @@ class SolicitudlabsController < ApplicationController
 
   def index
     
-    @solicitudlabs = getCurrentRequests(Solicitudlab.all, true)
+    @solicitudlabs = getCurrentRequests(Solicitudlab.all)
     @cuenta=@solicitudlabs.size
 
 
@@ -266,10 +266,10 @@ end
     
     tiempoSolicitud = params[:tiempoSolicitud]
     case tiempoSolicitud
-      when '0' then @solicitudlabs = getCurrentRequests(@solicitudlabs, true)
+      when '0' then @solicitudlabs = getCurrentRequests(@solicitudlabs)
       when '1' then @solicitudlabs = getCurrentCuatrimesterRequests(@solicitudlabs, true)
-      when '2' then @solicitudlabs = getFromLastYearRequests(@solicitudlabs, true)
-      when '3' then @solicitudlabs = getFromLast2YearsRequests(@solicitudlabs, true)
+      when '2' then @solicitudlabs = getFromLastYearRequests(@solicitudlabs)
+      when '3' then @solicitudlabs = getFromLast2YearsRequests(@solicitudlabs)
     end
 
     @cuenta = @solicitudlabs.size

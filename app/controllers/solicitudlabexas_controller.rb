@@ -8,13 +8,13 @@ class SolicitudlabexasController < ApplicationController
 
 
   def initializeIndex
-      @tiempoSolicitudes = ["Curso académico actual", "Cuatrimestre actual", "Desde hace un año", "Desde hace dos años"]
+      @tiempoSolicitudes = ["Curso académico actual", "Período actual", "Desde hace un año", "Desde hace dos años"]
   end
 
   def index
 
     @solicitudlabexas = Solicitudlabexa.order("fecha").to_a
-    @solicitudlabexas = getCurrentRequests(@solicitudlabexas, false) 
+    @solicitudlabexas = getCurrentRequests(@solicitudlabexas) 
     @cuenta = @solicitudlabexas.size
     
     respond_to do |format|
@@ -178,10 +178,10 @@ end
 
     tiempoSolicitud = params[:tiempoSolicitud]
     case tiempoSolicitud
-      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas, false)
+      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas)
       when '1' then @solicitudlabexas = getCurrentCuatrimesterRequests(@solicitudlabexas, false)
-      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas, false)
-      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas, false)
+      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas)
+      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas)
     end
     
     @solicitudlabexas.each(&:destroy)
@@ -221,10 +221,10 @@ end
     tiempoSolicitud = params[:tiempoSolicitud]
 
     case tiempoSolicitud
-      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas, false)
+      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas)
       when '1' then @solicitudlabexas = getCurrentCuatrimesterRequests(@solicitudlabexas, false)
-      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas, false)
-      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas, false)
+      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas)
+      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas)
 
     end
 

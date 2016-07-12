@@ -4,6 +4,8 @@
     </p>
     <div id="recuadro">
       <p><%= image_tag ("bg_separ.gif") %></p>
+      <% periodo=Periodo.where('admision = ? and tipo = ?',"t","Examenes").to_a %>
+     <% if periodo.size!=0 %>
       <div id="recuadro-azul" style="height:600px">
           <%= form_for @solicitudlabexa, :url => url_for(:controller => 'solicitudusuariolabexas', :action => @action),
                                :html=> {:name => "formulario"} do |f| %>
@@ -102,7 +104,13 @@
                 <% end %>
           </div>
       <% end %><!-- de form_for -->
-   </div><!-- de recuadro -->
+      <% else %><!-- de periodo de admision -->
+        <div class="aviso">
+            <p>No est&aacute; activa la admisi&oacute;n de solicitudes</p>
+            <p>Para cualquier consulta: tecnicos@lcc.uma.es</p>
+        </div>
+   <% end %>
+  </div><!-- de recuadro -->
 </div><!-- de central -->
 
 <script type="text/javascript">

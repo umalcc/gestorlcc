@@ -16,74 +16,42 @@ module SolicitudesHelper
 
   def getCurrentExamsPeriod
 
-      mesActual = Date.today.month
-      currentDate = Date.today
+      periodos = Periodo.where("iniciosol <= ? and finsol >= ? and tipo = ?", Date.today, Date.today, 'Examenes')
 
-      #exámenes diciembre
-      if(mesActual == 12)
-        inicioCurso = Date.new(currentDate.year,12,1)
-        finCurso = Date.new(currentDate.year,12,31)
-      end
+      if periodos.size > 0
 
-      #exámenes primer cuatrimestre
-      if(mesActual >= 1 and mesActual <= 2)
-        inicioCurso = Date.new(currentDate.year,1,1)
-        finCurso = Date.new(currentDate.year,3,1)
-      end
+        return {:iniciocurso => periodos[0].iniciosol, :fincurso => periodos[0].finsol}
+      
+      else
 
-      #exámenes segundo cuatrimestre
-      if(mesActual >= 6 and mesActual <= 7)
-        inicioCurso = Date.new(currentDate.year,6,1)
-        finCurso = Date.new(currentDate.year,7,31)
-      end
+        return {:iniciocurso => nil, :fincurso => nil}
 
-      #exámenes septiembre
-      if(mesActual == 9)
-        inicioCurso = Date.new(currentDate.year,9,1)
-        finCurso = Date.new(currentDate.year,9,30)
-      end
-
-      return {:iniciocurso => inicioCurso, :fincurso => finCurso}
-
+      end      
   end
 
   def getCurrentCuatrimester
-      mesActual = Date.today.month
-      currentDate = Date.today
 
-      if(mesActual >= 1 and mesActual <= 7)
-        #segundo cuatrimestre
-        inicioCurso = Date.new(currentDate.year,1,22)
-        finCurso = Date.new(currentDate.year,7,31)
+     periodos = Periodo.where("iniciosol <= ? and finsol >= ? and tipo = ?", Date.today, Date.today, 'Lectivo')
+
+     if periodos.size > 0
+
+        return {:iniciocurso => periodos[0].iniciosol, :fincurso => periodos[0].finsol}
+      
       else
-        #primer cuatrimestre
-        inicioCurso = Date.new(currentDate.year,8,1)
-        finCurso = Date.new(currentDate.next_year.year,1,21)
-      end
 
-      return {:iniciocurso => inicioCurso, :fincurso => finCurso}
+        return {:iniciocurso => nil, :fincurso => nil}
+
+      end 
   end
 	
-  def isValidRequest?(solicitud, inicio, fin, lectivo)
+  def isValidRequest?(solicitud, inicio, fin)
 
-    if lectivo
-       return ((solicitud.fechasol.year == inicio and 
-                        solicitud.fechasol.month >= 9 and 
-                        solicitud.fechasol.month <= 12) or
-                       (solicitud.fechasol.year == fin and
-                        solicitud.fechasol.month >= 1 and
-                        solicitud.fechasol.month <= 7))
-
-
-    else 
-       return ((solicitud.fecha.year == inicio and 
-                    solicitud.fecha.month >= 9 and 
-                    solicitud.fecha.month <= 12) or
-                   (solicitud.fecha.year == fin and
-                    solicitud.fecha.month >= 1 and
-                    solicitud.fecha.month <= 7))   
-    end 
-
+    return ((solicitud.fechasol.year == inicio and 
+             solicitud.fechasol.month >= 9 and 
+             solicitud.fechasol.month <= 12) or
+            (solicitud.fechasol.year == fin and
+             solicitud.fechasol.month >= 1 and
+             solicitud.fechasol.month <= 7))
 	end
 
   def isLabRequestCurrentCuatrimester?(solicitud, lectivo)
@@ -97,45 +65,44 @@ module SolicitudesHelper
     inicioCurso = periodoAcademico[:iniciocurso]
     fincurso = periodoAcademico[:fincurso]
 
-    if lectivo
+    if inicioCurso.nil? and fincurso.nil?
 
-         return (solicitud.fechasol.year >= inicioCurso.year and 
-                        solicitud.fechasol.month >= inicioCurso.month and 
-                        solicitud.fechasol.month <= fincurso.month and
-                       solicitud.fechasol.year <= fincurso.year)
+      return false
+
     else
 
-         return (solicitud.fecha.year >= inicioCurso.year and 
-                 solicitud.fecha.month >= inicioCurso.month and 
-                 solicitud.fecha.month <= fincurso.month and
-                 solicitud.fecha.year <= fincurso.year)
+      return (solicitud.fechasol.year >= inicioCurso.year and 
+            solicitud.fechasol.month >= inicioCurso.month and 
+            solicitud.fechasol.month <= fincurso.month and
+            solicitud.fechasol.year <= fincurso.year)
+
     end
 
   end
 
-  def isLabRequestCurrent?(solicitud, lectivo)
+  def isLabRequestCurrent?(solicitud)
 
       periodoAcademico = getCurrentTeachingPeriod
 
-      return true if isValidRequest?(solicitud, periodoAcademico[:iniciocurso], periodoAcademico[:fincurso], lectivo)
-    end
+      return true if isValidRequest?(solicitud, periodoAcademico[:iniciocurso], periodoAcademico[:fincurso])
+  end
 
-    def isLabRequestFromLastYear?(solicitud, lectivo)
+    def isLabRequestFromLastYear?(solicitud)
       
       periodoAcademicoActual = getCurrentTeachingPeriod
       inicioCursoPasado = periodoAcademicoActual[:iniciocurso] -1
       finCursoPasado = periodoAcademicoActual[:fincurso] -1
       
-      return true if isValidRequest?(solicitud, inicioCursoPasado, finCursoPasado, lectivo)
+      return true if isValidRequest?(solicitud, inicioCursoPasado, finCursoPasado)
     end
 
-    def isLabRequestFromLast2Years?(solicitud, lectivo)
+    def isLabRequestFromLast2Years?(solicitud)
 
       periodoAcademicoActual = getCurrentTeachingPeriod
       inicioCursoPasado2 = periodoAcademicoActual[:iniciocurso] -2
       finCursoPasado2 = periodoAcademicoActual[:fincurso] -2
       
-      return true if isValidRequest?(solicitud, inicioCursoPasado2, finCursoPasado2, lectivo)    
+      return true if isValidRequest?(solicitud, inicioCursoPasado2, finCursoPasado2)    
     end
 
     def getCurrentCuatrimesterRequests(solicitudlabs, lectivo)
@@ -143,21 +110,21 @@ module SolicitudesHelper
       return solicitudlabs
     end
     
-    def getCurrentRequests(solicitudlabs, lectivo)
-      solicitudlabs = solicitudlabs.select{|s| isLabRequestCurrent?(s, lectivo)} 
+    def getCurrentRequests(solicitudlabs)
+      solicitudlabs = solicitudlabs.select{|s| isLabRequestCurrent?(s)} 
       return solicitudlabs
     end
 
-    def getFromLastYearRequests(solicitudlabs, lectivo)
-      solicitudlabs = solicitudlabs.select {|s| isLabRequestCurrent?(s, lectivo) || 
-      	                                        isLabRequestFromLastYear?(s, lectivo)}
+    def getFromLastYearRequests(solicitudlabs)
+      solicitudlabs = solicitudlabs.select {|s| isLabRequestCurrent?(s) || 
+      	                                        isLabRequestFromLastYear?(s)}
       return solicitudlabs
     end
 
-    def getFromLast2YearsRequests(solicitudlabs, lectivo)
-      solicitudlabs = solicitudlabs.select {|s| isLabRequestCurrent?(s, lectivo) || 
-    	                                      isLabRequestFromLastYear?(s, lectivo) || 
-    	                                      isLabRequestFromLast2Years?(s, lectivo)}
+    def getFromLast2YearsRequests(solicitudlabs)
+      solicitudlabs = solicitudlabs.select {|s| isLabRequestCurrent?(s) || 
+    	                                      isLabRequestFromLastYear?(s) || 
+    	                                      isLabRequestFromLast2Years?(s)}
       return solicitudlabs
     end
 
