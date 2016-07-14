@@ -1,7 +1,7 @@
 <p><%= image_tag ("bg_separ.gif") %></p>
- <% activo=Periodo.where("activo = ? AND tipo= ?","t","Examenes").first %>
+ <% activo=Periodo.where("activo = ? AND tipo= ?","t","Examenes").order("inicio desc").first %>
    <% if activo.nil? %>
-      <% activo=Periodo.where("tipo= ? AND inicio >= ?","Examenes",Date.today).order("inicio").first %>
+      <% activo=Periodo.where("tipo= ? AND inicio >= ?","Examenes",Date.today).order("inicio desc").first %>
       <% inactivo=true %>
    <% end %>
       <div id="nom_periodo">
@@ -14,7 +14,12 @@
          <span style="margin-left:600px;color:blue;font-weight:normal;font-size:0.7em">Para imprimir 
          <%= link_to image_tag("print.png",:alt=>"Para imprimir"), '../listado/asignacion_examenes_impresa',{:target => "_blank" } %></span>
       </div>
+
+      <br/>
+
 <div id="asignadirecta" style="top:-117px;left:700px"><%= link_to 'Asignación directa','../asignacionexas/asigna_directa' %></div>
+
+<br/>
 
 <div id="recuadro">
  <div id="lista-gestion">

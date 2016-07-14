@@ -2,9 +2,9 @@
  <tr>
    <td>
      <p style="font-size:1em;margin-left:50px;">ASIGNACI&Oacute;N GENERAL DE LABORATORIOS</p>
-     <% activo=Periodo.where("activo = ? AND tipo= ?","t","Lectivo").first %>
+     <% activo=Periodo.where("activo = ? AND tipo= ?","t","Lectivo").order("inicio desc").first %>
      <% if activo.nil? %>
-        <% activo=Periodo.where("tipo= ? AND inicio>= ?","Examenes",Date.today).order("inicio").first %>
+        <% activo=Periodo.where("tipo= ? AND inicio>= ?","Examenes",Date.today).order("inicio desc").first %>
         <% inactivo=true %>
      <% end %>
      <div id="nom_periodo" style="margin-left:50px;">

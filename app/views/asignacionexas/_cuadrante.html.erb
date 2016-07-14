@@ -1,5 +1,5 @@
 
- <% periodo=Periodo.where("tipo = ? and inicio > ?",'Examenes',Date.today).order('inicio').first %>
+ <% periodo=Periodo.where("tipo = ? and inicio >= ?",'Examenes',Date.today).order('inicio').first %>
 <%if periodo.nil? %>
 
   <div class="aviso" style="text-align:left;font-size:160%">

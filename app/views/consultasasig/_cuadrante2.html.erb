@@ -1,5 +1,5 @@
 
- <% activo=Periodo.where('activo = ? and tipo= ?',"t","Examenes").to_a %>
+ <% activo=Periodo.where('activo = ? and tipo= ?',"t","Examenes").order("inicio desc").to_a %>
       <div id="nom_periodo">
          <%= activo.first.nombre %>
            <span style="margin-left:400px;color:blue;font-weight:normal;font-size:0.7em">

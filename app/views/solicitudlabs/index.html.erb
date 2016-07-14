@@ -26,7 +26,7 @@
 
       
           <% if @solicitudlabs %>
-              <% periodo=Periodo.where("tipo = ? AND (activo = ? OR admision = ?)","Lectivo","t","t").order("admision DESC").first %>
+              <% periodo=Periodo.where("tipo = ? AND (activo = ? OR admision = ?)","Lectivo","t","t").order("inicio DESC").first %>
               <div id="nom_periodo">
                 <% if !periodo.nil? %><!-- si se esta en un periodo de asignaciones activadas o adjudicadas-->
                   <%= periodo.nombre %>

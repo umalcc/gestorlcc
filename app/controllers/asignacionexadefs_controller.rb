@@ -41,7 +41,7 @@ def consulta
      @asignacionexas = @asignacionexas.as_json 
     end
 
-    periodo=Periodo.where("tipo = ? and inicio > ?",'Examenes',Date.today).order('inicio').first 
+    periodo=Periodo.where("tipo = ? and inicio > ?",'Examenes',Date.today).order("inicio").first 
     @inicioPeriodo = periodo.inicio
     @finPeriodo = periodo.fin
     @horas = Horario.where('en_uso = ?','t').order("num")

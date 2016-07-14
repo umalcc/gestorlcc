@@ -24,7 +24,7 @@
           <img id="cargando" style="vertical-align:middle;display:none;horizontal-align:middle;" src="/assets/ajax-loader.gif" />
       
           <% if @solicitudlabexas %>
-              <% periodo=Periodo.where("tipo = ? AND (activo = ? OR admision = ?)","Examenes","t","t").order("admision DESC").first %>
+              <% periodo=Periodo.where("tipo = ? AND (activo = ? OR admision = ?)","Examenes","t","t").order("inicio desc").first %>
               <div id="nom_periodo">
                 <% if !periodo.nil? %><!-- si se esta en un periodo de asignaciones activadas o adjudicadas-->
                   <%= periodo.nombre %>

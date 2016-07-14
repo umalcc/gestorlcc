@@ -27,9 +27,6 @@ class PeriodosController < ApplicationController
     @periodo.fin = Date.today
     @periodo.iniciosol = Date.today
     @periodo.finsol = Date.today
-    ##@dia=formato_europeo(Date.today)
-    #hoy=Date.today.to_s.split('-') 
-    #@dia=hoy[2]+'-'+hoy[1]+'-'+hoy[0]
 
     respond_to do |format|
       format.html # new.html.erb

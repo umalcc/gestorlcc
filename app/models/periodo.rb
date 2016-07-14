@@ -11,6 +11,10 @@ class Periodo < ActiveRecord::Base
 
  validate :activo_admision?
 
+ validate :fechas_correctas?
+
+ validate :fechas_solicitudes_correctas?
+
  validate :unico_activo_lectivo?,
           :if=> Proc.new { |u| u.tipo=='Lectivo' and u.activo and  ((Periodo.where("tipo=? and activo=?","Lectivo","t").to_a.size>0 and u.id==0) or (Periodo.where("tipo=? and activo=?","Lectivo","t").to_a.size>1 and u.id!=0)) }
  validate :unico_activo_examenes?,
@@ -19,6 +23,14 @@ class Periodo < ActiveRecord::Base
           :if=> Proc.new { |u| u.tipo=='Lectivo' and u.admision and ((Periodo.where("tipo=? and admision=?","Lectivo","t").to_a.size>0 and u.id==0) or (Periodo.where("tipo=? and admision=?","Lectivo","t").to_a.size>1 and u.id!=0)) }
  validate :unico_admision_examenes?,
           :if=> Proc.new { |u| u.tipo=='Examenes' and u.admision and ((Periodo.where("tipo=? and admision=?","Examenes","t").to_a.size>0 and u.id==0) or (Periodo.where("tipo=? and admision=?","Examenes","t").to_a.size>1 and u.id!=0)) }
+
+ def fechas_correctas?
+     errors.add("fechas: ", "La fecha de inicio es posterior a la fecha de fin") unless inicio<=fin
+ end
+
+ def fechas_solicitudes_correctas?
+  errors.add("fechas: ", "La fecha de inicio de solicitudes es posterior a la fecha de fin de solicitudes") unless iniciosol<=finsol
+ end
 
  def unico_activo_lectivo?
      errors.add("asignado: ","ya hay otro periodo lectivo asignado") #if (activo and tipo=="Lectivo" and Proc.new{|u| u.tipo=='Lectivo' and u.activo})

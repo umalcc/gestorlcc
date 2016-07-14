@@ -5,9 +5,9 @@
   </p>
   <div id="recuadro">  
     <p><%= image_tag ("bg_separ.gif") %></p>
-       <% activo=Periodo.where("activo = ? AND tipo= ?","t","Lectivo").first %>
+       <% activo=Periodo.where("activo = ? AND tipo= ?","t","Lectivo").order("inicio desc").first %>
        <% if activo.nil? %>
-          <% activo=Periodo.where("tipo= ? AND inicio>= ?","Lectivo",Date.today).order("inicio").first %>
+          <% activo=Periodo.where("tipo= ? AND inicio>= ?","Lectivo",Date.today).order("inicio desc").first %>
           <% inactivo=true %>
        <% end %>
        <% nasig=Asignacion.all.size %>
