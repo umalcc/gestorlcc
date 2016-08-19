@@ -51,7 +51,7 @@ gem 'byebug'
    gem 'web-console', '~> 2.0'
    gem "mocha"
    gem "rspec-rails", ">= 2.0.0.beta.19"
-   #>>>>>>>>>>>>config.gem :net-ldap 
+   gem 'net-ldap'
    gem 'railties'#, ">= 3.1.0"
   	gem 'sass-rails'#, '~> 3.2.6'
  gem 'coffee-rails'#, '~> 3.2.2'
