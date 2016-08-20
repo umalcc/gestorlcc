@@ -176,9 +176,10 @@ function elimEventListaExt(id,confirmacionReq)
 	}
 }
 function documentClick(ev)
-{
+{	
 	$(".seleccionado").css("border", "1px solid #3a87ad");
 	$(".seleccionado").css("background-color", "#3a87ad");
+	$(".conflicto").css("border", "2px solid red");
 	$(".fc-event").removeClass("seleccionado");
 }
 
@@ -395,6 +396,7 @@ $(function()
     	  $(this).remove(); //elimina el evento de la lista externa visualmente
     	  var height=$("#external-events").height();
    		  $("#external-events").height(height-35);
+   		  console.log("entra aquí");
 		},
         eventLimit: true, //allow "more" link when too many events
         events: filterEventsByDay(asignacions,divId), //load events
@@ -410,6 +412,7 @@ $(function()
             var conflicts = GetConflictsForEventInCalendar(event,divId);
 			if(conflicts.length > 1){
 				element.css({"border-color":"red","border-width":"2px", "border-style":"solid"});
+				element.addClass("conflicto");
 			}
             element.attr('title', event.info);
         },
@@ -447,29 +450,30 @@ $(function()
 	    	}
 		    	event.operacion="";
 		    	updateEventCalendar(event);
-             //ToDo: actualizar tabla peticionlabs tb
 	    },
 	    eventDragStop: function(event, jsEvent, ui, view) 
 	    {  
         //Move event from calendar to external list
 	   	if(isElemOverDiv(jsEvent,'#external-events'))
 	   	{
-	   		//alert(eve nt.info);
 	   		event.operacion="cortar";
 	   		var diaId = obtenerCalendarioActual();
 	   		moverEventoTmp(event,false,diaId,false);
 	   		$("#"+divId).fullCalendar('removeEvents',event.id);
 	   	}
+	   	
 	   },
        eventClick: function(event){
-       	     $(".seleccionado").css("border", "1px solid #3a87ad");
+            
+             $(".seleccionado").css("border", "px solid #3a87ad");  
 	         $(".seleccionado").css("background-color", "#3a87ad");
+       	     $(".conflicto").css("border", "2px solid red");
        	     $(".fc-event").removeClass("seleccionado");
        	     $(this).addClass("seleccionado");
        	     $(".seleccionado").css("border-style", "dashed");
        	     $(".seleccionado").css("background-color", "#6F8");
        	     return false;
-        },
+        }
 
         });
     });
