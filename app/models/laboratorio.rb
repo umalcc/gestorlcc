@@ -8,7 +8,7 @@ class Laboratorio < ActiveRecord::Base
   PUESTOS_EXAMEN=[64,100,150]
 
   validates_uniqueness_of :nombre_lab,
-                          :message => ': Ya se encuentra registrado ese valor'
+                          :message => ': ya se encuentra registrado ese valor'
   validates_presence_of :nombre_lab, :puestos, :ssoo,
-                        :message => ': No puede estar en blanco'
+                        :message => ': no puede estar en blanco'
 end

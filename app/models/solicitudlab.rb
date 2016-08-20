@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 class Solicitudlab < ActiveRecord::Base
+
 has_many :peticionlab
 belongs_to :asignatura
 belongs_to :usuario

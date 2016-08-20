@@ -29,7 +29,7 @@ class Periodo < ActiveRecord::Base
  end
 
  def fechas_solicitudes_correctas?
-  errors.add("fechas: ", "La fecha de inicio de solicitudes es posterior a la fecha de fin de solicitudes") unless iniciosol<=finsol
+  errors.add("fechas: ", "La fecha de inicio de solicitudes es posterior a la fecha de fin de solicitudes") unless tipo =='Festivo' or iniciosol<=finsol
  end
 
  def unico_activo_lectivo?

@@ -7,5 +7,5 @@ NUMHORAS=6
                           :message => ': Ya se encuentra registrado ese valor'
 
   validates_presence_of :identificador,  :descripcion, :caracteristicas,
-                        :message => 'no puede estar en blanco'
+                        :message => ': no puede estar en blanco'
 end
