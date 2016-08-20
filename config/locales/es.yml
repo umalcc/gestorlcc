@@ -16,6 +16,7 @@ es:
           num: "Número"
       usuario:
           password: "Contraseña"
+          password_confirmation: "Confirmación"
       laboratorio:
           nombre_lab: "Número"
           ssoo: "Denominación/SSOO"

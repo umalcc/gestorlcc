@@ -3,3 +3,27 @@
 
 en:
   hello: "Hello world"
+  activerecord:
+    attributes:
+      recurso:
+        descripcion: "Type"
+        caracteristicas: "Characteristics"
+      titulacion:
+         codigo: "Code"
+         abrevia: "Abbreviation"
+      dia:
+          num: "Number"
+      horario:
+          num: "Number"
+      horasexa:
+          num: "Number"
+      usuario:
+          password: "Password"
+          password_confirmation: "Confirmation"
+      laboratorio:
+          nombre_lab: "Number"
+          ssoo: "Software"
+      asignatura:
+           nombre_asig: "Name"
+           codigo_asig: "Code"
+           abrevia_asig: "Acronym"
