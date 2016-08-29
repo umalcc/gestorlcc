@@ -55,8 +55,8 @@
 </div>
 </p>
 <% @labs=Laboratorio.order("nombre_lab").to_a %>
-<% @horas=Horasexa.order("num").to_a %>
-<% for dia in  fechas %><!-- POR CADA DIA DE EXAMEN -->
+<% @horasoriginal=Horasexa.order("num").to_a %>
+<% for dia in fechas %><!-- POR CADA DIA DE EXAMEN -->
    
    <div id="rotulodia">
                        <a name="<%=dia.to_s%>"><%=Dia::DIASEM[dia.wday]%>&nbsp;<%=fecha_europea(dia).to_s%></a>&nbsp;&nbsp;<br/>
@@ -89,13 +89,13 @@
      </tr>
 
      
-     <% for hora in @horas do %><!-- las horas son las filas -->
+     <% for hora in @horasoriginal do %><!-- las horas son las filas -->
      <tr>
       <th><%=hora.comienzo+'-'+hora.fin %></th>
 
        <% for lab in @labs do %>
        <!-- busco las asignaciones a ese lab ese dia a esa hora -->
-         <% as=@asignacionexas.select {|a| a.laboratorio_id==lab.id and a.horaini.to_s==hora.comienzo.to_s and dia==a.dia} %>
+         <% as=@asignacionexas.select {|a| a.laboratorio_id==lab.id and a.horaini.to_s==hora.comienzo.to_s and dia==a.dia}.to_a %>
          
          <td >
                 <% if as.size>1 %><!-- si hay colision, remarco en rojo -->
@@ -125,8 +125,8 @@
                             
 
                              <%= a.solicitudlabexa.asignatura.abrevia_asig %><br/><br/>
-                       <% hi=Horasexa.find_by_comienzo(a.solicitudlabexa.horaini).num %>
-                            <% hf=Horasexa.find_by_fin(a.solicitudlabexa.horafin).num %>
+                       <% hi=@horasoriginal.select{|h|h.comienzo ==  a.solicitudlabexa.horaini}.first.num %>
+                            <% hf=@horasoriginal.select{|h| h.fin == a.solicitudlabexa.horafin}.first.num %>
                             <%= '('+(hf-hi+1).to_s+'h)' %><!-- muestro abrevia_asig e info flotante -->
                         
                       </a>
@@ -180,10 +180,10 @@
                                             </tr>
 				            <tr>
                                               <td>Laboratorio </td>
-                                              <td> <% @laboratorios=Laboratorio.order("nombre_lab").to_a %>
-                                                   <% labora=Laboratorio.find(a.laboratorio_id).nombre_lab %>
+                                              <td>
+                                                   <% labora=@labs.find(a.laboratorio_id).first.nombre_lab %>
                 				   <%= select "laboratorio_id", "nombre", 
-								@laboratorios.map {|l| [l.nombre_lab]},html_options={:selected=>labora } %></td>
+								@labs.map {|l| [l.nombre_lab]},html_options={:selected=>labora } %></td>
 			                    </tr>                                               
 					    <tr>
                                               <td>Dia </td>
@@ -196,10 +196,11 @@
                                             </tr>
                                             <tr>
                                               <td>Hora </td>
-                                              <td> <% @horas=Horasexa.where('en_uso = ?',"t").to_a %>
+                                              <td> <% horasTmp=@horasoriginal.select{|h| h.en_uso ==true}.to_a
+                                              %>
                                                    <% a.horaini %>
                 				   <%= select "horario_id", "comienzo", 
-								@horas.map {|h| [h.comienzo]},html_options={:selected=>a.horaini } %></td>
+								horasTmp.map {|h| [h.comienzo]},html_options={:selected=>a.horaini } %></td>
 			                    </tr>
 				            <tr>
                     <td><%= hidden_field_tag "id", a.id %></td>

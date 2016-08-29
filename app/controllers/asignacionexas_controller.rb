@@ -200,14 +200,15 @@ class AsignacionexasController < ApplicationController
   end
 
   def mover
+    horas = Horasexa.all.to_a
     @asignacionexa=Asignacionlabexa.find(params[:id]) #coger todas las que tengan la misma solicitudlabexa_id
     inicial_dia=@asignacionexa.dia                    #mover una por una con los cambios de día u hora o lab
     inicial_hora_ini=@asignacionexa.horaini
     inicial_hora_fin=@asignacionexa.horafin
     inicial_laboratorio=@asignacionexa.laboratorio
     laboratorio_id=Laboratorio.find_by_nombre_lab(params[:nombre_lab]).id
-    horaini=Horasexa.find_by_comienzo(params[:comienzo]).comienzo
-    horafin=Horasexa.find_by_comienzo(params[:comienzo]).fin
+    horaini=horas.select{|h| h.comienzo == params[:comienzo]}.first.comienzo
+    horafin=horas.select{|h| h.comienzo == params[:comienzo]}.first.fin
 
 
     if inicial_laboratorio!=laboratorio_id
@@ -227,12 +228,12 @@ class AsignacionexasController < ApplicationController
     end
     mov_hora="" 
     if inicial_hora_ini != params[:comienzo]
-      diferencia=Horasexa.find_by_comienzo(inicial_hora_ini).num-Horasexa.find_by_comienzo(params[:comienzo]).num
+      diferencia=horas.select{|h| h.comienzo==inicial_hora_ini}.first.num-horas.select{|h|h.comienzo ==params[:comienzo]}.first.num
       mov_hora=" cambio de "+inicial_hora_ini+"-"+inicial_hora_fin+" a "+params[:comienzo]+"-"+horafin+"; "
       asignaciones=Asignacionlabexa.where('solicitudlabexa_id = ?',@asignacionexa.solicitudlabexa).to_a
       for asignacionexa in asignaciones # todas las que haya que modificar
-        asignacionexa.update_attributes(:horaini=> Horasexa.find_by_num(Horasexa.find_by_comienzo(asignacionexa.horaini).num-diferencia).comienzo,
-                                        :horafin=> Horasexa.find_by_num(Horasexa.find_by_comienzo(asignacionexa.horaini).num-diferencia).fin,
+        asignacionexa.update_attributes(:horaini=> horas.select{|h|h.num==(horas.select{|h| h.comienzo ==asignacionexa.horaini}.first.num-diferencia)}.first.comienzo,
+                                        :horafin=> horas.select{|h| h.num == (horas.select{|h| h.comienzo ==asignacionexa.horaini}.first.num-diferencia)}.first.fin,
                                        :mov_hora=> mov_hora )
       end  
     end
