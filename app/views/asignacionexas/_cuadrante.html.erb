@@ -102,7 +102,8 @@
                   <div style="border-style:solid;border-color:#ff0000">
                 <% end %>
 
-                <% for a in as %><!-- por cada asignacion hallada -->   
+                <% for a in as %><!-- por cada asignacion hallada -->  
+                <div data-solicitudlabexa=<%=a.solicitudlabexa_id %>> 
                    <a onmouseover="ShowContent('flotante<%=dia.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>'); return true;"
    		                onmouseout="HideContent('flotante<%=dia.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>'); return true;">
                       <div id="flotante<%=dia.to_s%><%=hora.id.to_s%><%=lab.id.to_s%><%=a.id.to_s%>" 
@@ -212,6 +213,7 @@
                                          </table>
                                        </div>
                                   </div><!-- formulario flotante para mover asignacion -->       
+                              </div><!-- Asignaciones bucle -->
                 <% end %>
                 <% if as.size>1 %>
                   </div>
@@ -239,15 +241,16 @@ $(function()
    $('a[name=borraNorm]').click(function (event) {    
     var asignaId=$(this).attr("id");
     var row=$("#"+asignaId).parent();
+        var solicitudlabexa = row.attr('data-solicitudlabexa');
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
             $.ajax({
                      type: "POST",
+                     dataType:'json',
                      url: "/asignacionexas/borranormal",
                      data: { asigna:asignaId },
                     success:function(){
-                      row.remove();
-                    }
+$('div[data-solicitudlabexa="'+solicitudlabexa+'"]').remove();                    }
                    });
          } 
          event.preventDefault();
@@ -257,14 +260,16 @@ $(function()
    $('a[name=borraDir]').click(function (event) { 
     var asignaId=$(this).attr("id");
     var row=$("#"+asignaId).parent();
+    var solicitudlabexa = row.attr('data-solicitudlabexa');
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
             $.ajax({
               type: "POST",
+              dataType:'json',
               url: "/asignacionexas/borradir",
               data: { asigna:asignaId },
               success:function(){
-                      row.remove();
+                $('div[data-solicitudlabexa="'+solicitudlabexa+'"]').remove();
               }
          });
          } 

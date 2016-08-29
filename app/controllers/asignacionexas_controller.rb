@@ -379,14 +379,15 @@ class AsignacionexasController < ApplicationController
     @asignacionexas=Asignacionlabexa.all
 
     respond_to do |format|
-      format.js
+      format.json {render :json => {:msg => "Todo ok"},:status => 200}
+      format.xml  { head :ok }
     end
   end
 
   def borranormalasignada 
     asignacionexa=Asignacionlabexa.find(params[:asigna])
     #asignacionexa.delete
-    otrasasignacionexas=Asignacionlabexa.all('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id)
+    otrasasignacionexas=Asignacionlabexa.where('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id)
     otrasasignacionexas.each {|o| o.delete }
     @asignacionexas=Asignacionlabexa.all
     respond_to do |format|
@@ -413,7 +414,8 @@ class AsignacionexasController < ApplicationController
     @asignacionexas=Asignacionlabexa.all
     
     respond_to do |format|
-      format.js
+      format.json {render :json => {:msg => "Todo ok"},:status => 200}
+      format.xml  { head :ok }
     end
   end
  
