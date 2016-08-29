@@ -254,7 +254,7 @@ $(function()
             return false;    
     }); 
 
-   $('a[name=borraDir]').click(function () { 
+   $('a[name=borraDir]').click(function (event) { 
     var asignaId=$(this).attr("id");
     var row=$("#"+asignaId).parent();
          if(confirm('Seguro que desea eliminar la asignacion?'))
@@ -267,7 +267,9 @@ $(function()
                       row.remove();
               }
          });
-         }  
+         } 
+          event.preventDefault();
+            return false;     
     });
         $('input[name=moverBtn]').click(function () { 
       var divDialog=$(this).parent().parent().parent();

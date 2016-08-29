@@ -408,18 +408,15 @@ class AsignacionexasController < ApplicationController
 
   def borradir
     asignacionexa=Asignacionlabexa.find(params[:asigna])
-    solicitudlab=Solicitudlab.find(asignacionexa.solicitudlabexa_id)
-    otrasasignacionexas=Asignacionlabexa.all('solicitudlabexa_id = ?',asignacionexa.solicitudlab_id)
-    #asignacionexa.delete
+    otrasasignacionexas=Asignacionlabexa.where('solicitudlabexa_id = ?',asignacionexa.solicitudlabexa_id)
     otrasasignacionexas.each {|o| o.delete }
-    #solicitudlab.delete
     @asignacionexas=Asignacionlabexa.all
     
     respond_to do |format|
       format.js
     end
   end
-
+ 
   def listar
     cadena=params[:query]
    # para las fechas
