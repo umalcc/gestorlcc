@@ -250,7 +250,10 @@ $(function()
                      url: "/asignacionexas/borranormal",
                      data: { asigna:asignaId },
                     success:function(){
-$('div[data-solicitudlabexa="'+solicitudlabexa+'"]').remove();                    }
+$('div[data-solicitudlabexa="'+solicitudlabexa+'"]').remove();                    },
+                    error:function(){
+                      alert("Ha habido un error intentando borrar la asignacion");
+                    }
                    });
          } 
          event.preventDefault();
@@ -270,7 +273,9 @@ $('div[data-solicitudlabexa="'+solicitudlabexa+'"]').remove();                  
               data: { asigna:asignaId },
               success:function(){
                 $('div[data-solicitudlabexa="'+solicitudlabexa+'"]').remove();
-              }
+              },error:function(){
+                      alert("Ha habido un error intentando borrar la asignacion");
+                    }
          });
          } 
           event.preventDefault();
