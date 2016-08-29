@@ -119,8 +119,12 @@ $(function(){
                      url: "borradirasignada",
                      data: { asigna:asignaId },
                      success:function(){
+                      if(row.parent().children().length ===1){
+                        location.reload();
+                      }else{
                         row.remove();
-                   }, error:function(request, status, error)
+                      }
+                    }, error:function(request, status, error)
                    {
                     alert(error);
                    }});
