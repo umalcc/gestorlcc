@@ -41,9 +41,10 @@ class AsignacionexasController < ApplicationController
     solicitudes=Solicitudlabexa.where("fecha >= ? and asignado <> ?",Date.today,"D").to_a
     #@adjudicado=Periodo.where(:conditions=>["activo = ? and tipo= ?","t","Examenes"]).to_a
     if solicitudes.size!=0 
-     
-     @solicitudlabexas=solicitudes
+    @horas = Horasexa.where('en_uso = ?',"t").select(:id, :num, :comienzo, :fin, :en_uso).to_a
+    @todoslabOriginal = Laboratorio.order("nombre_lab").select(:id, :nombre_lab, :puestos, :ssoo, :descr_HW, :descr_SW, :comentarios, :aviso, :especial, :grupo).to_a
 
+     @solicitudlabexas=solicitudes
      logger.debug "Num de solicitudes:" + (@solicitudlabexas.size).to_s
 
      # ordenacion de solicitudes de examen segun metodo de ascenso de burbujas por los criterios:
@@ -51,7 +52,7 @@ class AsignacionexasController < ApplicationController
      # 2- por numero de puestos descendentemente
      for i in 0..@solicitudlabexas.size-1
        for j in 0..@solicitudlabexas.size-2-i
-         if horasexa(@solicitudlabexas[j])<horasexa(@solicitudlabexas[j+1])
+         if horasexa2(@solicitudlabexas[j],@horas)<horasexa2(@solicitudlabexas[j+1], @horas)
              @solicitudlabexas[j],@solicitudlabexas[j+1]=@solicitudlabexas[j+1],@solicitudlabexas[j]
          end
        end
@@ -59,25 +60,23 @@ class AsignacionexasController < ApplicationController
 
       for i in 0..@solicitudlabexas.size-1
        for j in 0..@solicitudlabexas.size-2-i
-         if horasexa(@solicitudlabexas[j])==horasexa(@solicitudlabexas[j+1]) and
+         if horasexa2(@solicitudlabexas[j],@horas)==horasexa2(@solicitudlabexas[j+1],@horas) and
            @solicitudlabexas[j].npuestos<@solicitudlabexas[j+1].npuestos
            @solicitudlabexas[j],@solicitudlabexas[j+1]=@solicitudlabexas[j+1],@solicitudlabexas[j]
          end
        end
      end
-
      # los componentes ordenados secuencialmente, se cargan en un array 3d de horas x labs x ### FECHA ####
      cuadrante=Array3d.new
      @asignacionexas=[]
-   
      ####### VER FECHA EN NUMERICO ENTERO Y COMO MANTENER LA CONTINUIDAD DE HORAS (LAS DE IGUAL SOLICITUDLABEXA_ID)
      @nhoras=[]
      @solicitudlabexas.each { |sol|     #por cada una de las @solicitudlabexas, buscamos los lab que tienen ese n. de puestos
                    
          # tomamos la fecha, la hora de inicio y la de fin ###### FECHA NO DIA DE LA SEMANA ##################
          dia=sol.fecha.yday  ####### poner fecha en formato enteroooooooo
-         hi=Horasexa.find_by_comienzo(sol.horaini).id.to_i  #### LA SOLICITUD TIENE HORAINI
-         hf=Horasexa.find_by_fin(sol.horafin).id.to_i 
+         hi=@horas.select{|h|h.comienzo == sol.horaini}.first.id.to_i  #### LA SOLICITUD TIENE HORAINI
+         hf=@horas.select{|h|h.fin ==sol.horafin}.first.id.to_i 
          nhoras=hf-hi+1 #### las horas a partir de la inicial que ocupa el examen
          # for hora in hi..hf     #   for cada hora del tramo,una asignacionexa MIRAR SI LIBRE LA PRIMERA HORA Y LAS RESTANTES 
           @nhoras<<nhoras
@@ -90,7 +89,7 @@ class AsignacionexasController < ApplicationController
 
           while (numLab <= numLabs && !labApple)
       
-            @todoslab=Laboratorio.order("nombre_lab").to_a
+            @todoslab=@todoslabOriginal
             # en principio el laboratorio asignado es ninguno y buscamos uno libre de ese tamaño
             if sol.preferencias=="" or sol.preferencias==nil
                @todoslab.each {|laboratorio|  
@@ -103,7 +102,7 @@ class AsignacionexasController < ApplicationController
              else # el usuario manifesto una preferencia favorable o desfavorable
              preferencias=sol.preferencias.split(";")        # troceo la cadena de preferencias por el ;  
              preferencias.each { |p| trestramos=p.split("-") # e itero sobre cada trozo y vuelvo a trocear
-                                 l=Laboratorio.find_by_nombre_lab(trestramos[0]).id    #  en 3.1.4-Apple-no por el guion
+                                 l=@todoslabOriginal.select{|l|l.nombre_lab == trestramos[0]}.first.id    #  en 3.1.4-Apple-no por el guion
                                  if trestramos[2]=="si"      # si ha dicho que si, ahí lo coloco
                                    labApple = true
                                    lab=[l]                   # si el laboratorio está libre y cabe el num de puestos
@@ -130,8 +129,8 @@ class AsignacionexasController < ApplicationController
                          @asignacionexas<<asignacionexa=Asignacionlabexa.new(:solicitudlabexa_id=>sol.id,
                                                                  :laboratorio_id=>l,
                                                                  :dia=>sol.fecha,              #aqui hay cambio
-                                                                 :horaini=>Horasexa.find(hora).comienzo,
-                                                                 :horafin=>Horasexa.find(hora).fin,# POR CADA HORA ENTRE hi y hf
+                                                                 :horaini=>@horas.select{|h|h.id==hora}.first.comienzo,
+                                                                 :horafin=>@horas.select{|h|h.id ==hora}.first.fin,# POR CADA HORA ENTRE hi y hf
                                                                  :mov_dia=>"",
                                                                  :mov_hora=>"")
                     

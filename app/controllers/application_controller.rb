@@ -80,6 +80,13 @@ class ApplicationController < ActionController::Base
        total=(f-p+1)
        return total
     end
+
+    def horasexa2(solicitud, horas)
+       p=horas.find{ |h| h.comienzo == solicitud.horaini}[0].to_i
+       f = horas.find{ |h| h.fin == solicitud.horafin}[0].to_i
+       total=(f-p+1)
+       return total
+    end
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
 end
