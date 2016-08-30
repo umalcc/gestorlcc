@@ -1,31 +1,55 @@
 module SolicitudesHelper
+
+  def getStartAndEndYears
+
+    currentYear = Date.today.year
+    if Date.today.month >= 1 and Date.today.month <= 9
+        startYear = currentYear - 1
+        endYear = currentYear
+    else
+        startYear = currentYear
+        endYear = currentYear + 1
+    end
+
+    return {:startYear => startYear, :endYear => endYear}
+  end
+
 	def getCurrentTeachingPeriod
 
-      primerPeriodo = Periodo.order("inicio").where("iniciosol <= ? and fin >= ? and tipo = ? and cast(strftime('%m', inicio) as int) = ?",Date.today,Date.today,'Lectivo', 9).first
+      #primerPeriodo = Periodo.order("inicio").where("iniciosol <= ? and fin >= ? and tipo = ? and cast(strftime('%m', inicio) as int) = ?",Date.today,Date.today,'Lectivo', 9).first
 
-      if primerPeriodo != nil
-        inicioCurso = primerPeriodo.iniciosol
-        finCurso = Date.new(inicioCurso.next_year.year,7,1)
-      else
-        inicioCurso = nil
-        finCurso = nil
-      end
+      #if primerPeriodo != nil
+      #  inicioCurso = primerPeriodo.iniciosol
+      #  finCurso = Date.new(inicioCurso.next_year.year,7,1)
+      #else
+      #  inicioCurso = nil
+      #  finCurso = nil
+      #end
+
+      startAndEndYears = getStartAndEndYears
+
+      inicioCurso = Date.new(startAndEndYears[:startYear], 9, 1)
+      finCurso = Date.new(startAndEndYears[:endYear],7,1)
 	    
 	    return {:iniciocurso => inicioCurso, :fincurso => finCurso}
 	end
 
   def getCurrentTeachingPeriodForExams
 
-      primerPeriodoExamenes = Periodo.order("inicio").where("iniciosol <= ? and fin >= ? and tipo = ? and cast(strftime('%m', inicio) as int) = ?",Date.today,Date.today,'Examenes', 12).first
-      ultPeriodoExamenes = Periodo.order("inicio DESC").where("iniciosol <= ? and fin >= ? and tipo = ? and cast(strftime('%m', inicio) as int) = ?",Date.today,Date.today,'Examenes', 9).first
+      #ultPeriodoExamenes = Periodo.order("inicio DESC").where("iniciosol <= ? and fin >= ? and tipo = ? and cast(strftime('%m', inicio) as int) = ?",Date.today,Date.today,'Examenes', 9).first
       
-      if primerPeriodoExamenes.nil? and ultPeriodoExamenes.nil? 
-          inicioCurso = nil
-          finCurso = nil
-      else
-          inicioCurso = primerPeriodoLectivo.inicio
-          finCurso = ultPeriodoExamenes.fin
-      end
+      #if ultPeriodoExamenes.nil? 
+      #    inicioCurso = nil
+      #    finCurso = nil
+      #else
+      #    inicioCurso = Date.new(ultPeriodoExamenes.fin.prev_year.year, 10, 1)
+      #    finCurso = ultPeriodoExamenes.fin
+      #end
+
+      startAndEndYears = getStartAndEndYears
+
+      inicioCurso = Date.new(startAndEndYears[:startYear], 10, 1)
+      finCurso = Date.new(startAndEndYears[:endYear],10,1)
       
       return {:iniciocurso => inicioCurso, :fincurso => finCurso}
   end
