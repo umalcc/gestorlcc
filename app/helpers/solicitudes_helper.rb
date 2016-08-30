@@ -16,16 +16,6 @@ module SolicitudesHelper
 
 	def getCurrentTeachingPeriod
 
-      #primerPeriodo = Periodo.order("inicio").where("iniciosol <= ? and fin >= ? and tipo = ? and cast(strftime('%m', inicio) as int) = ?",Date.today,Date.today,'Lectivo', 9).first
-
-      #if primerPeriodo != nil
-      #  inicioCurso = primerPeriodo.iniciosol
-      #  finCurso = Date.new(inicioCurso.next_year.year,7,1)
-      #else
-      #  inicioCurso = nil
-      #  finCurso = nil
-      #end
-
       startAndEndYears = getStartAndEndYears
 
       inicioCurso = Date.new(startAndEndYears[:startYear], 9, 1)
@@ -35,16 +25,6 @@ module SolicitudesHelper
 	end
 
   def getCurrentTeachingPeriodForExams
-
-      #ultPeriodoExamenes = Periodo.order("inicio DESC").where("iniciosol <= ? and fin >= ? and tipo = ? and cast(strftime('%m', inicio) as int) = ?",Date.today,Date.today,'Examenes', 9).first
-      
-      #if ultPeriodoExamenes.nil? 
-      #    inicioCurso = nil
-      #    finCurso = nil
-      #else
-      #    inicioCurso = Date.new(ultPeriodoExamenes.fin.prev_year.year, 10, 1)
-      #    finCurso = ultPeriodoExamenes.fin
-      #end
 
       startAndEndYears = getStartAndEndYears
 
