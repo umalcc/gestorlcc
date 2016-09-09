@@ -2,8 +2,11 @@ module SolicitudesHelper
 	def getCurrentTeachingPeriod
 
 	    mesActual = Date.today.month
+      añoActual = Date.today.year
 
-	    if(mesActual >= 1 and mesActual <= 7)
+      ultPeriodo = Periodo.order("inicio DESC").where("tipo = ? and cast(strftime('%m', inicio) as int) = ?",'Examenes', 9)
+
+	    if(mesActual >= 1 and Date.today <= ultPeriodo[0].fin)
 	    	inicioCurso = Date.today.prev_year.year
 	    	finCurso = Date.today.year
 	    else
@@ -15,15 +18,13 @@ module SolicitudesHelper
 	end
 
   def getCurrentExamsPeriod
-
-      periodos = Periodo.where("iniciosol <= ? and finsol >= ? and tipo = ?", Date.today, Date.today, 'Examenes')
+      
+      periodos=Periodo.where("tipo = ? AND (activo = ? OR admision = ?)","Examenes","t","t").order("inicio desc")
 
       if periodos.size > 0
-
         return {:iniciocurso => periodos[0].iniciosol, :fincurso => periodos[0].finsol}
       
       else
-
         return {:iniciocurso => nil, :fincurso => nil}
 
       end      
@@ -84,6 +85,7 @@ module SolicitudesHelper
 
       periodoAcademico = getCurrentTeachingPeriod
 
+      
       return true if isValidRequest?(solicitud, periodoAcademico[:iniciocurso], periodoAcademico[:fincurso])
   end
 
