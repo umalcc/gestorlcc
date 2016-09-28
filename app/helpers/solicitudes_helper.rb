@@ -1,9 +1,9 @@
 module SolicitudesHelper
-
-  def getStartAndEndYears
+  
+  def getStartAndEndYearsTeachingPeriod
 
     currentYear = Date.today.year
-    if Date.today.month >= 1 and Date.today.month <= 9
+    if Date.today.month >= 1 and Date.today.month <= 8
         startYear = currentYear - 1
         endYear = currentYear
     else
@@ -14,9 +14,33 @@ module SolicitudesHelper
     return {:startYear => startYear, :endYear => endYear}
   end
 
+
+  def getStartAndEndYearsForExamsPeriod
+
+    currentYear = Date.today.year
+    if Date.today.month >= 1 and Date.today.month <= 9
+        startYear = currentYear - 1
+        endYear = currentYear
+
+        periodos=Periodo.where("tipo = ? and cast(strftime('%m', inicio) as int) = ? and cast(strftime('%Y', inicio) as int) = ?","Examenes", 9, endYear).order("inicio desc")
+        if periodos.size > 0
+           diaFinExamsSept = periodos[0].fin.day
+           if Date.today.day > diaFinExamsSept
+             startYear = currentYear
+             endYear = currentYear + 1
+           end
+        end
+    else
+        startYear = currentYear
+        endYear = currentYear + 1
+    end
+
+    return {:startYear => startYear, :endYear => endYear}
+  end
+
 	def getCurrentTeachingPeriod
 
-      startAndEndYears = getStartAndEndYears
+      startAndEndYears = getStartAndEndYearsTeachingPeriod
 
       inicioCurso = Date.new(startAndEndYears[:startYear], 9, 1)
       finCurso = Date.new(startAndEndYears[:endYear],7,1)
@@ -25,12 +49,12 @@ module SolicitudesHelper
 	end
 
   def getCurrentTeachingPeriodForExams
-
-      startAndEndYears = getStartAndEndYears
-
+       
+      startAndEndYears = getStartAndEndYearsForExamsPeriod
+ 
       inicioCurso = Date.new(startAndEndYears[:startYear], 10, 1)
       finCurso = Date.new(startAndEndYears[:endYear],10,1)
-      
+     
       return {:iniciocurso => inicioCurso, :fincurso => finCurso}
   end
 
