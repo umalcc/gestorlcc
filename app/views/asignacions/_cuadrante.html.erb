@@ -140,7 +140,7 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
                            <% formid="form"+dia[2].to_s+hora[0].to_s+lab[0].to_s+a.id.to_s %>
                           <div id="flotanteform<%=dia[2].to_s%><%=hora[0].to_s%><%=lab[0].to_s%><%=a.id.to_s%>"
                                style='display:none;position:absolute; border-style: solid; background-color: white; padding: 2px;';>
-                               <div id="formid" >
+                      <div id="formid" >
                                         <table class=flotante2>
                                            <tr>
                                              <td></td>
@@ -164,8 +164,7 @@ A partir de ahora se podra activar el periodo <br/><br/>correspondiente</p>
                                               <!--REVISAR ESTA PARTE-->
                                                    <% labora=@todoslaboratorios.find{ |l| l[0] == a.laboratorio_id}[1] %>
                            <%= select "laboratorio_id", "nombre_lab", 
-                @todoslaboratorios.map {|l| [l[1]]},
-                                                                html_options={:selected=>labora } %></td>
+                @todoslaboratorios.map {|l| [l[1]]},html_options={:selected=>labora } %></td>
                           </tr>                                               
               <tr>
                                               <td>D&iacute;a </td>

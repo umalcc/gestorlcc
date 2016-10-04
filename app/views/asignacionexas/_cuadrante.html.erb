@@ -137,13 +137,13 @@
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
 			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16,:style=>"float:left"),
-                                "#", :name => "borraDir"%>
+                                "#",:id=>a.id, :name => "borraDir"%>
                             <% else %>
                               <% formid3="formborra"+hora.id.to_s+dia.to_s+a.id.to_s %>
 			      <div id="formid3" >
                                <%= hidden_field_tag "asigna", value=a.id %>
                               </div>        
-			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16), "#", :name=>"borraNorm"%>
+			      <%= link_to image_tag("borrar.png", :border=>0,:height=>16,:width=>16), "#",:id=>a.id, :name=>"borraNorm"%>
                             <% end %>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <!-- NO PUEDE BORRAR AQUI TAMBIEN LAS ASIGNACIONES **** VER CONTROLLER -->
@@ -183,8 +183,7 @@
                                               <td> <% @laboratorios=Laboratorio.order("nombre_lab").to_a %>
                                                    <% labora=Laboratorio.find(a.laboratorio_id).nombre_lab %>
                 				   <%= select "laboratorio_id", "nombre", 
-								@laboratorios.map {|l| [l.nombre_lab]},
-                                                                html_options={:selected=>labora } %></td>
+								@laboratorios.map {|l| [l.nombre_lab]},html_options={:selected=>labora } %></td>
 			                    </tr>                                               
 					    <tr>
                                               <td>Dia </td>
@@ -193,22 +192,18 @@
 						       <% fechas_europeas<<fecha_europea(d) %>
 						  <% end %>
 						  <%= select "dia", "dia", 
-								fechas_europeas,
-                                                                html_options={:selected=>fecha_europea(a.dia) } %></td>
+								fechas_europeas,html_options={:selected=>fecha_europea(a.dia) } %></td>
                                             </tr>
                                             <tr>
                                               <td>Hora </td>
                                               <td> <% @horas=Horasexa.where('en_uso = ?',"t").to_a %>
                                                    <% a.horaini %>
                 				   <%= select "horario_id", "comienzo", 
-								@horas.map {|h| [h.comienzo]},
-                                                                html_options={:selected=>a.horaini } %></td>
+								@horas.map {|h| [h.comienzo]},html_options={:selected=>a.horaini } %></td>
 			                    </tr>
-
 				            <tr>
-                                              <td><%= hidden_field_tag "id", a.id %>
-                                              </td>
-                                              <td>
+                    <td><%= hidden_field_tag "id", a.id %></td>
+                      <td>
                                           <input name="moverBtn" type="button" value="Mover" 
                                                 style="width:45px;height:20px;" />
                                               </td>
@@ -240,35 +235,40 @@
 <script type="text/javascript">
 $(function()
 {
-   $('a[name=borraNorm]').click(function () {    
+   $('a[name=borraNorm]').click(function (event) {    
+    var asignaId=$(this).attr("id");
+    var row=$("#"+asignaId).parent();
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
             $.ajax({
                      type: "POST",
-                     url: "borranormal",
-                     data: { asigna:$("#asigna").val() }
-                   })
-         }  
-    }) 
-});
+                     url: "/asignacionexas/borranormal",
+                     data: { asigna:asignaId },
+                    success:function(){
+                      row.remove();
+                    }
+                   });
+         } 
+         event.preventDefault();
+            return false;    
+    }); 
 
-$(function()
-{
-   $('a[name=borraDir]').click(function () {    
+   $('a[name=borraDir]').click(function () { 
+    var asignaId=$(this).attr("id");
+    var row=$("#"+asignaId).parent();
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
             $.ajax({
-                     type: "POST",
-                     url: "borradir",
-                     data: { asigna:$("#asigna").val() }
-                   })
+              type: "POST",
+              url: "/asignacionexas/borradir",
+              data: { asigna:asignaId },
+              success:function(){
+                      row.remove();
+              }
+         });
          }  
-    }) 
-});
-
-$(function()
-{
-     $('input[name=moverBtn]').click(function () { 
+    });
+        $('input[name=moverBtn]').click(function () { 
       var divDialog=$(this).parent().parent().parent();
       var dia=divDialog.find("select[name='dia[dia]']").val();
       var lab=divDialog.find("select[name='laboratorio_id[nombre]']").val();
@@ -276,7 +276,7 @@ $(function()
       var id=divDialog.find("input[name='id']").val();
        $.ajax({
                  type: "POST",
-                 url: "mover",
+                 url: "/asignacionexas/mover",
                  data: { id:id,nombre_lab:lab, 
                  dia:dia, 
                  comienzo:hora },
@@ -285,9 +285,6 @@ $(function()
                     $("div[id^='flotanteform']").hide();
                  }
               });
-       
-           
-      
     });
 });
 
