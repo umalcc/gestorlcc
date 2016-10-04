@@ -46,9 +46,14 @@
     <% end %>
   
    <tr valign="top" class="<%=cycle('linea-impar','linea-par') %>">
-    <td style="text-align:center"><% if diaant != a.dia %>
+    <td style="text-align:center;">
+    <% if diaant != a.dia %>
+    <span style="display:inline">
+       <% else%>
+           <span style="display:none">
+               <% end %>
                                     <%= formato_europeo(a.dia) %>
-                                  <% end %><% diaant=a.dia %></td>
+                                 <% diaant=a.dia %></span></td>
     <td><%= a.solicitudlabexa.usuario.nombre+" "+a.solicitudlabexa.usuario.apellidos %></td>
     <td><a onmouseover="ShowContent('asignatura<%=a.id.to_s%>'); return true;"
    			   onmouseout="HideContent('asignatura<%=a.id.to_s%>'); return true;">
@@ -76,16 +81,18 @@
     <td style="text-align:center"><%= a.solicitudlabexa.npuestos %></td> 
     <td><% todasas=@asignacionexas.select{|as| as.solicitudlabexa==a.solicitudlabexa } %>
         <%= a.horaini+"-"+todasas.last.horafin %></td>
-    <td style="text-align:center"><% labs=todasas.map{|as| as.laboratorio.nombre_lab }.sort %>
+    <td style="text-align:center"><% labs=todasas.sort_by{|as| [as.laboratorio.nombre_lab]}  %>
         <% antlab=" " %>
         <% labs.each do |l|  %>
-          <% if antlab!=l %>
+          <% if antlab!=l.laboratorio.nombre_lab %>
+          <span>
             <% if antlab!=" " %>
                <%= " - " %>
             <% end %>
-            <%= l %><%= link_to image_tag("borrar.png",:border=>0,:height => "50%"), "#", name:"borraDirAsig"%>
+            <%= l.laboratorio.nombre_lab %><%= link_to image_tag("borrar.png",:border=>0,:height => "50%"), "#", name:"borraDirAsig", id:l.id%>
           <% end %>
-          <% antlab= l %>
+        </span>
+          <% antlab= l.laboratorio.nombre_lab %>
         <% end %></td>
    </tr>
      <% aant_id=a.solicitudlabexa_id %>
@@ -100,31 +107,27 @@
 
 
 <script type="text/javascript">
-
-$(function()
-{
-  
-   $('a[name=borraDirAsig]').click(function () { 
-
-         var aux=$("div[id^='asignatura']").attr("id"); 
-         var asignaId = aux.replace("asignatura",""); 
-         var row=$("#"+aux).parent().parent().parent();
+$(function(){
+   $("a[name='borraDirAsig']").click(function (event) { 
+         var asignaId=$(this).attr("id");
+         var row=$("#"+asignaId).parent();
          if(confirm('Seguro que desea eliminar la asignacion?'))
          {
             $.ajax({
                      type: "POST",
+                     dataType:"json",
                      url: "borradirasignada",
                      data: { asigna:asignaId },
                      success:function(){
                         row.remove();
-                   }, error:function()
+                   }, error:function(request, status, error)
                    {
-                    alert("Hubo un problema borrando la solicitud");
+                    alert(error);
                    }});
-         }  
-         
-    }) 
-
-});
+         }   
+            event.preventDefault();
+            return false;     
+    });
+ });
 
 </script>

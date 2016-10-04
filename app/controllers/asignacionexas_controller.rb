@@ -395,15 +395,14 @@ class AsignacionexasController < ApplicationController
   end
 
   def borradirasignada
-    asignacionexa=Asignacionlabexadef.find(params[:asigna].to_i)
-    solicitudlab=Solicitudlabexa.find(asignacionexa.solicitudlabexa_id)
-    otrasasignacionexas=Asignacionlabexadef.where('solicitudlabexa_id = ? and laboratorio_id = ?',asignacionexa.solicitudlabexa_id,asignacionexa.laboratorio_id).to_a
-    #asignacionexa.delete
-    otrasasignacionexas.each {|o| o.delete }
-    #solicitudlab.delete
-    @asignacionexas=Asignacionlabexadef.order('dia,solicitudlabexa_id,laboratorio_id').to_a
+    asignacion = Asignacionlabexadef.find(params[:asigna])
+    otrasasignaciones=Asignacionlabexadef.where('solicitudlabexa_id = ? and laboratorio_id = ?',asignacion.solicitudlabexa_id,asignacion.laboratorio_id)
+    otrasasignaciones.each {|o| o.delete }
+
+    asignacion.destroy
     respond_to do |format|
-      format.js
+      format.json {render :json => {:msg => "Todo ok"},:status => 200}
+      format.xml  { head :ok }
     end
   end
 
