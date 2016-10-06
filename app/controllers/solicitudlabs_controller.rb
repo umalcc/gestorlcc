@@ -219,21 +219,31 @@ def getSubjects(solicitudlab)
     @asignaturas = Asignatura.where('titulacion_id = ? and curso = ?',solicitudlab.asignatura.titulacion_id,curso).to_a
 end
 
-  # DELETE /solicitudlabs/1
-  # DELETE /solicitudlabs/1.xml
+ # DELETE /solicitudlabs/1
  def destroy
     @solicitudlab = Solicitudlab.find(params[:id])
     CorreoTecnicos::emitesolicitudlectivo(@solicitudlab,params[:fechaini],params[:fechafin],@correotramos,"Solicitud cursada por admin","Borrado de ").deliver_later 
-    @tramos=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).to_a # busco todos los tramos que tenian el id
+    
+    # eliminamos las asignaciones no definitivas
+    @asignacions= Asignacion.where("solicitudlab_id = ?",@solicitudlab.id).to_a
+    @asignacions.each {|asignacion| asignacion.destroy}
+    
+    # eliminamos las asignaciones definitivas
+    @asignaciondefs= Asignaciondef.where("solicitudlab_id = ?",@solicitudlab.id).to_a
+    @asignaciondefs.each {|asignaciondef| asignaciondef.destroy}
+
+    # eliminamos las peticiones
+    @tramos=Peticionlab.where("solicitudlab_id = ?",@solicitudlab.id).to_a
     @correotramos=''
     @tramos.each {|tramo| @correotramos+=' - '+tramo.diasemana+' de '+tramo.horaini+' a '+tramo.horafin
-                          tramo.destroy} # los elimino en cascada
+                          tramo.destroy} # los elimino en cascada 
+    
     @solicitudlab.destroy
     respond_to do |format|
       format.html { redirect_to(solicitudlabs_url) }
       format.xml  { head :ok }
     end
-  end
+ end
 
  
   def listar

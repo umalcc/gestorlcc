@@ -38,6 +38,10 @@ class PeriodosController < ApplicationController
   def edit
     @periodo = Periodo.find(params[:id])
     @tipoact=@periodo.tipo
+    if @tipoact == 'Festivo'
+      @periodo.iniciosol = Date.today
+      @periodo.finsol = Date.today
+    end
     @activo="NO" unless @periodo.activo?
     @admision="NO" unless @periodo.admision? 
   end
@@ -47,8 +51,6 @@ class PeriodosController < ApplicationController
   def create
     @periodo = Periodo.new
     saveModel(params)
-    ###@periodo.tipo=params[:tipo]
-    #@periodo.activo=params[:activo]=="SI"
 
     respond_to do |format|
       if @periodo.save
