@@ -113,10 +113,10 @@ before_action :login_requerido
     
     tiempoSolicitud = params[:tiempoSol]
     case tiempoSolicitud
-      when '0' then @solicitudlabs = getCurrentRequests(@solicitudlabs)
+      when '0' then @solicitudlabs = getCurrentRequests(@solicitudlabs, true)
       when '1' then @solicitudlabs = getCurrentCuatrimesterRequests(@solicitudlabs, true)
-      when '2' then @solicitudlabs = getFromLastYearRequests(@solicitudlabs)
-      when '3' then @solicitudlabs = getFromLast2YearsRequests(@solicitudlabs)
+      when '2' then @solicitudlabs = getFromLastYearRequests(@solicitudlabs, true)
+      when '3' then @solicitudlabs = getFromLast2YearsRequests(@solicitudlabs, true)
     end
 
     respond_to do |format|
@@ -154,10 +154,10 @@ before_action :login_requerido
     
     tiempoSolicitud = params[:tiempoSol]
     case tiempoSolicitud
-      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas)
+      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas, false)
       when '1' then @solicitudlabexas = getCurrentCuatrimesterRequests(@solicitudlabexas, false)
-      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas)
-      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas)
+      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas, false)
+      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas, false)
     end
 
     respond_to do |format|

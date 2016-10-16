@@ -14,7 +14,7 @@ class SolicitudlabexasController < ApplicationController
   def index
 
     @solicitudlabexas = Solicitudlabexa.order("fecha").to_a
-    @solicitudlabexas = getCurrentRequests(@solicitudlabexas) 
+    @solicitudlabexas = getCurrentRequests(@solicitudlabexas, false) 
     @cuenta = @solicitudlabexas.size
     
     respond_to do |format|
@@ -178,10 +178,10 @@ end
 
     tiempoSolicitud = params[:tiempoSolicitud]
     case tiempoSolicitud
-      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas)
+      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas, false)
       when '1' then @solicitudlabexas = getCurrentCuatrimesterRequests(@solicitudlabexas, false)
-      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas)
-      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas)
+      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas, false)
+      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas, false)
     end
     
     @solicitudlabexas.each(&:destroy)
@@ -221,10 +221,10 @@ end
     tiempoSolicitud = params[:tiempoSolicitud]
 
     case tiempoSolicitud
-      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas)
+      when '0' then @solicitudlabexas = getCurrentRequests(@solicitudlabexas, false)
       when '1' then @solicitudlabexas = getCurrentCuatrimesterRequests(@solicitudlabexas, false)
-      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas)
-      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas)
+      when '2' then @solicitudlabexas = getFromLastYearRequests(@solicitudlabexas, false)
+      when '3' then @solicitudlabexas = getFromLast2YearsRequests(@solicitudlabexas, false)
 
     end
 
