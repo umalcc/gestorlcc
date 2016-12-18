@@ -142,8 +142,8 @@ module SolicitudesHelper
       if periodoAcademico[:iniciocurso].nil? and periodoAcademico[:fincurso].nil?
          return false
       else
-        inicioCursoPasado = periodoAcademico[:iniciocurso].prev_year.year
-        finCursoPasado = periodoAcademico[:fincurso].prev_year.year
+        inicioCursoPasado = periodoAcademico[:iniciocurso].prev_year
+        finCursoPasado = periodoAcademico[:fincurso].prev_year
         return isValidRequest?(solicitud, inicioCursoPasado, finCursoPasado)
       end
     end
@@ -160,8 +160,8 @@ module SolicitudesHelper
       if periodoAcademico[:iniciocurso].nil? and periodoAcademico[:fincurso].nil?
          return false
       else
-         inicioCursoPasado2 = periodoAcademico[:iniciocurso].prev_year.prev_year.year
-         finCursoPasado2 = periodoAcademico[:fincurso].prev_year.prev_year.year
+         inicioCursoPasado2 = periodoAcademico[:iniciocurso].prev_year.prev_year
+         finCursoPasado2 = periodoAcademico[:fincurso].prev_year.prev_year
          return isValidRequest?(solicitud, inicioCursoPasado2, finCursoPasado2)   
       end 
     end
